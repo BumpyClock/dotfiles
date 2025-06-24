@@ -1,6 +1,6 @@
 Create a clear and detailed tasklist to accomplish what we have discussed.
 
-- Save the tasks in .claude/tasks/tasks.md 
+- Save the tasks in .claude/tasks/tasks.md
 
 # Claude Code Implementation Planning Guidelines (CoT-Enhanced)
 
@@ -24,63 +24,70 @@ Before starting, ask the user:
 <step_1>
 **UNDERSTAND THE ISSUE**
 Think: "The issue is: [issue description]
+
 - Root cause: [why this problem exists]
 - Current impact: [what problems it causes]
 - Files affected: [specific files and line numbers]
 - Dependencies: [what else might be affected]"
-</step_1>
+  </step_1>
 
 <step_2>
 **ASSESS IMPLEMENTATION COMPLEXITY**
 Think: "This fix requires:
+
 - Effort level: [hours/days]
 - Risk level: [low/medium/high]
 - Breaking changes: [yes/no, what kind]
 - Dependencies to modify: [list]
 - Testing requirements: [unit/integration/e2e]"
-</step_2>
+  </step_2>
 
 <step_3>
 **DESIGN THE SOLUTION**
 Think: "The solution approach:
+
 - Strategy: [refactor/rewrite/patch]
 - Pattern to apply: [specific pattern if applicable]
 - Key changes: [list main modifications]
 - Preservation requirements: [what must not change]"
-</step_3>
+  </step_3>
 
 <step_4>
 **SEQUENCE THE IMPLEMENTATION**
 Think: "Optimal execution order:
+
 1. Prerequisites: [what must be done first]
 2. Core changes: [main implementation]
 3. Integration: [connecting with existing code]
 4. Verification: [how to confirm success]
-Dependencies between steps: [which steps block others]"
-</step_4>
+   Dependencies between steps: [which steps block others]"
+   </step_4>
 
 <step_5>
 **IDENTIFY RISKS AND MITIGATIONS**
 Think: "Potential risks:
+
 - What could break: [specific concerns]
 - Rollback strategy: [how to undo if needed]
 - Testing gaps: [what's hard to test]
 - Performance impacts: [expected changes]"
-</step_5>
+  </step_5>
 
 <step_6>
 **CREATE VERIFICATION PLAN**
 Think: "Success criteria:
+
 - Tests to write: [specific test cases]
 - Metrics to measure: [performance/quality metrics]
 - Manual verification: [what to check manually]
 - Regression prevention: [how to ensure it stays fixed]"
-</step_6>
-</reasoning_framework>
+  </step_6>
+  </reasoning_framework>
 
 ## Implementation Plan Output Format
 
 <plan_structure>
+
 ### Issue: [Issue Title]
 
 <context>
@@ -91,7 +98,9 @@ Think: "Success criteria:
 </context>
 
 <implementation_phases>
+
 #### Phase 1: Setup and Prerequisites
+
 ```xml
 <phase_1>
 Goal: [What this phase accomplishes]
@@ -113,6 +122,7 @@ Verification:
 ```
 
 #### Phase 2: Core Implementation
+
 ```xml
 <phase_2>
 Goal: [Main fix implementation]
@@ -136,6 +146,7 @@ Verification:
 ```
 
 #### Phase 3: Testing and Integration
+
 ```xml
 <phase_3>
 Goal: Comprehensive testing and integration
@@ -160,6 +171,7 @@ Verification:
 ```
 
 #### Phase 4: Documentation and Finalization
+
 ```xml
 <phase_4>
 Goal: Complete implementation with documentation
@@ -182,20 +194,24 @@ Success Criteria:
 - [ ] All checks passing
 </phase_4>
 ```
+
 </implementation_phases>
 
 <rollback_plan>
 If issues arise:
+
 1. [Specific rollback step 1]
 2. [Specific rollback step 2]
 3. [How to preserve any valuable changes]
-</rollback_plan>
-</plan_structure>
+   </rollback_plan>
+   </plan_structure>
 
 ## Claude Code Integration Patterns
 
 <claude_code_usage>
+
 ### For Complex Refactoring
+
 ```
 <context>
 CLAUDE.md file should contain architecture patterns and coding standards
@@ -207,6 +223,7 @@ CLAUDE.md file should contain architecture patterns and coding standards
 ```
 
 ### For Bug Fixes
+
 ```
 <command>
 "Analyze the bug in [file:line]. First reproduce it with a test, then fix the root cause, not just the symptom. Ensure the fix doesn't break existing functionality."
@@ -214,6 +231,7 @@ CLAUDE.md file should contain architecture patterns and coding standards
 ```
 
 ### For Performance Optimization
+
 ```
 <command>
 "Profile [function/module] and identify performance bottlenecks. Create benchmarks before optimizing. Implement improvements incrementally, measuring impact at each step."
@@ -221,11 +239,13 @@ CLAUDE.md file should contain architecture patterns and coding standards
 ```
 
 ### For Security Fixes
+
 ```
 <command>
 "Analyze security vulnerability in [component]. Implement fix following OWASP guidelines. Add security tests. Ensure no sensitive data is exposed in logs or errors."
 </command>
 ```
+
 </claude_code_usage>
 
 ## Example: SQL Injection Fix Implementation
@@ -239,7 +259,8 @@ User: "Fix the SQL injection vulnerability in searchUsers() function"
 
 **Step 3 - DESIGN**: "Replace string concatenation with parameterized queries. Use repository pattern properly. Add input validation layer."
 
-**Step 4 - SEQUENCE**: 
+**Step 4 - SEQUENCE**:
+
 1. Add input validation
 2. Implement parameterized queries
 3. Add security tests
@@ -256,20 +277,22 @@ Goal: Setup and reproduce vulnerability
 Duration: 30 minutes
 
 Claude Code Commands:
+
 - "Create branch fix/sql-injection-search-users"
 - "Write a test that demonstrates SQL injection in searchUsers()"
 - "Set up test database with safe sandbox"
-</phase_1>
+  </phase_1>
 
 <phase_2>
 Goal: Implement secure query handling
 Duration: 2 hours
 
 Claude Code Commands:
+
 - "In UserRepository, refactor searchUsers to use parameterized queries with proper escaping"
 - "Add input validation middleware for search parameters"
 - "Implement query builder pattern for complex search scenarios"
-</phase_2>
+  </phase_2>
 
 [Continues with remaining phases...]
 </example>
@@ -281,10 +304,8 @@ When addressing multiple related issues:
 
 1. **Dependency Analysis**
    Think: "Issue A blocks B, B and C can be parallel, D depends on all"
-   
 2. **Resource Optimization**
    Think: "Combining fixes for issues X and Y saves setup time"
-   
 3. **Risk Mitigation**
    Think: "Fix critical issues first, cosmetic issues last"
 
@@ -301,25 +322,29 @@ Claude Code Command:
 Before moving between phases, verify:
 
 □ **Code Quality**
+
 - Follows project standards in CLAUDE.md
 - No code smells introduced
 - Complexity metrics acceptable
 
 □ **Testing**
+
 - New tests for the fix
 - Existing tests still pass
 - Edge cases covered
 
 □ **Performance**
+
 - No degradation (or improved)
 - Memory usage acceptable
 - Response times maintained
 
 □ **Security**
+
 - No new vulnerabilities
 - Follows security guidelines
 - Sensitive data protected
-</quality_gates>
+  </quality_gates>
 
 ## Anti-Patterns to Avoid
 
@@ -337,14 +362,16 @@ Before moving between phases, verify:
 **Remember**: Show reasoning at each step. Create implementation plans that are specific, measurable, and executable. Use Claude Code's strengths in systematic execution and deep analysis. Each phase should have clear entry criteria, exit criteria, and rollback procedures.
 
 # Task list
-Think deeply and carefully about the list of tasks, they should be detailed and specific. Each task should be a single line item. Tasks can be grouped by category, but each task should be a single line item.Tasks should not be overly complex. 
+
+Think deeply and carefully about the list of tasks, they should be detailed and specific. Each task should be a single line item. Tasks can be grouped by category, but each task should be a single line item.Tasks should not be overly complex.
 
 Tasks should be specific and actionable. Avoid vague or ambiguous tasks. Each task should be a single line item. Tasks should be clear and concise. Use simple language and avoid jargon or technical terms that may not be familiar to the reader. Think carefully about the tasks, review your initial list for complexity and identify the tasks that are complex then break them down into smaller, more manageable tasks.
 
 Here's an example
-```markdown
 
+```markdown
 # Section 1
+
 - [x] Task 1 is an example of a task that is complete
 - [ ] Task 2
 - [ ] Task 3
@@ -352,6 +379,7 @@ Here's an example
 - [ ] Task 5
 
 # Section 2
+
 - [ ] Task 1
 - [ ] Task 2
 - [ ] Task 3

@@ -81,33 +81,39 @@ Execute these steps explicitly, showing your thinking:
 **Core Question**: "What's the simplest solution that fully solves the current problem?"
 
 **Simplify When**:
+
 - Single implementation exists
 - Pattern adds no value
 - Abstraction isn't reused
 - Complexity exceeds problem
 
 **Keep Complexity When**:
+
 - Multiple implementations exist
 - Proven scalability needs
 - Regulatory requirements
 - Team documented reasons
 
 **Balance Check**:
+
 1. Does it solve a real current problem?
 2. Is the abstraction reused?
 3. Can juniors understand it?
 4. Is flexibility actually used?
-</complexity_balance>
+   </complexity_balance>
 
 ## Output Format
 
 <report_structure>
+
 ### Executive Summary
+
 [Overall health + main concerns + complexity assessment in 2-3 sentences]
 
 ### Critical Findings
 
 **🔴 Critical Issues**
+
 - **[Issue]**: [Impact] at `file:line`
   - Quick: [Solution] (2hr)
   - Proper: [Solution] (2day)
@@ -116,16 +122,18 @@ Execute these steps explicitly, showing your thinking:
 [Same format]
 
 **🟢 Simplification Opportunities**
+
 - **[Complex Pattern]**: Currently [X files/lines]
-  - Simplify to: [Solution] 
+  - Simplify to: [Solution]
   - Reduces: [X lines, Y files]
   - Preserves: [All functionality]
 
 ### Action Plan
+
 1. **Immediate**: [This week priorities]
 2. **Short-term**: [This month]
 3. **Long-term**: [This quarter]
-</report_structure>
+   </report_structure>
 
 ## Example Analysis
 
@@ -142,20 +150,22 @@ ISSUES: "🔴 SQL injection in searchUsers(), 🟡 No rate limiting"
 
 COMPLEXITY: "UserRepositoryFactoryInterface with single PostgreSQL implementation - unnecessary"
 
-SOLUTIONS: 
+SOLUTIONS:
+
 - SQL injection: Parameterized queries (2hr) OR ORM (2day)
 - Over-engineering: Remove Factory, direct instantiation (1hr, -200 lines)
-</example>
+  </example>
 
 ## Uncertainty Protocol
 
 <when_unclear>
 "I need clarification:
+
 - What's the intended behavior of [component]?
 - Is [pattern] intentional or technical debt?
 - Was [complexity] chosen for specific reasons?
 - Any constraints for changes?"
-</when_unclear>
+  </when_unclear>
 
 ## Anti-Patterns
 
