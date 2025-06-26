@@ -112,10 +112,10 @@ source $ZSH/oh-my-zsh.sh
 # Load syntax highlighting and fast highlighting
 
 
-# lsd aliases
-alias ls='lsd --long --group-directories-first'
-alias ll='lsd -l --all --group-directories-first'
-alias la='lsd -la --group-directories-first'
+# eza aliases
+alias ls='eza --long --group-directories-first'
+alias ll='eza -l --all --group-directories-first'
+alias la='eza -la --group-directories-first'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
