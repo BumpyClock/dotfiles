@@ -35,23 +35,7 @@ Agents: 3 coding agents working in parallel
 - Testing → YES
 - Architecture → NO (your job)
 
-**Parallelization secret:** 
-Define interfaces BEFORE implementation
-```javascript
-// Define contracts:
-interface CartService {
-  addItem(productId: string, qty: number): CartItem
-  getTotal(): number
-}
 
-interface InventoryService {
-  checkStock(productId: string): number
-  reserve(items: CartItem[]): string
-}
-
-// Now 2 agents can code simultaneously!
-// Each mocks the other's interface
-```
 
 **Agent command:**
 ```bash
@@ -95,4 +79,25 @@ Core team in `~/.claude/agents/`:
 - `sub-agent-performance.md` - Optimizes
 - `sub-agent-documentation.md` - Documents
 
+**Parallelization secret FOR CODING TASKS ONLY:** 
+
+
+For coding tasks the secret is to define public interfaces first so that multiple agents can implement different parts of a feature simultaneously.
+
+Define interfaces BEFORE implementation
+```javascript
+// Define contracts:
+interface CartService {
+  addItem(productId: string, qty: number): CartItem
+  getTotal(): number
+}
+
+interface InventoryService {
+  checkStock(productId: string): number
+  reserve(items: CartItem[]): string
+}
+
+// Now 2 agents can code simultaneously!
+// Each mocks the other's interface
+```
 **Remember:** Define interfaces → Delegate → Integrate. That's it.
