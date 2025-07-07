@@ -149,6 +149,19 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 # Aliases
 alias claude-yolo='claude --dangerously-skip-permissions'
-
+alias pn='pnpm'
 # Starship prompt
 eval "$(starship init zsh)"
+
+
+. "$HOME/.cargo/env"
+# bun completions
+[ -s "/home/bumpyclock/.bun/_bun" ] && source "/home/bumpyclock/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Task Master aliases added on 7/3/2025
+alias tm='task-master'
+alias taskmaster='task-master'

@@ -23,11 +23,11 @@ print_warning() {
 
 # Detect OS
 detect_os() {
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [ "$OSTYPE" = "darwin"* ]; then
         echo "macos"
-    elif [[ -f /etc/arch-release ]]; then
+    elif [ -f /etc/arch-release ]; then
         echo "arch"
-    elif [[ -f /etc/lsb-release ]] || [[ -f /etc/debian_version ]]; then
+    elif [ -f /etc/lsb-release ] || [ -f /etc/debian_version ]; then
         echo "ubuntu"
     else
         echo "unknown"
@@ -82,7 +82,7 @@ install_zsh() {
 
 # Install oh-my-zsh
 install_oh_my_zsh() {
-    if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    if [ -d "$HOME/.oh-my-zsh" ]; then
         print_status "oh-my-zsh is already installed"
     else
         print_status "Installing oh-my-zsh..."
@@ -93,33 +93,29 @@ install_oh_my_zsh() {
 # Install zsh plugins
 install_zsh_plugins() {
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-    
     # zsh-autosuggestions
-    if [[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
+    if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
         print_status "zsh-autosuggestions is already installed"
     else
         print_status "Installing zsh-autosuggestions..."
         git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
     fi
-    
     # zsh-syntax-highlighting
-    if [[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
+    if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
         print_status "zsh-syntax-highlighting is already installed"
     else
         print_status "Installing zsh-syntax-highlighting..."
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
     fi
-    
     # fast-syntax-highlighting
-    if [[ -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]]; then
+    if [ -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]; then
         print_status "fast-syntax-highlighting is already installed"
     else
         print_status "Installing fast-syntax-highlighting..."
         git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
     fi
-    
     # zsh-autocomplete
-    if [[ -d "$ZSH_CUSTOM/plugins/zsh-autocomplete" ]]; then
+    if [ -d "$ZSH_CUSTOM/plugins/zsh-autocomplete" ]; then
         print_status "zsh-autocomplete is already installed"
     else
         print_status "Installing zsh-autocomplete..."
@@ -158,11 +154,16 @@ install_eza() {
     fi
 }
 
-# Install Starship prompt
+# Install Starship prompt (ensures zsh is installed first)
 install_starship() {
     if command -v starship &> /dev/null; then
         print_status "Starship is already installed"
     else
+        # Ensure zsh is installed before installing Starship
+        if ! command -v zsh &> /dev/null; then
+            print_status "zsh is not installed. Installing zsh first..."
+            install_zsh
+        fi
         print_status "Installing Starship..."
         curl -sS https://starship.rs/install.sh | sh -s -- -y
     fi
@@ -201,11 +202,11 @@ install_additional_tools() {
         ubuntu)
             sudo apt install -y git curl wget ripgrep fd-find bat fzf
             # Create symlink for fd on Ubuntu
-            if [[ -f /usr/bin/fdfind ]] && [[ ! -f /usr/bin/fd ]]; then
+            if [ -f /usr/bin/fdfind ] && [ ! -f /usr/bin/fd ]; then
                 sudo ln -s /usr/bin/fdfind /usr/bin/fd
             fi
             # Create symlink for bat on Ubuntu
-            if [[ -f /usr/bin/batcat ]] && [[ ! -f /usr/bin/bat ]]; then
+            if [ -f /usr/bin/batcat ] && [ ! -f /usr/bin/bat ]; then
                 sudo ln -s /usr/bin/batcat /usr/bin/bat
             fi
             ;;
@@ -215,50 +216,42 @@ install_additional_tools() {
 # Create symlinks for dotfiles
 create_symlinks() {
     print_status "Creating symlinks for dotfiles..."
-    
     # Detect dotfiles directory (where this script is located)
     DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     print_status "Detected dotfiles directory: $DOTFILES_DIR"
-    
     # Create ~/.claude directory if it doesn't exist
     mkdir -p "$HOME/.claude"
-    
     # Symlink .zshrc
-    if [[ -f "$HOME/.zshrc" ]] && [[ ! -L "$HOME/.zshrc" ]]; then
+    if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
         print_warning "Backing up existing .zshrc to .zshrc.backup"
         mv "$HOME/.zshrc" "$HOME/.zshrc.backup"
     fi
     ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
-    
     # Symlink Claude files if they exist
-    if [[ -d "$DOTFILES_DIR/.claude" ]]; then
-        [[ -d "$DOTFILES_DIR/.claude/commands" ]] && ln -sf "$DOTFILES_DIR/.claude/commands" "$HOME/.claude/commands"
-        [[ -f "$DOTFILES_DIR/.claude/CLAUDE.md" ]] && ln -sf "$DOTFILES_DIR/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-        [[ -d "$DOTFILES_DIR/.claude/agents" ]] && ln -sf "$DOTFILES_DIR/.claude/agents" "$HOME/.claude/agents"
-        [[ -d "$DOTFILES_DIR/.claude/docs" ]] && ln -sf "$DOTFILES_DIR/.claude/docs" "$HOME/.claude/docs"
+    if [ -d "$DOTFILES_DIR/.claude" ]; then
+        [ -d "$DOTFILES_DIR/.claude/commands" ] && ln -sf "$DOTFILES_DIR/.claude/commands" "$HOME/.claude/commands"
+        [ -f "$DOTFILES_DIR/.claude/CLAUDE.md" ] && ln -sf "$DOTFILES_DIR/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+        [ -d "$DOTFILES_DIR/.claude/agents" ] && ln -sf "$DOTFILES_DIR/.claude/agents" "$HOME/.claude/agents"
+        [ -d "$DOTFILES_DIR/.claude/docs" ] && ln -sf "$DOTFILES_DIR/.claude/docs" "$HOME/.claude/docs"
     else
         print_warning "No .claude directory found in dotfiles"
     fi
-    
     print_status "Symlinks created successfully"
 }
 
 # Main installation
 main() {
     print_status "Starting zsh environment setup..."
-    
     # Check if running as root
-    if [[ $EUID -eq 0 ]]; then
+    if [ $EUID -eq 0 ]; then
        print_error "This script should not be run as root"
        exit 1
     fi
-    
     # Check OS support
-    if [[ "$OS" == "unknown" ]]; then
+    if [ "$OS" = "unknown" ]; then
         print_error "Unsupported operating system"
         exit 1
     fi
-    
     # Run installations
     install_base_packages
     install_zsh
@@ -270,12 +263,10 @@ main() {
     install_pnpm
     install_additional_tools
     create_symlinks
-    
     print_status "Installation complete!"
     print_status "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
-    
     # Set zsh as default shell if it isn't already
-    if [[ "$SHELL" != *"zsh"* ]]; then
+    if [ "${SHELL#*zsh}" = "$SHELL" ]; then
         print_status "Setting zsh as default shell..."
         chsh -s $(which zsh)
         print_status "Please log out and log back in for the shell change to take effect"
