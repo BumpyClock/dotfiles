@@ -1,0 +1,442 @@
+#!/usr/bin/env python3
+# ABOUTME: Script to sync MCP server configurations between mcp-servers.json and ~/.claude.json
+# ABOUTME: Supports bidirectional sync to keep configurations in sync across devices
+
+import json
+import os
+import sys
+from pathlib import Path
+import shutil
+from datetime import datetime
+import argparse
+import urllib.request
+import urllib.error
+import subprocess
+from typing import Tuple, Dict, Any, Optional
+
+def load_json_file(filepath):
+    """Load JSON from file, return empty dict if file doesn't exist or is invalid."""
+    try:
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Warning: Could not load {filepath}: {e}")
+        return {}
+
+def validate_mcp_server_config(server_name: str, server_config: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+    """Validate MCP server configuration against expected schema."""
+    if not isinstance(server_config, dict):
+        return False, f"Server '{server_name}' configuration must be a dictionary"
+    
+    # Check required fields
+    if 'type' not in server_config:
+        return False, f"Server '{server_name}' missing required 'type' field"
+    
+    server_type = server_config['type']
+    valid_types = ['stdio', 'http', 'docker']
+    
+    if server_type not in valid_types:
+        return False, f"Server '{server_name}' has invalid type '{server_type}'. Valid types: {', '.join(valid_types)}"
+    
+    # Type-specific validation
+    if server_type == 'stdio':
+        if 'command' not in server_config:
+            return False, f"STDIO server '{server_name}' missing required 'command' field"
+        if not isinstance(server_config['command'], str):
+            return False, f"STDIO server '{server_name}' 'command' must be a string"
+        if 'args' in server_config and not isinstance(server_config['args'], list):
+            return False, f"STDIO server '{server_name}' 'args' must be a list"
+    
+    elif server_type == 'http':
+        if 'url' not in server_config:
+            return False, f"HTTP server '{server_name}' missing required 'url' field"
+        if not isinstance(server_config['url'], str):
+            return False, f"HTTP server '{server_name}' 'url' must be a string"
+        # Basic URL validation
+        url = server_config['url']
+        if not (url.startswith('http://') or url.startswith('https://')):
+            return False, f"HTTP server '{server_name}' 'url' must start with http:// or https://"
+    
+    elif server_type == 'docker':
+        if 'command' not in server_config:
+            return False, f"Docker server '{server_name}' missing required 'command' field"
+        if not isinstance(server_config['command'], str):
+            return False, f"Docker server '{server_name}' 'command' must be a string"
+        if 'args' in server_config and not isinstance(server_config['args'], list):
+            return False, f"Docker server '{server_name}' 'args' must be a list"
+    
+    # Validate env if present
+    if 'env' in server_config:
+        if not isinstance(server_config['env'], dict):
+            return False, f"Server '{server_name}' 'env' must be a dictionary"
+        for key, value in server_config['env'].items():
+            if not isinstance(key, str):
+                return False, f"Server '{server_name}' env key must be a string"
+            if not isinstance(value, (str, int, float, bool)):
+                return False, f"Server '{server_name}' env value for '{key}' must be a string, number, or boolean"
+    
+    return True, None
+
+def check_server_health(server_name: str, server_config: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+    """Check if an MCP server is accessible/valid."""
+    server_type = server_config.get('type')
+    
+    if server_type == 'stdio':
+        command = server_config.get('command')
+        if command:
+            if command == 'docker':
+                # Special handling for docker command
+                if shutil.which('docker') is None:
+                    return False, f"Docker not found in PATH"
+                # Check if docker is running
+                try:
+                    result = subprocess.run(['docker', 'info'], 
+                                           capture_output=True, text=True, timeout=5)
+                    if result.returncode != 0:
+                        return False, f"Docker is not running or not accessible"
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    return False, f"Docker command failed or timed out"
+            elif command == 'npx':
+                # Check if npx is available
+                if shutil.which('npx') is None:
+                    return False, f"npx not found in PATH"
+            else:
+                # Check if command exists in PATH
+                if shutil.which(command) is None:
+                    return False, f"Command '{command}' not found in PATH"
+    
+    elif server_type == 'http':
+        url = server_config.get('url')
+        if url:
+            try:
+                # Try to reach the URL with a short timeout
+                request = urllib.request.Request(url)
+                with urllib.request.urlopen(request, timeout=10) as response:
+                    # Just check if we can connect, don't care about the response
+                    pass
+            except urllib.error.URLError as e:
+                return False, f"Cannot reach URL '{url}': {e}"
+            except Exception as e:
+                return False, f"Error checking URL '{url}': {e}"
+    
+    elif server_type == 'docker':
+        # For docker type, check if docker is available
+        if shutil.which('docker') is None:
+            return False, f"Docker not found in PATH"
+        
+        # Check if docker is running
+        try:
+            result = subprocess.run(['docker', 'info'], 
+                                   capture_output=True, text=True, timeout=5)
+            if result.returncode != 0:
+                return False, f"Docker is not running or not accessible"
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+            return False, f"Docker command failed or timed out"
+    
+    return True, None
+
+def show_diff(old_servers: Dict[str, Any], new_servers: Dict[str, Any], mode: str):
+    """Display differences between server configurations."""
+    print(f"\n=== CHANGES PREVIEW ({mode.upper()} MODE) ===")
+    
+    # Find additions
+    added = set(new_servers.keys()) - set(old_servers.keys())
+    if added:
+        print(f"\n+ SERVERS TO ADD ({len(added)}):")
+        for server in sorted(added):
+            print(f"  + {server} ({new_servers[server].get('type', 'unknown')})")
+    
+    # Find removals (shouldn't happen in normal sync, but good to check)
+    removed = set(old_servers.keys()) - set(new_servers.keys())
+    if removed:
+        print(f"\n- SERVERS TO REMOVE ({len(removed)}):")
+        for server in sorted(removed):
+            print(f"  - {server} ({old_servers[server].get('type', 'unknown')})")
+    
+    # Find modifications
+    modified = []
+    for server in set(old_servers.keys()) & set(new_servers.keys()):
+        if old_servers[server] != new_servers[server]:
+            modified.append(server)
+    
+    if modified:
+        print(f"\n~ SERVERS TO UPDATE ({len(modified)}):")
+        for server in sorted(modified):
+            print(f"  ~ {server} ({new_servers[server].get('type', 'unknown')})")
+            # Show detailed changes
+            old_config = old_servers[server]
+            new_config = new_servers[server]
+            
+            for key in set(old_config.keys()) | set(new_config.keys()):
+                if key not in old_config:
+                    print(f"    + {key}: {new_config[key]}")
+                elif key not in new_config:
+                    print(f"    - {key}: {old_config[key]}")
+                elif old_config[key] != new_config[key]:
+                    print(f"    ~ {key}: {old_config[key]} → {new_config[key]}")
+    
+    if not added and not removed and not modified:
+        print("\n✓ No changes detected")
+
+def validate_all_servers(servers: Dict[str, Any]) -> Tuple[bool, list]:
+    """Validate all server configurations."""
+    all_valid = True
+    errors = []
+    
+    for server_name, server_config in servers.items():
+        is_valid, error = validate_mcp_server_config(server_name, server_config)
+        if not is_valid:
+            all_valid = False
+            errors.append(error)
+    
+    return all_valid, errors
+
+def health_check_all_servers(servers: Dict[str, Any]) -> Tuple[int, int, list]:
+    """Check health of all servers."""
+    healthy_count = 0
+    total_count = len(servers)
+    issues = []
+    
+    for server_name, server_config in servers.items():
+        is_healthy, error = check_server_health(server_name, server_config)
+        if is_healthy:
+            healthy_count += 1
+        else:
+            issues.append(f"{server_name}: {error}")
+    
+    return healthy_count, total_count, issues
+
+def backup_file(filepath):
+    """Create a backup of the file with timestamp."""
+    if os.path.exists(filepath):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = f"{filepath}.backup.{timestamp}"
+        shutil.copy2(filepath, backup_path)
+        print(f"Created backup: {backup_path}")
+        return backup_path
+    return None
+
+def merge_mcp_servers(source_servers, target_config):
+    """Merge MCP servers from source into target configuration."""
+    # Initialize mcpServers if it doesn't exist
+    if 'mcpServers' not in target_config:
+        target_config['mcpServers'] = {}
+    
+    # Get existing servers
+    existing_servers = target_config['mcpServers']
+    
+    # Merge each server from source
+    for server_name, server_config in source_servers.items():
+        if server_name in existing_servers:
+            print(f"Updating existing server: {server_name}")
+        else:
+            print(f"Adding new server: {server_name}")
+        
+        existing_servers[server_name] = server_config
+    
+    return target_config
+
+def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
+    """Push MCP servers from mcp-servers.json to ~/.claude.json"""
+    print("\n=== PUSH MODE: mcp-servers.json → ~/.claude.json ===")
+    
+    # Load MCP servers configuration
+    mcp_config = load_json_file(mcp_servers_file)
+    if 'mcpServers' not in mcp_config:
+        print("Error: mcp-servers.json must contain 'mcpServers' key")
+        sys.exit(1)
+    
+    source_servers = mcp_config['mcpServers']
+    print(f"\nFound {len(source_servers)} MCP servers to push:")
+    for server_name in source_servers:
+        print(f"  - {server_name}")
+    
+    # Validate configurations
+    print("\n=== VALIDATION ===")
+    all_valid, errors = validate_all_servers(source_servers)
+    if not all_valid:
+        print("\u274c Configuration validation failed:")
+        for error in errors:
+            print(f"  • {error}")
+        sys.exit(1)
+    else:
+        print(f"✓ All {len(source_servers)} server configurations are valid")
+    
+    # Health check if requested
+    if health_check:
+        print("\n=== HEALTH CHECK ===")
+        healthy_count, total_count, issues = health_check_all_servers(source_servers)
+        if issues:
+            print(f"⚠️ Health check found {len(issues)} issues:")
+            for issue in issues:
+                print(f"  • {issue}")
+            print(f"\nHealthy servers: {healthy_count}/{total_count}")
+            
+            if healthy_count == 0:
+                print("\u274c No servers are healthy. Aborting.")
+                sys.exit(1)
+        else:
+            print(f"✓ All {total_count} servers passed health check")
+    
+    # Load existing Claude configuration
+    claude_config = load_json_file(claude_config_file)
+    current_servers = claude_config.get('mcpServers', {})
+    
+    # Show diff
+    show_diff(current_servers, source_servers, 'push')
+    
+    if dry_run:
+        print("\n🔍 DRY RUN MODE: No changes will be made")
+        return
+    
+    # Create backup if file exists
+    if claude_config_file.exists():
+        backup_file(claude_config_file)
+    
+    # Merge configurations
+    print("\nMerging configurations...")
+    updated_config = merge_mcp_servers(source_servers, claude_config)
+    
+    # Write updated configuration
+    with open(claude_config_file, 'w') as f:
+        json.dump(updated_config, f, indent=2)
+    
+    print(f"\n✓ Successfully updated {claude_config_file}")
+    print(f"Total MCP servers in config: {len(updated_config.get('mcpServers', {}))}")
+
+def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
+    """Pull MCP servers from ~/.claude.json to mcp-servers.json"""
+    print("\n=== PULL MODE: ~/.claude.json → mcp-servers.json ===")
+    
+    # Load existing Claude configuration
+    claude_config = load_json_file(claude_config_file)
+    if 'mcpServers' not in claude_config or not claude_config['mcpServers']:
+        print("No MCP servers found in ~/.claude.json")
+        return
+    
+    claude_servers = claude_config['mcpServers']
+    print(f"\nFound {len(claude_servers)} MCP servers in ~/.claude.json:")
+    for server_name in claude_servers:
+        print(f"  - {server_name}")
+    
+    # Validate configurations
+    print("\n=== VALIDATION ===")
+    all_valid, errors = validate_all_servers(claude_servers)
+    if not all_valid:
+        print("\u274c Configuration validation failed:")
+        for error in errors:
+            print(f"  • {error}")
+        sys.exit(1)
+    else:
+        print(f"✓ All {len(claude_servers)} server configurations are valid")
+    
+    # Health check if requested
+    if health_check:
+        print("\n=== HEALTH CHECK ===")
+        healthy_count, total_count, issues = health_check_all_servers(claude_servers)
+        if issues:
+            print(f"⚠️ Health check found {len(issues)} issues:")
+            for issue in issues:
+                print(f"  • {issue}")
+            print(f"\nHealthy servers: {healthy_count}/{total_count}")
+            
+            if healthy_count == 0:
+                print("\u274c No servers are healthy. Aborting.")
+                sys.exit(1)
+        else:
+            print(f"✓ All {total_count} servers passed health check")
+    
+    # Load existing mcp-servers.json
+    mcp_config = load_json_file(mcp_servers_file)
+    if 'mcpServers' not in mcp_config:
+        mcp_config = {'mcpServers': {}}
+    
+    current_servers = mcp_config['mcpServers']
+    
+    # Show diff
+    show_diff(current_servers, claude_servers, 'pull')
+    
+    if dry_run:
+        print("\n🔍 DRY RUN MODE: No changes will be made")
+        return
+    
+    # Merge servers from Claude config
+    new_servers = []
+    updated_servers = []
+    
+    for server_name, server_config in claude_servers.items():
+        if server_name in current_servers:
+            if current_servers[server_name] != server_config:
+                updated_servers.append(server_name)
+        else:
+            new_servers.append(server_name)
+        current_servers[server_name] = server_config
+    
+    # Create backup if file exists
+    if mcp_servers_file.exists():
+        backup_file(mcp_servers_file)
+    
+    # Write updated mcp-servers.json
+    with open(mcp_servers_file, 'w') as f:
+        json.dump(mcp_config, f, indent=4)
+    
+    print(f"\n✓ Successfully updated {mcp_servers_file}")
+    if new_servers:
+        print(f"Added {len(new_servers)} new servers: {', '.join(new_servers)}")
+    if updated_servers:
+        print(f"Updated {len(updated_servers)} servers: {', '.join(updated_servers)}")
+    print(f"Total MCP servers: {len(current_servers)}")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Sync MCP server configurations between mcp-servers.json and ~/.claude.json',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  %(prog)s              # Default: push from mcp-servers.json to ~/.claude.json
+  %(prog)s push         # Push from mcp-servers.json to ~/.claude.json
+  %(prog)s pull         # Pull from ~/.claude.json to mcp-servers.json
+  %(prog)s --dry-run    # Preview changes without applying them
+  %(prog)s --health-check # Check server health before syncing
+  %(prog)s pull --dry-run --health-check # Full preview with health check
+        ''')
+    
+    parser.add_argument(
+        'mode',
+        nargs='?',
+        default='push',
+        choices=['push', 'pull'],
+        help='Sync mode: push (default) or pull'
+    )
+    
+    parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Show what would be changed without making actual changes'
+    )
+    
+    parser.add_argument(
+        '--health-check',
+        action='store_true',
+        help='Check if configured MCP servers are accessible before syncing'
+    )
+    
+    args = parser.parse_args()
+    
+    # Define paths
+    dotfiles_dir = Path(__file__).parent
+    mcp_servers_file = dotfiles_dir / "mcp-servers.json"
+    claude_config_file = Path.home() / ".claude.json"
+    
+    print(f"MCP servers file: {mcp_servers_file}")
+    print(f"Claude config file: {claude_config_file}")
+    
+    if args.mode == 'push':
+        push_to_claude_config(mcp_servers_file, claude_config_file, 
+                             dry_run=args.dry_run, health_check=args.health_check)
+    else:  # pull
+        pull_from_claude_config(mcp_servers_file, claude_config_file, 
+                               dry_run=args.dry_run, health_check=args.health_check)
+
+if __name__ == "__main__":
+    main()
