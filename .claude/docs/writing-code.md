@@ -11,3 +11,17 @@
 - NEVER implement a mock mode for testing or for any purpose. We always use real data and real APIs, never mock implementations.
 - When you are trying to fix a bug or compilation error or any other issue, YOU MUST NEVER throw away the old implementation and rewrite without explicit permission from the user. If you are going to do this, YOU MUST STOP and get explicit permission from the user.
 - NEVER name things as 'improved' or 'new' or 'enhanced', etc. Code naming should be evergreen. What is new today will be "old" someday.
+
+## Language specific guidelines
+Language specific guidelines are documented in the `~/.claude/docs/` directory. Only refer to these when you are writing code in that specific language. If you are not sure which language to use, ask the user. Only read the relevant language specific guidelines for the language you are working in.
+
+# Python
+General - `~/.claude/docs/python.md`
+package mangement - `~/.claude/docs/using-uv.md`
+
+# JavaScript / TypeScript
+General - `~/.claude/docs/typescript.md`
+package management - `~/.claude/docs/using-pnpm.md`
+
+# Git
+General - `~/.claude/docs/source-control.md`
