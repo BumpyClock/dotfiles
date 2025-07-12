@@ -1,6 +1,7 @@
 Create a clear and detailed tasklist to accomplish what we have discussed.
 
-- Save the tasks in .claude/tasks/tasks.md
+- Save the tasks in .claude/tasks/tasks.md or a task file that user specifies.
+- use the review markdown file provided by the user to create the tasks. If the user has not provided a review markdown file or a specific ask then stop and ask them to provide either a review markdown file or a specific ask.
 
 # Claude Code Implementation Planning Guidelines (CoT-Enhanced)
 
@@ -215,6 +216,7 @@ If issues arise:
 ```
 <context>
 CLAUDE.md file should contain architecture patterns and coding standards
+~/.claude/docs/writing-code.md contains guidelines for writing code and should be followed for all code changes.
 </context>
 
 <command>
