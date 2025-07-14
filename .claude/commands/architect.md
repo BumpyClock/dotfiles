@@ -10,7 +10,7 @@ Process the user command with the following structure:
 ```
 
 ### Valid Arguments:
-- `--file`: Output file for the review (default: `arch-review.md`)
+- `--file`: Output file for the review (default: `.claude/arch-review.md`)
 - `--overwrite`: Replace existing review if true (default: false)
 - `--details`: Additional review details or focus areas
 - `--context`: Additional context files or architectural information
@@ -146,9 +146,9 @@ Your review should follow this structure:
 
 ## Step 5: Launch Sub-Agent
 
-use the task tool to Execute the sub-agent with enhanced parameters:
+use the bash tool to Execute the sub-agent with enhanced parameters:
 ```bash
-claude-yolo --model claude-opus-4-20250514 -p "{constructed_prompt}"
+claude --model claude-opus-4-20250514 -p "{constructed_prompt}"  --output json --dangerously-skip-permissions
 ```
 
 ## Step 6: Post-Processing
