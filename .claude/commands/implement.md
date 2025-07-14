@@ -1,6 +1,6 @@
 # Task Implementation Sub-Agent Workflow
 
-Launch a sub-agent to implement tasks from a task list, updating progress in real-time. ultrathink
+Launch a sub-agent to implement tasks from a task list, updating progress in real-time. use the bash tool to launch multiple parallel instances of claude-code for implementation. Set the timeout to be 15m since the execution can take pretty long. All agents should work in the same branch unless explictly asked by the user. ultrathink
 
 ## Step 1: Parse Command
 
@@ -106,16 +106,11 @@ Expected Change:
 {after_code}
 ```
 }
-```
+
 
 ### 3.6 Set Quality Requirements
 ```
-Before marking any task complete, ensure:
-- No debug statements (console.log, print, etc.)
-- Code follows {language} conventions
-- Success criteria explicitly met
-- {if_testing: Tests pass}
-- Tasklist updated
+Mark tasks as complete as you finish them. 
 
 Journal entries in {journal_path} should include:
 - Start/end timestamps
@@ -129,7 +124,7 @@ Journal entries in {journal_path} should include:
 
 Execute the sub-agent:
 ```bash
-claude-yolo --model claude-sonnet-4-20250514 -p "{$prompt}"
+claude  -p "{$prompt} --model claude-sonnet-4-20250514 --dangerously-skip-permissions"
 ```
 
 Monitor progress via:
