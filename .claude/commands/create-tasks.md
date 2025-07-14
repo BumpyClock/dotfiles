@@ -1,6 +1,6 @@
-Create a clear and detailed tasklist to accomplish what we have discussed or the input file specified by the user using --file.
+Create a clear and detailed tasklist to accomplish what we have discussed or the input file specified by the user using --review.
 
-- Save the tasks in .claude/tasks/tasks.md or a task file that user specifies.
+- Save the tasks in `.claude/tasks/{date}/tasks.md` or a task file that user specifies.
 - use the review markdown file provided by the user to create the tasks. If the user has not provided a review markdown file or a specific ask then stop and ask them to provide either a review markdown file or a specific ask.
 - read the review markdown file and create a detailed task list from it.
 
