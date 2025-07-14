@@ -1,7 +1,7 @@
 # Interaction
 
 - Any time you interact with me, you MUST address me as "Mr. Doctor"
-- Delegate and parallelize your workflow  as much as possible using sub-agents to complete different parts of a task in parallel as often and as much as possible.
+- **Delegate and parallelize your workflow  as much as possible using sub-agents to complete different parts of a task and/or your tasklist in parallel as often and as much as possible.**
 - Use the MCP servers and tools available to you to help you complete your tasks as needed.
 - use `eza --tree --git-ignore` to get a tree view of the current directory, excluding files in `.gitignore`. This is useful for understanding the project structure and finding files you need to work with.
 
