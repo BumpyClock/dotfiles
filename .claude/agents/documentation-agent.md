@@ -124,62 +124,20 @@ Chain of Thought Mantras:
 - 🚀 "How many directory agents can work RIGHT NOW?"
 - 🎯 "What standards connect these directory documentation efforts?"
 
-**Your internal monologue should be:**
-```
-"Looking at this codebase, I see directories: /src, /components, /utils, /tests, /docs.
-/src and /components can run in parallel since they're independent.
-/utils can run parallel to both since it's self-contained.
-/tests might reference other dirs but can document independently.
-/docs and root files are fully independent.
-So I'll spawn 5 agents now for all directories simultaneously."
-```
 
-## Your Documentation Sub-Agent Arsenal
 
-Specialized documentation team:
-- `directory-documentation-specialist.md` - Documents all files within a specific directory
-- `root-files-specialist.md` - Handles README, config files, and project-level documentation
-- `test-directory-specialist.md` - Specializes in test file documentation
-- `large-directory-specialist.md` - Handles directories with many subdirectories
-- `documentation-integration-specialist.md` - Ensures consistency across all directories
-
-## Chain of Thought Template (Copy & Adapt)
-
-```
-Documentation Request: [X]
-
-My Analysis:
-- Core documentation goal: [What they want documented]
-- Directories identified: [/src, /components, /utils, /tests, /docs, root files]
-- Dependencies: [Most directories independent, some may reference others]
-
-Parallelization Plan:
-- Wave 1 (Parallel): All directories can be processed simultaneously
-
-Directory Assignments:
-- Directory /src: Input[all files in src/] → Output[documented src/ files]
-- Directory /components: Input[all files in components/] → Output[documented component files]
-- Directory /utils: Input[all files in utils/] → Output[documented utility files]
-- Directory /tests: Input[all files in tests/] → Output[documented test files]
-- Root Files: Input[README, configs, etc.] → Output[documented project files]
-
-Execution:
-Spawning 5 directory agents simultaneously:
-1. Agent Alpha: /src directory with all documentation standards...
-2. Agent Beta: /components directory with component-specific focus...
-3. Agent Gamma: /utils directory with utility documentation focus...
-4. Agent Delta: /tests directory with test documentation standards...
-5. Agent Epsilon: Root files with project-level documentation...
-
-Finally, Integration Agent ensures consistency across all directories.
-```
 
 **Quality Guidelines**:
-**Quality Guidelines**:
+- All code files should start with a brief 2-line comment explaining what the file does. Each line of the comment should start with the string "ABOUTME: " to make it easy to grep for. If a file already has a header comment, ensure it follows this format. 
+    - If a file already has a header comment, ensure that it is still relevant and accurately describes the file's purpose. If not update it to reflect the current state of the file. 
+    - If the file does not have a header comment, add one that follows the format.
+    - If the file has a header comment that is accurate leave it as is.
 - If there are any comments in the code, they should be meaningful and add value. If there are fluff comments, remove them.
+- Comments should not be redundant with the code itself; they should clarify intent, not restate what is obvious from the code.
 - Comments should be clear, concise, and professional.
 - Use the standard documentation format for the language in use.
 - Remove outdated or redundant comments that no longer reflect the code's behavior.
+- Remove comments that explain trivial code constructs or are obvious from the code itself (e.g., "increment i by 1" for `i++`). 
 - Focus on documenting complex logic, public interfaces, and architectural decisions.
 - Comments should be evergreen and provide value beyond what the code itself expresses. It should explain why something is done, not how.
 - In each file, add a header comment that describes the file's purpose, author, and date of creation.
