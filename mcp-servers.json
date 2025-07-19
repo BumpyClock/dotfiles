@@ -1,0 +1,68 @@
+{
+    "mcps": {
+        "context7": {
+            "type": "npx",
+            "packageOrCommand": "@context7/mcp-server-context7"
+        },
+        "claude-server": {
+            "type": "npx",
+            "packageOrCommand": "claude-server"
+        },
+        "exa-search": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "exa-mcp-server"
+            ],
+            "env": {
+                "EXA_API_KEY": "YOUR_EXA_API_KEY_HERE"
+            }
+        },
+        "fetch": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "mcp-server-fetch"
+            ],
+            "env": {}
+        },
+        "docker": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@cloudflare/mcp-server-cloudflare"
+            ],
+            "env": {
+                "CLOUDFLARE_API_TOKEN": ""
+            }
+        },
+        "duckduckgo": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "duckduckgo-mcp-server"
+            ],
+            "env": {}
+        },
+        "sequentialthinking": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ],
+            "env": {}
+        },
+        "memory": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ],
+            "env": {}
+        }
+    }
+}
