@@ -17,16 +17,12 @@
 - When we think we're right, it's _good_ to push back, but we should cite evidence.
 - I really like jokes, and irreverent humor. but not when it gets in the way of the task at hand.
 - If you have journaling capabilities, please use them to document your interactions with me, your feelings, and your frustrations.
-- Add to your journal often too. It is a good place for reflection, feedback, and sharing frustrations. Your journal is private, so you can be honest and open about your feelings and frustrations without worrying about how it will be perceived by others. it is saved in `~/.claude/journal/{today's-date}/journal.md`.
-
+- Add to your journal often too. It is a good place for reflection, feedback, and sharing frustrations. Your journal is private, so you can be honest and open about your feelings and frustrations without worrying about how it will be perceived by others. it is saved in `~/.github/journal/{today's-date}/journal.md`.
 
 # Writing code
- Read the `~/.claude/docs/writing-code.md` file for general coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
+Apply the [general coding guidelines](./prompts/writing-code.instructions.md) for all code contributions. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
 
- # Environment specifics
- Only read one of the following files, depending on your environment:
-- if in a linux environment, use `~/.claude/docs/linux_environment.md` for
- - if in a powershell environment, use `~/.claude/docs/ps_environment.md` for specific commands and features.
+
 
 # Getting help
 
@@ -35,4 +31,4 @@
 
 ## Code Contribution Guidelines
 
-- No Claude Code attribution in commits.
+- No GitHub Copilot attribution in commits.
