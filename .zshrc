@@ -275,6 +275,8 @@ alias taskmaster='task-master'
 # Claude integration
 alias claude-yolo='claude --dangerously-skip-permissions'
 alias cy='claude-yolo'
+claude-monitor() { command claude-monitor --plan max20 "$@" }
+alias cmon='claude-monitor'
 # Starship prompt
 eval "$(starship init zsh)"
 
