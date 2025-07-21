@@ -13,6 +13,8 @@ Generate pull request descriptions that provide context, summarize changes, and 
 <pr_structure>
 Title: [Type] Brief description (#issue)
 
+*Note: Use emojis sparingly in titles and call out only key aspects, e.g., breaking changes. Prioritize clear, concise wording over decoration.*
+
 ## Summary
 
 One paragraph explaining the why and what
@@ -32,6 +34,7 @@ What reviewers should focus on
 </pr_structure>
 
 <type_prefixes>
+// Use prefixes to categorize PRs; avoid tag overload.
 [Feature] New functionality
 [Fix] Bug fixes
 [Refactor] Code improvements
@@ -39,7 +42,7 @@ What reviewers should focus on
 [Docs] Documentation only
 [Test] Test additions/changes
 [Build] Build/CI changes
-[BREAKING] Breaking changes
+[BREAKING] Breaking changes (use to highlight breaking changes)
 </type_prefixes>
 
 ## Chain-of-Thought Reasoning Process

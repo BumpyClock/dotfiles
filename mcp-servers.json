@@ -1,13 +1,12 @@
 {
-    "mcpServers": {
+    "mcps": {
         "context7": {
-            "type": "stdio",
-            "command": "npx",
-            "args": [
-                "-y",
-                "@upstash/context7-mcp"
-            ],
-            "env": {}
+            "type": "npx",
+            "packageOrCommand": "@context7/mcp-server-context7"
+        },
+        "claude-server": {
+            "type": "npx",
+            "packageOrCommand": "claude-server"
         },
         "exa-search": {
             "type": "stdio",
@@ -17,7 +16,7 @@
                 "exa-mcp-server"
             ],
             "env": {
-                "EXA_API_KEY": "e779d92c-3c66-4209-85dd-ccf6a96fd89b"
+                "EXA_API_KEY": "YOUR_EXA_API_KEY_HERE"
             }
         },
         "fetch": {
@@ -30,14 +29,14 @@
         },
         "docker": {
             "type": "stdio",
-            "command": "docker",
+            "command": "npx",
             "args": [
-                "run",
-                "-i",
-                "--rm",
-                "mcp/fetch"
+                "-y",
+                "@cloudflare/mcp-server-cloudflare"
             ],
-            "env": {}
+            "env": {
+                "CLOUDFLARE_API_TOKEN": ""
+            }
         },
         "duckduckgo": {
             "type": "stdio",

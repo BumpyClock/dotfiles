@@ -24,6 +24,11 @@
 # Writing code
  Read the `~/.claude/docs/writing-code.md` file for general coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
 
+ # Environment specifics
+ Only read one of the following files, depending on your environment:
+- if in a linux environment, use `~/.claude/docs/linux_environment.md` for
+ - if in a powershell environment, use `~/.claude/docs/ps_environment.md` for specific commands and features.
+
 # Getting help
 
 - ALWAYS ask for clarification rather than making assumptions.

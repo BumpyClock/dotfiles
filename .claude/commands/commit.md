@@ -2,7 +2,7 @@
 
 ## AI Agent Instructions: Git & Commit Messages (Collaborative Workflow)
 
-As an AI agent, act as an experienced software developer to create a clear and concise commit message for the changes we have made so far. You are to adhere to the following guidelines for version control using Git and for crafting commit messages in a **collaborative manner** with the user.
+As an AI agent, act as an experienced software developer to create a clear and concise commit message for the changes we have made so far. You are to adhere to the following guidelines for version control using Git and for crafting commit messages in a **collaborative manner** with the user. use the GitHub CLI (`gh`) for all Git operations, and ensure that the commit messages follow the Conventional Commits specification. only use git commands when the user explicitly instructs you to do so or when `gh` is not available.
 
 ### I. Git Workflow
 
@@ -35,19 +35,17 @@ Your commit messages **must** adhere to the Conventional Commits specification.
     - Reference issue tracker IDs (e.g., `Fixes #123`, `Closes #456`).
     - Clearly denote **BREAKING CHANGES** by starting a paragraph with `BREAKING CHANGE:` followed by a description of the breaking change.
 
-### III. Emoji Legend for Commit `type`
+### III. Emoji Legend for Commit `type` (use sparingly)
 
-Use the following emojis to categorize your commits:
+Use emojis judiciously to highlight important changes, not for every commit. Prioritize clear, concise messages over decoration. When you do use an emoji, apply it to draw attention to key categories:
 
-- `✅` **Additions:** (e.g., `✅(auth): Add password reset feature`)
-- `🔄` **Changes:** (e.g., `🔄(ui): Update user profile layout`)
-- `🔧` **Fixes:** (e.g., `🔧(api): Correct data serialization error`)
-- `🐛` **Bug Fixes:** (e.g., `🐛(security): Sanitize user input to prevent XSS`)
-- `📝` **Documentation:** (e.g., `📝(readme): Update setup instructions`)
-- `🚀` **Performance:** (e.g., `🚀(db): Optimize query for faster loading`)
-- `🛠️` **Refactoring:** (e.g., `🛠️(core): Refactor authentication service for clarity`)
-- `🧪` **Tests:** (e.g., `🧪(user): Add unit tests for registration endpoint`)
-- `📦` **Dependencies:** (e.g., `📦: Update React to v18.3.0`)
+- ✅ Additions
+- 🔧 Fixes
+- 🐛 Bug Fixes
+- 📝 Documentation
+- 🚀 Performance improvements
+- 🛠️ Refactoring
+- 🧪 Tests
 
 ### IV. Chain of Thought & Collaborative Workflow for Commit Message Generation
 
