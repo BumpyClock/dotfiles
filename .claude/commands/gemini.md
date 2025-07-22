@@ -1,0 +1,5 @@
+Use the bash tool to run `gemini -p` to leverage Google Gemini's large context capacity.
+- All files should contain a header comment that starts with "ABOUTME: " to make it easy to grep for. This is important for maintaining consistency and readability across the codebase. Grep for "ABOUTME: " to find these comments quickly and get context for the relevant files.
+- Use `eza --tree --git-ignore` to get a tree view of the current directory, excluding files in `.gitignore`. This is useful for understanding the project structure and finding files you need to work with.
+
+- Use the bash tool to run  `gemini` tool to analyze large codebases. The Gemini CLI has a massive context window that can handle entire codebases that would overflow Claude's context. It is designed to help you understand the structure, dependencies, and implementation details of the codebase. The guidelines for using the Gemini CLI are in the [Gemini CLI Guidelines](`~/.claude/docs/gemini-cli.md`) file.
