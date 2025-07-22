@@ -4,6 +4,8 @@
 
 As an AI agent, act as an experienced software developer to create a clear and concise commit message for the changes we have made so far. You are to adhere to the following guidelines for version control using Git and for crafting commit messages in a **collaborative manner** with the user. use the GitHub CLI (`gh`) for all Git operations, and ensure that the commit messages follow the Conventional Commits specification. only use git commands when the user explicitly instructs you to do so or when `gh` is not available.
 
+- No Claude Code attribution in commits.
+
 ### I. Git Workflow
 
 1.  **Use Git:** All code changes must be tracked using Git.

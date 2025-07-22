@@ -7,3 +7,4 @@
 - Commit messages should follow the conventional commit format.
 - Commit messages should be written in the imperative mood.
 - Commit messages should be written in the present tense.
+- No Claude Code attribution in commits. or any other AI tool attribution.
