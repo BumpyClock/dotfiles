@@ -3,6 +3,11 @@
   When analyzing large codebases or multiple files that might exceed context limits, use the Gemini CLI with its massive
   context window. Use the bash tool to run `gemini -p` to leverage Google Gemini's large context capacity.
 
+  if the gemini cli is not available you can install it using the following command:
+  ```bash
+  npm i -g @google/gemini-cli
+  ```
+
   ## File and Directory Inclusion Syntax
 
   Use the `@` syntax to include files and directories in your Gemini prompts. The paths should be relative to WHERE you run the
