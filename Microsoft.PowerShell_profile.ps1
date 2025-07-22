@@ -175,14 +175,37 @@ function downloads { Set-Location ~\Downloads }
 # =============================================================================
 
 # eza aliases
-if (Test-Path "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe") {
-    function ls-eza { & "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe" --long --group-directories-first --icons --color }
+# Try to find eza in various locations
+$ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
+if (-not $ezaCommand) {
+    # Check common winget install locations
+    $possiblePaths = @(
+        "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\eza-community.eza_Microsoft.Winget.Source_8wekyb3d8bbwe\eza.exe",
+        "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe",
+        "$env:ProgramFiles\eza\eza.exe",
+        "$env:ProgramFiles(x86)\eza\eza.exe"
+    )
+    
+    foreach ($path in $possiblePaths) {
+        if (Test-Path $path) {
+            $ezaDir = Split-Path $path -Parent
+            if ($env:Path -notlike "*$ezaDir*") {
+                $env:Path = "$ezaDir;$env:Path"
+            }
+            break
+        }
+    }
+    $ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
+}
+
+if ($ezaCommand) {
+    function ls-eza { eza --long --group-directories-first --icons --color }
     Set-Alias ls ls-eza
 
-    function ll { & "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe" -l --all --group-directories-first --icons }
-    function la { & "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe" -la --group-directories-first --icons }
+    function ll { eza -l --all --group-directories-first --icons }
+    function la { eza -la --group-directories-first --icons }
 
-    function ls-tree-eza { & "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe" --tree --git-ignore --show-symlinks --icons --hyperlink}
+    function ls-tree-eza { eza --tree --git-ignore --show-symlinks --icons --hyperlink}
     Set-Alias lt ls-tree-eza
 } else {
     Write-Host "eza not found. Installing..." -ForegroundColor Yellow
