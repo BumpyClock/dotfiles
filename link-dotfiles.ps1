@@ -66,14 +66,22 @@ function New-Symlink {
     }
     
     # If target is already a symlink, check if it points to the correct source
-    if ((Test-Path $Target) -and ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-        $currentTarget = (Get-Item $Target -Force).Target
-        if ($currentTarget -eq $Source) {
-            Write-Status "Already linked correctly: $Source → $Target"
-            return $true
-        } else {
-            Write-Warning "Removing incorrect symlink: $Target → $currentTarget"
-            Remove-Item $Target -Force
+    if (Test-Path $Target) {
+        $targetItem = Get-Item $Target -Force -ErrorAction SilentlyContinue
+        if ($targetItem -and ($targetItem.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            $currentTarget = $targetItem.Target
+            if ($currentTarget -eq $Source) {
+                Write-Status "Already linked correctly: $Source → $Target"
+                return $true
+            } else {
+                Write-Warning "Removing incorrect symlink: $Target → $currentTarget"
+                try {
+                    Remove-Item $Target -Force -ErrorAction Stop
+                } catch {
+                    Write-Error "Failed to remove incorrect symlink: $Target - $_"
+                    return $false
+                }
+            }
         }
     }
     
