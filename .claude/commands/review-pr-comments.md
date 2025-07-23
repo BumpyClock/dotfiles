@@ -1,1 +1,1 @@
-use the task tool to create a sub agent to run ./agents/source-control/review-pr-comments.md
+use the task tool to create a sub agent to run ~/.claude/agents/source-control/review-pr-comments.md
