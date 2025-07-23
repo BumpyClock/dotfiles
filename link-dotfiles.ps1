@@ -65,16 +65,23 @@ function New-Symlink {
         New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
     }
     
+    # If target is already a symlink, check if it points to the correct source
+    if ((Test-Path $Target) -and ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+        $currentTarget = (Get-Item $Target -Force).Target
+        if ($currentTarget -eq $Source) {
+            Write-Status "Already linked correctly: $Source → $Target"
+            return $true
+        } else {
+            Write-Warning "Removing incorrect symlink: $Target → $currentTarget"
+            Remove-Item $Target -Force
+        }
+    }
+    
     # If target exists and is not a symlink, back it up
     if ((Test-Path $Target) -and -not ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
         $backup = "${Target}.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
         Write-Warning "Backing up existing file: $Target → $backup"
         Move-Item -Path $Target -Destination $backup -Force
-    }
-    
-    # Remove existing symlink if it exists
-    if ((Test-Path $Target) -and ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-        Remove-Item $Target -Force
     }
     
     # Determine if source is a directory or file

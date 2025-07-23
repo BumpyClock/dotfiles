@@ -1,5 +1,11 @@
 # Commit Message Guidelines for AI Agent
 
+Create a local commit use the following workflow to create the commitmessage. Do not push the commit to the remote repository. The user will guide you on when to push.
+
+if the user is in the main branch, create a new branch with the name `{username}/{commit-title}` and switch to that branch before creating the commit. If the user is in a feature branch, use that branch.
+
+# Commit Message Guidelines for AI Agent
+
 ## AI Agent Instructions: Git & Commit Messages (Collaborative Workflow)
 
 As an AI agent, act as an experienced software developer to create a clear and concise commit message for the changes we have made so far. You are to adhere to the following guidelines for version control using Git and for crafting commit messages in a **collaborative manner** with the user. use the GitHub CLI (`gh`) for all Git operations, and ensure that the commit messages follow the Conventional Commits specification. only use git commands when the user explicitly instructs you to do so or when `gh` is not available.

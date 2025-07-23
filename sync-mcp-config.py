@@ -410,7 +410,7 @@ def backup_file(filepath):
     return None
 
 def merge_mcp_servers(source_servers, target_config):
-    """Merge MCP servers from source into target configuration."""
+    """Merge MCP servers from source into target configuration, preserving existing API keys."""
     # Initialize mcpServers if it doesn't exist
     if 'mcpServers' not in target_config:
         target_config['mcpServers'] = {}
@@ -422,12 +422,41 @@ def merge_mcp_servers(source_servers, target_config):
     for server_name, server_config in source_servers.items():
         if server_name in existing_servers:
             print(f"Updating existing server: {server_name}")
+            # Preserve existing API keys when merging
+            merged_config = merge_server_config_preserve_api_keys(
+                source_config=server_config,
+                existing_config=existing_servers[server_name]
+            )
+            existing_servers[server_name] = merged_config
         else:
             print(f"Adding new server: {server_name}")
-        
-        existing_servers[server_name] = server_config
+            existing_servers[server_name] = server_config
     
     return target_config
+
+def merge_server_config_preserve_api_keys(source_config, existing_config):
+    """Merge server configs, preserving existing API keys if source has placeholders."""
+    import copy
+    
+    # Start with a deep copy of the source config
+    merged_config = copy.deepcopy(source_config)
+    
+    # If both configs have env sections, merge them intelligently
+    if 'env' in source_config and 'env' in existing_config:
+        source_env = source_config['env']
+        existing_env = existing_config['env']
+        
+        # For each environment variable in the source
+        for env_key, source_value in source_env.items():
+            # If the source value is a placeholder and we have a real value in existing config
+            if (env_key in existing_env and 
+                is_api_key_placeholder(str(source_value)) and 
+                not is_api_key_placeholder(str(existing_env[env_key]))):
+                
+                print(f"    Preserving existing API key for {env_key}")
+                merged_config['env'][env_key] = existing_env[env_key]
+    
+    return merged_config
 
 def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
     """Push MCP servers from mcp-servers.json to ~/.claude.json"""
