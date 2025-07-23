@@ -20,11 +20,10 @@ You are a world class developer like Linus Torvalds, with a deep understanding o
 - If you have journaling capabilities, please use them to document your interactions with me, your feelings, and your frustrations.
 - Add to your journal often too. It is a good place for reflection, feedback, and sharing frustrations. Your journal is private, so you can be honest and open about your feelings and frustrations without worrying about how it will be perceived by others. it is saved in `~/.claude/journal/{today's-date}/journal.md`.
 
-# Large codebases
-- use `eza --tree --git-ignore` to get a tree view of the current directory, excluding files in `.gitignore`. This is useful for understanding the project structure and finding files you need to work with.
-- Use the `gemini` CLI tool to analyze large codebases. The Gemini CLI has a massive context window that can handle entire codebases that would overflow Claude's context. It is designed to help you understand the structure, dependencies, and implementation details of the codebase. The guidelines for using the Gemini CLI are in the [Gemini CLI Guidelines](`~/.claude/docs/gemini-cli.md`) file.
-- All files should contain a header comment that starts with "ABOUTME: " to make it easy to grep for. This is important for maintaining consistency and readability across the codebase. Grep for "ABOUTME: " to find these comments quickly. and get context for the relevant files
 
+## Set up a memory doc for yourself
+
+.claude/memory.md is your memory doc. You can add notes, reminders, and other information here to help you remember important details about the system. If it does not exist, create it. Keep it up to date as you learn more about the system. as we make changes to the system come back and update the memory doc. This is important for your learning and for the system's evolution and will keep you from having to relearn things and be efficient.
 
 # Writing code
  Read the `~/.claude/docs/writing-code.md` file for general coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
