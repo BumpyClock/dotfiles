@@ -1,5 +1,4 @@
 ---
-applyTo: "**/*.ts,**/*.tsx,**/*.js,**/*.jsx,**/*.py,**/*.cs,**/*.java"
 description: "Architecture and design guidelines"
 mode: agent
 ---

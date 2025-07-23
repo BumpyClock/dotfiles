@@ -13,15 +13,208 @@ import urllib.request
 import urllib.error
 import subprocess
 from typing import Tuple, Dict, Any, Optional
+import getpass
+import platform
 
 def load_json_file(filepath):
     """Load JSON from file, return empty dict if file doesn't exist or is invalid."""
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Warning: Could not load {filepath}: {e}")
         return {}
+
+def get_mcp_servers_key(config):
+    """Get the appropriate key for MCP servers from config (handles both 'mcps' and 'mcpServers')."""
+    if 'mcpServers' in config:
+        return 'mcpServers'
+    elif 'mcps' in config:
+        return 'mcps'
+    return None
+
+def normalize_config_keys(config):
+    """Normalize config to use 'mcpServers' key."""
+    if 'mcps' in config and 'mcpServers' not in config:
+        config['mcpServers'] = config.pop('mcps')
+    return config
+
+def is_api_key_placeholder(value):
+    """Check if a value is an API key placeholder that needs to be filled."""
+    if not isinstance(value, str):
+        return False
+    
+    placeholder_patterns = [
+        'YOUR_API_KEY_HERE',
+        'YOUR_',
+        'REPLACE_ME',
+        'PLACEHOLDER',
+        'API_KEY_HERE',
+        '<YOUR_',
+        '[YOUR_'
+    ]
+    
+    value_upper = value.upper()
+    return any(pattern in value_upper for pattern in placeholder_patterns) or value == ''
+
+def prompt_for_api_keys(servers):
+    """Prompt user to enter API keys for any placeholders found."""
+    api_keys_needed = []
+    
+    # Find all API key placeholders
+    for server_name, server_config in servers.items():
+        if 'env' in server_config and isinstance(server_config['env'], dict):
+            for env_key, env_value in server_config['env'].items():
+                if is_api_key_placeholder(str(env_value)):
+                    api_keys_needed.append((server_name, env_key, env_value))
+    
+    if not api_keys_needed:
+        return servers
+    
+    print("\n=== API KEY CONFIGURATION ===")
+    print(f"Found {len(api_keys_needed)} API key(s) that need to be configured:\n")
+    
+    updated_servers = json.loads(json.dumps(servers))  # Deep copy
+    
+    for server_name, env_key, current_value in api_keys_needed:
+        print(f"Server: {server_name}")
+        print(f"Environment variable: {env_key}")
+        print(f"Current value: {current_value}")
+        
+        # Prompt for API key
+        while True:
+            api_key = getpass.getpass(f"Enter API key for {env_key} (or press Enter to skip): ").strip()
+            
+            if not api_key:
+                print("Skipping...\n")
+                break
+            
+            # Basic validation
+            if len(api_key) < 10:
+                print("API key seems too short. Please enter a valid API key.")
+                continue
+            
+            # Update the server config
+            updated_servers[server_name]['env'][env_key] = api_key
+            print("[OK] API key updated\n")
+            break
+    
+    return updated_servers
+
+def is_windows():
+    """Check if running on Windows."""
+    return platform.system().lower() == 'windows'
+
+def wrap_command_for_windows(server_config):
+    """Wrap commands with cmd /c for Windows if needed."""
+    if not is_windows():
+        return server_config
+    
+    # Only process stdio type servers
+    if server_config.get('type') != 'stdio':
+        return server_config
+    
+    command = server_config.get('command', '')
+    
+    # Skip if already wrapped with cmd
+    if command.lower() == 'cmd':
+        return server_config
+    
+    # List of commands that need cmd /c wrapper on Windows
+    commands_needing_wrapper = ['npx', 'uvx', 'node', 'python', 'py']
+    
+    if command.lower() in commands_needing_wrapper:
+        # Create a deep copy to avoid modifying the original
+        wrapped_config = json.loads(json.dumps(server_config))
+        wrapped_config['command'] = 'cmd'
+        
+        # Handle packageOrCommand field (used by some servers like context7)
+        if 'packageOrCommand' in wrapped_config and 'args' not in wrapped_config:
+            package = wrapped_config.pop('packageOrCommand')
+            wrapped_config['args'] = ['/c', command, package]
+        else:
+            # Prepare new args with /c wrapper
+            original_args = wrapped_config.get('args', [])
+            wrapped_config['args'] = ['/c', command] + original_args
+        
+        return wrapped_config
+    
+    return server_config
+
+def wrap_servers_for_windows(servers):
+    """Apply Windows command wrapping to all servers."""
+    if not is_windows():
+        return servers
+    
+    wrapped_servers = {}
+    for server_name, server_config in servers.items():
+        wrapped_servers[server_name] = wrap_command_for_windows(server_config)
+    
+    return wrapped_servers
+
+def unwrap_command_from_windows(server_config):
+    """Unwrap cmd /c wrapper to restore original command."""
+    # Only process stdio type servers
+    if server_config.get('type') != 'stdio':
+        return server_config
+    
+    command = server_config.get('command', '')
+    args = server_config.get('args', [])
+    
+    # Check if it's wrapped with cmd /c
+    if command.lower() == 'cmd' and len(args) >= 2 and args[0] == '/c':
+        # Create a deep copy to avoid modifying the original
+        unwrapped_config = json.loads(json.dumps(server_config))
+        
+        # Extract the original command and args
+        unwrapped_config['command'] = args[1]
+        unwrapped_config['args'] = args[2:] if len(args) > 2 else []
+        
+        # Remove empty args list if no args remain
+        if not unwrapped_config['args']:
+            unwrapped_config.pop('args', None)
+        
+        return unwrapped_config
+    
+    # Handle legacy "cmd /c npx" format in command field
+    if command.lower().startswith('cmd /c '):
+        unwrapped_config = json.loads(json.dumps(server_config))
+        original_command = command[7:]  # Remove "cmd /c "
+        unwrapped_config['command'] = original_command
+        return unwrapped_config
+    
+    return server_config
+
+def unwrap_servers_from_windows(servers):
+    """Remove Windows command wrapping from all servers."""
+    unwrapped_servers = {}
+    for server_name, server_config in servers.items():
+        unwrapped_servers[server_name] = unwrap_command_from_windows(server_config)
+    
+    return unwrapped_servers
+
+def sanitize_api_keys(servers):
+    """Replace actual API keys with placeholders for security."""
+    sanitized_servers = json.loads(json.dumps(servers))  # Deep copy
+    
+    for server_name, server_config in sanitized_servers.items():
+        if 'env' in server_config and isinstance(server_config['env'], dict):
+            for env_key, env_value in server_config['env'].items():
+                # Check if this looks like an API key environment variable
+                if any(keyword in env_key.upper() for keyword in ['API', 'KEY', 'TOKEN', 'SECRET', 'PASS']):
+                    # Don't sanitize if it's already a placeholder
+                    if not is_api_key_placeholder(str(env_value)):
+                        # Create a descriptive placeholder based on the env var name
+                        if 'API_KEY' in env_key:
+                            sanitized_servers[server_name]['env'][env_key] = 'YOUR_API_KEY_HERE'
+                        elif 'TOKEN' in env_key:
+                            sanitized_servers[server_name]['env'][env_key] = 'YOUR_TOKEN_HERE'
+                        elif 'SECRET' in env_key:
+                            sanitized_servers[server_name]['env'][env_key] = 'YOUR_SECRET_HERE'
+                        else:
+                            sanitized_servers[server_name]['env'][env_key] = 'YOUR_' + env_key + '_HERE'
+    
+    return sanitized_servers
 
 def validate_mcp_server_config(server_name: str, server_config: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
     """Validate MCP server configuration against expected schema."""
@@ -33,7 +226,7 @@ def validate_mcp_server_config(server_name: str, server_config: Dict[str, Any]) 
         return False, f"Server '{server_name}' missing required 'type' field"
     
     server_type = server_config['type']
-    valid_types = ['stdio', 'http', 'docker']
+    valid_types = ['stdio', 'http', 'docker', 'sse']
     
     if server_type not in valid_types:
         return False, f"Server '{server_name}' has invalid type '{server_type}'. Valid types: {', '.join(valid_types)}"
@@ -47,15 +240,15 @@ def validate_mcp_server_config(server_name: str, server_config: Dict[str, Any]) 
         if 'args' in server_config and not isinstance(server_config['args'], list):
             return False, f"STDIO server '{server_name}' 'args' must be a list"
     
-    elif server_type == 'http':
+    elif server_type == 'http' or server_type == 'sse':
         if 'url' not in server_config:
-            return False, f"HTTP server '{server_name}' missing required 'url' field"
+            return False, f"{server_type.upper()} server '{server_name}' missing required 'url' field"
         if not isinstance(server_config['url'], str):
-            return False, f"HTTP server '{server_name}' 'url' must be a string"
+            return False, f"{server_type.upper()} server '{server_name}' 'url' must be a string"
         # Basic URL validation
         url = server_config['url']
         if not (url.startswith('http://') or url.startswith('https://')):
-            return False, f"HTTP server '{server_name}' 'url' must start with http:// or https://"
+            return False, f"{server_type.upper()} server '{server_name}' 'url' must start with http:// or https://"
     
     elif server_type == 'docker':
         if 'command' not in server_config:
@@ -173,10 +366,10 @@ def show_diff(old_servers: Dict[str, Any], new_servers: Dict[str, Any], mode: st
                 elif key not in new_config:
                     print(f"    - {key}: {old_config[key]}")
                 elif old_config[key] != new_config[key]:
-                    print(f"    ~ {key}: {old_config[key]} → {new_config[key]}")
+                    print(f"    ~ {key}: {old_config[key]} -> {new_config[key]}")
     
     if not added and not removed and not modified:
-        print("\n✓ No changes detected")
+        print("\n[OK] No changes detected")
 
 def validate_all_servers(servers: Dict[str, Any]) -> Tuple[bool, list]:
     """Validate all server configurations."""
@@ -238,15 +431,18 @@ def merge_mcp_servers(source_servers, target_config):
 
 def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
     """Push MCP servers from mcp-servers.json to ~/.claude.json"""
-    print("\n=== PUSH MODE: mcp-servers.json → ~/.claude.json ===")
+    print("\n=== PUSH MODE: mcp-servers.json -> ~/.claude.json ===")
     
     # Load MCP servers configuration
     mcp_config = load_json_file(mcp_servers_file)
-    if 'mcpServers' not in mcp_config:
-        print("Error: mcp-servers.json must contain 'mcpServers' key")
+    mcp_config = normalize_config_keys(mcp_config)
+    
+    servers_key = get_mcp_servers_key(mcp_config)
+    if not servers_key:
+        print("Error: mcp-servers.json must contain 'mcpServers' or 'mcps' key")
         sys.exit(1)
     
-    source_servers = mcp_config['mcpServers']
+    source_servers = mcp_config[servers_key]
     print(f"\nFound {len(source_servers)} MCP servers to push:")
     for server_name in source_servers:
         print(f"  - {server_name}")
@@ -255,28 +451,38 @@ def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, h
     print("\n=== VALIDATION ===")
     all_valid, errors = validate_all_servers(source_servers)
     if not all_valid:
-        print("\u274c Configuration validation failed:")
+        print("[ERROR] Configuration validation failed:")
         for error in errors:
             print(f"  • {error}")
         sys.exit(1)
     else:
-        print(f"✓ All {len(source_servers)} server configurations are valid")
+        print(f"[OK] All {len(source_servers)} server configurations are valid")
+    
+    # Prompt for API keys if needed (not in dry run mode)
+    if not dry_run:
+        source_servers = prompt_for_api_keys(source_servers)
+    
+    # Apply Windows command wrapping if on Windows
+    if is_windows():
+        print("\n=== WINDOWS COMPATIBILITY ===")
+        print("Wrapping npx/uvx commands with 'cmd /c' for Windows compatibility...")
+    source_servers = wrap_servers_for_windows(source_servers)
     
     # Health check if requested
     if health_check:
         print("\n=== HEALTH CHECK ===")
         healthy_count, total_count, issues = health_check_all_servers(source_servers)
         if issues:
-            print(f"⚠️ Health check found {len(issues)} issues:")
+            print(f"[WARNING] Health check found {len(issues)} issues:")
             for issue in issues:
                 print(f"  • {issue}")
             print(f"\nHealthy servers: {healthy_count}/{total_count}")
             
             if healthy_count == 0:
-                print("\u274c No servers are healthy. Aborting.")
+                print("[ERROR] No servers are healthy. Aborting.")
                 sys.exit(1)
         else:
-            print(f"✓ All {total_count} servers passed health check")
+            print(f"[OK] All {total_count} servers passed health check")
     
     # Load existing Claude configuration
     claude_config = load_json_file(claude_config_file)
@@ -286,7 +492,7 @@ def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, h
     show_diff(current_servers, source_servers, 'push')
     
     if dry_run:
-        print("\n🔍 DRY RUN MODE: No changes will be made")
+        print("\n[DRY RUN] No changes will be made")
         return
     
     # Create backup if file exists
@@ -298,23 +504,26 @@ def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, h
     updated_config = merge_mcp_servers(source_servers, claude_config)
     
     # Write updated configuration
-    with open(claude_config_file, 'w') as f:
+    with open(claude_config_file, 'w', encoding='utf-8') as f:
         json.dump(updated_config, f, indent=2)
     
-    print(f"\n✓ Successfully updated {claude_config_file}")
+    print(f"\n[OK] Successfully updated {claude_config_file}")
     print(f"Total MCP servers in config: {len(updated_config.get('mcpServers', {}))}")
 
 def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
     """Pull MCP servers from ~/.claude.json to mcp-servers.json"""
-    print("\n=== PULL MODE: ~/.claude.json → mcp-servers.json ===")
+    print("\n=== PULL MODE: ~/.claude.json -> mcp-servers.json ===")
     
     # Load existing Claude configuration
     claude_config = load_json_file(claude_config_file)
-    if 'mcpServers' not in claude_config or not claude_config['mcpServers']:
+    claude_config = normalize_config_keys(claude_config)
+    
+    servers_key = get_mcp_servers_key(claude_config)
+    if not servers_key or not claude_config.get(servers_key):
         print("No MCP servers found in ~/.claude.json")
         return
     
-    claude_servers = claude_config['mcpServers']
+    claude_servers = claude_config[servers_key]
     print(f"\nFound {len(claude_servers)} MCP servers in ~/.claude.json:")
     for server_name in claude_servers:
         print(f"  - {server_name}")
@@ -323,41 +532,58 @@ def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False,
     print("\n=== VALIDATION ===")
     all_valid, errors = validate_all_servers(claude_servers)
     if not all_valid:
-        print("\u274c Configuration validation failed:")
+        print("[ERROR] Configuration validation failed:")
         for error in errors:
             print(f"  • {error}")
         sys.exit(1)
     else:
-        print(f"✓ All {len(claude_servers)} server configurations are valid")
+        print(f"[OK] All {len(claude_servers)} server configurations are valid")
+    
+    # Prompt for API keys if needed (not in dry run mode)
+    if not dry_run:
+        claude_servers = prompt_for_api_keys(claude_servers)
     
     # Health check if requested
     if health_check:
         print("\n=== HEALTH CHECK ===")
         healthy_count, total_count, issues = health_check_all_servers(claude_servers)
         if issues:
-            print(f"⚠️ Health check found {len(issues)} issues:")
+            print(f"[WARNING] Health check found {len(issues)} issues:")
             for issue in issues:
                 print(f"  • {issue}")
             print(f"\nHealthy servers: {healthy_count}/{total_count}")
             
             if healthy_count == 0:
-                print("\u274c No servers are healthy. Aborting.")
+                print("[ERROR] No servers are healthy. Aborting.")
                 sys.exit(1)
         else:
-            print(f"✓ All {total_count} servers passed health check")
+            print(f"[OK] All {total_count} servers passed health check")
     
     # Load existing mcp-servers.json
     mcp_config = load_json_file(mcp_servers_file)
+    mcp_config = normalize_config_keys(mcp_config)
+    
+    # Ensure we have the right key structure
     if 'mcpServers' not in mcp_config:
         mcp_config = {'mcpServers': {}}
     
     current_servers = mcp_config['mcpServers']
     
+    # Unwrap Windows commands for portability
+    print("\n=== PORTABILITY ===")
+    print("Unwrapping Windows 'cmd /c' wrappers for cross-platform compatibility...")
+    claude_servers = unwrap_servers_from_windows(claude_servers)
+    
+    # Sanitize API keys for security
+    print("\n=== SECURITY ===")
+    print("Replacing API keys with placeholders for version control safety...")
+    claude_servers = sanitize_api_keys(claude_servers)
+    
     # Show diff
     show_diff(current_servers, claude_servers, 'pull')
     
     if dry_run:
-        print("\n🔍 DRY RUN MODE: No changes will be made")
+        print("\n[DRY RUN] No changes will be made")
         return
     
     # Merge servers from Claude config
@@ -377,10 +603,10 @@ def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False,
         backup_file(mcp_servers_file)
     
     # Write updated mcp-servers.json
-    with open(mcp_servers_file, 'w') as f:
+    with open(mcp_servers_file, 'w', encoding='utf-8') as f:
         json.dump(mcp_config, f, indent=4)
     
-    print(f"\n✓ Successfully updated {mcp_servers_file}")
+    print(f"\n[OK] Successfully updated {mcp_servers_file}")
     if new_servers:
         print(f"Added {len(new_servers)} new servers: {', '.join(new_servers)}")
     if updated_servers:
