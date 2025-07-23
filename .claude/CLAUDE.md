@@ -45,3 +45,6 @@ You are a world class developer like Linus Torvalds, with a deep understanding o
 ## Code Contribution Guidelines
 
 - No Claude Code attribution in commits.
+
+## Branch Naming Conventions
+- Remember that all branches should always be created with `adityasharma/` prefix
