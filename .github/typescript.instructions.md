@@ -23,10 +23,8 @@ Apply the [general coding guidelines](./writing-code.instructions.md) to all cod
 
 # Component creation guidelines
 
-
 ## Design System Guidelines
-- Use the `src/design-system` directory for design tokens and utilities
-- Use the `src/components/ui` directory for reusable UI components
+- Use the `src/Components/ui` directory for reusable UI components. Do not modify or add components directly in this directory without explicit permission.
 - Use the `src/components` directory for application-specific components
 
 

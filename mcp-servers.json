@@ -39,17 +39,6 @@
             ],
             "env": {}
         },
-        "cloudflare-mcp": {
-            "type": "stdio",
-            "command": "npx",
-            "args": [
-                "-y",
-                "@cloudflare/mcp-server-cloudflare"
-            ],
-            "env": {
-                "CLOUDFLARE_API_TOKEN": ""
-            }
-        },
         "duckduckgo": {
             "type": "stdio",
             "command": "uvx",
@@ -75,6 +64,21 @@
                 "@modelcontextprotocol/server-memory"
             ],
             "env": {}
+        },
+        "supabase": {
+            "type": "stdio",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "npx",
+                "-y",
+                "@supabase/mcp-server-supabase@latest",
+                "--read-only",
+                "--project-ref=<project-ref>"
+            ],
+            "env": {
+                "SUPABASE_ACCESS_TOKEN": "<personal-access-token>"
+            }
         }
     }
 }

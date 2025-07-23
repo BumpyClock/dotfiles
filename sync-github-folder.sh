@@ -21,17 +21,7 @@ TARGET_PATH="$(realpath "$TARGET_PATH" 2>/dev/null)" || { echo "Error: Target pa
 echo -e "\033[36mSource: $SOURCE_PATH\033[0m"
 echo -e "\033[36mTarget: $TARGET_GITHUB_PATH\033[0m"
 
-# Check if .github already exists in target
-if [ -e "$TARGET_GITHUB_PATH" ]; then
-    echo -e "\033[33m.github folder already exists at target location!\033[0m"
-    read -p "Do you want to overwrite it? (y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "\033[31mOperation cancelled.\033[0m"
-        exit 0
-    fi
-    rm -rf "$TARGET_GITHUB_PATH"
-fi
+# No need to check if .github exists - we'll merge or create as needed
 
 # Ask user preference
 echo -e "\n\033[32mHow would you like to add .github to the project?\033[0m"
@@ -41,19 +31,36 @@ read -p "Enter your choice (1 or 2): " choice
 
 case $choice in
     1)
-        echo -e "\n\033[33mCreating symbolic link...\033[0m"
-        if ln -s "$SOURCE_PATH" "$TARGET_GITHUB_PATH"; then
-            echo -e "\033[32mSuccessfully created symbolic link!\033[0m"
-            echo -e "\033[36mChanges to source .github folder will automatically reflect in the target.\033[0m"
-        else
-            echo -e "\033[31mFailed to create symbolic link.\033[0m"
-            exit 1
-        fi
+        echo -e "\n\033[33mCreating symbolic links for .github contents...\033[0m"
+        # Create .github directory if it doesn't exist
+        mkdir -p "$TARGET_GITHUB_PATH"
+        
+        # Create symlinks for each item in the source .github folder
+        for item in "$SOURCE_PATH"/*; do
+            if [ -e "$item" ]; then
+                basename=$(basename "$item")
+                target_item="$TARGET_GITHUB_PATH/$basename"
+                
+                # Remove existing item if it exists
+                if [ -e "$target_item" ]; then
+                    rm -rf "$target_item"
+                fi
+                
+                if ln -s "$item" "$target_item"; then
+                    echo -e "\033[32m  ✓ Linked $basename\033[0m"
+                else
+                    echo -e "\033[31m  ✗ Failed to link $basename\033[0m"
+                    exit 1
+                fi
+            fi
+        done
+        echo -e "\033[32mSuccessfully created symbolic links!\033[0m"
+        echo -e "\033[36mChanges to source .github contents will automatically reflect in the target.\033[0m"
         ;;
     2)
         echo -e "\n\033[33mCopying files...\033[0m"
-        if cp -r "$SOURCE_PATH" "$TARGET_GITHUB_PATH"; then
-            echo -e "\033[32mSuccessfully copied .github folder!\033[0m"
+        if mkdir -p "$TARGET_GITHUB_PATH" && cp -r "$SOURCE_PATH"/* "$TARGET_GITHUB_PATH/"; then
+            echo -e "\033[32mSuccessfully copied .github folder contents!\033[0m"
             echo -e "\033[36mNote: This is an independent copy. Changes won't sync automatically.\033[0m"
         else
             echo -e "\033[31mFailed to copy files.\033[0m"

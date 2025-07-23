@@ -6,19 +6,6 @@ mode: agent
 
 # TypeScript Development Guidelines
 
-## Package Management
-
-- **Always use `pnpm`** for all Node.js package management operations
-  - Use `pnpm add` to add dependencies
-  - Use `pnpm run` to execute scripts
-  - Use `pnpm install` to install dependencies
-  - Use `pnpm update` to update packages
-
-- **Avoid legacy package managers**:
-  - Do not use `npm` directly
-  - Do not use `yarn` (v1 or v2)
-  - Do not use other package managers unless specifically required
-
 ## Project Setup
 
 - **Ensure `package.json` exists** in the project root directory

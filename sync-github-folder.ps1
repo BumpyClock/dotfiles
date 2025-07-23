@@ -16,16 +16,7 @@ $TargetGithubPath = Join-Path $TargetPath ".github"
 Write-Host "Source: $SourcePath" -ForegroundColor Cyan
 Write-Host "Target: $TargetGithubPath" -ForegroundColor Cyan
 
-# Check if .github already exists in target
-if (Test-Path $TargetGithubPath) {
-    Write-Host ".github folder already exists at target location!" -ForegroundColor Yellow
-    $overwrite = Read-Host "Do you want to overwrite it? (y/n)"
-    if ($overwrite -ne 'y') {
-        Write-Host "Operation cancelled." -ForegroundColor Red
-        exit 0
-    }
-    Remove-Item $TargetGithubPath -Recurse -Force
-}
+# No need to check if .github exists - we'll merge or create as needed
 
 # Ask user preference
 Write-Host "`nHow would you like to add .github to the project?" -ForegroundColor Green
@@ -35,15 +26,30 @@ $choice = Read-Host "Enter your choice (1 or 2)"
 
 switch ($choice) {
     "1" {
-        Write-Host "`nCreating symbolic link..." -ForegroundColor Yellow
+        Write-Host "`nCreating symbolic links for .github contents..." -ForegroundColor Yellow
         try {
-            # Create symlink (requires admin rights on Windows)
-            New-Item -ItemType SymbolicLink -Path $TargetGithubPath -Target $SourcePath -Force | Out-Null
-            Write-Host "Successfully created symbolic link!" -ForegroundColor Green
-            Write-Host "Changes to source .github folder will automatically reflect in the target." -ForegroundColor Cyan
+            # Create .github directory if it doesn't exist
+            New-Item -ItemType Directory -Path $TargetGithubPath -Force | Out-Null
+            
+            # Create symlinks for each item in the source .github folder
+            $items = Get-ChildItem -Path $SourcePath
+            foreach ($item in $items) {
+                $targetItem = Join-Path $TargetGithubPath $item.Name
+                
+                # Remove existing item if it exists
+                if (Test-Path $targetItem) {
+                    Remove-Item $targetItem -Recurse -Force
+                }
+                
+                # Create symlink (requires admin rights on Windows)
+                New-Item -ItemType SymbolicLink -Path $targetItem -Target $item.FullName -Force | Out-Null
+                Write-Host "  ✓ Linked $($item.Name)" -ForegroundColor Green
+            }
+            Write-Host "Successfully created symbolic links!" -ForegroundColor Green
+            Write-Host "Changes to source .github contents will automatically reflect in the target." -ForegroundColor Cyan
         }
         catch {
-            Write-Host "Failed to create symbolic link. This requires administrator privileges." -ForegroundColor Red
+            Write-Host "Failed to create symbolic links. This requires administrator privileges." -ForegroundColor Red
             Write-Host "Error: $_" -ForegroundColor Red
             Write-Host "`nTip: Run PowerShell as Administrator or use option 2 to copy files instead." -ForegroundColor Yellow
         }
@@ -51,8 +57,9 @@ switch ($choice) {
     "2" {
         Write-Host "`nCopying files..." -ForegroundColor Yellow
         try {
-            Copy-Item -Path $SourcePath -Destination $TargetGithubPath -Recurse -Force
-            Write-Host "Successfully copied .github folder!" -ForegroundColor Green
+            New-Item -ItemType Directory -Path $TargetGithubPath -Force | Out-Null
+            Copy-Item -Path "$SourcePath\*" -Destination $TargetGithubPath -Recurse -Force
+            Write-Host "Successfully copied .github folder contents!" -ForegroundColor Green
             Write-Host "Note: This is an independent copy. Changes won't sync automatically." -ForegroundColor Cyan
         }
         catch {
