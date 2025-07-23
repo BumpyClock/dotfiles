@@ -1,10 +1,10 @@
 # Task Title
 
-Use the task tool to run ~/.claude/commands/agents/gemini/gemini-agent.md
+Use the task tool to run ~/.claude/agents/gemini/gemini-agent.md
 
 <task>
-<description">Gemini Agent</description>
-<prompt>Read ~/.claude/commands/agents/gemini/gemini-agent.md and process {user_prompt}</prompt>
+<description>Gemini Agent</description>
+<prompt>Read ~/.claude/agents/gemini/gemini-agent.md and process {user_prompt}</prompt>
 </task>
 
 
