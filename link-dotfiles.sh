@@ -40,15 +40,27 @@ create_symlink() {
         return 1
     fi
     
-    # If target is already a symlink pointing to the correct source, skip
+    # If target is already a symlink, check and handle atomically
     if [[ -L "$target" ]]; then
-        local current_target=$(readlink "$target")
-        if [[ "$current_target" == "$source" ]]; then
-            print_status "Already linked correctly: $source → $target"
-            return 0
+        local current_target
+        if current_target=$(readlink "$target" 2>/dev/null); then
+            if [[ "$current_target" == "$source" ]]; then
+                print_status "Already linked correctly: $source → $target"
+                return 0
+            else
+                print_warning "Removing incorrect symlink: $target → $current_target"
+                rm "$target" 2>/dev/null || {
+                    print_error "Failed to remove incorrect symlink: $target"
+                    return 1
+                }
+            fi
         else
-            print_warning "Removing incorrect symlink: $target → $current_target"
-            rm "$target"
+            # Symlink exists but readlink failed (broken link), remove it
+            print_warning "Removing broken symlink: $target"
+            rm "$target" 2>/dev/null || {
+                print_error "Failed to remove broken symlink: $target"
+                return 1
+            }
         fi
     fi
     
