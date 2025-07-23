@@ -1,285 +1,469 @@
-# Create Pull Request - Chain of Thought Prompt
+# Create Pull Request - Chain of Thought Prompt (Refined)
 
-You are tasked with analyzing git changes and generating comprehensive pull request content. Use the task tool to parallelize operations for maximum efficiency.
+You are tasked with analyzing git changes and generating comprehensive pull request content. You have access to a task tool that allows you to run multiple operations in parallel. Follow this explicit chain of thought process with careful variable tracking.
 
-## Step 1: Environment Validation and Setup
+## Variable Declarations
 
-First, validate the environment and check for uncommitted changes:
+```typescript
+// Global State Variables
+let ENV_STATE = {
+  isGitRepo: false,
+  isAuthenticated: false,
+  isClean: false,
+  validationPassed: false,
+};
 
-```bash
-# Create temporary directory for results
-mkdir -p /tmp/pr-gen
+let REPO_DATA = {
+  defaultBranch: null,
+  currentBranch: null,
+  repoName: null,
+  repoOwner: null,
+};
 
-# Check if we're in a git repository
-if ! git rev-parse --git-dir > /dev/null 2>&1; then
-  echo '{"status": "error", "error": "Not in a git repository"}'
-  exit 1
-fi
+let COMMIT_DATA = {
+  commits: [],
+  totalCount: 0,
+  primaryCommit: null,
+};
 
-# Verify GitHub CLI authentication
-if ! gh auth status > /dev/null 2>&1; then
-  echo '{"status": "error", "error": "GitHub CLI not authenticated. Run: gh auth login"}'
-  exit 1
-fi
+let FILE_DATA = {
+  changed: 0,
+  additions: 0,
+  deletions: 0,
+  list: [],
+};
 
-# Check for uncommitted changes
-if [ -n "$(git status --porcelain)" ]; then
-  echo '{"status": "error", "error": "Uncommitted changes detected. Please commit first or run local-commit workflow"}'
-  exit 1
-fi
+let PROJECT_DATA = {
+  projectType: null,
+  hasPackageJson: false,
+  dependencies: [],
+};
+
+let GITHUB_DATA = {
+  availableLabels: [],
+  relatedIssues: [],
+};
+
+let PR_ANALYSIS = {
+  type: null,
+  breaking: false,
+  patterns: {
+    fixes: 0,
+    features: 0,
+    refactors: 0,
+    docs: 0,
+  },
+};
+
+let PR_CONTENT = {
+  title: null,
+  body: null,
+  labels: [],
+  draft: true,
+};
 ```
 
-## Step 2: Parallel Information Gathering
+## Step 1: Environment Validation [PARALLEL]
 
-Use the task tool to create multiple sub-agents that run simultaneously:
+### Reasoning Step 1.1
 
-### Sub-agent 1: Repository Analysis
+**Think**: "I need to validate three environmental prerequisites. Each check is independent, so I'll run them in parallel. I'll track the results in ENV_STATE."
 
-```bash
-task create-sub-agent --name "repo-info" --script '
-  echo "{
-    \"defaultBranch\": \"$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)\",
-    \"currentBranch\": \"$(git branch --show-current)\",
-    \"repoName\": \"$(gh repo view --json name -q .name)\",
-    \"repoOwner\": \"$(gh repo view --json owner -q .owner.login)\"
-  }" > /tmp/pr-gen/repo.json
-'
+### Action Step 1.1: Parallel Validation Checks
+
+```yaml
+parallel_tasks:
+  - task_id: "git_check"
+    command: "test -d .git"
+    on_success: SET ENV_STATE.isGitRepo = true
+    on_failure: SET ENV_STATE.isGitRepo = false
+
+  - task_id: "auth_check"
+    command: "gh auth status"
+    on_success: SET ENV_STATE.isAuthenticated = true
+    on_failure: SET ENV_STATE.isAuthenticated = false
+
+  - task_id: "clean_check"
+    command: "git status --porcelain"
+    on_success: SET ENV_STATE.isClean = (output.length === 0)
+    on_failure: SET ENV_STATE.isClean = false
 ```
 
-### Sub-agent 2: Commit Analysis
+### Decision Step 1.2
 
-```bash
-task create-sub-agent --name "commits" --script '
-  DEFAULT=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name || echo "main")
-  git log $DEFAULT..HEAD --pretty=format:"{\"sha\":\"%H\",\"message\":\"%s\"}" | jq -s "{commits: .}" > /tmp/pr-gen/commits.json
-'
-```
+**Think**: "Now I need to evaluate if all checks passed."
 
-### Sub-agent 3: File Changes Analysis
+```javascript
+// Evaluate validation state
+ENV_STATE.validationPassed =
+  ENV_STATE.isGitRepo &&
+  ENV_STATE.isAuthenticated &&
+  ENV_STATE.isClean
 
-```bash
-task create-sub-agent --name "files" --script '
-  DEFAULT=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name || echo "main")
-  FILES=$(git diff --name-only $DEFAULT..HEAD | jq -R -s -c "split(\"\n\") | map(select(. != \"\"))")
-  STATS=$(git diff --shortstat $DEFAULT..HEAD)
-  ADDS=$(echo "$STATS" | grep -oE "[0-9]+ insertion" | grep -oE "[0-9]+" || echo 0)
-  DELS=$(echo "$STATS" | grep -oE "[0-9]+ deletion" | grep -oE "[0-9]+" || echo 0)
+// Generate appropriate error if validation failed
+if (!ENV_STATE.validationPassed) {
+  let errors = []
+  if (!ENV_STATE.isGitRepo) errors.push("Not in a git repository")
+  if (!ENV_STATE.isAuthenticated) errors.push("GitHub CLI not authenticated. Run: gh auth login")
+  if (!ENV_STATE.isClean) errors.push("Uncommitted changes detected. Please commit first")
 
-  echo "{
-    \"changed\": $(echo "$FILES" | jq length),
-    \"additions\": $ADDS,
-    \"deletions\": $DELS,
-    \"list\": $FILES
-  }" > /tmp/pr-gen/files.json
-'
-```
-
-### Sub-agent 4: Project Type Detection
-
-```bash
-task create-sub-agent --name "project-type" --script '
-  TYPE="other"
-  if [ -f package.json ]; then
-    if grep -q "react\\|vue\\|angular\\|next" package.json; then TYPE="web"
-    elif grep -q "\"bin\":" package.json; then TYPE="cli"
-    elif grep -q "express\\|fastify\\|koa" package.json; then TYPE="api"
-    else TYPE="library"
-    fi
-  fi
-  echo "{\"projectType\": \"$TYPE\"}" > /tmp/pr-gen/project.json
-'
-```
-
-### Sub-agent 5: GitHub Metadata
-
-```bash
-task create-sub-agent --name "metadata" --script '
-  LABELS=$(gh label list --json name --jq "[.[].name]" 2>/dev/null || echo "[]")
-  ISSUES=$(git log origin/main..HEAD --pretty=format:"%s %b" | grep -oE "#[0-9]+" | grep -oE "[0-9]+" | sort -u | jq -R -s "split(\"\n\") | map(select(. != \"\")) | map(tonumber)")
-
-  echo "{
-    \"availableLabels\": $LABELS,
-    \"relatedIssues\": $ISSUES
-  }" > /tmp/pr-gen/metadata.json
-'
-```
-
-Wait for all sub-agents to complete:
-
-```bash
-task wait-all --timeout 30s
-```
-
-## Step 3: Content Generation and Analysis
-
-Based on the gathered data, generate PR content:
-
-```bash
-# Load all collected data
-REPO=$(cat /tmp/pr-gen/repo.json)
-COMMITS=$(cat /tmp/pr-gen/commits.json)
-FILES=$(cat /tmp/pr-gen/files.json)
-PROJECT=$(cat /tmp/pr-gen/project.json)
-METADATA=$(cat /tmp/pr-gen/metadata.json)
-
-# Analyze commits to determine PR type and title
-COMMIT_COUNT=$(echo "$COMMITS" | jq '.commits | length')
-FIRST_COMMIT=$(echo "$COMMITS" | jq -r '.commits[0].message // "Update code"')
-
-# Determine PR type from commit patterns
-PR_TYPE="feature"
-if echo "$COMMITS" | jq -r '.commits[].message' | grep -qi "fix\\|bug"; then
-  PR_TYPE="fix"
-elif echo "$COMMITS" | jq -r '.commits[].message' | grep -qi "refactor"; then
-  PR_TYPE="refactor"
-elif echo "$COMMITS" | jq -r '.commits[].message' | grep -qi "docs"; then
-  PR_TYPE="docs"
-fi
-
-# Check for breaking changes
-BREAKING=false
-if echo "$COMMITS" | jq -r '.commits[].message' | grep -qi "breaking"; then
-  BREAKING=true
-fi
-
-# Generate title
-TITLE=$(echo "$FIRST_COMMIT" | sed -E 's/^(feat|fix|docs|refactor|test|chore)(\(.+\))?:\s*//i')
-if [ "$BREAKING" = true ]; then
-  TITLE="[BREAKING] $TITLE"
-else
-  TITLE="[${PR_TYPE^}] $TITLE"
-fi
-
-# Generate comprehensive body
-BODY="## Summary
-
-This pull request $(echo "$COMMITS" | jq -r '.commits | length') commits that $(echo "$FILES" | jq -r '.changed') files.
-
-## Changes
-
-$(echo "$FILES" | jq -r '.list[]' | head -10 | sed 's/^/- /')
-
-## Statistics
-- Files changed: $(echo "$FILES" | jq -r '.changed')
-- Additions: +$(echo "$FILES" | jq -r '.additions')
-- Deletions: -$(echo "$FILES" | jq -r '.deletions')
-
-## Commits
-$(echo "$COMMITS" | jq -r '.commits[] | "- \(.message)"')
-"
-
-# Add project-specific sections
-PROJECT_TYPE=$(echo "$PROJECT" | jq -r '.projectType')
-case "$PROJECT_TYPE" in
-  "web")
-    BODY="$BODY
-
-## UI Changes
-*Screenshots recommended - use Playwright MCP if available*"
-    ;;
-  "cli")
-    BODY="$BODY
-
-## CLI Examples
-*Add terminal output examples after PR creation*"
-    ;;
-  "api")
-    BODY="$BODY
-
-## API Changes
-*Document any endpoint changes or new routes*"
-    ;;
-esac
-
-# Determine suggested labels
-SUGGESTED_LABELS=$(echo "$METADATA" | jq --arg type "$PR_TYPE" '
-  .availableLabels | map(select(. | ascii_downcase | contains($type))) |
-  if length == 0 then ["enhancement"] else .[0:3] end
-')
-```
-
-## Step 4: Assemble Final JSON Response
-
-Create the complete JSON response with all PR details:
-
-```bash
-# Build the final JSON response
-cat > /tmp/pr-gen/final.json <<EOF
-{
-  "status": "success",
-  "data": {
-    "title": "$TITLE",
-    "body": $(echo "$BODY" | jq -Rs .),
-    "type": "$PR_TYPE",
-    "breaking": $BREAKING,
-    "draft": true,
-    "branch": {
-      "current": $(echo "$REPO" | jq -r '.currentBranch' | jq -Rs .),
-      "base": $(echo "$REPO" | jq -r '.defaultBranch' | jq -Rs .)
-    },
-    "commits": $(echo "$COMMITS" | jq '.commits'),
-    "files": $(echo "$FILES"),
-    "projectType": "$PROJECT_TYPE",
-    "metadata": {
-      "suggestedLabels": $SUGGESTED_LABELS,
-      "relatedIssues": $(echo "$METADATA" | jq '.relatedIssues')
-    }
+  RETURN {
+    status: "error",
+    error: errors.join("; "),
+    state: ENV_STATE
   }
 }
-EOF
-
-# Output the final JSON
-cat /tmp/pr-gen/final.json
 ```
+
+**Checkpoint**: `ENV_STATE.validationPassed === true` before proceeding
+
+## Step 2: Parallel Information Gathering [PARALLEL WITH TASK TOOL]
+
+### Reasoning Step 2.1
+
+**Think**: "Environment is valid. Now I need to gather 5 different types of repository information. Since these are independent, I'll parallelize them. Each sub-agent will populate its respective global variable."
+
+### Action Step 2.2: Parallel Data Collection
+
+```yaml
+parallel_tasks:
+  - task_id: "repo_analysis"
+    description: "Extract repository metadata"
+    commands:
+      - "git symbolic-ref --short HEAD" → REPO_DATA.currentBranch
+      - "git remote get-url origin" → parse → REPO_DATA.repoName, REPO_DATA.repoOwner
+      - "git symbolic-ref refs/remotes/origin/HEAD" → REPO_DATA.defaultBranch
+    output_variable: REPO_DATA
+
+  - task_id: "commit_analysis"
+    description: "Analyze commit history"
+    commands:
+      - "git log {REPO_DATA.defaultBranch}..HEAD --format='%H|%s'" → parse
+    post_process:
+      - COMMIT_DATA.commits = parsed_commits
+      - COMMIT_DATA.totalCount = commits.length
+      - COMMIT_DATA.primaryCommit = commits[0] || null
+    output_variable: COMMIT_DATA
+
+  - task_id: "file_analysis"
+    description: "Quantify file modifications"
+    commands:
+      - "git diff --numstat {REPO_DATA.defaultBranch}...HEAD" → parse
+      - "git diff --name-only {REPO_DATA.defaultBranch}...HEAD" → FILE_DATA.list
+    post_process:
+      - Calculate FILE_DATA.additions, FILE_DATA.deletions, FILE_DATA.changed
+    output_variable: FILE_DATA
+
+  - task_id: "project_detection"
+    description: "Identify project type"
+    commands:
+      - "test -f package.json" → PROJECT_DATA.hasPackageJson
+      - If hasPackageJson: "cat package.json" → parse dependencies
+    decision_tree:
+      - IF contains ["react", "vue", "angular", "next"] → PROJECT_DATA.projectType = "web"
+      - ELIF has "bin" field → PROJECT_DATA.projectType = "cli"
+      - ELIF contains ["express", "fastify", "koa"] → PROJECT_DATA.projectType = "api"
+      - ELIF hasPackageJson → PROJECT_DATA.projectType = "library"
+      - ELSE → PROJECT_DATA.projectType = "other"
+    output_variable: PROJECT_DATA
+
+  - task_id: "github_metadata"
+    description: "Collect GitHub metadata"
+    commands:
+      - "gh label list --json name" → GITHUB_DATA.availableLabels
+      - "git log --grep='#[0-9]' {REPO_DATA.defaultBranch}..HEAD" → extract issue numbers
+    output_variable: GITHUB_DATA
+```
+
+### Synchronization Step 2.3
+
+**Think**: "I need to wait for all parallel tasks to complete and verify data integrity."
+
+```javascript
+// Wait for all tasks
+await Promise.all(parallel_tasks);
+
+// Validate collected data
+let dataValidation = {
+  hasRepoData: REPO_DATA.currentBranch !== null,
+  hasCommitData: COMMIT_DATA.totalCount > 0,
+  hasFileData: FILE_DATA.changed > 0,
+  hasProjectType: PROJECT_DATA.projectType !== null,
+};
+
+// Log intermediate state for debugging
+console.log("Data Collection Summary:", {
+  repoData: REPO_DATA,
+  commitCount: COMMIT_DATA.totalCount,
+  filesChanged: FILE_DATA.changed,
+  projectType: PROJECT_DATA.projectType,
+});
+```
+
+## Step 3: Sequential Analysis and Content Generation
+
+### Reasoning Step 3.1
+
+**Think**: "With all raw data collected, I now need to analyze patterns and generate content. This must be sequential as each step builds on previous analysis."
+
+### Analysis Step 3.2: Commit Pattern Analysis
+
+```javascript
+// Initialize pattern counters
+PR_ANALYSIS.patterns = { fixes: 0, features: 0, refactors: 0, docs: 0 };
+
+// Analyze each commit message
+for (let commit of COMMIT_DATA.commits) {
+  let msg = commit.message.toLowerCase();
+
+  // Count patterns
+  if (msg.match(/\b(fix|bug|resolve|patch)\b/)) PR_ANALYSIS.patterns.fixes++;
+  if (msg.match(/\b(feat|feature|add|implement)\b/))
+    PR_ANALYSIS.patterns.features++;
+  if (msg.match(/\b(refactor|restructure|reorganize)\b/))
+    PR_ANALYSIS.patterns.refactors++;
+  if (msg.match(/\b(docs|documentation|readme)\b/)) PR_ANALYSIS.patterns.docs++;
+
+  // Check for breaking changes
+  if (msg.match(/\bbreaking\b|BREAKING CHANGE|!/)) PR_ANALYSIS.breaking = true;
+}
+
+// Determine primary type based on highest count
+let maxPattern = Math.max(...Object.values(PR_ANALYSIS.patterns));
+if (PR_ANALYSIS.patterns.fixes === maxPattern) PR_ANALYSIS.type = "fix";
+else if (PR_ANALYSIS.patterns.refactors === maxPattern)
+  PR_ANALYSIS.type = "refactor";
+else if (PR_ANALYSIS.patterns.docs === maxPattern) PR_ANALYSIS.type = "docs";
+else PR_ANALYSIS.type = "feature";
+
+// Log reasoning
+console.log("Pattern Analysis:", PR_ANALYSIS);
+```
+
+### Generation Step 3.3: Title Generation
+
+```javascript
+// Extract base message
+let baseMessage = COMMIT_DATA.primaryCommit.message.replace(
+  /^(feat|fix|docs|refactor|test|chore)(\(.+\))?:\s*/i,
+  ""
+);
+
+// Capitalize first letter
+baseMessage = baseMessage.charAt(0).toUpperCase() + baseMessage.slice(1);
+
+// Apply prefix based on analysis
+if (PR_ANALYSIS.breaking) {
+  PR_CONTENT.title = `[BREAKING] ${baseMessage}`;
+} else {
+  let typeLabel =
+    PR_ANALYSIS.type.charAt(0).toUpperCase() + PR_ANALYSIS.type.slice(1);
+  PR_CONTENT.title = `[${typeLabel}] ${baseMessage}`;
+}
+
+// Validate title length
+if (PR_CONTENT.title.length > 72) {
+  PR_CONTENT.title = PR_CONTENT.title.substring(0, 69) + "...";
+}
+```
+
+### Generation Step 3.4: Body Generation
+
+```javascript
+// Build body sections
+let bodySections = [];
+
+// Summary section
+bodySections.push(
+  `## Summary\n\nThis pull request includes ${COMMIT_DATA.totalCount} commits that modify ${FILE_DATA.changed} files.`
+);
+
+// Changes section
+let filesList = FILE_DATA.list
+  .slice(0, 10)
+  .map((f) => `- ${f}`)
+  .join("\n");
+if (FILE_DATA.list.length > 10) {
+  filesList += `\n- ... and ${FILE_DATA.list.length - 10} more files`;
+}
+bodySections.push(`## Changes\n\n${filesList}`);
+
+// Statistics section
+bodySections.push(
+  `## Statistics\n\n- Files changed: ${FILE_DATA.changed}\n- Additions: +${FILE_DATA.additions}\n- Deletions: -${FILE_DATA.deletions}`
+);
+
+// Commits section
+let commitsList = COMMIT_DATA.commits.map((c) => `- ${c.message}`).join("\n");
+bodySections.push(`## Commits\n\n${commitsList}`);
+
+// Project-specific section
+let projectSection = null;
+switch (PROJECT_DATA.projectType) {
+  case "web":
+    projectSection =
+      "## UI Changes\n\n*Screenshots recommended - use Playwright MCP if available*";
+    break;
+  case "cli":
+    projectSection =
+      "## CLI Examples\n\n*Add terminal output examples after PR creation*";
+    break;
+  case "api":
+    projectSection =
+      "## API Changes\n\n*Document any endpoint changes or new routes*";
+    break;
+}
+if (projectSection) bodySections.push(projectSection);
+
+// Related issues section if applicable
+if (GITHUB_DATA.relatedIssues.length > 0) {
+  let issuesList = GITHUB_DATA.relatedIssues
+    .map((i) => `- Addresses #${i}`)
+    .join("\n");
+  bodySections.push(`## Related Issues\n\n${issuesList}`);
+}
+
+// Combine all sections
+PR_CONTENT.body = bodySections.join("\n\n");
+```
+
+### Generation Step 3.5: Label Suggestions
+
+```javascript
+// Filter available labels based on PR type
+PR_CONTENT.labels = GITHUB_DATA.availableLabels
+  .filter((label) => {
+    let lowerLabel = label.toLowerCase();
+    return (
+      lowerLabel.includes(PR_ANALYSIS.type) ||
+      (PR_ANALYSIS.breaking && lowerLabel.includes("breaking")) ||
+      (PR_ANALYSIS.type === "feature" && lowerLabel.includes("enhancement"))
+    );
+  })
+  .slice(0, 3);
+
+// Default if no matches
+if (PR_CONTENT.labels.length === 0) {
+  PR_CONTENT.labels = ["enhancement"];
+}
+```
+
+## Step 4: Final Assembly and Validation
+
+### Reasoning Step 4.1
+
+**Think**: "All analysis and generation is complete. I need to assemble the final response and validate its integrity."
+
+### Assembly Step 4.2: Build Response
+
+```javascript
+let finalResponse = {
+  status: "success",
+  data: {
+    // Core PR content
+    title: PR_CONTENT.title,
+    body: PR_CONTENT.body,
+    type: PR_ANALYSIS.type,
+    breaking: PR_ANALYSIS.breaking,
+    draft: PR_CONTENT.draft,
+
+    // Branch information
+    branch: {
+      current: REPO_DATA.currentBranch,
+      base: REPO_DATA.defaultBranch,
+    },
+
+    // Detailed data
+    commits: COMMIT_DATA.commits,
+    files: {
+      changed: FILE_DATA.changed,
+      additions: FILE_DATA.additions,
+      deletions: FILE_DATA.deletions,
+      list: FILE_DATA.list,
+    },
+
+    // Metadata
+    projectType: PROJECT_DATA.projectType,
+    metadata: {
+      suggestedLabels: PR_CONTENT.labels,
+      relatedIssues: GITHUB_DATA.relatedIssues,
+      analysisPatterns: PR_ANALYSIS.patterns,
+    },
+  },
+
+  // Debugging information
+  debug: {
+    environmentState: ENV_STATE,
+    totalExecutionSteps: 4,
+    parallelTasksRun: 5,
+  },
+};
+```
+
+### Validation Step 4.3: Quality Checks
+
+```javascript
+// Validate response structure
+let validationErrors = [];
+
+// Required fields check
+if (!finalResponse.data.title) validationErrors.push("Missing title");
+if (!finalResponse.data.body) validationErrors.push("Missing body");
+if (!finalResponse.data.branch.current)
+  validationErrors.push("Missing current branch");
+
+// Data integrity checks
+if (finalResponse.data.files.changed === 0)
+  validationErrors.push("No files changed");
+if (finalResponse.data.commits.length === 0)
+  validationErrors.push("No commits found");
+
+// Type validation
+if (!["feature", "fix", "docs", "refactor"].includes(finalResponse.data.type)) {
+  validationErrors.push("Invalid PR type");
+}
+
+// Final decision
+if (validationErrors.length > 0) {
+  return {
+    status: "error",
+    error: "Validation failed",
+    validationErrors: validationErrors,
+    partialData: finalResponse.data,
+  };
+}
+
+// Return validated response
+return finalResponse;
+```
+
+## Error Recovery Strategy
+
+```javascript
+// Define recovery actions for common failures
+const RECOVERY_STRATEGIES = {
+  auth_failure: "Please run 'gh auth login' and retry",
+  no_commits: "Ensure you have commits to push. Run 'git log {base}..HEAD'",
+  dirty_workspace: "Commit or stash changes. Run 'git status' to see changes",
+  network_error: "Check internet connection and GitHub access",
+};
+```
+
+## Performance Metrics
+
+Track these metrics for optimization:
+
+- Total execution time
+- Time spent in parallel tasks vs sequential tasks
+- Number of git commands executed
+- Data collection success rate
 
 ## Chain of Thought Summary
 
-1. **Validate** environment (git repo, gh auth, no uncommitted changes)
-2. **Parallelize** data collection using 5 sub-agents:
-   - Repository information
-   - Commit history
-   - File changes
-   - Project type
-   - GitHub metadata (labels and related issues)
-3. **Analyze** commits to determine PR type and detect breaking changes
-4. **Generate** comprehensive title and body based on changes
-5. **Enrich** with project-specific sections (UI, CLI, API)
-6. **Suggest** appropriate labels based on PR type
-7. **Return** structured JSON for upstream confirmation
-
-## Expected JSON Output Structure
-
-```json
-{
-  "status": "success",
-  "data": {
-    "title": "[Feature] Add user authentication",
-    "body": "## Summary\n\nThis pull request...",
-    "type": "feature",
-    "breaking": false,
-    "draft": true,
-    "branch": {
-      "current": "feature/auth",
-      "base": "main"
-    },
-    "commits": [...],
-    "files": {
-      "changed": 12,
-      "additions": 450,
-      "deletions": 23,
-      "list": [...]
-    },
-    "projectType": "web",
-    "metadata": {
-      "suggestedLabels": ["feature", "authentication"],
-      "relatedIssues": [123, 456]
-    }
-  }
-}
-```
-
-This JSON can then be used by the upstream command to:
-
-1. Display the PR preview to the user
-2. Get confirmation (draft/publish/cancel)
-3. Execute `gh pr create` with the appropriate parameters
+1. **Variable Declaration**: All state is explicitly tracked
+2. **Parallel Execution**: Independent tasks run concurrently
+3. **Sequential Analysis**: Dependent operations maintain order
+4. **Progressive Enhancement**: Each step builds on previous results
+5. **Fail-Fast**: Early validation prevents wasted computation
+6. **Comprehensive Logging**: Every decision point is tracked
+7. **Graceful Degradation**: Partial results returned on non-critical failures
