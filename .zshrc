@@ -113,14 +113,14 @@ alias la='eza -la --group-directories-first'
 
 
 # fnm
-FNM_PATH="/home/bumpyclock/.local/share/fnm"
+FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
-  export PATH="/home/bumpyclock/.local/share/fnm:$PATH"
+  export PATH="$FNM_PATH:$PATH"
   eval "`fnm env`"
 fi
 
 # pnpm
-export PNPM_HOME="/home/bumpyclock/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -130,17 +130,19 @@ esac
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/bumpyclock/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/bumpyclock/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/bumpyclock/miniconda3/etc/profile.d/conda.sh"
+if [ -f "$HOME/miniconda3/bin/conda" ]; then
+    __conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+        eval "$__conda_setup"
     else
-        export PATH="/home/bumpyclock/miniconda3/bin:$PATH"
+        if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+            . "$HOME/miniconda3/etc/profile.d/conda.sh"
+        else
+            export PATH="$HOME/miniconda3/bin:$PATH"
+        fi
     fi
+    unset __conda_setup
 fi
-unset __conda_setup
 # <<< conda initialize <<<
 
 export PATH=$PATH:/usr/local/go/bin
@@ -283,7 +285,7 @@ eval "$(starship init zsh)"
 
 . "$HOME/.cargo/env"
 # bun completions
-[ -s "/home/bumpyclock/.bun/_bun" ] && source "/home/bumpyclock/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

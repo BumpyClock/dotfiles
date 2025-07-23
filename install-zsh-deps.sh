@@ -23,7 +23,7 @@ print_warning() {
 
 # Detect OS
 detect_os() {
-    if [ "$OSTYPE" = "darwin"* ]; then
+    if [[ "$OSTYPE" == darwin* ]]; then
         echo "macos"
     elif [ -f /etc/arch-release ]; then
         echo "arch"
