@@ -1,16 +1,9 @@
 {
-    "mcpServers": {
-        "Figma Dev Mode MCP": {
-            "type": "http",
-            "url": "http://127.0.0.1:3845/sse"
-        },
+    "mcps": {
         "context7": {
             "type": "stdio",
             "command": "npx",
-            "args": [
-                "-y",
-                "@upstash/context7-mcp"
-            ]
+            "packageOrCommand": "@context7/mcp-server-context7"
         },
         "exa-search": {
             "type": "stdio",
@@ -28,7 +21,7 @@
             "command": "npx",
             "args": [
                 "-y",
-                "@executeautomation/playwright-mcp-server"
+                "@playwright/mcp@latest"
             ]
         },
         "fetch": {
