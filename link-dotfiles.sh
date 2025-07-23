@@ -40,16 +40,23 @@ create_symlink() {
         return 1
     fi
     
+    # If target is already a symlink pointing to the correct source, skip
+    if [[ -L "$target" ]]; then
+        local current_target=$(readlink "$target")
+        if [[ "$current_target" == "$source" ]]; then
+            print_status "Already linked correctly: $source → $target"
+            return 0
+        else
+            print_warning "Removing incorrect symlink: $target → $current_target"
+            rm "$target"
+        fi
+    fi
+    
     # If target exists and is not a symlink, back it up
     if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
         local backup="${target}.backup.$(date +%Y%m%d_%H%M%S)"
         print_warning "Backing up existing file: $target → $backup"
         mv "$target" "$backup"
-    fi
-    
-    # Remove existing symlink if it exists
-    if [[ -L "$target" ]]; then
-        rm "$target"
     fi
     
     # Create the symlink
