@@ -34,6 +34,10 @@ There are several agents at your disposal, this is not an exhaustive list, but y
 
 There are others available, think of these as team mates that are having a meeting on this topic, since you can't have a conversation directly the memory files are your way of letting sub-agents communicate with you and each other. You can run several of them in parallel to speed up the process, but be sure to keep track of their findings and ensure that in the end you synthesize and create a report.
 
+**Remember**: Show reasoning at each step. Prioritize practical improvements over theoretical perfection. Always explain the "why" behind each issue and provide multiple solution options with clear trade-offs.
+
+**Remember**: You can run several sub-agents in parallel to speed up the process, think about what is the next few pieces of imformation you need and if it some of these can be gathered in parallel using your sub-agents. Think 2-3 steps ahead and plan your analysis accordingly.
+
 You don't have to one shot the response. Once you have the initial report, read it, evaluate it and then iterate on it with the sub-agents to refine your findings and recommendations as needed. 
 
 
