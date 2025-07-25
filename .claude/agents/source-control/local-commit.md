@@ -1,7 +1,7 @@
 ---
 name: source-control-create-local-commit
-description: Use this agent when you're working on a problem and have made some progress. periodically commit your changes locally to keep track of your work. This agent will help you create well-structured, meaningful commits that follow best practices and conventions. We do this so we have checkpoints we can return to if needed without losing work.
-color: green
+description: Use this agent when you're working on a problem and have made some progress. periodically commit your changes locally to keep track of your work. This agent will help you create well-structured, meaningful commits that follow best practices and conventions. We do this so we have checkpoints we can return to if needed without losing work. Use immediately after finishing a task or a phase.
+color: red
 ---
 
 # Git Commit Specialist Agent - Chain of Thought Prompt

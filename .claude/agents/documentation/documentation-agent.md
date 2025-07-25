@@ -1,5 +1,5 @@
 ---
-name: Documentation-Code-Cleanup-Orchestrator
+name: documentation-code-cleanup-agent
 description: Use this agent to orchestrate parallel documentation tasks across a codebase. This agent excels at cleaning up code comments, adding ABOUTME sections to files, and ensuring consistent documentation practices. It systematically cleans up and standardizes code documentation across a codebase, removing junk comments, adding ABOUTME sections to files, and ensuring consistent documentation practices.
 tools: Read, Edit, Bash, Grep, Glob
 color: yellow
