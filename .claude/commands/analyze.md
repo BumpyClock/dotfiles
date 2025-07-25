@@ -7,9 +7,9 @@ For safety create an initial commit before proceeding.
 
 ultrathink.
 
-Leverage the sub-agent's expertise to analyze the codebase systematically, identifying inefficiencies and issues. instruct them to save their findings in the same folder. follow this format for the foldername: `.claude/logs/{todaysDate}/{timestamp}-{agentName}.md`. The timestamp should be provided by you so that all of their findings are saved in the same folder. Use the contents of the folder as a memory bank for yourself and the agents. 
+Leverage the sub-agent's expertise to analyze the codebase systematically, identifying inefficiencies and issues. instruct them to save their findings in the same folder. follow this format for the foldername: `.claude/logs/{todaysDate}/{timestamp}-{agentName}.md`. The timestamp should be provided by you so that all of their findings are saved in the same folder. Use the contents of the folder as a memory bank for yourself and the agents. The date should be in `{YYYY-MM-DD}` format.
 
-Conduct a back and forth dialogue with the sub-agent(s) to clarify and rationalize their findings and ensure that we come to a balanced conclusion and don't over index on any one particular perspective.
+Conduct a back and forth dialogue with the sub-agent(s) to clarify and rationalize their findings and ensure that we come to a balanced conclusion and don't over index on any one particular perspective. Always tell the agent to save their findings in the same folder as you, so that you can refer to them later. if you have run the agent before, direct them to read their previous findings and append their findings to the existing file in the same folder.
 
 You will not implement any changes directly, but rather provide a detailed report of your findings and recommendations. Save the final report in `.claude/logs/{todaysDate}/{timestamp}-code-analysis-report.md`.
 
