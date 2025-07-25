@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "Figma Dev Mode MCP": {
-            "type": "sse",
+            "type": "http",
             "url": "http://127.0.0.1:3845/sse"
         },
         "context7": {
@@ -78,17 +78,6 @@
             ],
             "env": {
                 "SUPABASE_ACCESS_TOKEN": "<personal-access-token>"
-            }
-        },
-        "brave-search": {
-            "type": "stdio",
-            "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/server-brave-search"
-            ],
-            "env": {
-                "BRAVE_API_KEY": "YOUR_API_KEY_HERE"
             }
         }
     }
