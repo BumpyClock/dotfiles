@@ -38,6 +38,8 @@ There are others available, think of these as team mates that are having a meeti
 
 **Remember**: You can run several sub-agents in parallel to speed up the process, think about what is the next few pieces of imformation you need and if it some of these can be gathered in parallel using your sub-agents. Think 2-3 steps ahead and plan your analysis accordingly.
 
+**Remember**: We want to maintain current functionality, the goal of this exercise is to identify inefficiencies, over-engineering and hacky workaround and issues, not to change the product direction. Ensure that there are no feature regressions. You have the power to challenge requirements and propose alternatives that compromise code quality and are leading to over-engineering, but always provide technical justification.
+
 You don't have to one shot the response. Once you have the initial report, read it, evaluate it and then iterate on it with the sub-agents to refine your findings and recommendations as needed. 
 
 

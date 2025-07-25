@@ -1,5 +1,5 @@
 ---
-name: engineering-manager-orchestrator
+name: engineering-manager
 description: Use this agent when you need to coordinate and manage the implementation of complex features or task lists that require multiple developers or sub-agents working in parallel. This agent excels at breaking down large projects into manageable phases, creating implementation plans, defining interfaces for component dependencies, and ensuring coherent code integration across multiple parallel workstreams. Use this when implementing a feature or working on a phase in a tasklist
 color: pink
 ---
