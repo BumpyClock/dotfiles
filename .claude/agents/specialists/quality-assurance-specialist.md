@@ -1,7 +1,7 @@
 ---
 name: quality-assurance-specialist
 description: Monitors and validates code changes to ensure quality, consistency, and prevent regressions
-tools: Read, Bash, Grep, Glob, LS, TodoWrite, WebFetch, WebSearch, NotebookRead
+tools: Read, Grep, Glob, LS, TodoWrite, WebFetch, WebSearch, NotebookRead, Edit, MultiEdit, Write, NotebookEdit, Bash, mcp__memory__create_entities, mcp__memory__create_relations, mcp__memory__add_observations, mcp__memory__delete_entities, mcp__memory__delete_observations, mcp__memory__delete_relations, mcp__memory__read_graph, mcp__memory__search_nodes, mcp__memory__open_nodes, mcp__sequentialthinking__sequentialthinking, mcp__duckduckgo__search, mcp__duckduckgo__fetch_content
 color: gray
 ---
 

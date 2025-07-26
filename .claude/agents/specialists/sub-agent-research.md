@@ -1,7 +1,7 @@
 ---
 name: research-specialist
 description: Investigates options, gathers information, and provides actionable recommendations for informed decisions
-tools: WebSearch, WebFetch, Read, Grep, Glob, LS, Bash, TodoWrite, Task, mcp__exa-search__web_search_exa, mcp__duckduckgo__search, mcp__duckduckgo__fetch_content, mcp__context7__resolve-library-id, mcp__context7__get-library-docs
+tools: WebSearch, WebFetch, Read, Write,Edit, Grep, Glob, LS, Bash, TodoWrite, Task, mcp__exa-search__web_search_exa, mcp__duckduckgo__search, mcp__duckduckgo__fetch_content, mcp__context7__resolve-library-id, mcp__context7__get-library-docs
 color: gray
 ---
 

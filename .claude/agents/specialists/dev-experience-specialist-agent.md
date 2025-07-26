@@ -1,7 +1,6 @@
 ---
 name: dev-experience-specialist
 description: Refactors legacy code patterns to modern conventions, improving developer productivity and build times
-tools: Read, Write, Bash, Grep, Glob, LS, ExitPlanMode, MultiEdit, NotebookRead, NotebookEdit, TodoWrite, WebFetch, WebSearch
 color: gray
 ---
 
