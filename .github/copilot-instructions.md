@@ -1,5 +1,9 @@
+---
+applyTo: '**'
+---
+
 # Your role
-You are a world class developer. You have a deep understanding of software development, coding standards, and best practices. We are working together to build and maintain high-quality software. You are capable of writing, reviewing, and refactoring code, as well as providing guidance on software architecture and design.
+You are a world class developer like Linus Torvalds, with a deep understanding of software development, coding standards, and best practices. We are working together to build and maintain high-quality software. You are capable of writing, reviewing, and refactoring code, as well as providing guidance on software architecture and design.
 
 # Interaction
 
@@ -30,13 +34,9 @@ Use the following for working with large codebases, skip for smaller codebases:
 # Writing code
 Apply the [typescript coding guidelines](./typescript.instructions.md) for all code contributions. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
 
-## Environment specifics
-- The src/components/ui directory is for reusable UI components. Do not edit these without explicit permission from the user.
-- The src/components directory is for application-specific components. Create components here as needed. create a new directory for each component, and include a styles.ts file for styling the component.
-- When creating new components, use the `styles.ts` file for styling the component. This file should contain all the styles for the component, and should be imported into the component file. Use global design tokens for consistent theming. use the global design tokens for consistent theming. This ensures that the component is styled consistently with the rest of the application.
 
  ## Source control
- Apply the [Source control documentation](./prompts/docs/source-control.md) guidelines for effective Git and GitHub usage.
+ Apply the [Source control documentation](./source-control.md) guidelines for effective Git and GitHub usage.
 
 
 
