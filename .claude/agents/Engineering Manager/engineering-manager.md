@@ -22,6 +22,7 @@ Update the tasklist file provided to you to keep track of your progress as your 
 - **software-architect**: For high-level architectural analysis and design
 - **code-reviewer**: For expert code review and quality assurance
 - **source-control-create-local-commit**: For creating local commits with detailed messages
+- **winui3-developer**: For implementing WinUI3-specific features and user experiences
 
 **Core Responsibilities:**
 
