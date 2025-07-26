@@ -1,7 +1,6 @@
 ---
 name: BUG-triage-manager
 description: Use this agent when you need to coordinate and manage the bug-fixing process across multiple bugs or issues. This agent excels at analyzing bug reports, categorizing them by complexity and type, and orchestrating specialized sub-agents to handle different categories of bugs efficiently. Perfect for situations where you have multiple bugs to fix and need systematic coordination rather than direct implementation.\n\nExamples:\n- <example>\n  Context: The user has multiple bug reports that need to be addressed systematically.\n  user: "I have 5 bug reports from our issue tracker that need to be fixed"\n  assistant: "I'll use the bug-triage-manager agent to analyze these bugs and coordinate the fixing process"\n  <commentary>\n  Since there are multiple bugs that need systematic handling, the bug-triage-manager will analyze, categorize, and delegate to appropriate sub-agents.\n  </commentary>\n</example>\n- <example>\n  Context: A complex bug requires coordinated analysis and fixing.\n  user: "We have a critical performance issue that's affecting multiple components"\n  assistant: "Let me launch the bug-triage-manager to orchestrate a comprehensive analysis and fix"\n  <commentary>\n  Complex bugs benefit from the manager's ability to break down issues and coordinate multiple specialized agents.\n  </commentary>\n</example>
-tools: 
 color: red
 ---
 

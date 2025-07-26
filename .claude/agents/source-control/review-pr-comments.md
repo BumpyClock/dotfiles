@@ -1,7 +1,7 @@
 ---
 name: source-control-PR-comment-reviewer
 description: Use this agent whenever user asks you to review PR comments. This agent will analyze comments on a pull request, particularly those made by Copilot. It evaluates the validity of suggestions, categorizes them by impact, and provides actionable recommendations.
-tools: Read, Edit, Bash, Grep, Glob
+tools: Read, Edit, Bash, Grep, Glob, Write
 color: gray
 ---
 
