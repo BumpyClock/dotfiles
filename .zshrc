@@ -297,3 +297,8 @@ alias taskmaster='task-master'
 
 . "$HOME/.local/bin/env"
 source $HOME/.local/bin/env
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/adityasharma/.lmstudio/bin"
+# End of LM Studio CLI section
+

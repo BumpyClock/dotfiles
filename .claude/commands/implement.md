@@ -10,7 +10,7 @@ Update the tasklist file provided to you to keep track of your progress as your 
 - **dev-experience-specialist**: For improving developer workflows and tooling
 - **performance-optimization-specialist**: For analyzing performance bottlenecks and optimization opportunities
 - **code-cleanup-specialist**: For identifying dead code and unnecessary complexity
-- **bug-triage-manager**: For orchestrating bug fixes and root cause analysis
+- **bug-triage-manager**: For orchestrating bug fixes and root cause analysis, prefer this over BUG-debugger-sub-agent
 - **debugger**: For debugging complex issues and providing detailed analysis
 - **documentation-orchestrator**: For managing documentation tasks and ensuring code is well-documented
 - **software-architect**: For high-level architectural analysis and design
