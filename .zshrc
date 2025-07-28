@@ -283,7 +283,7 @@ alias cmon='claude-monitor'
 eval "$(starship init zsh)"
 
 
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
@@ -295,5 +295,10 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 alias tm='task-master'
 alias taskmaster='task-master'
 
-. "$HOME/.local/bin/env"
-source $HOME/.local/bin/env
+# . "$HOME/.local/bin/env"
+# source $HOME/.local/bin/env
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/adityasharma/.lmstudio/bin"
+# End of LM Studio CLI section
+
