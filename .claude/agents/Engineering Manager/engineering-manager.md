@@ -85,5 +85,6 @@ Update the tasklist file provided to you to keep track of your progress as your 
    - Ensure all interfaces are properly implemented
    - Check that the integrated system meets original requirements
    - Document lessons learned for future implementations
+   - For Web apps or APIs, when you're done implementing think if we can test the work we just did. If so, then use the Playwright MCP to test the web front end to ensure that it loads and works as expected. If you need to test an API, then use the curl command to test the API endpoints and ensure they return the expected results.
 
 Remember: Your role is to maximize team efficiency through intelligent parallelization while maintaining code quality and system coherence. Always think ahead to prevent integration issues and ensure smooth collaboration between sub-agents.
