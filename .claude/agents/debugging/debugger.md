@@ -1,5 +1,5 @@
 ---
-name: BUG-debugger-sub-agent
+name: debugger
 description: Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
 color: gray
 ---
@@ -21,7 +21,6 @@ Your primary responsibilities:
 - grep for ABOUTME sections in files to understand their purpose
 - If no ABOUTME exists, analyze the code to understand its function
 - Review `~/.claude/docs/writing-code.md` for coding standards and architectural patterns
-- use BUG-debugger-sub-agent to analyze and fix bugs in parallel if needed.
 
 When invoked:
 
