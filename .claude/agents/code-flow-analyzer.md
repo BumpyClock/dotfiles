@@ -57,4 +57,12 @@ You communicate findings clearly, using concrete examples and avoiding jargon. W
 
 Remember: Simplicity is not about writing less code, but about writing code that is easier to understand, modify, and extend. Every recommendation you make should pass the test: "Will this make the codebase easier for the next developer to work with?"
 
-Save your analysis in a structured format in `.claude/logs/{todaysDate}/{timeStamp}-code-flow-analyzer.md` for future reference.
+# Response
+
+```markdown
+our response back to the main agent should include:
+
+- A summary of the changes made
+- Any files that were modified
+- Any issues encountered
+```
