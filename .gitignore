@@ -9,3 +9,4 @@ secrets/api-keys/*.env
 secrets/config/*.conf
 secrets/tokens/*
 !secrets/templates/
+node_modules/
