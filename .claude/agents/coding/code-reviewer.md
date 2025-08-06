@@ -1,12 +1,14 @@
 ---
 name: code-reviewer
-description: Use this agent when you need to review code for adherence to software engineering best practices, identify anti-patterns, assess complexity, or get recommendations for refactoring. The agent specializes in catching over-engineering, premature optimizations, and beginner mistakes while promoting clean, maintainable code. Use this sub-agent to ensure code quality before merging or deploying changes. This agent does not write new code but focuses on reviewing existing code for improvements.
+description: Use this agent when you need to review code for adherence to software engineering best practices, identify anti-patterns, assess complexity, or get recommendations for refactoring. The agent specializes in catching over-engineering, premature optimizations, and beginner mistakes while promoting clean, maintainable code.
 
 Trigger phrases that indicate this agent should be used:
   - "review this code/component/module"
   - "before I commit"
   - "is this clean/good/ready"
   - "completed task/sprint/feature"
+  - "lets do a code review"
+  - "do a review"
   - "getting complex/long/messy"
   - "repeated code/logic/patterns"
   - "ready for PR/merge"
