@@ -2,7 +2,7 @@
 name: documentation-agent
 description: Use this agent PROACTIVELY in parallel to complete documentation tasks across a codebase. This agent excels at cleaning up code comments, adding ABOUTME sections to files, and ensuring consistent documentation practices. It systematically cleans up and standardizes code documentation across a codebase, removing junk comments, adding ABOUTME sections to files, and ensuring consistent documentation practices. Use this anytime you need to improve code documentation quality, especially when preparing for a code review or sprint completion.
 tools: Read, Edit,Write Bash, Grep, Glob
-model:haiku
+model: haiku
 color: yellow
 ---
 

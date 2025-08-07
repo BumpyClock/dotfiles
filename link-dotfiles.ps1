@@ -6,7 +6,10 @@ param(
     
     [Parameter()]
     [Alias("h")]
-    [switch]$Help
+    [switch]$Help,
+    
+    [Parameter()]
+    [string]$ProjectAgents
 )
 
 # Enable strict mode
@@ -221,6 +224,50 @@ function Invoke-LinkPowerShellProfiles {
     }
 }
 
+# Function to link agents folder to project directory
+function Invoke-LinkProjectAgents {
+    param([string]$ProjectPath)
+    
+    Write-Status "Linking agents folder to project directory..."
+    
+    # Validate project path
+    if (-not (Test-Path $ProjectPath)) {
+        Write-Error "Project directory does not exist: $ProjectPath"
+        return $false
+    }
+    
+    # Check if it's a valid directory
+    if (-not (Get-Item $ProjectPath).PSIsContainer) {
+        Write-Error "Project path is not a directory: $ProjectPath"
+        return $false
+    }
+    
+    # Source agents folder
+    $agentsSource = Join-Path $DOTFILES_DIR ".claude\agents"
+    if (-not (Test-Path $agentsSource)) {
+        Write-Error "Agents folder not found in dotfiles: $agentsSource"
+        return $false
+    }
+    
+    # Target path in project directory
+    $claudeProjectDir = Join-Path $ProjectPath ".claude"
+    $agentsTarget = Join-Path $claudeProjectDir "agents"
+    
+    # Create .claude directory in project if it doesn't exist
+    if (-not (Test-Path $claudeProjectDir)) {
+        New-Item -ItemType Directory -Path $claudeProjectDir -Force | Out-Null
+        Write-Status "Created .claude directory in project: $claudeProjectDir"
+    }
+    
+    # Create the symlink
+    if (New-Symlink -Source $agentsSource -Target $agentsTarget) {
+        Write-Status "Successfully linked agents folder to project: $ProjectPath"
+        return $true
+    } else {
+        return $false
+    }
+}
+
 # Function to show current symlinks
 function Show-Symlinks {
     Write-Status "Current dotfile symlinks:"
@@ -279,10 +326,14 @@ function Show-Help {
     Write-Host "Create symlinks for dotfiles from $DOTFILES_DIR to home directory"
     Write-Host ""
     Write-Host "Options:"
-    Write-Host "  -Show         Show current symlinks"
-    Write-Host "  -Help, -h     Show this help message"
+    Write-Host "  -Show                  Show current symlinks"
+    Write-Host "  -Help, -h             Show this help message"
+    Write-Host "  -ProjectAgents PATH   Link .claude/agents folder to specified project directory"
     Write-Host ""
-    Write-Host "Without options, creates/updates all symlinks"
+    Write-Host "Examples:"
+    Write-Host "  .\link-dotfiles.ps1                           # Create all standard symlinks"
+    Write-Host "  .\link-dotfiles.ps1 -ProjectAgents C:\myapp   # Link agents to C:\myapp\.claude\agents"
+    Write-Host "  .\link-dotfiles.ps1 -Show                     # Show current symlinks"
     Write-Host ""
     Write-Host "Note: This script requires Administrator privileges to create symbolic links"
 }
@@ -293,6 +344,26 @@ if ($Help) {
 }
 elseif ($Show) {
     Show-Symlinks
+}
+elseif ($ProjectAgents) {
+    # Check if running as administrator
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Error "This script must be run as Administrator to create symbolic links"
+        Write-Host ""
+        Write-Host "Please run PowerShell as Administrator and try again"
+        exit 1
+    }
+    
+    # Link agents folder to project directory
+    if (Invoke-LinkProjectAgents -ProjectPath $ProjectAgents) {
+        Write-Host ""
+        Write-Status "✓ Agents folder linked successfully to project!" -Color Green
+    } else {
+        Write-Host ""
+        Write-Error "Failed to link agents folder to project"
+        exit 1
+    }
 }
 else {
     # Check if running as administrator

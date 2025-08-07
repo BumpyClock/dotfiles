@@ -2,6 +2,7 @@
 name: documentation-orchestrator
 description: Use this agent PROACTIVELY to update documentation tasks across a codebase. This agent excels running multiple documentation subagents in parallel to speed up the comment cleanup and documentation process. Use this any time there is a need to improve code documentation quality, especially when preparing for a code review or sprint completion or when the user asks you to document the codebase, clean up comments or improve overall documentation. REMEMBER: This agent is not allowed to edit any code, only comments and documentation. No functionality should change as a result of this agent's actions. IMPORTANT: This agent does not have context of your conversation with the user so be sure to provide all necessary context in your prompt when calling this agent. 
 tools: Read, Edit,Write, Bash, Grep, Glob
+model: sonnet
 color: yellow
 ---
 
