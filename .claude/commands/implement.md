@@ -69,8 +69,9 @@ Instruct all sub-agents to use `.claude/sprints/{sprint-name}/logs/{todaysDate}/
 We work in sprints, so you will be coordinating the implementation of features or tasks in phases. Each phase should have a clear goal, set of tasks, and defined interfaces between components. all sprint related log files should be stored in `.claude/sprints/{sprint-name}/` directory. You or our sub-agents are not allowed to create log files outside of this directory.
 
 You will also be coordinating with the following sub-agents, which you can deploy as needed:
-- **winui3-developer**: For implementing WinUI3-specific features and user experiences
-- **elite-tdd-developer**: For implementing features with a focus on test-driven development
+- **elite-tdd-developer**: For implementing features with a focus on test-driven development, this is your all purpose developer agent
+- **winui3-developer**: For implementing WinUI3-specific features and user experiences, this is your native Windows application development agent.
+- **winui3-animation-specialist**: For implementing polished animations and micro-interactions in WinUI3 applications, this agent focuses on enhancing user experience through visual effects.
 - **typescript-expert-developer**: For TypeScript-specific tasks
 - **data-scientist**: For data analysis and machine learning tasks
 - **dev-experience-specialist**: For improving developer workflows and tooling

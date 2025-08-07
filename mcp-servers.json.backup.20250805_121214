@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "Figma Dev Mode MCP": {
-            "type": "http",
+            "type": "sse",
             "url": "http://127.0.0.1:3845/sse"
         },
         "context7": {
@@ -67,17 +67,52 @@
         },
         "supabase": {
             "type": "stdio",
-            "command": "cmd",
+            "command": "npx",
             "args": [
-                "/c",
-                "npx",
                 "-y",
                 "@supabase/mcp-server-supabase@latest",
                 "--read-only",
                 "--project-ref=<project-ref>"
             ],
             "env": {
-                "SUPABASE_ACCESS_TOKEN": "<personal-access-token>"
+                "SUPABASE_ACCESS_TOKEN": "YOUR_TOKEN_HERE"
+            }
+        },
+        "brave-search": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-brave-search"
+            ],
+            "env": {
+                "BRAVE_API_KEY": "YOUR_API_KEY_HERE"
+            }
+        },
+        "python-sandbox": {
+            "type": "stdio",
+            "command": "deno",
+            "args": [
+                "run",
+                "-N",
+                "-R=node_modules",
+                "-W=node_modules",
+                "--node-modules-dir=auto",
+                "jsr:@pydantic/mcp-run-python",
+                "stdio"
+            ]
+        },
+        "node-code-sandbox-mcp": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "node-code-sandbox-mcp"
+            ],
+            "env": {
+                "FILES_DIR": "/Users/alfonsograziano/Desktop/node-sandbox",
+                "SANDBOX_MEMORY_LIMIT": "512m",
+                "SANDBOX_CPU_LIMIT": "0.75"
             }
         }
     }

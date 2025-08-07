@@ -1,3 +1,12 @@
 .DS_Store
 __pycache__
 *.py[cod]
+
+# Secrets submodule - don't ignore the submodule itself, 
+# but do ignore any local secret files that might accidentally get created
+secrets/*.env
+secrets/api-keys/*.env
+secrets/config/*.conf
+secrets/tokens/*
+!secrets/templates/
+node_modules/

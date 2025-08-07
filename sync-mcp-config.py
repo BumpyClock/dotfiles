@@ -57,11 +57,111 @@ def is_api_key_placeholder(value):
     value_upper = value.upper()
     return any(pattern in value_upper for pattern in placeholder_patterns) or value == ''
 
-def prompt_for_api_keys(servers):
+def get_secrets_env_path():
+    """Get the path to the secrets environment file."""
+    dotfiles_dir = Path(__file__).parent
+    secrets_dir = dotfiles_dir / "secrets"
+    api_keys_dir = secrets_dir / "api-keys"
+    
+    # Create api-keys directory if it doesn't exist
+    api_keys_dir.mkdir(parents=True, exist_ok=True)
+    
+    return api_keys_dir / "mcp-env.json"
+
+def load_secrets_env():
+    """Load API keys from the secrets repository."""
+    secrets_file = get_secrets_env_path()
+    
+    if not secrets_file.exists():
+        print(f"No secrets file found at {secrets_file}")
+        return {}
+    
+    try:
+        with open(secrets_file, 'r', encoding='utf-8') as f:
+            secrets_data = json.load(f)
+            # Filter out comment fields
+            return {k: v for k, v in secrets_data.items() if not k.startswith('_')}
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        print(f"Warning: Could not load secrets from {secrets_file}: {e}")
+        return {}
+
+def save_secrets_env(secrets_env):
+    """Save API keys to the secrets repository."""
+    secrets_file = get_secrets_env_path()
+    
+    # Load existing data to preserve comments
+    existing_data = {}
+    if secrets_file.exists():
+        try:
+            with open(secrets_file, 'r', encoding='utf-8') as f:
+                existing_data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            pass
+    
+    # Preserve comment fields
+    final_data = {k: v for k, v in existing_data.items() if k.startswith('_')}
+    final_data.update(secrets_env)
+    
+    # Write the updated secrets
+    with open(secrets_file, 'w', encoding='utf-8') as f:
+        json.dump(final_data, f, indent=2)
+    
+    print(f"Saved API keys to {secrets_file}")
+
+def merge_secrets_with_servers(servers, secrets_env):
+    """Merge secrets environment variables into server configurations."""
+    updated_servers = json.loads(json.dumps(servers))  # Deep copy
+    
+    for server_name, server_config in updated_servers.items():
+        if server_name in secrets_env and 'env' in server_config:
+            server_secrets = secrets_env[server_name]
+            
+            for env_key, env_value in server_config['env'].items():
+                # If we have a secret for this env var and current value is placeholder
+                if env_key in server_secrets and is_api_key_placeholder(str(env_value)):
+                    secret_value = server_secrets[env_key]
+                    # Only use the secret if it's not a placeholder itself
+                    if not is_api_key_placeholder(str(secret_value)):
+                        updated_servers[server_name]['env'][env_key] = secret_value
+                        print(f"    Loaded secret for {server_name}.{env_key}")
+    
+    return updated_servers
+
+def extract_secrets_from_servers(servers):
+    """Extract environment variables from servers to create secrets structure."""
+    secrets_env = {}
+    
+    for server_name, server_config in servers.items():
+        if 'env' in server_config and isinstance(server_config['env'], dict):
+            server_env = {}
+            for env_key, env_value in server_config['env'].items():
+                # Only extract if it looks like an API key and is not a placeholder
+                if (any(keyword in env_key.upper() for keyword in ['API', 'KEY', 'TOKEN', 'SECRET', 'PASS']) and
+                    not is_api_key_placeholder(str(env_value))):
+                    server_env[env_key] = env_value
+            
+            if server_env:
+                secrets_env[server_name] = server_env
+    
+    return secrets_env
+
+def prompt_for_api_keys(servers, sync_secrets=False):
     """Prompt user to enter API keys for any placeholders found."""
+    # Load existing secrets first
+    secrets_env = {}
+    if sync_secrets:
+        print("\n=== LOADING SECRETS ===")
+        secrets_env = load_secrets_env()
+        if secrets_env:
+            print(f"Loaded secrets for {len(secrets_env)} servers from secrets repository")
+            # Merge existing secrets into servers
+            servers = merge_secrets_with_servers(servers, secrets_env)
+        else:
+            print("No existing secrets found")
+    
     api_keys_needed = []
     
-    # Find all API key placeholders
+    # Find all API key placeholders (after loading secrets)
     for server_name, server_config in servers.items():
         if 'env' in server_config and isinstance(server_config['env'], dict):
             for env_key, env_value in server_config['env'].items():
@@ -75,6 +175,7 @@ def prompt_for_api_keys(servers):
     print(f"Found {len(api_keys_needed)} API key(s) that need to be configured:\n")
     
     updated_servers = json.loads(json.dumps(servers))  # Deep copy
+    new_secrets = {}
     
     for server_name, env_key, current_value in api_keys_needed:
         print(f"Server: {server_name}")
@@ -96,8 +197,28 @@ def prompt_for_api_keys(servers):
             
             # Update the server config
             updated_servers[server_name]['env'][env_key] = api_key
+            
+            # Track new secrets for saving
+            if sync_secrets:
+                if server_name not in new_secrets:
+                    new_secrets[server_name] = {}
+                new_secrets[server_name][env_key] = api_key
+            
             print("[OK] API key updated\n")
             break
+    
+    # Save new secrets to repository
+    if sync_secrets and new_secrets:
+        print("\n=== SAVING SECRETS ===")
+        # Merge with existing secrets
+        updated_secrets_env = dict(secrets_env)
+        for server_name, server_secrets in new_secrets.items():
+            if server_name not in updated_secrets_env:
+                updated_secrets_env[server_name] = {}
+            updated_secrets_env[server_name].update(server_secrets)
+        
+        save_secrets_env(updated_secrets_env)
+        print(f"Saved {len(new_secrets)} new API key(s) to secrets repository")
     
     return updated_servers
 
@@ -458,7 +579,7 @@ def merge_server_config_preserve_api_keys(source_config, existing_config):
     
     return merged_config
 
-def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
+def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False, sync_secrets=False):
     """Push MCP servers from mcp-servers.json to ~/.claude.json"""
     print("\n=== PUSH MODE: mcp-servers.json -> ~/.claude.json ===")
     
@@ -489,7 +610,7 @@ def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, h
     
     # Prompt for API keys if needed (not in dry run mode)
     if not dry_run:
-        source_servers = prompt_for_api_keys(source_servers)
+        source_servers = prompt_for_api_keys(source_servers, sync_secrets=sync_secrets)
     
     # Apply Windows command wrapping if on Windows
     if is_windows():
@@ -539,7 +660,7 @@ def push_to_claude_config(mcp_servers_file, claude_config_file, dry_run=False, h
     print(f"\n[OK] Successfully updated {claude_config_file}")
     print(f"Total MCP servers in config: {len(updated_config.get('mcpServers', {}))}")
 
-def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False):
+def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False, health_check=False, sync_secrets=False):
     """Pull MCP servers from ~/.claude.json to mcp-servers.json"""
     print("\n=== PULL MODE: ~/.claude.json -> mcp-servers.json ===")
     
@@ -570,7 +691,7 @@ def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False,
     
     # Prompt for API keys if needed (not in dry run mode)
     if not dry_run:
-        claude_servers = prompt_for_api_keys(claude_servers)
+        claude_servers = prompt_for_api_keys(claude_servers, sync_secrets=sync_secrets)
     
     # Health check if requested
     if health_check:
@@ -602,6 +723,24 @@ def pull_from_claude_config(mcp_servers_file, claude_config_file, dry_run=False,
     print("\n=== PORTABILITY ===")
     print("Unwrapping Windows 'cmd /c' wrappers for cross-platform compatibility...")
     claude_servers = unwrap_servers_from_windows(claude_servers)
+    
+    # Extract and save secrets if sync_secrets is enabled
+    if sync_secrets and not dry_run:
+        print("\n=== EXTRACTING SECRETS ===")
+        extracted_secrets = extract_secrets_from_servers(claude_servers)
+        if extracted_secrets:
+            # Load existing secrets and merge
+            existing_secrets = load_secrets_env()
+            merged_secrets = dict(existing_secrets)
+            for server_name, server_secrets in extracted_secrets.items():
+                if server_name not in merged_secrets:
+                    merged_secrets[server_name] = {}
+                merged_secrets[server_name].update(server_secrets)
+            
+            save_secrets_env(merged_secrets)
+            print(f"Extracted and saved secrets for {len(extracted_secrets)} servers")
+        else:
+            print("No secrets found to extract")
     
     # Sanitize API keys for security
     print("\n=== SECURITY ===")
@@ -653,6 +792,9 @@ Examples:
   %(prog)s pull         # Pull from ~/.claude.json to mcp-servers.json
   %(prog)s --dry-run    # Preview changes without applying them
   %(prog)s --health-check # Check server health before syncing
+  %(prog)s --sync-secrets # Load/save API keys from secrets repository
+  %(prog)s push --sync-secrets # Push with automatic secrets loading
+  %(prog)s pull --sync-secrets # Pull and extract secrets to repository
   %(prog)s pull --dry-run --health-check # Full preview with health check
         ''')
     
@@ -676,6 +818,12 @@ Examples:
         help='Check if configured MCP servers are accessible before syncing'
     )
     
+    parser.add_argument(
+        '--sync-secrets',
+        action='store_true',
+        help='Load API keys from secrets repository and save new keys back to secrets'
+    )
+    
     args = parser.parse_args()
     
     # Define paths
@@ -688,10 +836,10 @@ Examples:
     
     if args.mode == 'push':
         push_to_claude_config(mcp_servers_file, claude_config_file, 
-                             dry_run=args.dry_run, health_check=args.health_check)
+                             dry_run=args.dry_run, health_check=args.health_check, sync_secrets=args.sync_secrets)
     else:  # pull
         pull_from_claude_config(mcp_servers_file, claude_config_file, 
-                               dry_run=args.dry_run, health_check=args.health_check)
+                               dry_run=args.dry_run, health_check=args.health_check, sync_secrets=args.sync_secrets)
 
 if __name__ == "__main__":
     main()
