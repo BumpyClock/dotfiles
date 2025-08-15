@@ -8,7 +8,19 @@
       "Bash(git add:*)",
       "Bash(git push:*)",
       "Bash(git submodule:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "mcp__sequentialthinking__sequentialthinking",
+      "Bash(uv pip install:*)",
+      "Bash(grep:*)",
+      "Bash(git init:*)",
+      "Bash(move \"mcp-tools-cli\" \"mcp-manager\")",
+      "Bash(move \"src\\mcp_tools\" \"src\\mcp_manager\")",
+      "Bash(move registry.py core )",
+      "Bash(move deployment.py core )",
+      "Bash(move platforms.py core )",
+      "Bash(move project_detection.py coreprojects.py)",
+      "Bash(mv:*)",
+      "Bash(mcp-manager:*)"
     ],
     "deny": []
   }
