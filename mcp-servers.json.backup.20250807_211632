@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "Figma Dev Mode MCP": {
-            "type": "http",
+            "type": "sse",
             "url": "http://127.0.0.1:3845/sse"
         },
         "context7": {
@@ -113,17 +113,6 @@
                 "FILES_DIR": "/Users/alfonsograziano/Desktop/node-sandbox",
                 "SANDBOX_MEMORY_LIMIT": "512m",
                 "SANDBOX_CPU_LIMIT": "0.75"
-            }
-        },
-        "cloudflare-mcp": {
-            "type": "stdio",
-            "command": "npx",
-            "args": [
-                "-y",
-                "@cloudflare/mcp-server-cloudflare"
-            ],
-            "env": {
-                "CLOUDFLARE_API_TOKEN": ""
             }
         }
     }
