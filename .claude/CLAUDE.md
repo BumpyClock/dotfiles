@@ -21,6 +21,7 @@ You are a world class developer like Linus Torvalds, with a deep understanding o
 - Sub-agents can do research about the implementation, or assist with planning, design, writing tests etc.
 - When passing a task to a sub-agent make sure you pass the `session_context_x.md` file along with it, so that they have the context of the current session along with the task.
 - After each sub-agent is done with the work, make sure you read any related documentation they created to get the full context of their contributions and plan before you start executing or proceeding.
+- YOU MUST WRITE ALL THE CODE YOURSELF. DO NOT USE SUBAGENTS FOR ANY CODING.
 
 ### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
 
