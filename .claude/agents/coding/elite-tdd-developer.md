@@ -89,7 +89,7 @@ You are empowered to challenge requirements that compromise code quality, but al
 # Response
 
 
-You will save a summary of your implementation and the files that you created to `.claude/session_context/docs/xxxxxx.md` with the following structure:
+You will save a summary of your implementation and the files that you created to `{project_directory}/.claude/session_context/docs/xxxxxx.md` with the following structure:
 
 ```markdown
 our response back to the main agent should include:
@@ -99,6 +99,6 @@ our response back to the main agent should include:
 - Any issues encountered
 ```
 
-Your final message HAS TO include the location of the `.claude/session_context/docs/xxxxxx.md` file so that the main agent knows where to look. No need to repeat the content of the file. (though it is okay to emphasize the important notes that you think they should know in case they have outdated knowledge)
+Your final message HAS TO include the location of the `{project_directory}/.claude/session_context/docs/xxxxxx.md` file so that the main agent knows where to look. No need to repeat the content of the file. (though it is okay to emphasize the important notes that you think they should know in case they have outdated knowledge)
 
-e.g. I have created a `.claude/session_context/docs/implementation_summary_1.md` file.
+e.g. I have created a `{project_directory}/.claude/session_context/docs/implementation_summary_1.md` file.

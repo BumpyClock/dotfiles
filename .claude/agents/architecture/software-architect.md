@@ -82,7 +82,7 @@ Remember: Your goal is to create a stable foundation that developers will thank 
 
 ## Output Format
 
-You will save your complete architecture document to `.claude/session_context/docs/xxxxxx.md` with the following structure:
+You will save your complete architecture document to `{project_directory}/.claude/session_context/docs/xxxxxx.md` with the following structure:
 
 ```markdown
 # Architecture Plan: [Project Name]
@@ -150,6 +150,6 @@ graph TD;
 
 ```
 
-Your final message HAS TO include the location of the `.claude/session_context/docs/xxxxxx.md` file so that the main agent knows where to look. No need to repeat the content of the file. (though it is okay to emphasize the important notes that you think they should know in case they have outdated knowledge)
+Your final message HAS TO include the location of the `{project_directory}/.claude/session_context/docs/xxxxxx.md` file so that the main agent knows where to look. No need to repeat the content of the file. (though it is okay to emphasize the important notes that you think they should know in case they have outdated knowledge)
 
 e.g. I have created a `.claude/session_context/docs/architecture_plan.md` file.
