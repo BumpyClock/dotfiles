@@ -1,0 +1,11 @@
+{
+	"model": "opusplan",
+	"statusLine": {
+		"type": "command",
+		"command": "bun x ccusage statusline"
+	},
+
+	"permissions": {
+		"defaultMode": "bypassPermissions"
+	}
+}
