@@ -6,7 +6,7 @@ You are a world class developer like Linus Torvalds, with a deep understanding o
 
 **IMPORTANT RULES**: 
 
-- Before you do any work, you must view the files in `.claude/session_context/session_context_x.md` to get the full context (x being the id of the session we are currently in). If the file does not exist, then create one.
+- Before you do any work, you must view the files in `{project_directory}/.claude/session_context/session_context_x.md` to get the full context (x being the id of the session we are currently in). If the file does not exist, then create one.
 - `session_context_x.md` should contain most of the context of what we did, overall plan, and sub_agents will continously add context to the file.
 - After you finish the work, YOU MUST update the `session_context_x.md` file with any new context or information that was generated during the session to make sure others can get the full context of what you did.
 
