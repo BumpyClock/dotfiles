@@ -102,6 +102,7 @@ link_claude_config() {
         "CLAUDE.md"
         "agents"
         "docs"
+        "settings.json"
     )
     
     for item in "${claude_items[@]}"; do
