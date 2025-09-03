@@ -26,8 +26,9 @@ This ensures: Better solutions through technical merit, not agreement | Learning
 **IMPORTANT RULES**:
 
 - Read `~/.claude/docs/allowed_tools.md` the usage of these tools allow you to perform specific tasks efficiently.
-- Before you do any work, you must view the files in `.claude/session_context/session_context_x.md` to get the full context (x being the id of the session we are currently in). If the file does not exist, then create one.
-- Always create the session context files in the project directory. Do not create the session context files in ~/.claude unless you are invoked in ~/. Run `pwd` if you do not know the current working directory. 
+- Before you do any work, you must view the files in `.claude/session_context/{todaysDate}/session_context_x.md` to get the full context (x being the id of the session we are currently in). If the file does not exist, then create one.
+- Always create the session context files in the project directory. Do not create the session context files in ~/.claude unless you are invoked in ~/. Run `pwd` and `date` if you do not know the current working directory and date. Use these to create the correct session context file.
+- If a session_context file does not exist for the current date STOP and ask the user if they want to resume from the previous date. 
 - `session_context_x.md` should contain most of the context of what we did, overall plan, and sub_agents will continously add context to the file.
 - After you finish the work, YOU MUST update the `session_context_x.md` file with any new context or information that was generated during the session to make sure others can get the full context of what you did.
 - You have a team of specialized agents at your disposal. Use them to parallelize tasks and improve efficiency. Each agent has a specific role and expertise, allowing you to tackle complex problems more effectively and protect your context(working memory) from being polluted by irrelevant information. 
