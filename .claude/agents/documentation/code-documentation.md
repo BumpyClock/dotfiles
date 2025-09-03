@@ -1,5 +1,5 @@
 ---
-name: code-documentation-enforcer
+name: code-documentation
 description: Use this agent when you need to ensure code files follow proper documentation standards, including ABOUTME headers and appropriate function documentation. Examples: <example>Context: User has just written a new Python module for data processing. user: 'I just finished writing a data processing module in Python. Can you make sure it follows our documentation standards?' assistant: 'I'll use the code-documentation-enforcer agent to review and update the documentation in your Python module to ensure it meets our standards.' <commentary>The user wants to ensure their code follows documentation standards, so use the code-documentation-enforcer agent to add ABOUTME headers and proper docstrings.</commentary></example> <example>Context: User is working on a JavaScript project and wants to clean up comments. user: 'This JavaScript file has gotten messy with comments. Can you clean it up according to our standards?' assistant: 'I'll use the code-documentation-enforcer agent to clean up the comments and ensure proper JSDoc documentation in your JavaScript file.' <commentary>The user wants comment cleanup and proper documentation, which is exactly what the code-documentation-enforcer agent handles.</commentary></example>
 tools: Edit, MultiEdit, Write, NotebookEdit, Glob, Grep, LS, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash, ListMcpResourcesTool, ReadMcpResourceTool
 model: haiku
@@ -21,6 +21,8 @@ Before making any changes, analyze if the file already meets standards:
    # ABOUTME: Brief description of file purpose
    # ABOUTME: Additional context about what the file contains
    ```
+   Make sure the ABOUTME header is present and accurately describes the file's purpose and contents.
+   Make sure the ABOUTME header follows the language-specific conventions for comments.
 
 2. **Function Documentation**: Use language-appropriate formats:
    - **Python**: Triple-quoted docstrings with Args/Returns for IDE IntelliSense
