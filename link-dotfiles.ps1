@@ -141,7 +141,8 @@ function Invoke-LinkClaudeConfig {
         "commands",
         "CLAUDE.md",
         "agents",
-        "docs"
+        "docs",
+        "settings.json"
     )
     
     foreach ($item in $claudeItems) {

@@ -1,13 +1,14 @@
 {
-	"permissions": {
-		"defaultMode": "bypassPermissions"
-	},
-	"statusLine": {
-		"type": "command",
-		"command": "bun x ccusage statusline"
-	},
-	"model": "opusplan",
-	"env": {
-		"MAX_THINKING_TOKENS": "32000"
-	}
+  "env": {
+    "MAX_THINKING_TOKENS": "32000"
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "model": "opusplan",
+  "statusLine": {
+    "type": "command",
+    "command": "bun x ccusage statusline"
+  }
 }
