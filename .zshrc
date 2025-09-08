@@ -158,3 +158,7 @@ eval "$(starship init zsh)"
 # 6. GitHub CLI functions loaded on demand
 # 7. Removed unused functions and complexity
 # =============================================================================
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/adityasharma/.lmstudio/bin"
+# End of LM Studio CLI section
+
