@@ -115,7 +115,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opus",
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
