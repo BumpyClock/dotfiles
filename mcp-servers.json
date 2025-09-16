@@ -31,6 +31,15 @@
                 "@playwright/mcp@latest"
             ]
         },
+        "browsermcp": {
+            "command": "cmd",
+            "args": [
+                "/c",
+                "npx",
+                "-y",
+                "@browsermcp/mcp@latest"
+            ]
+        },
         "fetch": {
             "type": "stdio",
             "command": "uvx",
@@ -46,6 +55,30 @@
                 "duckduckgo-mcp-server"
             ],
             "env": {}
+        },
+        "shadcn-mcp": {
+            "type": "stdio",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "npx",
+                "@jpisnice/shadcn-ui-mcp-server",
+                "--github-api-key",
+                "YOUR_TOKEN_HERE"
+            ]
+        },
+        "shadcn-themes": {
+            "command": "cmd",
+            "args": [
+                "/c",
+                "npx",
+                "-y",
+                "shadcn@canary",
+                "registry:mcp"
+            ],
+            "env": {
+                "REGISTRY_URL": "https://tweakcn.com/r/themes/registry.json"
+            }
         },
         "sequentialthinking": {
             "type": "stdio",
@@ -110,7 +143,7 @@
                 "node-code-sandbox-mcp"
             ],
             "env": {
-                "FILES_DIR": "/Users/alfonsograziano/Desktop/node-sandbox",
+                "FILES_DIR": "/Users/adityasharma/Desktop/node-sandbox",
                 "SANDBOX_MEMORY_LIMIT": "512m",
                 "SANDBOX_CPU_LIMIT": "0.75"
             }
