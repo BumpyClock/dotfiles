@@ -33,6 +33,8 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 create_symlink() {
     local source="$1"
     local target="$2"
+    local target_dir="$(dirname "$target")"
+    mkdir -p "$target_dir"
     
     # Check if source exists
     if [[ ! -e "$source" ]]; then
@@ -93,15 +95,13 @@ link_dotfiles() {
 link_claude_config() {
     print_status "Linking Claude configuration..."
     
-    # Create ~/.claude directory if it doesn't exist
+    # Create ~/.claude and ~/.codex directories if they don't exist
     mkdir -p "$HOME/.claude"
+    mkdir -p "$HOME/.codex"
     
-    # Claude configuration files and directories
+    # Items that remain stored under .claude in the repo
     local claude_items=(
-        "commands"
-        "CLAUDE.md"
         "agents"
-        "docs"
         "settings.json"
     )
     
@@ -113,6 +113,23 @@ link_claude_config() {
             create_symlink "$source" "$target"
         fi
     done
+    
+    local ai_dir="$DOTFILES_DIR/.ai_agents"
+    
+    if [[ -d "$ai_dir/prompts" ]]; then
+        create_symlink "$ai_dir/prompts" "$HOME/.claude/commands"
+        create_symlink "$ai_dir/prompts" "$HOME/.codex/prompts"
+    fi
+    
+    if [[ -f "$ai_dir/AGENTS.md" ]]; then
+        create_symlink "$ai_dir/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+        create_symlink "$ai_dir/AGENTS.md" "$HOME/.codex/AGENTS.md"
+    fi
+    
+    if [[ -d "$ai_dir/docs" ]]; then
+        create_symlink "$ai_dir/docs" "$HOME/.claude/docs"
+        create_symlink "$ai_dir/docs" "$HOME/.codex/docs"
+    fi
 }
 
 # Function to link config directories
