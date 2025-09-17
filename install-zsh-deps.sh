@@ -229,12 +229,22 @@ create_symlinks() {
     ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
     # Symlink Claude files if they exist
     if [ -d "$DOTFILES_DIR/.claude" ]; then
-        [ -d "$DOTFILES_DIR/.claude/commands" ] && ln -sf "$DOTFILES_DIR/.claude/commands" "$HOME/.claude/commands"
-        [ -f "$DOTFILES_DIR/.claude/CLAUDE.md" ] && ln -sf "$DOTFILES_DIR/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
         [ -d "$DOTFILES_DIR/.claude/agents" ] && ln -sf "$DOTFILES_DIR/.claude/agents" "$HOME/.claude/agents"
-        [ -d "$DOTFILES_DIR/.claude/docs" ] && ln -sf "$DOTFILES_DIR/.claude/docs" "$HOME/.claude/docs"
+        [ -f "$DOTFILES_DIR/.claude/settings.json" ] && ln -sf "$DOTFILES_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
     else
         print_warning "No .claude directory found in dotfiles"
+    fi
+
+    if [ -d "$DOTFILES_DIR/.ai_agents" ]; then
+        mkdir -p "$HOME/.codex"
+        [ -d "$DOTFILES_DIR/.ai_agents/prompts" ] && ln -sf "$DOTFILES_DIR/.ai_agents/prompts" "$HOME/.claude/commands"
+        [ -d "$DOTFILES_DIR/.ai_agents/prompts" ] && ln -sf "$DOTFILES_DIR/.ai_agents/prompts" "$HOME/.codex/prompts"
+        [ -f "$DOTFILES_DIR/.ai_agents/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/.ai_agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+        [ -f "$DOTFILES_DIR/.ai_agents/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/.ai_agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+        [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.claude/docs"
+        [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.codex/docs"
+    else
+        print_warning "No .ai_agents directory found in dotfiles"
     fi
     print_status "Symlinks created successfully"
 }

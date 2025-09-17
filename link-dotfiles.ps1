@@ -130,18 +130,20 @@ function Invoke-LinkDotfiles {
 function Invoke-LinkClaudeConfig {
     Write-Status "Linking Claude configuration..."
     
-    # Create ~/.claude directory if it doesn't exist
+    # Create ~/.claude and ~/.codex directories if they don't exist
     $claudeDir = "$env:USERPROFILE\.claude"
     if (-not (Test-Path $claudeDir)) {
         New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
     }
     
-    # Claude configuration files and directories
+    $codexDir = "$env:USERPROFILE\.codex"
+    if (-not (Test-Path $codexDir)) {
+        New-Item -ItemType Directory -Path $codexDir -Force | Out-Null
+    }
+    
+    # Items that remain stored under .claude in the repo
     $claudeItems = @(
-        "commands",
-        "CLAUDE.md",
         "agents",
-        "docs",
         "settings.json"
     )
     
@@ -151,6 +153,23 @@ function Invoke-LinkClaudeConfig {
         
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $target | Out-Null
+        }
+    }
+    
+    $aiDir = Join-Path $DOTFILES_DIR ".ai_agents"
+    
+    $aiLinks = @(
+        @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
+        @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
+        @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) }
+    )
+    
+    foreach ($link in $aiLinks) {
+        $source = $link.Source
+        if (Test-Path $source) {
+            foreach ($target in $link.Targets) {
+                New-Symlink -Source $source -Target $target | Out-Null
+            }
         }
     }
 }
