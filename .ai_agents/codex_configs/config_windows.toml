@@ -1,0 +1,40 @@
+projects = { 'C:\Users\adity\Projects\mcp-manager' = { trust_level = "trusted" } , 'C:\Users\adity' = { trust_level = "trusted" } , 'C:\Users\adity\Projects\Digests-Windows' = { trust_level = "trusted" } }
+sandbox_mode = "workspace-write"
+model = "gpt-5-codex"
+
+[mcp_servers.docker]
+command = "cmd"
+args = ["/c", "docker", "mcp", "gateway", "run"]
+env = { "LOCALAPPDATA" = "C:\\Users\\adity\\AppData\\Local", "ProgramFiles" = "C:\\Program Files" }
+startup_timeout_ms = 40_000
+
+[mcp_servers.context7]
+type = "stdio"
+command = "cmd"
+args = ["-y", "@upstash/context7-mcp"]
+startup_timeout_ms = 40_000
+
+[mcp_servers.exa-search]
+command = "cmd"
+args = ["/c", "npx", "-y", "exa-mcp-server"]
+env = { "EXA_API_KEY" = "e779d92c-3c66-4209-85dd-ccf6a96fd89b" }
+startup_timeout_ms = 40_000
+
+[mcp_servers.duckduckgo]
+command = "cmd"
+args = ["/c", "uvx", "duckduckgo-mcp-server"]
+startup_timeout_ms = 40_000
+
+[mcp_servers.sequentialthinking]
+command = "cmd"
+args = ["/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+startup_timeout_ms = 40_000
+
+[mcp_servers.playwright]
+command = "cmd"
+args = ["/c", "npx", "-y", "@playwright/mcp@latest"]
+env = {}
+startup_timeout_ms = 40_000
+
+[tools]
+web_search = true
