@@ -34,3 +34,10 @@ One message = all related operations (batch everything).
 ## Writing code
 
 When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
+
+## Tooling & Shell Usage (When using Windows only)
+
+When using Windows, you **MUST** follow these guidelines when using shell commands:
+- Prefer the bundled bash helpers (`bash -lc`) when invoking shell commands; always set the `workdir` parameter.
+- Use `rg`/`rg --files` for searches; fall back only if unavailable.
+- Avoid PowerShell-specific commands.
