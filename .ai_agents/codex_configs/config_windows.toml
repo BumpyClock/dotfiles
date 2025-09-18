@@ -2,39 +2,27 @@ projects = { 'C:\Users\adity\Projects\mcp-manager' = { trust_level = "trusted" }
 sandbox_mode = "workspace-write"
 model = "gpt-5-codex"
 
-[mcp_servers.docker]
-command = "cmd"
-args = ["/c", "docker", "mcp", "gateway", "run"]
-env = { "LOCALAPPDATA" = "C:\\Users\\adity\\AppData\\Local", "ProgramFiles" = "C:\\Program Files" }
-startup_timeout_ms = 40_000
-
-[mcp_servers.context7]
-type = "stdio"
-command = "cmd"
-args = ["-y", "@upstash/context7-mcp"]
-startup_timeout_ms = 40_000
 
 [mcp_servers.exa-search]
-command = "cmd"
-args = ["/c", "npx", "-y", "exa-mcp-server"]
-env = { "EXA_API_KEY" = "e779d92c-3c66-4209-85dd-ccf6a96fd89b" }
-startup_timeout_ms = 40_000
+command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\47404_1758048379606\\npx.cmd"
+args = [ "-y", "exa-mcp-server"]
+env = { "EXA_API_KEY" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989", APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
+startup_timeout_ms = 20_000
 
-[mcp_servers.duckduckgo]
-command = "cmd"
-args = ["/c", "uvx", "duckduckgo-mcp-server"]
-startup_timeout_ms = 40_000
 
 [mcp_servers.sequentialthinking]
-command = "cmd"
-args = ["/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\47404_1758048379606\\npx.cmd"
+args = [ "-y", "@modelcontextprotocol/server-sequential-thinking"]
+env = { APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
 startup_timeout_ms = 40_000
 
-[mcp_servers.playwright]
-command = "cmd"
-args = ["/c", "npx", "-y", "@playwright/mcp@latest"]
-env = {}
+[mcp_servers.serena]
+command = "C:\\Users\\adityasharma\\.local\\bin\\uvx.exe"
+args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "codex"]
+env = { APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
 startup_timeout_ms = 40_000
+
+
 
 [tools]
 web_search = true
