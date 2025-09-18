@@ -10,3 +10,4 @@ secrets/config/*.conf
 secrets/tokens/*
 !secrets/templates/
 node_modules/
+.ai_agents/session_context

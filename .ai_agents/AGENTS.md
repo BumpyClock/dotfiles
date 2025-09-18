@@ -13,8 +13,8 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 - Failure is fine—pause, find root causes, avoid band‑aids.
 
 **IMPORTANT RULES**:
-- Read ~/.claude/docs/allowed_tools.md before any work.
-- Load or create today’s ./.ai_agents/session_context/{YYYY-MM-DD}/session_context_<id>.md in the project directory (not ~/.claude unless invoked there). Use pwd and date if unsure.
+- Read ~/.ai_agents/docs/allowed_tools.md before any work.
+- Load or create today’s ./.ai_agents/session_context/{YYYY-MM-DD}/session_context_<id>.md in the project directory (not ~/.claude or ~/.ai_agents or ~/.codex unless invoked there). Use pwd and date if unsure.
 - If today’s file is missing, pause and ask whether to resume from the previous date.
 - Treat the session file as the source of truth: plan, decisions, work log. Sub-agents append to it. Update it at the end of the session.
 - Use specialized sub-agents to parallelize research, planning, and tests. Always pass the session file when delegating, and review their outputs before proceeding.
@@ -33,4 +33,5 @@ One message = all related operations (batch everything).
 
 ## Writing code
 
-When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
+When writing code you **MUST** read the `~/.ai_agents/docs/writing-code.md` file for coding guidelines. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
+- use serena to navigate the codebase and to make edits if effective
