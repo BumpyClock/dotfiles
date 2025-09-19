@@ -158,3 +158,4 @@ eval "$(starship init zsh)"
 # 6. GitHub CLI functions loaded on demand
 # 7. Removed unused functions and complexity
 # =============================================================================
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
