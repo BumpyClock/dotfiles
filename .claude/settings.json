@@ -122,5 +122,6 @@
   },
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  }
+  },
+  "enableAllProjectMcpServers": true
 }
