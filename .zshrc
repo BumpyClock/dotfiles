@@ -33,12 +33,10 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # LAZY LOADING FOR HEAVY TOOLS
 # =============================================================================
 
-# Lazy load fnm (only when using node)
-fnm() {
-    unfunction fnm
-    eval "$(command fnm env)"
-    fnm "$@"
-}
+# Ensure Node (fnm) is initialized early so tools like pnpm work at login
+if [ -x "$HOME/.local/share/fnm/fnm" ]; then
+  eval "$("$HOME/.local/share/fnm/fnm" env --use-on-cd)"
+fi
 
 # Lazy load conda (only when needed)
 conda() {
@@ -159,3 +157,7 @@ eval "$(starship init zsh)"
 # 7. Removed unused functions and complexity
 # =============================================================================
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/adityasharma/.lmstudio/bin"
+# End of LM Studio CLI section

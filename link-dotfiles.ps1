@@ -46,6 +46,24 @@ function Write-Action {
     Write-Host "[ACTION] $Message" -ForegroundColor $colors.Blue
 }
 
+function Get-SymlinkItem {
+    param(
+        [string]$Path
+    )
+
+    try {
+        $item = Get-Item -LiteralPath $Path -Force -ErrorAction Stop
+    }
+    catch {
+        return $null
+    }
+
+    if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+        return $item
+    }
+
+    return $null
+}
 # Get dotfiles directory (where this script is located)
 $DOTFILES_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
@@ -72,10 +90,10 @@ function New-Symlink {
     if ((Test-Path $Target) -and ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
         $currentTarget = (Get-Item $Target -Force).Target
         if ($currentTarget -eq $Source) {
-            Write-Status "Already linked correctly: $Source → $Target"
+            Write-Status "Already linked correctly: $Source -> $Target"
             return $true
         } else {
-            Write-Warning "Removing incorrect symlink: $Target → $currentTarget"
+            Write-Warning "Removing incorrect symlink: $Target -> $currentTarget"
             Remove-Item $Target -Force
         }
     }
@@ -83,7 +101,7 @@ function New-Symlink {
     # If target exists and is not a symlink, back it up
     if ((Test-Path $Target) -and -not ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
         $backup = "${Target}.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-        Write-Warning "Backing up existing file: $Target → $backup"
+        Write-Warning "Backing up existing file: $Target -> $backup"
         Move-Item -Path $Target -Destination $backup -Force
     }
     
@@ -96,7 +114,7 @@ function New-Symlink {
         } else {
             New-Item -ItemType SymbolicLink -Path $Target -Target $Source -Force | Out-Null
         }
-        Write-Action "Linked: $Source → $Target"
+        Write-Action "Linked: $Source -> $Target"
         return $true
     }
     catch {
@@ -130,18 +148,21 @@ function Invoke-LinkDotfiles {
 function Invoke-LinkClaudeConfig {
     Write-Status "Linking Claude configuration..."
     
-    # Create ~/.claude directory if it doesn't exist
+    # Create ~/.claude and ~/.codex directories if they don't exist
     $claudeDir = "$env:USERPROFILE\.claude"
     if (-not (Test-Path $claudeDir)) {
         New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
     }
     
-    # Claude configuration files and directories
+    $codexDir = "$env:USERPROFILE\.codex"
+    if (-not (Test-Path $codexDir)) {
+        New-Item -ItemType Directory -Path $codexDir -Force | Out-Null
+    }
+    
+    # Items that remain stored under .claude in the repo
     $claudeItems = @(
-        "commands",
-        "CLAUDE.md",
         "agents",
-        "docs"
+        "settings.json"
     )
     
     foreach ($item in $claudeItems) {
@@ -150,6 +171,23 @@ function Invoke-LinkClaudeConfig {
         
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $target | Out-Null
+        }
+    }
+    
+    $aiDir = Join-Path $DOTFILES_DIR ".ai_agents"
+    
+    $aiLinks = @(
+        @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
+        @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
+        @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) }
+    )
+    
+    foreach ($link in $aiLinks) {
+        $source = $link.Source
+        if (Test-Path $source) {
+            foreach ($target in $link.Targets) {
+                New-Symlink -Source $source -Target $target | Out-Null
+            }
         }
     }
 }
@@ -272,51 +310,101 @@ function Invoke-LinkProjectAgents {
 function Show-Symlinks {
     Write-Status "Current dotfile symlinks:"
     Write-Host ""
-    
-    # Check common dotfiles
-    $files = @(
-        "$env:USERPROFILE\.gitconfig",
-        "$env:USERPROFILE\.gitignore_global"
+
+    $dotfiles = @(
+        @{ Label = ".gitconfig"; Path = "$env:USERPROFILE\.gitconfig" }
+        @{ Label = ".gitignore_global"; Path = "$env:USERPROFILE\.gitignore_global" }
     )
-    
-    foreach ($file in $files) {
-        if ((Test-Path $file) -and ((Get-Item $file -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-            $target = (Get-Item $file).Target
-            Write-Host "  $(Split-Path -Leaf $file)" -ForegroundColor $colors.Blue -NoNewline
-            Write-Host " → $target"
+
+    foreach ($entry in $dotfiles) {
+        $item = Get-SymlinkItem -Path $entry.Path
+        if ($item) {
+            Write-Host "  $($entry.Label)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($item.Target)"
         }
     }
-    
-    # Check Claude config
+
     $claudeDir = "$env:USERPROFILE\.claude"
+    $claudeLinks = @()
     if (Test-Path $claudeDir) {
+        $claudeLinks = Get-ChildItem $claudeDir -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
+    }
+
+    if ($claudeLinks.Count -gt 0) {
         Write-Host "`n  Claude configuration:" -ForegroundColor $colors.Green
-        Get-ChildItem $claudeDir | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint } | ForEach-Object {
-            Write-Host "  $($_.Name)" -ForegroundColor $colors.Blue -NoNewline
-            Write-Host " → $($_.Target)"
+        foreach ($link in $claudeLinks) {
+            Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($link.Target)"
         }
     }
-    
-    # Check .config directory
+
+    $codexDir = "$env:USERPROFILE\.codex"
+    $codexLinks = @()
+    if (Test-Path $codexDir) {
+        $codexLinks = Get-ChildItem $codexDir -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
+    }
+
+    if ($codexLinks.Count -gt 0) {
+        Write-Host "`n  Codex configuration:" -ForegroundColor $colors.Green
+        foreach ($link in $codexLinks) {
+            Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($link.Target)"
+        }
+    }
+
     $configDir = "$env:USERPROFILE\.config"
     if (Test-Path $configDir) {
-        Write-Host "`n  Config directories:" -ForegroundColor $colors.Green
         $configItems = @("starship.toml", "nvim", "alacritty", "wezterm")
-        foreach ($item in $configItems) {
-            $path = Join-Path $configDir $item
-            if ((Test-Path $path) -and ((Get-Item $path -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-                $target = (Get-Item $path).Target
-                Write-Host "  $item" -ForegroundColor $colors.Blue -NoNewline
-                Write-Host " → $target"
+        $configPrinted = $false
+
+        foreach ($itemName in $configItems) {
+            $path = Join-Path $configDir $itemName
+            $item = Get-SymlinkItem -Path $path
+            if ($item) {
+                if (-not $configPrinted) {
+                    Write-Host "`n  Config directories:" -ForegroundColor $colors.Green
+                    $configPrinted = $true
+                }
+
+                Write-Host "  $itemName" -ForegroundColor $colors.Blue -NoNewline
+                Write-Host " -> $($item.Target)"
             }
         }
     }
-    
-    # Check PowerShell profile
-    if ((Test-Path $PROFILE) -and ((Get-Item $PROFILE -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-        Write-Host "`n  PowerShell profile:" -ForegroundColor $colors.Green
-        Write-Host "  Microsoft.PowerShell_profile.ps1" -ForegroundColor $colors.Blue -NoNewline
-        Write-Host " → $((Get-Item $PROFILE).Target)"
+
+    $terminalEntries = @(
+        @{ Label = "WindowsTerminal LocalState settings.json"; Path = (Join-Path "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState" "settings.json") }
+        @{ Label = "WindowsTerminalPreview LocalState settings.json"; Path = (Join-Path "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState" "settings.json") }
+    )
+    $terminalPrinted = $false
+
+    foreach ($entry in $terminalEntries) {
+        $item = Get-SymlinkItem -Path $entry.Path
+        if ($item) {
+            if (-not $terminalPrinted) {
+                Write-Host "`n  Windows Terminal:" -ForegroundColor $colors.Green
+                $terminalPrinted = $true
+            }
+
+            Write-Host "  $($entry.Label)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($item.Target)"
+        }
+    }
+
+    $profilePaths = @($PROFILE, "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1") | Sort-Object -Unique
+    $profilePrinted = $false
+
+    foreach ($profilePath in $profilePaths) {
+        $item = Get-SymlinkItem -Path $profilePath
+        if ($item) {
+            if (-not $profilePrinted) {
+                Write-Host "`n  PowerShell profile:" -ForegroundColor $colors.Green
+                $profilePrinted = $true
+            }
+
+            Write-Host "  $(Split-Path -Leaf $profilePath)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($item.Target)"
+        }
     }
 }
 
@@ -358,7 +446,7 @@ elseif ($ProjectAgents) {
     # Link agents folder to project directory
     if (Invoke-LinkProjectAgents -ProjectPath $ProjectAgents) {
         Write-Host ""
-        Write-Status "✓ Agents folder linked successfully to project!" -Color Green
+        Write-Status "OK Agents folder linked successfully to project!" -Color Green
     } else {
         Write-Host ""
         Write-Error "Failed to link agents folder to project"
@@ -383,7 +471,7 @@ else {
     Invoke-LinkPowerShellProfiles
     
     Write-Host ""
-    Write-Status "✓ All symlinks created successfully!" -Color Green
+    Write-Status "OK All symlinks created successfully!" -Color Green
     Write-Host ""
     Write-Status "Run '.\link-dotfiles.ps1 -Show' to see all active symlinks"
 }
