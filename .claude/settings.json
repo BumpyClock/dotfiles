@@ -115,6 +115,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
+  "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
@@ -122,5 +123,6 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  }
+  },
+  "model": "opus"
 }
