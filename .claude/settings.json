@@ -115,11 +115,11 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
   },
+  "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
   }
