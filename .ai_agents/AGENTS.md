@@ -15,8 +15,8 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 
 **IMPORTANT RULES**:
 
-- Read ~/.ai_agents/docs/allowed_tools.md before any work.
-- Load or create today’s ./.ai*agents/session_context/{YYYY-MM-DD}/session_context*<id>.md in the project directory (not ~/.claude or ~/.ai_agents or ~/.codex unless invoked there). Use pwd and date if unsure.
+- Read ~/.claude/docs/allowed_tools.md before any work.
+- Load or create today’s ./.ai_agents/session_context/{YYYY-MM-DD}/session_context*<id>.md in the project directory (not ~/.claude or ~/.ai_agents or ~/.codex unless invoked there). Use pwd and date if unsure.
 - If today’s file is missing, pause and ask whether to resume from the previous date.
 - Treat the session file as the source of truth: plan, decisions, work log. Sub-agents append to it. Update it at the end of the session.
 - Use specialized sub-agents to parallelize research, planning, and tests. Always pass the session file when delegating, and review their outputs before proceeding.
@@ -40,9 +40,9 @@ When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file fo
 - use serena to navigate the codebase and to make edits if effective
 
 ## Tooling & Shell Usage (When using Windows only)
+PREFER to use the tools available to you for tasks and file operations over shell commands.
 
 When using Windows, you **MUST** follow these guidelines when using shell commands:
-
 - Prefer the bundled bash helpers (`bash -lc`) when invoking shell commands; always set the `workdir` parameter.
 - Use `rg`/`rg --files` for searches; fall back only if unavailable.
 - Avoid using scripts for read,edit,write operations; use built-in tools or serena mcp instead.
