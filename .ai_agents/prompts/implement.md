@@ -42,6 +42,8 @@ Keep track of the tasklist and mark tasks as complete when done using [x]. Instr
 - Sub-agents have no memory, to give them context use the shared session_context files. Save all files in `.claude/session_context/{todaysDate}/` directory and instruct the sub-agents to read the appropriate files and write to the appropriate files in the instruction you pass to them.
 - Instruct sub-agents that they must summarize their work in a md file in this `.claude/session_context/{todaysDate}/` directory so you can review their contributions.
 - Encourage sub-agents to be concise and focus on the most important aspects of their work in their summaries.
+- To minimize drift and ensure sub-agents stay on task, you can provide them with a copy of the original tasklist and instructions to refer back to as needed.
+- To minimize drift and ensure sub-agents stay on task, check if the tasklist contains a step 0 to set up the scaffold empty modules, API interfaces, and file structure. If it does, ensure that you spawn an agent to implement step 0 and it is completed before spawning other sub-agents to work on parallel tasks. This is **CRITICAL** to ensure that sub-agents have the necessary structure and context to work effectively and minimize drift.
 
 ### Key Constraints
 
@@ -53,3 +55,8 @@ Keep track of the tasklist and mark tasks as complete when done using [x]. Instr
 ---
 
 **Remember**: Maximize efficiency through intelligent parallelization while maintaining system coherence. Think ahead to prevent integration issues.
+
+- After each sub-agent completes their task, review their work against the tasklist to ensure all requirements are met.
+- If any sub-agent's work is incomplete or does not meet the requirements, provide clear feedback and instructions for revisions.
+- Once all sub-agents have completed their tasks satisfactorily, coordinate the integration of their contributions into a cohesive final product.- Conduct a final review of the integrated work to ensure it meets all specified requirements and quality standards before delivering it to the user.
+- Conduct a final review of the integrated work to ensure it meets all specified requirements and quality standards before delivering it to the user.
