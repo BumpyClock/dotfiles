@@ -105,6 +105,12 @@ pr() { pnpm remove "$@" }
 # UTILITY FUNCTIONS (lightweight)
 # =============================================================================
 
+# Context function for LLMs
+ctx() {
+    echo "Working Directory: $(pwd)"
+    echo "Current Date/Time: $(date '+%Y-%m-%d %H:%M:%S')"
+}
+
 # Profile management
 edit-profile() { code ~/.zshrc }
 reload-profile() { source ~/.zshrc }

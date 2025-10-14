@@ -115,6 +115,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
+  "model": "opus",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -123,6 +124,5 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  },
-  "model": "opus"
+  }
 }
