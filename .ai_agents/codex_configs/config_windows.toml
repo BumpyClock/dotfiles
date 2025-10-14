@@ -4,14 +4,14 @@ model = "gpt-5-codex"
 
 
 [mcp_servers.exa-search]
-command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\47404_1758048379606\\npx.cmd"
-args = [ "-y", "exa-mcp-server"]
+command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\5708_1759432040927\\npx.cmd"
+args = [ "-y", "exa-mcp-server@2.0.9"]
 env = { "EXA_API_KEY" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989", APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
 startup_timeout_ms = 20_000
 
 
 [mcp_servers.sequentialthinking]
-command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\47404_1758048379606\\npx.cmd"
+command = "C:\\Users\\adityasharma\\AppData\\Local\\fnm_multishells\\5708_1759432040927\\npx.cmd"
 args = [ "-y", "@modelcontextprotocol/server-sequential-thinking"]
 env = { APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
 startup_timeout_ms = 40_000

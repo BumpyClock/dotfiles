@@ -15,8 +15,8 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 
 **IMPORTANT RULES**:
 
-- Read ~/.ai_agents/docs/allowed_tools.md before any work.
-- Load or create today’s ./.ai*agents/session_context/{YYYY-MM-DD}/session_context*<id>.md in the project directory (not ~/.claude or ~/.ai_agents or ~/.codex unless invoked there). Use pwd and date if unsure.
+
+- Load or create today’s ./.ai_agents/session_context/{YYYY-MM-DD}/session_context*<id>.md in the project directory (not ~/.claude or ~/.ai_agents or ~/.codex unless invoked there). Use pwd and date if unsure.
 - If today’s file is missing, pause and ask whether to resume from the previous date.
 - Treat the session file as the source of truth: plan, decisions, work log. Sub-agents append to it. Update it at the end of the session.
 - Use specialized sub-agents to parallelize research, planning, and tests. Always pass the session file when delegating, and review their outputs before proceeding.

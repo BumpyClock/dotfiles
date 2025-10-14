@@ -1,0 +1,1 @@
+**CRITICAL** Remember to use the code-tools mcp and serena mcp if they are available for navigating the codebase vs using python, powershell or bash scripts. They provide efficient tools for searching, reading, and editing code. 
