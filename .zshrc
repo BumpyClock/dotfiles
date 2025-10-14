@@ -84,7 +84,7 @@ alias cmon='claude-monitor'
 
 # Z.AI Claude function
 claude-zai() {
-    export ANTHROPIC_AUTH_TOKEN="your_zai_api_key"
+    export ANTHROPIC_AUTH_TOKEN="6263383b95054e69b6dc3542f62f9fb1.oBmzf2yqXBGYPrjU"
     export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
     export API_TIMEOUT_MS="3000000"
     export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.5-air"
