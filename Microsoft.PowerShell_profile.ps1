@@ -45,6 +45,15 @@ function Use-Conda {
 # UTILITY FUNCTIONS
 # =============================================================================
 
+# Context function for LLMs
+function Get-Context {
+    $currentPath = Get-Location
+    $currentDateTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Write-Host "Working Directory: $currentPath"
+    Write-Host "Current Date/Time: $currentDateTime"
+}
+Set-Alias ctx Get-Context
+
 # Profile Management
 function Edit-Profile { code $PROFILE }
 function Reload-Profile { & $PROFILE }

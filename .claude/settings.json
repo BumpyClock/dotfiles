@@ -115,6 +115,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
+  "model": "opus",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
