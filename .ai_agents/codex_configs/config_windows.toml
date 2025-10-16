@@ -23,6 +23,12 @@ env = { APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C
 startup_timeout_ms = 40_000
 
 
+[mcp_servers.code-tools]
+command = "C:\\Users\\adity\\AppData\\Local\\fnm_multishells\\36892_1760635713137\\pnpx.cmd"
+args = [  "code-tools-mcp@latest"]
+env = { APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming", LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local", HOME = "C:\\Users\\adityasharma", SystemRoot = "C:\\Windows", ComSpec = "C:\\Windows\\System32\\cmd.exe" }
+startup_timeout_ms = 40_000
+
 
 [tools]
 web_search = true
