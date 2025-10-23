@@ -120,6 +120,10 @@
     "type": "command",
     "command": "bun x ccusage statusline"
   },
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true,
+    "document-skills@anthropic-agent-skills": true
+  },
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798

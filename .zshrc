@@ -19,6 +19,8 @@ source $ZSH/oh-my-zsh.sh
 # =============================================================================
 
 # Static PATH additions (no dynamic evaluations)
+eval "$(fnm env --use-on-cd --shell zsh)"
+
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/fnm:$PATH"
 export PATH="$HOME/.local/share/pnpm:$PATH"
