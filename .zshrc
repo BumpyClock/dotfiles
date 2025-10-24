@@ -179,8 +179,11 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 export PATH="$PATH:/Users/adityasharma/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
 # pnpm
-export PNPM_HOME="/Users/adityasharma/Library/pnpm"
+export PNPM_HOME="~/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
