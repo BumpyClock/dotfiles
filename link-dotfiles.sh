@@ -73,7 +73,6 @@ link_dotfiles() {
     # Define dotfiles to link
     # Format: "source:target"
     local dotfiles=(
-        ".zshrc:$HOME/.zshrc"
         ".gitconfig:$HOME/.gitconfig"
         ".gitignore_global:$HOME/.gitignore_global"
         ".tmux.conf:$HOME/.tmux.conf"
