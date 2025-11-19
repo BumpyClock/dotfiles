@@ -215,18 +215,12 @@ install_additional_tools() {
 
 # Create symlinks for dotfiles
 create_symlinks() {
-    print_status "Creating symlinks for dotfiles..."
+    print_status "Linking supporting configuration files..."
     # Detect dotfiles directory (where this script is located)
     DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     print_status "Detected dotfiles directory: $DOTFILES_DIR"
     # Create ~/.claude directory if it doesn't exist
     mkdir -p "$HOME/.claude"
-    # Symlink .zshrc
-    if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
-        print_warning "Backing up existing .zshrc to .zshrc.backup"
-        mv "$HOME/.zshrc" "$HOME/.zshrc.backup"
-    fi
-    ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
     # Symlink Claude files if they exist
     if [ -d "$DOTFILES_DIR/.claude" ]; then
         [ -d "$DOTFILES_DIR/.claude/agents" ] && ln -sf "$DOTFILES_DIR/.claude/agents" "$HOME/.claude/agents"

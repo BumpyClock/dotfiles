@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(mkdir:*)",
       "Bash(python:*)",
@@ -21,8 +20,14 @@
       "Bash(move platforms.py core )",
       "Bash(move project_detection.py coreprojects.py)",
       "Bash(mv:*)",
-      "Bash(mcp-manager:*)"
+      "Bash(mcp-manager:*)",
+      "Bash(tree:*)",
+      "Bash(pacman -Q:*)",
+      "Bash(aconfmgr:*)",
+      "Bash(sudo aconfmgr:*)",
+      "Bash(chmod:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "bypassPermissions"
   }
 }
