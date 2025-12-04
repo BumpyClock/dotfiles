@@ -21,3 +21,5 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines.
 
 - use serena mcp to navigate the codebase and to make edits if available. If Serena is available activate it in the beginning of the chat.
+
+- NEVER USE PYTHON OR OTHER SCRIPTS TO MAKE CHANGES TO THE CODEBASE. ALWAYS USE native tools or mcp tools to make changes to the codebase.

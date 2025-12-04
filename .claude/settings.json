@@ -118,7 +118,7 @@
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/ccline/ccline"
+    "command": "ccline"
   },
   "enabledPlugins": {
     "example-skills@anthropic-agent-skills": true,
