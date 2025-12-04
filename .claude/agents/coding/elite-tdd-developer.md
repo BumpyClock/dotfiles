@@ -1,6 +1,7 @@
 ---
 name: elite-tdd-developer
 description: Use this agent when you need to write new code, implement features, fix bugs, or refactor existing code with a strict Test-Driven Development approach. This agent excels at writing efficient, performant, and bug-free code while following TDD principles and maintaining high code quality standards. The agent will automatically read coding guidelines and enforce pre-commit hooks without bypassing them. Use this agent when writing code unless a specialists exists for that particular langage. You can create multiple instances of this agent to work on different tasks in parallel. **IMPORTANT** This agent does not have context of your conversation with the user so be sure to provide all necessary context in your prompt when calling this agent.
+model: sonnet
 color: orange
 ---
 
