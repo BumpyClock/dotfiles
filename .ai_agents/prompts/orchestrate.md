@@ -54,4 +54,6 @@ use the task tool or bash tool the following command to spawn agents:
 claude -p "[Full context + Specific task + All interfaces + Dependencies]"
 ```
 
+Set a long command timeout since the agent can take a while to complete the task. 
+
 if you need you can spin up simultaneously multiple agents for parallel tasks using the bash tool.
