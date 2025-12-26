@@ -25,7 +25,6 @@ eval "$(fnm env --use-on-cd --shell zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/fnm:$PATH"
-export PATH="$HOME/.local/share/pnpm:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"  # Static instead of $(go env GOPATH)
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -64,21 +63,17 @@ alias la='eza -la --group-directories-first'
 alias lt='eza --tree --git-ignore'
 
 # Git shortcuts (basic, fast)
-alias gs='git status'
-alias gp='git push'
-alias gpl='git pull'
-alias gb='git branch'
-alias gco='git checkout'
+# alias gs='git status'
+# alias gp='git push'
+# alias gpl='git pull'
+# alias gb='git branch'
+# alias gco='git checkout'
 
-# Simple function aliases
-ga() { if [ $# -eq 0 ]; then git add .; else git add "$@"; fi }
-gc() { git commit -m "$1" }
-gcom() { git add . && git commit -m "$1" }
-lazyg() { git add . && git commit -m "$1" && git push }
-
-# Task Master
-alias tm='task-master'
-alias taskmaster='task-master'
+# # Simple function aliases
+# ga() { if [ $# -eq 0 ]; then git add .; else git add "$@"; fi }
+# gc() { git commit -m "$1" }
+# gcom() { git add . && git commit -m "$1" }
+# lazyg() { git add . && git commit -m "$1" && git push }
 
 # Claude
 alias claude-yolo='claude --dangerously-skip-permissions'
@@ -101,13 +96,6 @@ claude-zai() {
 # DEVELOPMENT SHORTCUTS (essentials only)
 # =============================================================================
 
-# pnpm
-export PNPM_HOME="/Users/adityasharma/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
 
 
 eval "$(starship init zsh)"
