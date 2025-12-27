@@ -5,7 +5,9 @@ description: Run a codereview using coderabbit cli and review the output.
 
 # CodeRabbit Review
 
-Run `coderabbit --prompt-only` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working.
+Run `coderabbit --prompt-only` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working. Give it a timeout of up to 5 minutes since it can take a while on large codebases.
+
+Redirect its output to a file, e.g., `coderabbit --prompt-only > .ai_agents/coderabbit_output.txt`. Read the file once the command completes. If the file already exists, delete it first to avoid confusion.
 
 ## Workflow
 
@@ -51,3 +53,7 @@ Run `coderabbit --prompt-only` and wait for it to finish (it may take a while). 
 - **Test strategy**: Specify preferred commands and fallbacks
 - **Parallelism**: Use up to 4 sub-agents; do not overlap files
 - Run formatting and linters to ensure code quality standards are met
+
+## Optional arguments
+
+ultrathink

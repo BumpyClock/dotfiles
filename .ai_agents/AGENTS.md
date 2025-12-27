@@ -14,12 +14,16 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 - Push back when confident; cite facts and reasoning. STOP when you don't have enough information to make a decision.
 - Failure is fine—pause, find root causes, avoid band‑aids.
 - I decide you execute.
+- We strictly follow test-driven-development (TDD) practices.
+- Use subagent-driven-development whenever possible. 
 
 
 ## Writing code
 
 When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines.
 
-- use serena mcp to navigate the codebase and to make edits if available. If Serena is available activate it in the beginning of the chat.
+- use serena mcp to navigate the codebase and to make edits if available. If Serena is available activate it in the beginning of the chat. 
+Use skills whenever possible. 
+
 
 - NEVER USE PYTHON OR OTHER SCRIPTS TO MAKE CHANGES TO THE CODEBASE. ALWAYS USE native tools or mcp tools to make changes to the codebase.
