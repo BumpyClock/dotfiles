@@ -129,6 +129,11 @@ link_claude_config() {
         create_symlink "$ai_dir/docs" "$HOME/.claude/docs"
         create_symlink "$ai_dir/docs" "$HOME/.codex/docs"
     fi
+
+    if [[ -d "$ai_dir/skills" ]]; then
+        create_symlink "$ai_dir/skills" "$HOME/.claude/skills"
+        create_symlink "$ai_dir/skills" "$HOME/.codex/skills"
+    fi
 }
 
 # Function to link config directories

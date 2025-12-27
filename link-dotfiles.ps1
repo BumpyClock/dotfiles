@@ -179,7 +179,8 @@ function Invoke-LinkClaudeConfig {
     $aiLinks = @(
         @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
-        @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) }
+        @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) },
+        @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills")) }
     )
     
     foreach ($link in $aiLinks) {
