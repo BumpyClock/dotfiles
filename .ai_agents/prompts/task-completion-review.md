@@ -149,4 +149,4 @@ Your review should follow this structure:
 
 use the task tool to Execute the sub-agent with enhanced parameters:
 ```bash
-claude-yolo --model claude-opus-4-20250514 -p "{constructed_prompt}"
+ccy --model claude-opus-4-5 -p "{constructed_prompt}"
