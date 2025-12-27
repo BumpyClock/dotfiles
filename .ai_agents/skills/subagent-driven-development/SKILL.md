@@ -9,6 +9,15 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 **Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
 
+## Model Selection
+
+Decide model before spawning the implementer subagent. Default to the cheapest model that is likely to succeed.
+
+- **Simple fixes** (single-file edits, small configs, doc tweaks): run `claude-zai -p <prompt>`
+- **Medium tasks** (multi-file changes, new tests, moderate refactors): run `claude --model claude-sonnet-4-5 -p <prompt>`
+- **Complex tasks** (new features, cross-cutting changes, tricky debugging): run `claude --model claude-opus-4-5 -p <prompt>`
+- **Reviews** (spec reviewer, code quality reviewer, final reviewer): always run `codex -m gpt-5.2 exec <prompt>`
+
 ## When to Use
 
 ```dot
@@ -44,7 +53,7 @@ digraph process {
     subgraph cluster_per_task {
         label="Per Task";
         "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" [shape=box];
-        "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)" [shape=box];
+        "Spawn implementer subagent (choose model per complexity; see Model Selection)" [shape=box];
         "Implementer subagent asks questions?" [shape=diamond];
         "Answer questions, provide context" [shape=box];
         "Implementer subagent implements, tests, commits, self-reviews" [shape=box];
@@ -67,8 +76,8 @@ digraph process {
 
     "Load orchestrator prompt  -> "Read plan, extract all tasks with full text, note context, create TodoWrite";
     "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md";
-    "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" -> "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)";
-    "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)" -> "Implementer subagent asks questions?";
+    "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" -> "Spawn implementer subagent (choose model per complexity; see Model Selection)";
+    "Spawn implementer subagent (choose model per complexity; see Model Selection)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
     "Answer questions, provide context" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" [label="update prompt"];
     "Implementer subagent asks questions?" -> "Implementer subagent implements, tests, commits, self-reviews" [label="no"];
@@ -103,7 +112,8 @@ Treat the implementer subagent as the coding agent in that loop, and use the rev
 
 **Do:**
 - Create a detailed, decision-complete prompt for each task and save it in `.ai_agents/session_context/{todaysdate}/coding-agent-prompts/`
-- Spawn the coding agent with `claude --model claude-opus-4-5 -p <prompt>` and allow a long timeout of around 30 minutes
+- Select the implementer model based on task complexity (see Model Selection) and allow a long timeout of around 30 minutes
+- Run all reviewer subagents (spec, code quality, final review) with `codex -m gpt-5.2 exec <prompt>`
 - Review the agent's work; if it drifts or misses requirements, send a new prompt and re-run until it meets the spec
 - Require the agent to write a summary, files touched, and changes in `.ai_agents/session_context/{todaysdate}/task-{taskid}.md`
 - Update your TodoWrite (or external task list) and mark the task complete before moving on
