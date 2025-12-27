@@ -121,8 +121,6 @@
     "command": "ccline"
   },
   "enabledPlugins": {
-    "example-skills@anthropic-agent-skills": true,
-    "document-skills@anthropic-agent-skills": true,
     "security-guidance@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
