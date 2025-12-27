@@ -33,6 +33,7 @@ Options:
 The script safely injects shared and platform-specific zsh snippets into
 ~/.zshrc between clearly marked boundaries, creating a timestamped backup on
 first run. Re-run at any time to refresh the block.
+The shared snippet includes Claude helpers (claude-zai, cz, ccy).
 EOF
 }
 

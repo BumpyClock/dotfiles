@@ -244,7 +244,6 @@ if (Test-Path "$env:USERPROFILE\.bun") {
 function Start-PnpmDev { pnpm dev }
 Set-Alias pnd Start-PnpmDev
 function claude-yolo { claude --dangerously-skip-permissions @args }
-Set-Alias cy claude-yolo
 function claude-monitor-plan-max-20 { claude-monitor --plan max20 @args }
 Set-Alias cmon claude-monitor-plan-max-20
 
@@ -257,4 +256,15 @@ function claude-zai {
     $env:ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6"
     $env:ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6"
     claude @args
+}
+Set-Alias cz claude-zai
+
+function ccy {
+    Remove-Item Env:ANTHROPIC_AUTH_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:ANTHROPIC_BASE_URL -ErrorAction SilentlyContinue
+    Remove-Item Env:API_TIMEOUT_MS -ErrorAction SilentlyContinue
+    Remove-Item Env:ANTHROPIC_DEFAULT_HAIKU_MODEL -ErrorAction SilentlyContinue
+    Remove-Item Env:ANTHROPIC_DEFAULT_SONNET_MODEL -ErrorAction SilentlyContinue
+    Remove-Item Env:ANTHROPIC_DEFAULT_OPUS_MODEL -ErrorAction SilentlyContinue
+    claude --dangerously-skip-permissions @args
 }

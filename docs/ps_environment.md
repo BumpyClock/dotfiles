@@ -111,5 +111,5 @@ The PowerShell profile automatically installs these tools if missing:
 - `Reload-Profile` - Reload PowerShell profile
 
 ### Claude Integration
-- `cy` / `claude-yolo` - Claude with --dangerously-skip-permissions
-
+- `claude-yolo` - Claude with --dangerously-skip-permissions
+- `ccy` - Clear Z.AI Claude env overrides, then run claude with --dangerously-skip-permissions
