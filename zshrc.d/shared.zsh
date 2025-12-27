@@ -82,6 +82,7 @@ alias cmon='claude-monitor'
 
 # Z.AI Claude function
 claude-zai() {
+    printf '\033]0;%s\007' 'Claude Code - Zai'
     export ANTHROPIC_AUTH_TOKEN="REDACTED_API_KEY"
     export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
     export API_TIMEOUT_MS="3000000"
@@ -94,6 +95,7 @@ claude-zai() {
 alias cz='claude-zai'
 
 ccy() {
+    printf '\033]0;%s\007' 'Claude Code'
     unset ANTHROPIC_AUTH_TOKEN
     unset ANTHROPIC_BASE_URL
     unset API_TIMEOUT_MS
