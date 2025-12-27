@@ -5,5 +5,5 @@ arguments:
   - name: ARGUMENT
     type: string
 ---
-use @git-workflow-manager subagent to perform $ARGUMENT.
+create a  @git-workflow-subagent subagent to perform $ARGUMENT. DO NOT perform any git operations directly yourself. hand off all git related tasks to the subagent.
 

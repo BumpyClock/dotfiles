@@ -1,5 +1,5 @@
 ---
-name: git-workflow-manager
+name: git-workflow-subagent
 description: CRITICAL Use this agent anytime you need to use Git or Github CLI  including local commit creation, remote push optimization, branch management, and maintaining clean repository history. 
 model: haiku
 color: green
