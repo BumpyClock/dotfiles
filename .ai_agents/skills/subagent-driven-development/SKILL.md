@@ -58,14 +58,14 @@ digraph process {
         "Mark task complete in TodoWrite" [shape=box];
     }
 
-    "Load orchestrator prompt (.ai_agents/prompts/orchestrate.md)" [shape=box];
+    "Load orchestrator prompt [shape=box];
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Stop and report failure after 10 iterations" [shape=box];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Load orchestrator prompt (.ai_agents/prompts/orchestrate.md)" -> "Read plan, extract all tasks with full text, note context, create TodoWrite";
+    "Load orchestrator prompt  -> "Read plan, extract all tasks with full text, note context, create TodoWrite";
     "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md";
     "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" -> "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)";
     "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)" -> "Implementer subagent asks questions?";
@@ -93,7 +93,6 @@ digraph process {
 
 ## Prompt Templates
 
-- `.ai_agents/prompts/orchestrate.md` - Orchestrator controller loop for coding agent execution (required)
 - `./implementer-prompt.md` - Dispatch implementer subagent
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
@@ -114,7 +113,6 @@ Treat the implementer subagent as the coding agent in that loop, and use the rev
 
 ## References
 
-- `.ai_agents/prompts/orchestrate.md` - Orchestrator controller loop prompt that wraps this workflow
 - `references/example-workflow.md` - Full end-to-end example with orchestration loop and reviews
 
 ## Advantages

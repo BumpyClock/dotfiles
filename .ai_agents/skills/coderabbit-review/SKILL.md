@@ -1,5 +1,5 @@
 ---
-name: coderabbit-review
+name: coderabbit-review-skill
 description: Run a codereview using coderabbit cli and review the output.
 ---
 
@@ -13,6 +13,22 @@ Redirect its output to a file, e.g., `coderabbit --prompt-only > .ai_agents/code
 
 1. **Collect and triage comments**
    - Collect ALL CodeRabbit comments and de-duplicate them
+    - The output will contain **multiple prompts**, each already in this shape:
+
+       ============================================================================
+       File: <path>
+       Line: <line number or range>
+       Type: <critical|major|potential_issue|refactor_suggestion|nitpick|...>
+
+       Prompt for AI Agent:
+       <one paragraph, specific instruction>
+       ============================================================================
+
+    - Prioritize by `Type`:
+       - **Handle ALL non-nitpick items first.** Start with highest severity and work down.
+          - Focus first on: `critical`, `major`, `potential_issue`, `refactor_suggestion` (and similar non-nitpick types).
+       - **Only after there are zero remaining non-nitpick items**, process `nitpick` items.
+       - If any non-nitpick items exist, **ignore nitpicks for now** (do not implement, do not bikeshed).
    - Triage each comment into:
      - (a) valid + actionable
      - (b) valid but out-of-scope
