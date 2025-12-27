@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Manage git workflows - PRs, commits, branches, merges. Use for any git/GitHub task.
+description: Manage git workflows - PRs, commits, branches, merges. Use for any git/GitHub task. any time the user asks for any action that requires interacting with git/GitHub.
 ---
 
 spin up a dedicated sub-agent to perform git-workflow tasks requested by the user. 

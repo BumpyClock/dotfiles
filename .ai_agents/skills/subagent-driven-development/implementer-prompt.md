@@ -10,7 +10,7 @@ Task tool (general-purpose):
 
     ## Task Description
 
-    [FULL TEXT of task from plan - paste it here, don't make subagent read file]
+    [FULL TEXT of task from plan - paste it here, don't make subagent read file]. Use test-driven-development skill to ensure your implementation meets the requirements.
 
     ## Context
 
@@ -75,4 +75,6 @@ Task tool (general-purpose):
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
+    - **CRITICAL** Write the report in `.ai_agents/session_context/{todaysDate}/coding-agent-reports/{taskID}-report.md`. This is critical because it ensures that the orchestrator can track progress and identify issues early and is your only mechanism for communication with the orchestrator.
+
 ```

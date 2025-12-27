@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session
+description: Use when executing implementation plans with independent tasks in the current session, orchestrating a coding agent via .ai_agents/prompts/orchestrate.md and per-task implementer/reviewer subagents
 ---
 
 # Subagent-Driven Development
@@ -43,7 +43,8 @@ digraph process {
 
     subgraph cluster_per_task {
         label="Per Task";
-        "Dispatch implementer subagent (./implementer-prompt.md)" [shape=box];
+        "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" [shape=box];
+        "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)" [shape=box];
         "Implementer subagent asks questions?" [shape=diamond];
         "Answer questions, provide context" [shape=box];
         "Implementer subagent implements, tests, commits, self-reviews" [shape=box];
@@ -53,30 +54,38 @@ digraph process {
         "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [shape=box];
         "Code quality reviewer subagent approves?" [shape=diamond];
         "Implementer subagent fixes quality issues" [shape=box];
+        "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" [shape=box];
         "Mark task complete in TodoWrite" [shape=box];
     }
 
+    "Load orchestrator prompt (.ai_agents/prompts/orchestrate.md)" [shape=box];
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
+    "Stop and report failure after 10 iterations" [shape=box];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
-    "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer subagent asks questions?";
+    "Load orchestrator prompt (.ai_agents/prompts/orchestrate.md)" -> "Read plan, extract all tasks with full text, note context, create TodoWrite";
+    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md";
+    "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" -> "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)";
+    "Spawn implementer subagent (claude --model claude-sonnet-4-5-20250929 -p <prompt>)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
-    "Answer questions, provide context" -> "Dispatch implementer subagent (./implementer-prompt.md)";
+    "Answer questions, provide context" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" [label="update prompt"];
     "Implementer subagent asks questions?" -> "Implementer subagent implements, tests, commits, self-reviews" [label="no"];
     "Implementer subagent implements, tests, commits, self-reviews" -> "Dispatch spec reviewer subagent (./spec-reviewer-prompt.md)";
     "Dispatch spec reviewer subagent (./spec-reviewer-prompt.md)" -> "Spec reviewer subagent confirms code matches spec?";
     "Spec reviewer subagent confirms code matches spec?" -> "Implementer subagent fixes spec gaps" [label="no"];
     "Implementer subagent fixes spec gaps" -> "Dispatch spec reviewer subagent (./spec-reviewer-prompt.md)" [label="re-review"];
+    "Implementer subagent fixes spec gaps" -> "Stop and report failure after 10 iterations" [label="if >10 loops"];
     "Spec reviewer subagent confirms code matches spec?" -> "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [label="yes"];
     "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" -> "Code quality reviewer subagent approves?";
     "Code quality reviewer subagent approves?" -> "Implementer subagent fixes quality issues" [label="no"];
     "Implementer subagent fixes quality issues" -> "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [label="re-review"];
-    "Code quality reviewer subagent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
+    "Implementer subagent fixes quality issues" -> "Stop and report failure after 10 iterations" [label="if >10 loops"];
+    "Code quality reviewer subagent approves?" -> "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" [label="yes"];
+    "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" -> "Mark task complete in TodoWrite";
     "Mark task complete in TodoWrite" -> "More tasks remain?";
-    "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
+    "More tasks remain?" -> "Create implementer prompt file (.ai_agents/coding-agent-prompts/...) using ./implementer-prompt.md" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];
     "Dispatch final code reviewer subagent for entire implementation" -> "Use superpowers:finishing-a-development-branch";
 }
@@ -84,85 +93,29 @@ digraph process {
 
 ## Prompt Templates
 
+- `.ai_agents/prompts/orchestrate.md` - Orchestrator controller loop for coding agent execution (required)
 - `./implementer-prompt.md` - Dispatch implementer subagent
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
 
-## Example Workflow
+## Orchestrator Prompt (Required)
 
-```
-You: I'm using Subagent-Driven Development to execute this plan.
+Treat the implementer subagent as the coding agent in that loop, and use the reviewer prompts for the spec and code quality review steps.
 
-[Read plan file once: docs/plans/feature-plan.md]
-[Extract all 5 tasks with full text and context]
-[Create TodoWrite with all tasks]
+**Do:**
+- Create a detailed, decision-complete prompt for each task and save it in `.ai_agents/session_context/{todaysdate}/coding-agent-prompts/`
+- Spawn the coding agent with `claude --model claude-opus-4-5 -p <prompt>` and allow a long timeout of around 30 minutes
+- Review the agent's work; if it drifts or misses requirements, send a new prompt and re-run until it meets the spec
+- Require the agent to write a summary, files touched, and changes in `.ai_agents/session_context/{todaysdate}/task-{taskid}.md`
+- Update your TodoWrite (or external task list) and mark the task complete before moving on
 
-Task 1: Hook installation script
+**Stop condition:**
+- If the agent fails to meet requirements after 10 iterations, stop the loop and report the failure to the user
 
-[Get Task 1 text and context (already extracted)]
-[Dispatch implementation subagent with full task text + context]
+## References
 
-Implementer: "Before I begin - should the hook be installed at user or system level?"
-
-You: "User level (~/.config/superpowers/hooks/)"
-
-Implementer: "Got it. Implementing now..."
-[Later] Implementer:
-  - Implemented install-hook command
-  - Added tests, 5/5 passing
-  - Self-review: Found I missed --force flag, added it
-  - Committed
-
-[Dispatch spec compliance reviewer]
-Spec reviewer: ✅ Spec compliant - all requirements met, nothing extra
-
-[Get git SHAs, dispatch code quality reviewer]
-Code reviewer: Strengths: Good test coverage, clean. Issues: None. Approved.
-
-[Mark Task 1 complete]
-
-Task 2: Recovery modes
-
-[Get Task 2 text and context (already extracted)]
-[Dispatch implementation subagent with full task text + context]
-
-Implementer: [No questions, proceeds]
-Implementer:
-  - Added verify/repair modes
-  - 8/8 tests passing
-  - Self-review: All good
-  - Committed
-
-[Dispatch spec compliance reviewer]
-Spec reviewer: ❌ Issues:
-  - Missing: Progress reporting (spec says "report every 100 items")
-  - Extra: Added --json flag (not requested)
-
-[Implementer fixes issues]
-Implementer: Removed --json flag, added progress reporting
-
-[Spec reviewer reviews again]
-Spec reviewer: ✅ Spec compliant now
-
-[Dispatch code quality reviewer]
-Code reviewer: Strengths: Solid. Issues (Important): Magic number (100)
-
-[Implementer fixes]
-Implementer: Extracted PROGRESS_INTERVAL constant
-
-[Code reviewer reviews again]
-Code reviewer: ✅ Approved
-
-[Mark Task 2 complete]
-
-...
-
-[After all tasks]
-[Dispatch final code-reviewer]
-Final reviewer: All requirements met, ready to merge
-
-Done!
-```
+- `.ai_agents/prompts/orchestrate.md` - Orchestrator controller loop prompt that wraps this workflow
+- `references/example-workflow.md` - Full end-to-end example with orchestration loop and reviews
 
 ## Advantages
 
@@ -235,6 +188,3 @@ Done!
 
 **Subagents should use:**
 - **superpowers:test-driven-development** - Subagents follow TDD for each task
-
-**Alternative workflow:**
-- **superpowers:executing-plans** - Use for parallel session instead of same-session execution
