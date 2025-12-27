@@ -77,7 +77,6 @@ alias lt='eza --tree --git-ignore'
 
 # Claude
 alias claude-yolo='claude --dangerously-skip-permissions'
-alias cy='claude-yolo'
 claude-monitor() { command claude-monitor --plan max20 "$@" }
 alias cmon='claude-monitor'
 
@@ -90,6 +89,18 @@ claude-zai() {
     export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.7"
     export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.7"
     claude "$@"
+}
+
+alias cz='claude-zai'
+
+ccy() {
+    unset ANTHROPIC_AUTH_TOKEN
+    unset ANTHROPIC_BASE_URL
+    unset API_TIMEOUT_MS
+    unset ANTHROPIC_DEFAULT_HAIKU_MODEL
+    unset ANTHROPIC_DEFAULT_SONNET_MODEL
+    unset ANTHROPIC_DEFAULT_OPUS_MODEL
+    claude --dangerously-skip-permissions "$@"
 }
 
 # =============================================================================

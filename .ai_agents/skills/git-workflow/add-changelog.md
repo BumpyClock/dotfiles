@@ -1,12 +1,12 @@
-# Add Changelog Command
+# Add Changelog
 
-Generate and maintain project changelog
+Create and maintain a project changelog.
 
 ## Instructions
 
-Setup and maintain changelog following these steps: **$ARGUMENTS**
+Set up or update `CHANGELOG.md` using these steps. Apply **$ARGUMENTS** as scope or constraints.
 
-1. **Changelog Format (Keep a Changelog)**
+1. **Changelog format (Keep a Changelog)**
    ```markdown
    # Changelog
    
@@ -35,7 +35,7 @@ Setup and maintain changelog following these steps: **$ARGUMENTS**
    - Security improvements
    ```
 
-2. **Version Entries**
+2. **Version entries**
    ```markdown
    ## [1.2.3] - 2024-01-15
    ### Added
@@ -48,7 +48,7 @@ Setup and maintain changelog following these steps: **$ARGUMENTS**
    - Timezone handling issues
    ```
 
-3. **Automation Tools**
+3. **Automation tools**
    ```bash
    # Generate changelog from git commits
    npm install -D conventional-changelog-cli
@@ -59,7 +59,7 @@ Setup and maintain changelog following these steps: **$ARGUMENTS**
    npx auto-changelog
    ```
 
-4. **Commit Convention**
+4. **Commit convention**
    ```bash
    # Conventional commits for auto-generation
    feat: add user authentication
@@ -71,10 +71,10 @@ Setup and maintain changelog following these steps: **$ARGUMENTS**
    chore: update dependencies
    ```
 
-5. **Integration with Releases**
+5. **Integration with releases**
    - Update changelog before each release
    - Include in release notes
    - Link to GitHub releases
    - Tag versions consistently
 
-Remember to keep entries clear, categorized, and focused on user-facing changes.
+Keep entries clear, categorized, and focused on user-facing changes.

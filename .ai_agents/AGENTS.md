@@ -25,5 +25,11 @@ When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file fo
 - use serena mcp to navigate the codebase and to make edits if available. If Serena is available activate it in the beginning of the chat. 
 Use skills whenever possible. 
 
+use the available skills to perform tasks whenever possible. They outline preferred workflows and best practices.
 
-- NEVER USE PYTHON OR OTHER SCRIPTS TO MAKE CHANGES TO THE CODEBASE. ALWAYS USE native tools or mcp tools to make changes to the codebase.
+Here are the critical skills available:
+- `git-workflow-manager` - Elite Git workflow specialist for all Git/GitHub tasks, ensuring clean commit histories and safe development workflows.
+- `dispatching-parallel-agents` - Dispatch one agent per independent problem domain. Let
+them work concurrently.
+- `programming` - General programming rules and guidelines across languages and frameworks.
+
