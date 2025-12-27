@@ -1,0 +1,1 @@
+Create a background git-workflow-subagent and use it for all git related tasks.
