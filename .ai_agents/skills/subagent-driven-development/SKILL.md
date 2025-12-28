@@ -16,7 +16,7 @@ Decide model before spawning the implementer subagent. Default to the cheapest m
 - **Simple fixes** (single-file edits, small configs, doc tweaks): run `claude-zai -p <prompt>`
 - **Medium tasks** (multi-file changes, new tests, moderate refactors): run `claude --model claude-sonnet-4-5 -p <prompt>`
 - **Complex tasks** (new features, cross-cutting changes, tricky debugging): run `claude --model claude-opus-4-5 -p <prompt>`
-- **Reviews** (spec reviewer, code quality reviewer, final reviewer): always run `codex -m gpt-5.2 exec <prompt>`
+- **Reviews** (spec reviewer, code quality reviewer, final reviewer): always run `codex -m gpt-5.2 exec <prompt>` or `codex review`
 
 ## When to Use
 

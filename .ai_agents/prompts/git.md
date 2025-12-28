@@ -1,5 +1,5 @@
 ---
-name: git-agent
+name: git
 description: spin up a git subagent to perform git related tasks like creating branches, committing code, creating pull requests, and managing merges.
 arguments:
   - name: ARGUMENT
