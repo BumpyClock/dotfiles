@@ -167,10 +167,8 @@
       "Bash(gh pr comment:*)"
     ],
     "deny": [],
-    "ask": [
-      "Bash(git push:*)"
-    ],
-    "defaultMode": "default"
+    "ask": ["Bash(git push:*)"],
+    "defaultMode": "bypassPermissions"
   },
   "enableAllProjectMcpServers": true,
   "statusLine": {
@@ -180,6 +178,7 @@
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true
   },
+  "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
