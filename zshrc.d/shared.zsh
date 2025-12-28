@@ -89,7 +89,9 @@ claude-zai() {
     export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.7"
     export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.7"
     export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.7"
-    claude "$@"
+    export ENABLE_LSP_TOOL=1
+
+    claude --dangerously-skip-permissions "$@"
 }
 
 alias cz='claude-zai'
@@ -102,13 +104,12 @@ ccy() {
     unset ANTHROPIC_DEFAULT_HAIKU_MODEL
     unset ANTHROPIC_DEFAULT_SONNET_MODEL
     unset ANTHROPIC_DEFAULT_OPUS_MODEL
+    export ENABLE_LSP_TOOL=1
     claude --dangerously-skip-permissions "$@"
 }
 
 # =============================================================================
 # DEVELOPMENT SHORTCUTS (essentials only)
 # =============================================================================
-
-
 
 eval "$(starship init zsh)"
