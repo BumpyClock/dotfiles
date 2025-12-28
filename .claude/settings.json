@@ -154,11 +154,23 @@
       "Bash(go install:*)",
       "Bash(staticcheck:*)",
       "Bash(cd:*)",
-      "Bash(go build:*)"
+      "Bash(go build:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh workflow run:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Skill(git-workflow)",
+      "Skill(programming)",
+      "Skill(subagent-driven-development)",
+      "Bash(gh pr review-comment:*)",
+      "Bash(gh pr comment:*)"
     ],
     "deny": [],
-    "ask": [],
-    "defaultMode": "dontAsk"
+    "ask": [
+      "Bash(git push:*)"
+    ],
+    "defaultMode": "default"
   },
   "enableAllProjectMcpServers": true,
   "statusLine": {
