@@ -10,11 +10,11 @@ Task tool (general-purpose):
 
     ## Task Description
 
-    [FULL TEXT of task from plan - paste it here, don't make subagent read file]. Use test-driven-development skill to ensure your implementation meets the requirements.
+    [FULL TEXT of task from plan - paste it here, don't make subagent read file]. Use programming skill to ensure your implementation meets the requirements.
 
     ## Context
 
-    [Scene-setting: where this fits, dependencies, architectural context]
+    [Scene-setting: where this fits, dependencies, architectural context. Coding agent will not have the full project context, so provide what they need to know to understand the task. They are not expected to make complex decisions, just implement the task as specified, if any decisions need to be made you must make those decisions yourself and include in the content and this prompt.]
 
     ## Before You Begin
 
