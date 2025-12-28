@@ -13,7 +13,7 @@ Please get the details for the following issue(s): $ISSUE_NUMBER
 
 Relevant skills `git-workflow` , `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development`, `dispatching-parallel-agents`. Read the skills you feel you need to complete the tasks before proceeding, do not read skills you don't need.
 
-create or reuse an existing @git-workflow-subagent subagent (preferably in the background so you can reuse this for other tasks) to fetch the details of issue number $ISSUE_NUMBER or all issues for the repo if the user argument is `all` ,`all issues`, nil, or something similar. DO NOT perform any git operations directly yourself. hand off all git related tasks to the subagent.
+create or reuse an existing subagent or use the task tool or bash tool for git-workflow to fetch the details of issue number $ISSUE_NUMBER or all issues for the repo if the user argument is `all` ,`all issues`, nil, or something similar. DO NOT perform any git operations directly yourself. 
 
 Once you have fetched the issue details, spin up parallel sub-agents (as many as needed) to analyze them and investigate the root cause of the issues. Not all issues are valid or reproducible so verifying them is critical. Once the issues have been validated, aggregate the valid issues and generate a comprehensive investigation summary.
 
