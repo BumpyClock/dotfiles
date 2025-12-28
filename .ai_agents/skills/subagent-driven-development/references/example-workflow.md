@@ -28,11 +28,9 @@ Implementer: "Got it. Implementing now..."
   - Committed
   - Wrote summary to .ai_agents/session_context/{todaysdate}/task-1.md
 
-[Dispatch spec compliance reviewer]
-Spec reviewer: ✅ Spec compliant - all requirements met, nothing extra
-
-[Get git SHAs, dispatch code quality reviewer]
-Code reviewer: Strengths: Good test coverage, clean. Issues: None. Approved.
+[Create reviewer prompt file using ./reviewer-prompt.md with full requirements, acceptance criteria, implementer report, base/head SHAs, diff/changed files, and test results]
+[Dispatch combined reviewer]
+Reviewer: ✅ Spec compliant, code quality approved (Strengths: Good test coverage, clean. Issues: None.)
 
 [Confirm summary file exists]
 [Mark Task 1 complete]
@@ -50,25 +48,18 @@ Implementer:
   - Self-review: All good
   - Committed
 
-[Dispatch spec compliance reviewer]
-Spec reviewer: ❌ Issues:
+[Create reviewer prompt file using ./reviewer-prompt.md with full requirements, acceptance criteria, implementer report, base/head SHAs, diff/changed files, and test results]
+[Dispatch combined reviewer]
+Reviewer: ❌ Issues:
   - Missing: Progress reporting (spec says "report every 100 items")
   - Extra: Added --json flag (not requested)
+  - Quality (Important): Magic number (100)
 
 [Implementer fixes issues]
-Implementer: Removed --json flag, added progress reporting
+Implementer: Removed --json flag, added progress reporting, extracted PROGRESS_INTERVAL constant
 
-[Spec reviewer reviews again]
-Spec reviewer: ✅ Spec compliant now
-
-[Dispatch code quality reviewer]
-Code reviewer: Strengths: Solid. Issues (Important): Magic number (100)
-
-[Implementer fixes]
-Implementer: Extracted PROGRESS_INTERVAL constant
-
-[Code reviewer reviews again]
-Code reviewer: ✅ Approved
+[Reviewer reviews again]
+Reviewer: ✅ Spec compliant, code quality approved
 
 [Confirm summary file exists]
 [Mark Task 2 complete]
