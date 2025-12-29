@@ -31,20 +31,32 @@ Choose the right model that is likely to succeed before spawning the implementer
 - Subagents must follow `programming` (TDD) for any code changes.
 - Every task gets a combined spec+quality review with full context (requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff/changed files, test results).
 - Review loop until approved; stop and report failure after 10 iterations.
-- Parallelize only when tasks are independent and file scopes do not overlap.
-- After all tasks: final reviewer
+
+## Parallelization and Sequencing (Required)
+
+1. Build a dependency map: for each task, list required decisions/outputs and touched files or modules.
+2. Identify foundation tasks that unblock others (schema or public API changes, shared config, core abstractions, test harness work). Run these first, usually one at a time.
+3. Create execution waves: tasks in the same wave can run in parallel; waves run in sequence.
+4. Only parallelize within a wave when all are true:
+   - No shared files or overlapping directories.
+   - No shared interface/contract changes.
+   - No shared build/test/config changes.
+   - No need for results from another task to make decisions.
+5. If any of the above is uncertain, default to sequential execution or merge tasks.
+6. Order waves by dependency and risk: unblockers first, then leaf tasks, then integration and cleanup.
 
 ## The Process
 
 - Load orchestrator prompt: `.ai_agents/prompts/orchestrate.md`.
 - Read the plan once; extract all tasks with full text and context; create TodoWrite.
-- For each task: create a decision-complete prompt file in `.ai_agents/session_context/{todaysdate}/coding-agent-prompts/` using `./implementer-prompt.md`.
-- For each task: spawn an implementer subagent (Model Selection). If it asks questions, answer and update the prompt, then re-run.
+- Build a dependency map and execution waves (see Parallelization and Sequencing).
+- For each wave: create decision-complete prompt files for the wave's tasks in `.ai_agents/session_context/{todaysdate}/coding-agent-prompts/` using `./implementer-prompt.md`.
+- For each wave: spawn implementer subagents in parallel (Model Selection). If it asks questions, answer and update the prompt, then re-run.
 - For each task: implementer implements, tests, commits, self-reviews, and writes summary to `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/task-{taskid}.md`.
 - For each task: create a reviewer prompt from `./reviewer-prompt.md` with requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff or changed files, and test results; dispatch reviewer.
 - If review fails: implementer fixes, reviewer re-reviews; stop and report failure after 10 loops.
 - Confirm summary file and mark task complete.
-- After all tasks: dispatch final code reviewer for entire implementation and run 
+- After all waves: dispatch final code reviewer for entire implementation and run required tests (per the plan).
 
 ## Prompt Templates
 
@@ -56,14 +68,9 @@ Choose the right model that is likely to succeed before spawning the implementer
 Treat the implementer subagent as the coding agent in that loop, and use the combined reviewer prompt.
 
 **Do:**
-- Run tasks in parallel only when independent and file scopes do not overlap.
-- Select implementer model per task complexity and allow a long timeout (~30 minutes).
-- Provide reviewers full context (requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff/changed files, test results).
+- Follow Rules, Parallelization and Sequencing, and The Process.
+- Use Model Selection and allow long timeouts (~30 minutes) when needed.
 - Re-prompt and re-run when the implementer drifts or misses requirements.
-- Require summary files in `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/task-{taskid}.md` and keep TodoWrite up to date.
-
-**Stop condition:**
-- If the agent fails to meet requirements after 10 iterations, stop the loop and report failure.
 
 ## References
 
