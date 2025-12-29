@@ -7,6 +7,8 @@ arguments:
     description: Optional scope (file, directory, or glob) to limit analysis.
 ---
 
+Create a subagent that will run the gemini cli and then parse the results and return just the findings to you for analysis.
+
 Analyze the complexity of the codebase using Gemini CLI to identify time complexity bottlenecks and suggest improvements in the following scope (if provided): $SCOPE.
 
 
