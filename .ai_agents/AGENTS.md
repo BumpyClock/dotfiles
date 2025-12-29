@@ -23,6 +23,8 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 
 When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines and use the `programming` skill.
 
+Use the lsp tool if available to validate code, check syntax, and run linters before reporting back.
+
 
 Use skills whenever possible. 
 

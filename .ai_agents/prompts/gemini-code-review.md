@@ -7,20 +7,21 @@ arguments:
     description: Optional scope (file, directory, or glob) to limit analysis.
 ---
 
-# Capability check
-- If your runtime supports subagents or a Task tool (for example, Claude Code), use them.
-- If subagents are available, you may delegate the Gemini CLI run, but you must validate findings yourself.
-- If subagents are not available (for example, Codex CLI), run the steps sequentially.
-- If repo access or scope is ambiguous, ask before proceeding.
+Analyze the complexity of the codebase using Gemini CLI to identify time complexity bottlenecks and suggest improvements in the following scope (if provided): $SCOPE.
 
+
+Perform a thorough code quality review using Gemini CLI focused on:
 Relevant skills: `programming`.
-Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when present; otherwise use the runtime skill registry (often `~/.claude/skills/`).
+
 
 ## Process
 1. Determine scope. If SCOPE is provided, use it. Otherwise, if the user provides a file list or directory, focus there; else scan the repo.
 2. Run Gemini CLI with the prompt below from the repo root or with the appropriate context options.
-3. Validate each finding against the code. Discard anything you cannot verify.
+3. Validate each finding against the code. Discard anything you cannot verify. If you have the capability to run subagents or parallel tasks, use them to speed up validation. 
 4. Present findings with evidence and practical refactor guidance. Do not propose rewrites unless clearly justified.
+5. If the Gemini CLI output includes questions or needs-info, present them to the user for clarification. Do not investigate yourself. If there is an error stop and let the user know.
+
+Sometimes gemini cli fails. if it fails, run it again up to 2 more times.
 
 ## Command
 ```bash
@@ -32,7 +33,7 @@ Act as a Principal software engineer. Perform a thorough code quality review foc
 - SOLID violations (name the principle and explain why)
 - YAGNI violations (features or abstractions not justified by current needs)
 
-Scope: ${SCOPE:-full repo}
+Scope: $SCOPE
 
 Constraints:
 - Do not make any edits.

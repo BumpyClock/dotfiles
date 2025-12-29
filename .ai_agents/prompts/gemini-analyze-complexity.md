@@ -7,14 +7,7 @@ arguments:
     description: Optional scope (file, directory, or glob) to limit analysis.
 ---
 
-# Capability check
-- If your runtime supports subagents or a Task tool (for example, Claude Code), use them.
-- If subagents are available, you may delegate the Gemini CLI run, but you must validate findings yourself.
-- If subagents are not available (for example, Codex CLI), run the steps sequentially.
-- If repo access or scope is ambiguous, ask before proceeding.
-
-Relevant skills: `programming`.
-Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when present; otherwise use the runtime skill registry (often `~/.claude/skills/`).
+Analyze the complexity of the codebase using Gemini CLI to identify time complexity bottlenecks and suggest improvements in the following scope (if provided): $SCOPE.
 
 ## Process
 1. Determine scope. If SCOPE is provided, use it. Otherwise, if the user provides a file list or directory, focus there; else scan the repo.
@@ -27,7 +20,7 @@ Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when p
 gemini -m gemini-3-pro-preview --prompt "$(cat <<PROMPT
 Act as a senior software engineer. Analyze the provided code for time complexity (Big O).
 
-Scope: ${SCOPE:-full repo}
+Scope: $SCOPE
 
 Goals:
 - Identify current time complexity and the specific loops or operations that cause bottlenecks.
