@@ -14,6 +14,8 @@ Create implementation-ready UX design documentation that covers layout, componen
 1. Gather inputs
    - Ask for goals, target users, platforms, constraints, and content requirements.
    - Identify any existing design system or component library.
+   - Audit existing design tokens and reusable components when project context is available.
+   - Look for signals like tokens files, theme configs, CSS variables, component libraries, or Storybook.
 2. Define structure
    - Map information architecture and key user flows.
    - Identify primary tasks and success criteria.
@@ -34,6 +36,8 @@ Create implementation-ready UX design documentation that covers layout, componen
 
 - Do not write implementation code.
 - Use a named component library when provided; otherwise describe components generically.
+- Prefer existing design tokens and components; define new ones only when gaps exist and document them.
+- If no tokens/components exist, define a minimal system before composing layouts.
 - Ask clarifying questions when requirements or constraints are missing.
 - Prefer concrete measurements, labels, and states over vague descriptions.
 
@@ -62,6 +66,12 @@ Use this default structure and adapt as needed:
 - Page hierarchy
 - Navigation model
 - Key user flows
+
+## Design System Strategy
+- Existing tokens/components to reuse
+- Discovery notes (where tokens/components were found or not found)
+- New tokens/components needed (only if none exist or gaps are confirmed)
+- Token naming conventions and reuse rules
 
 ## Layout and Responsive Behavior
 - Desktop
@@ -133,5 +143,6 @@ Mobile
 - Clear layout hierarchy for each breakpoint
 - ASCII layout diagram included
 - Components and states listed
+- Existing tokens/components reused or new ones defined
 - Accessibility guidance documented
 - Rationale provided for key decisions
