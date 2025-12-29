@@ -15,7 +15,7 @@ Codex-specific guidelines are in `references/codex-specific-instructions.md`. If
 
 Choose the cheapest model that is likely to succeed before spawning the implementer.
 
-- **Simple** (single-file edits, small configs, doc tweaks): `claude-zai --dangerously-skip-permissions -p <prompt>`
+- **Simple** (single-file edits, small configs, doc tweaks): `cz --dangerously-skip-permissions -p <prompt>`
 - **Medium** (multi-file changes, new tests): `claude --dangerously-skip-permissions --model claude-sonnet-4-5 -p <prompt>`
 - **Complex** (new features, cross-cutting changes, refactors, tricky debugging): `claude --dangerously-skip-permissions --model claude-opus-4-5 -p <prompt>`
 - **Reviews** (combined reviewer, final reviewer): `codex --yolo -m gpt-5.2-codex exec <prompt>` or `codex review`

@@ -9,6 +9,12 @@ arguments:
 
 Analyze the complexity of the codebase using Gemini CLI to identify time complexity bottlenecks and suggest improvements in the following scope (if provided): $SCOPE.
 
+Create a subagent that will run the gemini cli and then parse the results and return just the findings to you for analysis.
+
+Perform a thorough code quality review using Gemini CLI focused on:
+Relevant skills: `programming`.
+
+
 ## Process
 1. Determine scope. If SCOPE is provided, use it. Otherwise, if the user provides a file list or directory, focus there; else scan the repo.
 2. Run Gemini CLI with the prompt below from the repo root or with the appropriate context options.

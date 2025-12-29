@@ -189,6 +189,34 @@ install_pnpm() {
     fi
 }
 
+# Install ast-grep (code structural search)
+install_ast_grep() {
+    if command -v ast-grep &> /dev/null; then
+        print_status "ast-grep is already installed"
+    else
+        print_status "Installing ast-grep..."
+        case $OS in
+            macos)
+                brew install ast-grep
+                ;;
+            arch)
+                sudo pacman -S --noconfirm ast-grep
+                ;;
+            ubuntu)
+                # No native package - use pnpm or npm global install
+                if command -v pnpm &> /dev/null; then
+                    pnpm install --global @ast-grep/cli
+                elif command -v npm &> /dev/null; then
+                    npm install --global @ast-grep/cli
+                else
+                    print_error "pnpm or npm required to install ast-grep on Ubuntu"
+                    return 1
+                fi
+                ;;
+        esac
+    fi
+}
+
 # Install additional useful tools
 install_additional_tools() {
     print_status "Installing additional tools..."
@@ -265,6 +293,7 @@ main() {
     install_starship
     install_fnm
     install_pnpm
+    install_ast_grep
     install_additional_tools
     create_symlinks
     print_status "Installation complete!"
