@@ -11,6 +11,8 @@ Execute plans with a fresh subagent per task and one combined spec+quality revie
 
 Codex-specific guidelines are in `references/codex-specific-instructions.md`. If you're codex or codex-cli, read that file.
 
+**IMPORTANT** Agents will take a while to write the code. Wait for the agent to finish do not prematurely stop it. If need to check if the agent is making changes, check the git diff or the changed files.
+
 ## Model Selection
 
 Choose the cheapest model that is likely to succeed before spawning the implementer.
