@@ -25,6 +25,8 @@ When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file fo
 
 Use the lsp tool if available to validate code, check syntax, and run linters before reporting back.
 
+You can also use `ast-grep` cli tool to search and navigate the code.
+
 
 Use skills whenever possible. 
 

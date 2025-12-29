@@ -23,9 +23,10 @@ Choose the cheapest model that is likely to succeed before spawning the implemen
 ## Rules (Tight)
 
 - Use only when: plan exists, tasks mostly independent, and you will stay in this session.
-- If no plan or tasks tightly coupled: do manual execution or use executing-plans (parallel session).
+- If no plan: use dispatching-parallel-agents for independent investigations, otherwise manual execution; use executing-plans for a parallel session.
 - One implementer subagent per task; do not reuse across tasks.
 - Provide full task text and context; never make subagents read the plan file.
+- Subagents must follow `programming` (TDD) for any code changes.
 - Every task gets a combined spec+quality review with full context (requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff/changed files, test results).
 - Review loop until approved; stop and report failure after 10 iterations.
 - Parallelize only when tasks are independent and file scopes do not overlap.
@@ -66,39 +67,4 @@ Treat the implementer subagent as the coding agent in that loop, and use the com
 
 - `references/example-workflow.md` - Full end-to-end example with orchestration loop and reviews
 - `references/dot-graphs.md` - Optional DOT graphs (when-to-use + process)
-
-## Advantages
-
-- Subagents follow TDD; fresh context per task.
-- Same session, no handoff; continuous progress without human-in-loop between tasks.
-- Review checkpoints and loops enforce spec compliance and code quality.
-- Controller provides curated context; no extra file-reading overhead.
-- Parallel-safe when tasks are independent.
-
-**Cost:**
-- Reviewer + prep adds overhead.
-- Review loops add iterations but catch issues early.
-
-## Red Flags
-
-**Never:**
-- Skip review or allow skipping spec compliance or code quality checks.
-- Proceed with unfixed issues or open review items.
-- Dispatch parallel implementers that edit the same files.
-- Make subagents read the plan file; provide full text instead.
-- Skip scene-setting context or ignore subagent questions.
-- Accept "close enough" on spec compliance or quality.
-- Skip review loops or replace real review with implementer self-review.
-- Split review into separate steps; spec + quality must be covered together.
-
-**If subagent asks questions:**
-- Answer clearly and completely; add context as needed.
-
-**If reviewer finds issues:**
-- Implementer fixes, reviewer re-reviews, repeat until approved.
-
-**If subagent fails task:**
-- Dispatch a fix subagent with specific instructions; do not fix manually.
-
-**Subagents should use:**
-- **programming** - Subagents follow programming skill for each task
+- `references/guardrails.md` - Advantages, red flags, and operational notes
