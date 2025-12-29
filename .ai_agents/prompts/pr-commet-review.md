@@ -13,6 +13,7 @@ arguments:
 - If repo or PR access is missing or ambiguous, ask for the repo or required permissions before proceeding.
 - Lean heavily on subagents for independent tasks like validation, investigation, and implementation when possible.
 - Make sure that we're on the PR branch and up to date before addressing comments. If we're not on the PR branch, switch to it safely using git-workflow skills.
+- Get comments from `claude`, `codex`, or `codex-cli` on the PR, since sometimes they don't have resolved status but still need addressing.
 ---
 
 Relevant skills: `git-workflow`, `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development`, `subagent-driven-development`, `dispatching-parallel-agents`.
