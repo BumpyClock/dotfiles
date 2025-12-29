@@ -57,8 +57,11 @@ Task tool (general-purpose):
 
     **Discipline:**
     - Did I avoid overbuilding (YAGNI)?
+    - Did I follow SOLID principles?
+    - Did I avoid code duplication (DRY)?
     - Did I only build what was requested?
     - Did I follow existing patterns in the codebase?
+    - Do not discard any changes made by you. There may be parallel agents working on different files, discarding changes may cause loss of work for those agents. 
 
     **Testing:**
     - Do tests actually verify behavior (not just mock behavior)?
@@ -75,6 +78,6 @@ Task tool (general-purpose):
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
-    - **CRITICAL** Write the report in `.ai_agents/session_context/{todaysDate}/coding-agent-reports/{taskID}-report.md`. This is critical because it ensures that the orchestrator can track progress and identify issues early and is your only mechanism for communication with the orchestrator.
+    - **CRITICAL** Write the report in `ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}-report.md`. This is critical because it ensures that the orchestrator can track progress and identify issues early and is your only mechanism for communication with the orchestrator.
 
 ```

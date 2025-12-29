@@ -34,5 +34,5 @@ Additional instructions:
   - If spec compliance fails, Assessment must be "No" or "With fixes".
 
   CRITICAL: Write the report in
-  `.ai_agents/session_context/{todaysDate}/coding-agent-reports/{taskID}-code-review-report.md`.
+  `ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}-code-review-report.md`.
 ```

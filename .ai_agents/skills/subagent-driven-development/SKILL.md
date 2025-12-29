@@ -23,7 +23,7 @@ Choose the right model that is likely to succeed before spawning the implementer
 - **Reviews** (combined reviewer, final reviewer): `codex --yolo -m gpt-5.2-codex exec <prompt>` or `codex review`
 
 ## Rules (Tight)
-
+- If in plan mode, develop the plan on how you would implement the given tasks using the rules below.
 - Use only when: plan exists, tasks mostly independent, and you will stay in this session.
 - If no plan: use dispatching-parallel-agents for independent investigations, otherwise manual execution; use executing-plans for a parallel session.
 - One implementer subagent per task; do not reuse across tasks.
@@ -47,12 +47,11 @@ Choose the right model that is likely to succeed before spawning the implementer
 
 ## The Process
 
-- Load orchestrator prompt: `.ai_agents/prompts/orchestrate.md`.
 - Read the plan once; extract all tasks with full text and context; create TodoWrite.
 - Build a dependency map and execution waves (see Parallelization and Sequencing).
-- For each wave: create decision-complete prompt files for the wave's tasks in `.ai_agents/session_context/{todaysdate}/coding-agent-prompts/` using `./implementer-prompt.md`.
+- For each wave: create decision-complete prompt files for the wave's tasks in `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-prompts/` using `./implementer-prompt.md`.
 - For each wave: spawn implementer subagents in parallel (Model Selection). If it asks questions, answer and update the prompt, then re-run.
-- For each task: implementer implements, tests, commits, self-reviews, and writes summary to `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/task-{taskid}.md`.
+- For each task: implementer implements, tests, commits, self-reviews, and writes summary to `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}.md`.
 - For each task: create a reviewer prompt from `./reviewer-prompt.md` with requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff or changed files, and test results; dispatch reviewer.
 - If review fails: implementer fixes, reviewer re-reviews; stop and report failure after 10 loops.
 - Confirm summary file and mark task complete.
