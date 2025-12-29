@@ -85,4 +85,4 @@ If context is missing, ask:
 - Whether a complex pattern is intentional.
 
 ## Reporting note
-If you create a review doc under `.claude/session_context/docs`, include the path in your response.
+If you create a review doc under `.ai_agents/session_context/{todaysDate}/{hour-based-folder-name}/docs`, include the path in your response.
