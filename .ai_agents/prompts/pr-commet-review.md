@@ -19,6 +19,7 @@ Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when p
 
 ## Process
 0. Spin up a subagent to fetch and normalize PR comments (and child comments, sometimes AI coding review agents leave several child comments in response to a parent comment). Agent response should be a structured list of comments with severity, id, file or line, author, comment details body, and thread link.
+0.5. use the graphql api to fetch all unresolved review threads and comments for the PR, including replies. Distinguish resolved vs unresolved threads.
 1. Collect unresolved PR review threads and comments for PR $PR_NUMBER, including replies. Use GitHub CLI or API so you can distinguish resolved vs unresolved threads.
 2. Normalize the comments into a list with id, file or line, author, comment body, and thread link.
 3. Validate each comment against current code and tests. Classify each as valid, invalid, or needs-info with evidence.

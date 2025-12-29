@@ -21,7 +21,7 @@ Relevant skills: `programming`.
 4. Present findings with evidence and practical refactor guidance. Do not propose rewrites unless clearly justified.
 5. If the Gemini CLI output includes questions or needs-info, present them to the user for clarification. Do not investigate yourself. If there is an error stop and let the user know.
 
-Sometimes gemini cli fails. if it fails, run it again up to 2 more times.
+Sometimes gemini cli fails. if it fails, run it again up to 2 more times.e
 
 ## Command
 ```bash
