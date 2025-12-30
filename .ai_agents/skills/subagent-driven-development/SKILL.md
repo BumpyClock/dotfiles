@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session, orchestrating per-task implementer/reviewer subagents via .ai_agents/prompts/orchestrate.md.
+description: Use when executing implementation plans with independent tasks in the current session, orchestrating per-task implementer/reviewer subagents.
 ---
 
 # Subagent-Driven Development
@@ -13,14 +13,9 @@ Codex-specific guidelines are in `references/codex-specific-instructions.md`. If
 
 **IMPORTANT** Agents will take a while to write the code. Wait for the agent to finish do not prematurely stop it. If need to check if the agent is making changes, check the git diff or the changed files.
 
-## Model Selection
+## Model / Agent Selection
 
-Choose the right model that is likely to succeed before spawning the implementer. Cheapest is not always right cost model, since it may fail and require several retries. Consider task complexity:
-
-- **Simple** (single-file edits, small configs, doc tweaks): `cz --dangerously-skip-permissions -p <prompt>`
-- **Medium** (single-file changes, new tests, simple coding problems): `claude --dangerously-skip-permissions --model claude-sonnet-4-5 -p <prompt>`
-- **Complex** (new features, cross-cutting changes, refactors, tricky debugging, medium complexity and higher problems): `claude --dangerously-skip-permissions --model claude-opus-4-5 -p <prompt>`
-- **Reviews** (combined reviewer, final reviewer): `codex --yolo -m gpt-5.2-codex exec <prompt>` or `codex review`
+Choose the right agent / model that is likely to succeed before spawning the implementer. Cheapest is not always right cost model, since it may fail and require several retries. Consider task complexity
 
 ## Rules (Tight)
 - If in plan mode, develop the plan on how you would implement the given tasks using the rules below.

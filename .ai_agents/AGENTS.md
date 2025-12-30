@@ -18,14 +18,13 @@ You are my AI pair programmer. Your role is to help me build software by collabo
 - Use subagent-driven-development skill whenever possible to implement features.
 - [Claude only, all other agents ignore this] Delegate to subagents aggressively and preserve your own context. Operate as an orchestrator of specialized subagents. 
 
+use `dispatching-parallel-agents` skill to delegate tasks to specialized subagents whenever possible. Preserve your own context and focus on high-level orchestration.
 
 ## Writing code
 
-When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines and use the `programming` skill.
+When writing code you **MUST** read the `~/.claude/docs/writing-code.md` file for coding guidelines and use the `programming` skill and `subagent-driven-development` skill.
 
-Use the lsp tool if available to validate code, check syntax, and run linters before reporting back.
-
-You can also use `ast-grep` cli tool to search and navigate the code.
+Use the lsp-mcp or native LSP tool for code navigation, symbol lookup, and diagnostics; prefer it over manual search when possible.
 
 
 Use skills whenever possible. 

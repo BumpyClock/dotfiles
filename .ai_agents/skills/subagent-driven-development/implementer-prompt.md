@@ -78,6 +78,6 @@ Task tool (general-purpose):
     - Files changed
     - Self-review findings (if any)
     - Any issues or concerns
-    - **CRITICAL** Write the report in `ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}-report.md`. This is critical because it ensures that the orchestrator can track progress and identify issues early and is your only mechanism for communication with the orchestrator.
+    - **CRITICAL** Write the report in `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}-report.md`. This is critical because it ensures that the orchestrator can track progress and identify issues early and is your only mechanism for communication with the orchestrator.
 
 ```
