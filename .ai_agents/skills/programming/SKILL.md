@@ -20,6 +20,8 @@ Build maintainable, testable, production-ready software using DDD patterns and s
 - [references/roles/code-reviewer.md](references/roles/code-reviewer.md) - structured code review workflow
 - [references/roles/pair-programmer.md](references/roles/pair-programmer.md) - approach analysis before coding
 - [references/roles/coding-teacher.md](references/roles/coding-teacher.md) - teaching and conceptual guidance
+- [references/roles/software-architect.md](references/roles/software-architect.md) - architectural analysis and system design guidance
+- [references/roles/sprint-planner.md](references/roles/sprint-planner.md) - sprint planning and parallel workstream orchestration
 
 ## Language Index
 
@@ -42,6 +44,8 @@ Build maintainable, testable, production-ready software using DDD patterns and s
 - [references/roles/code-reviewer.md](references/roles/code-reviewer.md) - detailed code review guidance
 - [references/roles/pair-programmer.md](references/roles/pair-programmer.md) - solution exploration guidance
 - [references/roles/coding-teacher.md](references/roles/coding-teacher.md) - teaching guidance
+- [references/roles/software-architect.md](references/roles/software-architect.md) - architecture design guidance
+- [references/roles/sprint-planner.md](references/roles/sprint-planner.md) - sprint planning guidance
 - [references/languages/go.md](references/languages/go.md) - Go language guidance
 - [references/languages/swift-ios.md](references/languages/swift-ios.md) - Swift and iOS guidance
 - [references/languages/typescript-frontend.md](references/languages/typescript-frontend.md) - TypeScript and frontend guidance
