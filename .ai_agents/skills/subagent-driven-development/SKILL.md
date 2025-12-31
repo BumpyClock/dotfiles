@@ -23,7 +23,7 @@ Choose the right agent / model that is likely to succeed before spawning the imp
 - If no plan: use dispatching-parallel-agents for independent investigations, otherwise manual execution; use executing-plans for a parallel session.
 - One implementer subagent per task; do not reuse across tasks.
 - Provide full task text and context; never make subagents read the plan file.
-- Subagents must follow `programming` (TDD) for any code changes.
+- Subagents must follow `programming` guidance and apply TDD when required by the programming skill or explicit user request.
 - Every task gets a combined spec+quality review with full context (requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff/changed files, test results).
 - Review loop until approved; stop and report failure after 10 iterations.
 

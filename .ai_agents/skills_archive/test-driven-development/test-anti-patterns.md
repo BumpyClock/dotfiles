@@ -8,7 +8,7 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 
 **Core principle:** Test what the code does, not what the mocks do.
 
-**Following strict TDD prevents these anti-patterns.**
+**TDD helps prevent these anti-patterns. Even when not doing TDD, avoid them.**
 
 ## The Iron Laws
 
