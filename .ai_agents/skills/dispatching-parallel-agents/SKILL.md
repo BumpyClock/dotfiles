@@ -7,6 +7,8 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 Use this to investigate multiple independent failures or domains in parallel.
 
+[codex-specific-instructions]: When using Codex, confirm with the user if they want you to proceed with subagent-driven-development before starting. Without explicit user ask, do the work yourself.
+
 **Core principle:** One agent per independent domain.
 
 ## Rules (Tight)

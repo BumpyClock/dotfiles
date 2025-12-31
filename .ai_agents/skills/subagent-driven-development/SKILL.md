@@ -5,69 +5,71 @@ description: Use when executing implementation plans with independent tasks in t
 
 # Subagent-Driven Development
 
-Execute plans with a fresh subagent per task and one combined spec+quality review after each.
+Act as an orchestrator: run coding agents, review their work, and loop until tasks are complete.
 
-**Core principle:** Fresh subagent per task + combined review = fast, high quality.
+Codex-specific instructions are in `references/codex-specific-instructions.md`. If you're codex or codex-cli, read that file and follow it.
 
-Codex-specific guidelines are in `references/codex-specific-instructions.md`. If you're codex or codex-cli, read that file.
+Claude-specific instructions are in `references/claude-specific-instructions.md`. If you're claude or claude-cli, read that file and follow it.
 
-**IMPORTANT** Agents will take a while to write the code. Wait for the agent to finish do not prematurely stop it. If need to check if the agent is making changes, check the git diff or the changed files.
+## Chain of Thought Process (Always Follow This)
 
-## Model / Agent Selection
+### Step 1: Initial Analysis
+- Identify the core goal
+- List all components/subtasks needed
+- Consider dependencies between tasks
 
-Choose the right agent / model that is likely to succeed before spawning the implementer. Cheapest is not always right cost model, since it may fail and require several retries. Consider task complexity
+### Step 2: Interface Definition
+- Define clear interfaces for each component
+- Specify expected inputs/outputs
+- Document integration points
 
-## Rules (Tight)
-- If in plan mode, develop the plan on how you would implement the given tasks using the rules below.
-- Use only when: plan exists, tasks mostly independent, and you will stay in this session.
-- If no plan: use dispatching-parallel-agents for independent investigations, otherwise manual execution; use executing-plans for a parallel session.
-- One implementer subagent per task; do not reuse across tasks.
-- Provide full task text and context; never make subagents read the plan file.
-- Subagents must follow `programming` guidance and apply TDD when required by the programming skill or explicit user request.
-- Every task gets a combined spec+quality review with full context (requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff/changed files, test results).
-- Review loop until approved; stop and report failure after 10 iterations.
+### Step 3: Evaluate Task Complexity
+- If the task is too complex for one agent, break it down further
+- Create a succinct dependency graph of tasks.
+- Decide which tasks can be parallelized and which have dependencies on each other. 
+- Plan the order of task execution based on dependencies.
+- Start execution with independent tasks first and with dependencies so that dependent tasks can follow in parallel if possible.
+- Spawn additional agents in parallel whenever possible
 
-## Parallelization and Sequencing (Required)
+## Core Orchestration Loop
 
-1. Build a dependency map: for each task, list required decisions/outputs and touched files or modules.
-2. Identify foundation tasks that unblock others (schema or public API changes, shared config, core abstractions, test harness work). Run these first, usually one at a time.
-3. Create execution waves: tasks in the same wave can run in parallel; waves run in sequence.
-4. Only parallelize within a wave when all are true:
-   - No shared files or overlapping directories.
-   - No shared interface/contract changes.
-   - No shared build/test/config changes.
-   - No need for results from another task to make decisions.
-5. If any of the above is uncertain, default to sequential execution or merge tasks.
-6. Order waves by dependency and risk: unblockers first, then leaf tasks, then integration and cleanup.
+**Define work**
+- Create a follow-up prompt for the task in.
+- If the task is too big break it down into smaller sub-tasks that are manageable for the coding agent.
+- Create a detailed and precise prompt for the coding agent using the prompt creation flow.
+- Save the prompt in `.ai_agents/session_context/{todaysdate}/{hour}/coding-agent-prompts/` and pass it to the coding agent using `cat`.
+- Spawn the coding agent with a long timeout of 30minutes.
 
-## The Process
+**Review the work**
+- Review the agent's work. If it looks good, continue with the next task.
+- If it does not look good or drifts, create another prompt and call the coding agent again to fix the issue.
+- The  coding agent will not have context of your previous prompt; include sufficient context and details.
+- Stay in the review step until you are satisfied.
+- If the agent cannot meet requirements after 10 steps, break the loop and report to the user.
 
-- Read the plan once; extract all tasks with full text and context; create TodoWrite.
-- Build a dependency map and execution waves (see Parallelization and Sequencing).
-- For each wave: create decision-complete prompt files for the wave's tasks in `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-prompts/` using `./implementer-prompt.md`.
-- For each wave: spawn implementer subagents in parallel (Model Selection). If it asks questions, answer and update the prompt, then re-run.
-- For each task: implementer implements, tests, commits, self-reviews, and writes summary to `.ai_agents/session_context/{todaysdate}/{hour-based-folder-name}/coding-agent-reports/task-{taskid}.md`.
-- For each task: create a reviewer prompt from `./reviewer-prompt.md` with requirements, acceptance criteria, plan/spec context, implementer report, base/head SHAs, diff or changed files, and test results; dispatch reviewer.
-- If review fails: implementer fixes, reviewer re-reviews; stop and report failure after 10 loops.
-- Confirm summary file and mark task complete.
-- After all waves: dispatch final code reviewer for entire implementation and run required tests (per the plan).
+**Post-task steps**
+- Update your todo list and mark the task as completed. If you're following an external task list, update its completion status.
+- Start the next task.
+- Repeat until the delegated tasks are finished.
 
-## Prompt Templates
+Remember: the agent has no context of this conversation, so prompts must include sufficient context and details.
 
-- `./implementer-prompt.md` - Implementer subagent
-- `./reviewer-prompt.md` - Combined spec compliance + code quality reviewer subagent
+## Prompt Creation Flow
 
-## Orchestrator Prompt (Required)
+- The coding agent is not great at making decisions; you must make decisions and be explicit.
+- Read any needed and relevant code so you can decide on implementation details.
+- Prompts must be detailed and precise so the coding agent can implement without clarifications.
+- If the task is too big, break it into smaller sub-tasks and create a prompt for each.
+- In the prompt, require the agent to include a summary of their work and files changed in `.ai_agents/session_context/{todaysdate}/{hour}/coding-agent-reports/task-{taskid}.md`.
 
-Treat the implementer subagent as the coding agent in that loop, and use the combined reviewer prompt.
+## Agent Spawning Command
 
-**Do:**
-- Follow Rules, Parallelization and Sequencing, and The Process.
-- Use Model Selection and allow long timeouts (~30 minutes) when needed.
-- Re-prompt and re-run when the implementer drifts or misses requirements.
+Use the task tool or bash tool to spawn agents:
 
-## References
+```bash
+claude --model claude-opus-4-5 -p "[Full context + Specific task + All interfaces + Dependencies]"
+```
 
-- `references/example-workflow.md` - Full end-to-end example with orchestration loop and reviews
-- `references/dot-graphs.md` - Optional DOT graphs (when-to-use + process)
-- `references/guardrails.md` - Advantages, red flags, and operational notes
+Set a long timeout since agents can take a while to complete tasks.
+If needed, spin up multiple agents in parallel for truly independent tasks.
+
