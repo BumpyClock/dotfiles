@@ -5,9 +5,11 @@ description: Run a codereview using coderabbit cli and review the output.
 
 # CodeRabbit Review
 
-Run `coderabbit --prompt-only` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working. Give it a timeout of up to 5 minutes since it can take a while on large codebases.
+Run the command `coderabbit --prompt-only > .ai_agents/coderabbit_output.txt` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working. Give it a timeout of up to 5 minutes since it can take a while on large codebases.
 
 Redirect its output to a file, e.g., `coderabbit --prompt-only > .ai_agents/coderabbit_output.txt`. Read the file once the command completes. If the file already exists, delete it first to avoid confusion.
+
+the coderabbit cli is installed and available in PATH.
 
 ## Workflow
 

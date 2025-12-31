@@ -11,7 +11,7 @@ arguments:
 Please get the details for the following issue(s): $ISSUE_NUMBER
 
 
-Relevant skills `git-workflow` , `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development`, `dispatching-parallel-agents`. Read the skills you feel you need to complete the tasks before proceeding, do not read skills you don't need.
+Relevant skills `git-workflow` , `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development` (use only when explicitly required), `dispatching-parallel-agents`. Read the skills you feel you need to complete the tasks before proceeding, do not read skills you don't need.
 
 create or reuse an existing subagent or use the task tool or bash tool for git-workflow to fetch the details of issue number $ISSUE_NUMBER or all issues for the repo if the user argument is `all` ,`all issues`, nil, or something similar. DO NOT perform any git operations directly yourself. 
 
@@ -31,4 +31,3 @@ If you're in plan mode create a comprehensive plan to resolve the issue.
 to fix the issue create a new branch from the main branch named `fix/issue-<ISSUE_NUMBER>` and implement the fix using `programming` skill. Once the fix is implemented, use the `git-workflow` skill to create a pull request with a detailed description of the changes made to resolve the issue. Reference the issue number in the PR title and description for clarity.
 
 Ensure all changes are tested thoroughly and there are no linting and formatting issues before creating the PR. 
-
