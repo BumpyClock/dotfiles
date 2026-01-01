@@ -154,7 +154,7 @@ Parallel Execution:
 use the task tool or the following command to spawn agents:
 
 ```bash
-claude --dangerously-skip-permissions --model claude-sonnet-4-20250514 -p "[context + task + interfaces]"
+claude --dangerously-skip-permissions --model claude-sonnet-4-5 -p "[context + task + interfaces]"
 ```
 
 **Sub-agent delegation:** Your agents can spawn helpers (but helpers can't spawn more)
