@@ -1,5 +1,11 @@
 # Theme – lazy load on first prompt
-oh-my-posh init pwsh --config "C:\Users\adity\OneDrive\Documents\PowerShell\Themes\dracula.omp.json" | iex
+$ompThemePath = "$env:USERPROFILE\OneDrive\Documents\PowerShell\Themes\dracula.omp.json"
+if (Test-Path $ompThemePath) {
+    oh-my-posh init pwsh --config $ompThemePath | iex
+} elseif (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+    # Fallback to dracula theme from oh-my-posh built-in themes
+    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\dracula.omp.json" | iex
+}
 
 # Node (only once per session)
 if (-not $global:FNM_DONE) {
@@ -253,10 +259,11 @@ function claude-zai {
     $env:ANTHROPIC_AUTH_TOKEN = "6263383b95054e69b6dc3542f62f9fb1.oBmzf2yqXBGYPrjU"
     $env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
     $env:API_TIMEOUT_MS = "3000000"
-    $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
-    $env:ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6"
-    $env:ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6"
-    claude @args
+    $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7"
+    $env:ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.7"
+    $env:ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.7"
+    $env:ENABLE_LSP_TOOL = "1"
+    claude --dangerously-skip-permissions @args
 }
 Set-Alias cz claude-zai
 
@@ -268,5 +275,6 @@ function ccy {
     Remove-Item Env:ANTHROPIC_DEFAULT_HAIKU_MODEL -ErrorAction SilentlyContinue
     Remove-Item Env:ANTHROPIC_DEFAULT_SONNET_MODEL -ErrorAction SilentlyContinue
     Remove-Item Env:ANTHROPIC_DEFAULT_OPUS_MODEL -ErrorAction SilentlyContinue
+    $env:ENABLE_LSP_TOOL = "1"
     claude --dangerously-skip-permissions @args
 }
