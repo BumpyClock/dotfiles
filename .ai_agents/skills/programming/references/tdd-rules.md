@@ -6,28 +6,28 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 Core principle: If you didn't watch the test fail, you don't know if it tests the right thing.
 
-Violating the letter of the rules is violating the spirit of the rules.
+This reference applies when TDD is required or explicitly chosen. For mechanical edits (renames, formatting, file moves), docs/config-only changes, or copy/paste operations that do not affect behavior, you can skip TDD and use lighter verification.
 
 ## When to Use
 
-Always:
-- New features
+Default (when you choose TDD or behavior changes warrant it):
+- New behavior/features
 - Bug fixes
-- Refactoring
-- Behavior changes
+- Refactoring that could alter behavior
+- Any change that affects runtime behavior
 
-Exceptions (ask your human partner):
-- Throwaway prototypes
-- Generated code
-- Configuration files
+Skip or simplify (unless user explicitly requests TDD or project policy requires it):
+- Mechanical edits (renames, formatting, file moves)
+- Docs/config-only updates
+- Copy/paste changes that do not alter behavior
 
 ## The Iron Law
 
-NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+When doing TDD: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 
-Write code before the test? Delete it. Start over.
+Write code before the test? Delete it and start over if you are committed to TDD.
 
-No exceptions:
+If you are following TDD, no exceptions:
 - Don't keep it as "reference"
 - Don't "adapt" it while writing tests
 - Don't look at it
@@ -58,7 +58,7 @@ Before marking work complete:
 - [ ] Tests use real code (mocks only if unavoidable)
 - [ ] Edge cases and errors covered
 
-Can't check all boxes? You skipped TDD. Start over.
+Can't check all boxes? If you intended to follow TDD, you didn't. Either restart with TDD or explicitly decide to skip and state why.
 
 ## When Stuck
 
@@ -71,9 +71,7 @@ Can't check all boxes? You skipped TDD. Start over.
 
 ## Debugging Integration
 
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
-
-Never fix bugs without a test.
+Bug found? Default to a failing test that reproduces it, then follow the TDD cycle. If a test is infeasible, state why and propose the lightest viable verification.
 
 ## References
 

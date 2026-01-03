@@ -17,7 +17,7 @@ Use this to investigate multiple independent failures or domains in parallel.
 - If you already have a plan, use `subagent-driven-development` for execution and reviews.
 - If failures might be related or require full-system context, investigate sequentially.
 - One agent per domain; prompts must be focused, self-contained, and explicit about constraints and expected output.
-- Agents must follow `programming` (TDD) for any code changes.
+- Agents must follow `programming` guidance and apply TDD when required by the programming skill or explicit user request.
 - If investigations lead to fixes, convert them into tasks and execute via `subagent-driven-development` so review gates apply.
 - Parallelize only when file scopes do not overlap.
 

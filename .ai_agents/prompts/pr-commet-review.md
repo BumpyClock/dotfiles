@@ -16,7 +16,7 @@ arguments:
 - Get comments from `claude`, `codex`, or `codex-cli` on the PR, since sometimes they don't have resolved status but still need addressing.
 ---
 
-Relevant skills: `git-workflow`, `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development`, `subagent-driven-development`, `dispatching-parallel-agents`.
+Relevant skills: `git-workflow`, `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development` (use only when explicitly required), `subagent-driven-development`, `dispatching-parallel-agents`.
 Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when present; otherwise use the runtime skill registry (often `~/.claude/skills/`).
 
 ## Process
@@ -25,7 +25,7 @@ Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when p
 1. Collect unresolved PR review threads and comments for PR $PR_NUMBER, including replies. Use GitHub CLI or API so you can distinguish resolved vs unresolved threads.
 2. Normalize the comments into a list with id, file or line, author, comment body, and thread link.
 3. Validate each comment against current code and tests. Classify each as valid, invalid, or needs-info with evidence.
-4. For valid comments, group by area and sort by severity (critical to low). If subagents are available, parallelize investigation only when tasks are independent. Implement fixes sequentially using strict TDD; follow subagent-driven-development for implementation and reviews. If a fix is large or risky, ask the user before implementing.
+4. For valid comments, group by area and sort by severity (critical to low). If subagents are available, parallelize investigation only when tasks are independent. Implement fixes sequentially; use TDD for behavior changes or when explicitly requested, and skip TDD for mechanical edits/docs/config-only changes when safe. Follow subagent-driven-development for implementation and reviews. If a fix is large or risky, ask the user before implementing.
 5. Run relevant tests and record commands and results.
 6. Respond in the PR:
    - Valid: explain what changed and reference commit or code location.
@@ -40,4 +40,3 @@ Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when p
 - Tests: commands and outcomes
 - PR replies: posted or draft text
 - Follow-ups or risks
-
