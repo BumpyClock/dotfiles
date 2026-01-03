@@ -1,5 +1,7 @@
 # TDD Examples and Rationale
 
+Use this reference when TDD is required or explicitly chosen. For mechanical edits, docs/config-only changes, or copy/paste operations that do not affect behavior, you can skip TDD and use lighter verification.
+
 ## Contents
 
 - Red-Green-Refactor Diagram
@@ -81,7 +83,7 @@ Vague name, tests mock not code
 
 ## Verify RED - Watch It Fail
 
-**MANDATORY. Never skip.**
+**When doing TDD: mandatory.**
 
 ```bash
 npm test path/to/test.test.ts
@@ -136,7 +138,7 @@ Don't add features, refactor other code, or "improve" beyond the test.
 
 ## Verify GREEN - Watch It Pass
 
-**MANDATORY.**
+**When doing TDD: mandatory.**
 
 ```bash
 npm test path/to/test.test.ts
@@ -241,7 +243,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 
-**All of these mean: Delete code. Start over with TDD.**
+**If you intended to follow TDD, delete code and start over. If you are not doing TDD, say so explicitly and switch to a non-TDD workflow with appropriate verification.**
 
 ## Example: Bug Fix
 

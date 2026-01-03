@@ -21,14 +21,14 @@
 - **[G11-M]** Avoid names like "improved", "new", or "enhanced"; naming must be evergreen.
 - **[G12-H]** Ensure you understand the existing implementation and purpose before changing code; ask for clarification if unsure.
 - **[G13-C]** Never implement fallbacks or workarounds for failing tests; fix the underlying issue.
-- **[G14-C]** Tests must thoroughly verify desired outcomes; think about tests before implementing a feature.
+- **[G14-C]** For behavior changes, tests must thoroughly verify desired outcomes; think about tests before implementing a feature.
 - **[G15-H]** Plan first, code later; this minimizes wasted effort and improves correctness.
 
 ## Architecture & Structure [A]
 
 - **[A1-C]** The existing code structure must not be changed without a strong reason.
-- **[A2-C]** Every bug must be reproduced by a unit test before being fixed.
-- **[A3-C]** Every new feature must be covered by a unit test before it is implemented.
+- **[A2-C]** Default: reproduce every bug with a unit test before fixing it. If infeasible, state why and propose the lightest viable verification.
+- **[A3-C]** Default: cover every new behavior with a unit test before implementation. If skipping TDD for a non-behavioral change, state why and propose verification.
 - **[A4-M]** Minor inconsistencies and typos in the existing code may be fixed.
 - **[A5-H]** All CI workflows must pass before code changes may be reviewed.
 - **[A6-H]** Focus on domain and application logic using DDD tactical design
@@ -115,7 +115,7 @@
 ## AI Code Generation Process [AI]
 
 - **[AI1-H]** Analyze existing code patterns first
-- **[AI2-H]** Write tests before implementation
+- **[AI2-H]** Write tests before implementation when following TDD (behavior changes, bug fixes); otherwise ensure appropriate verification.
 - **[AI3-H]** Design interfaces before classes
 - **[AI4-H]** Implement with immutability in mind
 - **[AI5-H]** Error handling: validate early, use Optionals, throw specific exceptions

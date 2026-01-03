@@ -10,7 +10,7 @@ Think deeply and carefully about the list of tasks, they should be detailed and 
 
 Tasks should be specific and actionable. Avoid vague or ambiguous tasks. Each task should be a single line item. Tasks should be clear and concise. Use simple language and avoid jargon or technical terms that may not be familiar to the reader. Think carefully about the tasks, review your initial list for complexity and identify the tasks that are complex then break them down into smaller, more manageable tasks.
 
-ensure that we follow test driven development (TDD) principles. If a task is ambiguous, ask the user for clarification.
+Note when TDD is required (behavior changes) and when it can be skipped (mechanical edits, docs/config-only). If a task is ambiguous, ask the user for clarification.
 
 Here's an example
 

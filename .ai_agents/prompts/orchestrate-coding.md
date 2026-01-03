@@ -16,12 +16,13 @@ Think: "What contracts enable my team to work independently?"
 - Document expected behaviors
 - Create mock implementations for testing
 
-### Step 3: TDD Planning
-Think: "What tests need to be written for each component?"
+### Step 3: Testing Planning (TDD When Appropriate)
+Think: "What tests need to be written for each component, and where TDD is required?"
 - Unit tests for each module
 - Integration tests for interfaces
 - End-to-end tests for workflows
-- Tests can be written in parallel with implementation!
+- Use TDD for new behavior or bug fixes; skip TDD for mechanical edits/docs/config-only when safe, and state why.
+- Tests can be written in parallel with implementation when interfaces are clear.
 
 ### Step 4: Parallel Work Assignment
 Think: "How many developers can I get coding RIGHT NOW?"
@@ -54,13 +55,14 @@ read ~/.claude/docs/writing-code.md for guidelines on writing code and follow th
 - If the logs are supposed to contain errors, capture and test it.
 - NO EXCEPTIONS POLICY: Under no circumstances should you mark any test type as "not applicable". Every project, regardless of size or complexity, MUST have unit tests, integration tests, AND end-to-end tests. If you believe a test type doesn't apply, you need the human to say exactly "I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"
 
-## We practice TDD. That means:
+## TDD (Use when required or explicitly chosen)
 
 - Write tests before writing the implementation code
 - Only write enough code to make the failing test pass
 - Refactor code continuously while ensuring tests still pass
+- If not doing TDD, say why and define the lightest viable verification
 
-### TDD Implementation Process
+### TDD Implementation Process (When Used)
 
 - Write a failing test that defines a desired function or improvement
 - Run the test to confirm it fails as expected
@@ -152,7 +154,7 @@ Parallel Execution:
 use the task tool or the following command to spawn agents:
 
 ```bash
-claude --dangerously-skip-permissions --model claude-sonnet-4-20250514 -p "[context + task + interfaces]"
+claude --dangerously-skip-permissions --model claude-sonnet-4-5 -p "[context + task + interfaces]"
 ```
 
 **Sub-agent delegation:** Your agents can spawn helpers (but helpers can't spawn more)
