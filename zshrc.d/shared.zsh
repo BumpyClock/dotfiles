@@ -80,33 +80,8 @@ alias claude-yolo='claude --dangerously-skip-permissions'
 claude-monitor() { command claude-monitor --plan max20 "$@" }
 alias cmon='claude-monitor'
 
-# Z.AI Claude function
-claude-zai() {
-    printf '\033]0;%s\007' 'Claude Code - Zai'
-    export ANTHROPIC_AUTH_TOKEN="6263383b95054e69b6dc3542f62f9fb1.oBmzf2yqXBGYPrjU"
-    export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
-    export API_TIMEOUT_MS="3000000"
-    export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.7"
-    export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.7"
-    export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.7"
-    export ENABLE_LSP_TOOL=1
-
-    claude --dangerously-skip-permissions "$@"
-}
-
-alias cz='claude-zai'
-
-ccy() {
-    printf '\033]0;%s\007' 'Claude Code'
-    unset ANTHROPIC_AUTH_TOKEN
-    unset ANTHROPIC_BASE_URL
-    unset API_TIMEOUT_MS
-    unset ANTHROPIC_DEFAULT_HAIKU_MODEL
-    unset ANTHROPIC_DEFAULT_SONNET_MODEL
-    unset ANTHROPIC_DEFAULT_OPUS_MODEL
-    export ENABLE_LSP_TOOL=1
-    claude --dangerously-skip-permissions "$@"
-}
+# Note: cz and ccy are now standalone scripts in bin/, symlinked to ~/.local/bin
+# Run link-dotfiles.sh to create the symlinks
 
 # =============================================================================
 # DEVELOPMENT SHORTCUTS (essentials only)
