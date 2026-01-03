@@ -15,7 +15,6 @@
 - **[G4-H]** Match the style and formatting of surrounding code; consistency within a file outweighs external style guides.
 - **[G5-C]** Never make changes unrelated to the current task; document unrelated issues instead of fixing them.
 - **[G6-H]** Never remove code comments unless they are actively false.
-- **[G7-H]** All code files must start with a brief two-line comment explaining the file; each line must start with `ABOUTME: `.
 - **[G8-M]** Comments must avoid temporal context and describe the code as it is, not how it evolved.
 - **[G9-C]** Never implement a mock mode; always use real data and real APIs.
 - **[G10-C]** Never throw away an existing implementation and rewrite without explicit permission when fixing bugs or compilation errors.
