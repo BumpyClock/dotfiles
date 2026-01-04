@@ -12,3 +12,7 @@ secrets/tokens/*
 node_modules/
 .ai_agents/session_context
 .claude/session_context
+
+# lsp-mcp logs
+./lsp-mcp/logs/*
+./lsp-mcp/semanticSearch/*
