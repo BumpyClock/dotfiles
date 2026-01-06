@@ -179,11 +179,14 @@
   },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
-    "ralph-wiggum@claude-plugins-official": true
+    "ralph-wiggum@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  }
+  },
+  "model": "sonnet"
 }

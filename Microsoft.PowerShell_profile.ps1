@@ -1,5 +1,5 @@
 # Theme – lazy load on first prompt
-oh-my-posh init pwsh --config "C:\Users\adity\OneDrive\Documents\PowerShell\Themes\dracula.omp.json" | iex
+oh-my-posh init pwsh --config "$HOME\OneDrive\Documents\PowerShell\Themes\dracula.omp.json" | iex
 
 # Node (only once per session)
 if (-not $global:FNM_DONE) {
