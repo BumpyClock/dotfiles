@@ -247,26 +247,11 @@ function claude-yolo { claude --dangerously-skip-permissions @args }
 function claude-monitor-plan-max-20 { claude-monitor --plan max20 @args }
 Set-Alias cmon claude-monitor-plan-max-20
 
-# Z.AI Claude function
-function claude-zai {
-    $Host.UI.RawUI.WindowTitle = "Claude Code - Zai"
-    $env:ANTHROPIC_AUTH_TOKEN = "6263383b95054e69b6dc3542f62f9fb1.oBmzf2yqXBGYPrjU"
-    $env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
-    $env:API_TIMEOUT_MS = "3000000"
-    $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
-    $env:ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6"
-    $env:ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6"
-    claude @args
+# Claude wrappers from ~/.local/bin
+$localBin = "$env:USERPROFILE\.local\bin"
+if (Test-Path "$localBin\cz.ps1") {
+    function cz { & "$env:USERPROFILE\.local\bin\cz.ps1" @args }
 }
-Set-Alias cz claude-zai
-
-function ccy {
-    $Host.UI.RawUI.WindowTitle = "Claude Code"
-    Remove-Item Env:ANTHROPIC_AUTH_TOKEN -ErrorAction SilentlyContinue
-    Remove-Item Env:ANTHROPIC_BASE_URL -ErrorAction SilentlyContinue
-    Remove-Item Env:API_TIMEOUT_MS -ErrorAction SilentlyContinue
-    Remove-Item Env:ANTHROPIC_DEFAULT_HAIKU_MODEL -ErrorAction SilentlyContinue
-    Remove-Item Env:ANTHROPIC_DEFAULT_SONNET_MODEL -ErrorAction SilentlyContinue
-    Remove-Item Env:ANTHROPIC_DEFAULT_OPUS_MODEL -ErrorAction SilentlyContinue
-    claude --dangerously-skip-permissions @args
+if (Test-Path "$localBin\ccy.ps1") {
+    function ccy { & "$env:USERPROFILE\.local\bin\ccy.ps1" @args }
 }

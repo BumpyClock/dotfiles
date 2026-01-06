@@ -247,18 +247,44 @@ function Invoke-LinkWindowsTerminal {
 # Function to link PowerShell profiles
 function Invoke-LinkPowerShellProfiles {
     Write-Status "Linking PowerShell profiles..."
-    
+
     # PowerShell profile locations
     $profilePaths = @(
         @{source=".config\powershell\profile.ps1"; target=$PROFILE}
         @{source=".config\powershell\profile.ps1"; target="$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"}
     )
-    
+
     foreach ($entry in $profilePaths) {
         $source = Join-Path $DOTFILES_DIR $entry.source
-        
+
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $entry.target | Out-Null
+        }
+    }
+}
+
+# Function to link bin scripts to ~/.local/bin
+function Invoke-LinkBinScripts {
+    Write-Status "Linking bin scripts to ~/.local/bin..."
+
+    $binDir = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path $binDir)) {
+        New-Item -ItemType Directory -Path $binDir -Force | Out-Null
+    }
+
+    # Bin scripts to link
+    # Format: @{source="relative_path"; target_name="name_without_extension"}
+    $binScripts = @(
+        @{source="bin\cz.ps1"; target_name="cz.ps1"}
+        @{source="bin\ccy.ps1"; target_name="ccy.ps1"}
+    )
+
+    foreach ($entry in $binScripts) {
+        $source = Join-Path $DOTFILES_DIR $entry.source
+        $target = Join-Path $binDir $entry.target_name
+
+        if (Test-Path $source) {
+            New-Symlink -Source $source -Target $target | Out-Null
         }
     }
 }
@@ -407,6 +433,26 @@ function Show-Symlinks {
             Write-Host " -> $($item.Target)"
         }
     }
+
+    $binDir = "$env:USERPROFILE\.local\bin"
+    if (Test-Path $binDir) {
+        $binScripts = @("cz.ps1", "ccy.ps1")
+        $binPrinted = $false
+
+        foreach ($script in $binScripts) {
+            $path = Join-Path $binDir $script
+            $item = Get-SymlinkItem -Path $path
+            if ($item) {
+                if (-not $binPrinted) {
+                    Write-Host "`n  Bin scripts:" -ForegroundColor $colors.Green
+                    $binPrinted = $true
+                }
+
+                Write-Host "  $script" -ForegroundColor $colors.Blue -NoNewline
+                Write-Host " -> $($item.Target)"
+            }
+        }
+    }
 }
 
 # Function to show help
@@ -470,7 +516,8 @@ else {
     Invoke-LinkConfigDirs
     Invoke-LinkWindowsTerminal
     Invoke-LinkPowerShellProfiles
-    
+    Invoke-LinkBinScripts
+
     Write-Host ""
     Write-Status "OK All symlinks created successfully!" -Color Green
     Write-Host ""
