@@ -176,7 +176,8 @@
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
     "ralph-wiggum@claude-plugins-official": true,
-    "agent-deck@agent-deck": true
+    "agent-deck@agent-deck": true,
+    "code-review@claude-plugins-official": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
