@@ -1,6 +1,5 @@
 # CLAUDE instructions
 
-Activate the lsp mcp on startup. Use the LSP for code navigation , semantic search and code intelligence features. 
 
 When building any kind of software, use the `ux-designer` skill to ensure that the you keep the end user experience in mind. 
 

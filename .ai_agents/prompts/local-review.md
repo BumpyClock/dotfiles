@@ -10,6 +10,7 @@ Review local git changes using `git diff`.
 - `/local-review --staged` - Review only staged changes
 - `/local-review HEAD~3` - Review changes since 3 commits ago
 - `/local-review main` - Review changes compared to main branch
+- `/local-review everything` - Review the entire codebase (like a full static analysis)
 
 ## Steps
 
@@ -29,7 +30,7 @@ Review local git changes using `git diff`.
 
 4. **Get change summary** (Haiku agent): View the diff and return a brief summary of what changed.
 
-5. **Launch 4 parallel Sonnet review agents**, each returning issues with reasoning:
+5. **Launch upto 8 parallel Sonnet review agents**, each returning issues with reasoning:
 
    a. **CLAUDE.md compliance**: Check changes against relevant CLAUDE.md rules.
 
@@ -39,7 +40,7 @@ Review local git changes using `git diff`.
 
    d. **Code comments compliance**: Read comments in modified files. Ensure changes don't violate guidance in comments (TODOs, warnings, invariants).
 
-6. **Score each issue** (parallel Haiku agents): For each issue from step 5, score confidence 0-100:
+6. **Score each issue** (up to 8 parallel  Haiku agents): For each issue from step 5, score confidence 0-100:
    - 0: False positive, doesn't hold up to scrutiny
    - 25: Might be real, couldn't verify, or stylistic without CLAUDE.md backing
    - 50: Verified real but minor/nitpick

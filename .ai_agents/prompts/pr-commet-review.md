@@ -17,11 +17,12 @@ arguments:
 ---
 
 Relevant skills: `git-workflow`, `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development` (use only when explicitly required), `subagent-driven-development`, `dispatching-parallel-agents`.
-Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when present; otherwise use the runtime skill registry (often `~/.claude/skills/`).
+Read only what you need. 
 
 ## Process
 0. Spin up a subagent to fetch and normalize PR comments (and child comments, sometimes AI coding review agents leave several child comments in response to a parent comment). Agent response should be a structured list of comments with severity, id, file or line, author, comment details body, and thread link.
-0.5. use the graphql api to fetch all unresolved review threads and comments for the PR, including replies. Distinguish resolved vs unresolved threads.
+0.5. use the graphql api to fetch all comments for the PR $PR_NUMBER, including replies. Distinguish resolved vs unresolved threads. Read unresovled threads and comments by `claude`, `codex`, or `codex-cli`, `coderabbit`. Sometimes they leave several child comments in response to a parent comment which contain the actual review feedback.
+.5.a. For each comment, spin up a validation subagent (sonnet) to classify it as valid, invalid, or needs-info with evidence.
 1. Collect unresolved PR review threads and comments for PR $PR_NUMBER, including replies. Use GitHub CLI or API so you can distinguish resolved vs unresolved threads.
 2. Normalize the comments into a list with id, file or line, author, comment body, and thread link.
 3. Validate each comment against current code and tests. Classify each as valid, invalid, or needs-info with evidence.
@@ -32,6 +33,8 @@ Read only what you need. Prefer repo-local skills in `.ai_agents/skills/` when p
    - Invalid: explain why, with evidence.
    - Needs-info: ask targeted questions.
 7. Resolve a thread only after posting a reply or if we have addressed the concern expressed in the comment or deemed it resolved/invalid; if you cannot post, provide draft replies and leave unresolved.
+8. Resolve all outdated comments that have been addressed by other changes in the PR.
+9. Summarize the review in the output , the changes made, tests run, and any follow-ups or risks.
 
 ## Output format
 - Comments fetched: count and brief list
