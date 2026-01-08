@@ -1,6 +1,8 @@
 ---
 name: technical-writer
 description: Enforce code documentation standards. Use when adding or cleaning ABOUTME headers, docstrings, inline comments, or other technical documentation inside code files.
+context: fork
+model : claude-haiku-4-5
 ---
 
 # Technical Writer
