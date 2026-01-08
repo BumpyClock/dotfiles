@@ -1,6 +1,5 @@
 # CLAUDE instructions
 
-Activate the lsp mcp on startup. Use the LSP for code navigation , semantic search and code intelligence features. 
 
 ## Writing code
 
