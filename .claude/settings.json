@@ -163,7 +163,9 @@
       "mcp__lspMCP__findSymbol"
     ],
     "deny": [],
-    "ask": ["Bash(git push:*)"],
+    "ask": [
+      "Bash(git push:*)"
+    ],
     "defaultMode": "bypassPermissions"
   },
   "enableAllProjectMcpServers": true,
