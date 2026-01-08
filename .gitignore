@@ -2,7 +2,7 @@
 __pycache__
 *.py[cod]
 
-# Secrets submodule - don't ignore the submodule itself, 
+# Secrets submodule - don't ignore the submodule itself,
 # but do ignore any local secret files that might accidentally get created
 secrets/*.env
 secrets/api-keys/*.env
@@ -16,3 +16,4 @@ node_modules/
 # lsp-mcp logs
 ./lsp-mcp/logs/*
 ./lsp-mcp/semanticSearch/*
+.lsp-mcp/
