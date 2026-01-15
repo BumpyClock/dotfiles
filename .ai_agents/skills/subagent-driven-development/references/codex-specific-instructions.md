@@ -1,8 +1,9 @@
 Since codex does not have the same capabilities and tools as Claude CLI for parallel sub-agents, follow these additional instructions when using codex for sub-agent driven development tasks.
 
-- use multi_tool_use.parallel to run multiple functions.exec_command calls at the same time. This will help you run tasks in parallel when possible.
-- You cannot interact with sub_agents. While the agent is working there will not be any console output until the agent is done. Let the subagent run uninterrupted for at least 30 minutes. Do not prematurely stop the agent ,be patient.
-- Think carefully about which tasks can be parallelized. Only parallelize tasks that do not share files, configuration, or interfaces. If in doubt, run sequentially. When tasks don't share files, configuration, or interfaces, you can run them in parallel using multi_tool_use.parallel to spin up multiple coding agents at once and speed up the implementation. 
+- Use `multi_tool_use.parallel` to run multiple tool calls concurrently (for example, multiple `functions.exec_command` or `functions.shell_command` entries in a single `multi_tool_use.parallel` call). Outputs return together. This is your tool to invoke multiple sub-agents in parallel.
+- Only parallelize tasks that do not touch the same files, configuration, or interfaces. If in doubt, run sequentially.
+- You cannot interact with sub-agents while they run, and you will not see output until they finish. Let them run uninterrupted for at least 30 minutes.
+- Write all prompts up front before starting any sub-agents.
 
 ## Model / Agent Selection
 
