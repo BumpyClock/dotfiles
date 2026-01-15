@@ -17,12 +17,13 @@
 - **[G6-H]** Never remove code comments unless they are actively false.
 - **[G8-M]** Comments must avoid temporal context and describe the code as it is, not how it evolved.
 - **[G9-C]** Never implement a mock mode; always use real data and real APIs.
-- **[G10-C]** Never throw away an existing implementation and rewrite without explicit permission when fixing bugs or compilation errors.
+- **[G10-C]** Never throw away an existing implementation and rewrite without explicit permission when fixing bugs or compilation errors. **No backwards compatibility; we follow a fix‑forward approach** — remove deprecated code immediately, do not leave dead code behind.
 - **[G11-M]** Avoid names like "improved", "new", or "enhanced"; naming must be evergreen.
 - **[G12-H]** Ensure you understand the existing implementation and purpose before changing code; ask for clarification if unsure.
 - **[G13-C]** Never implement fallbacks or workarounds for failing tests; fix the underlying issue.
 - **[G14-C]** For behavior changes, tests must thoroughly verify desired outcomes; think about tests before implementing a feature.
 - **[G15-H]** Plan first, code later; this minimizes wasted effort and improves correctness.
+-
 
 ## Architecture & Structure [A]
 
@@ -39,8 +40,9 @@
 - **[S2-M]** Error and log messages should not end with a period.
 - **[S3-M]** Error and log messages must always be a single sentence, with no periods inside.
 - **[S4-H]** Favor "fail fast" paradigm over "fail safe": throw exception earlier.
-- **[S5-H]** Classes must avoid using public static literals.
-- **[S6-H]** CQS is a core principle on designing functions and methods
+- **[S5-M]** Detailed errors over graceful failures - we want to identify and fix issues fast.
+- **[S6-H]** Classes must avoid using public static literals.
+- **[S7-H]** CQS is a core principle on designing functions and methods
 
 ## Class Requirements [C]
 
