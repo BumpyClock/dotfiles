@@ -158,6 +158,11 @@ function Invoke-LinkClaudeConfig {
     if (-not (Test-Path $codexDir)) {
         New-Item -ItemType Directory -Path $codexDir -Force | Out-Null
     }
+
+    $opencodeDir = "$env:USERPROFILE\.config\opencode"
+    if (-not (Test-Path $opencodeDir)) {
+        New-Item -ItemType Directory -Path $opencodeDir -Force | Out-Null
+    }
     
     # Items that remain stored under .claude in the repo
     $claudeItems = @(
@@ -180,7 +185,7 @@ function Invoke-LinkClaudeConfig {
         @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
         @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) },
-        @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills")) }
+        @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills"), (Join-Path $opencodeDir "skill")) }
     )
     
     foreach ($link in $aiLinks) {
@@ -377,6 +382,13 @@ function Show-Symlinks {
             Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
             Write-Host " -> $($link.Target)"
         }
+    }
+
+    $opencodeSkill = Get-SymlinkItem -Path (Join-Path "$env:USERPROFILE\.config\opencode" "skill")
+    if ($opencodeSkill) {
+        Write-Host "`n  OpenCode configuration:" -ForegroundColor $colors.Green
+        Write-Host "  skill" -ForegroundColor $colors.Blue -NoNewline
+        Write-Host " -> $($opencodeSkill.Target)"
     }
 
     $configDir = "$env:USERPROFILE\.config"
