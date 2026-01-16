@@ -133,6 +133,8 @@ link_claude_config() {
     if [[ -d "$ai_dir/skills" ]]; then
         create_symlink "$ai_dir/skills" "$HOME/.claude/skills"
         create_symlink "$ai_dir/skills" "$HOME/.codex/skills"
+        mkdir -p "$HOME/.config/opencode"
+        create_symlink "$ai_dir/skills" "$HOME/.config/opencode/skill"
     fi
 }
 
@@ -213,6 +215,12 @@ show_symlinks() {
     if [[ -d "$HOME/.claude" ]]; then
         echo -e "\n  ${GREEN}Claude configuration:${NC}"
         find "$HOME/.claude" -maxdepth 1 -type l -exec bash -c 'echo -e "  ${BLUE}$(basename "{}")${NC} → $(readlink "{}")"' \;
+    fi
+
+    # Check OpenCode config
+    if [[ -L "$HOME/.config/opencode/skill" ]]; then
+        echo -e "\n  ${GREEN}OpenCode configuration:${NC}"
+        echo -e "  ${BLUE}skill${NC} → $(readlink "$HOME/.config/opencode/skill")"
     fi
     
     # Check .config directory
