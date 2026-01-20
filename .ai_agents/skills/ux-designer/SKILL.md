@@ -260,7 +260,7 @@ Create implementation-ready UX design documentation that covers layout, componen
    - Document states, transitions, and feedback.
    - Cover loading, empty, error, and validation behavior.
 5. Specify visual system
-   - Define color roles, typography scale, spacing system, and tokens when known.
+   - Define color roles, typography scale, spacing system, and design tokens.
 6. Check accessibility
    - Provide keyboard navigation, focus order, and contrast guidance.
 7. Produce design doc

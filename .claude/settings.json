@@ -173,6 +173,9 @@
     "type": "command",
     "command": "ccline"
   },
+  "env": {
+    "AUTO_TOOL_SEARCH" :"auto:5"
+  },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
     "ralph-wiggum@claude-plugins-official": true,
