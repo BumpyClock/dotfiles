@@ -1,12 +1,21 @@
+# Core
+- Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
+  - Evaluate options by: maintenance cadence, community adoption, docs quality, license, and compatibility with the project's stack.
+  - When multiple good options exist, propose 2–3 with clear pros/cons and a recommendation.
+  - Prefer the latest versions of libraries unless there are compatability concerns. 
 
-# Core instructions
-- When planning work and writing code, research Github packages, libraries and frameworks that may be useful in developing the feature and help you achieve your goals without writing unnecessary code. If someone has solved a problem similar to yours, consider using their solution instead of reinventing the wheel. 
-- Search online and find well maintained packages that seem to be regularly updated, have reliable communities, and can essentially simplify the development of this particular feature. When there are multiple options, propose different ones with their advantages and disadvantages. They should be compatible with with the framework the project is using.
+# Learnings (per-repo)
+- Maintain a `LEARNINGS.md` at the repository root (create if missing).
+- On start: read `LEARNINGS.md` to avoid repeating ineffective approaches.
+- After notable progress or a new failure mode: append a short entry:
+  - Context: what you were trying to do
+  - What you tried
+  - Outcome (worked / didn’t work + error pattern)
+  - Next time: what to do / avoid
+- Keep entries concise. Never include secrets, sensitive URLs, or personal data.
 
-
-When building frontend for any kind of software, use the `ux-designer` skill to ensure that the you keep the end user experience in mind. 
-
-## Writing code
-Only load the `programming` skill when you are actively writing or modifying code. Do not load it for planning, research, copy/paste, file moves, or docs-only changes.
-
-
+# Skills / modes (if supported by the runtime)
+- Use "programming" only when actively writing/modifying code.
+- Use "ux-designer" when implementing or changing user-facing UI/UX (provide brief UX rationale).
+- Use "subagent-driven-development" for larger changes to preserve context and parallelize safely.
+- If skills/modes aren’t available in the environment, follow the intent of the above rules and state what you’re doing instead.

@@ -7,9 +7,9 @@ description: Use when executing implementation plans with independent tasks in t
 
 Act as an orchestrator: run coding agents, review their work, and loop until tasks are complete.
 
-Codex-specific instructions are in `references/codex-specific-instructions.md`. If you're codex or codex-cli, read that file and follow it.
+Codex-specific instructions are in `./references/codex-specific-instructions.md`. Only read if you're codex or codex-cli, read that file and follow it.
 
-Claude-specific instructions are in `references/claude-specific-instructions.md`. If you're claude or claude-cli, read that file and follow it.
+Claude-specific instructions are in `./references/claude-specific-instructions.md`. Only read if you're claude or claude-cli, read that file and follow it.
 
 ## Chain of Thought Process (Always Follow This)
 
@@ -65,11 +65,8 @@ Remember: the agent has no context of this conversation, so prompts must include
 
 ## Agent Spawning Command
 
-Use the task tool or bash tool to spawn agents:
+Use the task tool or bash tool if needed to spawn the sub-agents.
 
-```bash
-claude --model claude-opus-4-5 -p "[Full context + Specific task + All interfaces + Dependencies]"
-```
 
 Set a long timeout since agents can take a while to complete tasks.
 If needed, spin up multiple agents in parallel for truly independent tasks.
