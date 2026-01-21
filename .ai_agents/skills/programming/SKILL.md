@@ -25,7 +25,7 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 ## Quick Start (Required)
 
 1. Read `~/.claude/docs/writing-code.md` for coding guidelines.
-2. Read [CODING-RULES.md](CODING-RULES.md).
+2. Read [CODING-RULES.md](./CODING-RULES.md).
 3. Follow severity: Critical > High > Medium > Low.
 4. Resolve conflicts by severity, then existing code patterns.
 5. If writing or changing code, choose a testing approach: default to TDD for behavior changes, otherwise use judgment. If skipping TDD, say why and offer a testable next step.
@@ -45,11 +45,11 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 
 ## Modes (Load as needed)
 
-- [references/roles/code-reviewer.md](references/roles/code-reviewer.md) - structured code review workflow
-- [references/roles/pair-programmer.md](references/roles/pair-programmer.md) - approach analysis before coding
-- [references/roles/coding-teacher.md](references/roles/coding-teacher.md) - teaching and conceptual guidance
-- [references/roles/software-architect.md](references/roles/software-architect.md) - architectural analysis and system design guidance
-- [references/roles/sprint-planner.md](references/roles/sprint-planner.md) - sprint planning and parallel workstream orchestration
+- [references/roles/code-reviewer.md](./references/roles/code-reviewer.md) - structured code review workflow
+- [references/roles/pair-programmer.md](./references/roles/pair-programmer.md) - approach analysis before coding
+- [references/roles/coding-teacher.md](./references/roles/coding-teacher.md) - teaching and conceptual guidance
+- [references/roles/software-architect.md](./references/roles/software-architect.md) - architectural analysis and system design guidance
+- [references/roles/sprint-planner.md](./references/roles/sprint-planner.md) - sprint planning and parallel workstream orchestration
 
 ## Language Index
 
@@ -66,15 +66,15 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 
 ## References
 
-- [CODING-RULES.md](CODING-RULES.md) - full rule set
-- [references/tdd-rules.md](references/tdd-rules.md) - full TDD workflow, checklist, troubleshooting
-- [references/tdd-examples.md](references/tdd-examples.md) - examples and red flags
+- [CODING-RULES.md](./CODING-RULES.md) - full rule set
+- [references/tdd-rules.md](./references/tdd-rules.md) - full TDD workflow, checklist, troubleshooting
+- [references/tdd-examples.md](./references/tdd-examples.md) - examples and red flags
 - [../test-driven-development/test-anti-patterns.md](../test-driven-development/test-anti-patterns.md) - testing anti-patterns
-- [references/roles/code-reviewer.md](references/roles/code-reviewer.md) - detailed code review guidance
-- [references/roles/pair-programmer.md](references/roles/pair-programmer.md) - solution exploration guidance
-- [references/roles/coding-teacher.md](references/roles/coding-teacher.md) - teaching guidance
-- [references/roles/software-architect.md](references/roles/software-architect.md) - architecture design guidance
-- [references/roles/sprint-planner.md](references/roles/sprint-planner.md) - sprint planning guidance
-- [references/languages/go.md](references/languages/go.md) - Go language guidance
-- [references/languages/swift-ios.md](references/languages/swift-ios.md) - Swift and iOS guidance
-- [references/languages/typescript-frontend.md](references/languages/typescript-frontend.md) - TypeScript and frontend guidance
+- [references/roles/code-reviewer.md](./references/roles/code-reviewer.md) - detailed code review guidance
+- [references/roles/pair-programmer.md](./references/roles/pair-programmer.md) - solution exploration guidance
+- [references/roles/coding-teacher.md](./references/roles/coding-teacher.md) - teaching guidance
+- [references/roles/software-architect.md](./references/roles/software-architect.md) - architecture design guidance
+- [references/roles/sprint-planner.md](./references/roles/sprint-planner.md) - sprint planning guidance
+- [references/languages/go.md](./references/languages/go.md) - Go language guidance
+- [references/languages/swift-ios.md](./references/languages/swift-ios.md) - Swift and iOS guidance
+- [references/languages/typescript-frontend.md](./references/languages/typescript-frontend.md) - TypeScript and frontend guidance
