@@ -18,8 +18,8 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 - Admit unknowns and blockers; ask for help early. Stop when you do not have enough information to decide.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
 - Execute only after the user decides; confirm if anything is ambiguous.
-- [Claude only] Use `subagent-driven-development` when implementing features. [Codex] only delegate to subagents when explicitly instructed by the user.
-- [Claude only] Delegate to subagents aggressively and preserve your own context; act as an orchestrator.
+- Use `subagent-driven-development` when implementing features. 
+- Delegate to subagents aggressively and preserve your own context; act as an orchestrator.
 - Use `dispatching-parallel-agents` to split independent tasks and stay focused on high-level orchestration.
 
 ## Quick Start (Required)
