@@ -1,6 +1,8 @@
 ---
 name: git-workflow
 description: Preferred way to use git - PRs, commits, branches, merges, PR comments, and CI checks. Use for any git/GitHub task. any time the user asks for any action that requires interacting with git/GitHub like commit, push, comments, create PR, or fix CI.
+context: fork
+model : claude-haiku-4-5
 ---
 
 spin up a dedicated sub-agent to perform git-workflow tasks requested by the user. 

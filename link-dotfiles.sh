@@ -133,16 +133,18 @@ link_claude_config() {
     if [[ -d "$ai_dir/skills" ]]; then
         create_symlink "$ai_dir/skills" "$HOME/.claude/skills"
         create_symlink "$ai_dir/skills" "$HOME/.codex/skills"
+        mkdir -p "$HOME/.config/opencode"
+        create_symlink "$ai_dir/skills" "$HOME/.config/opencode/skill"
     fi
 }
 
 # Function to link config directories
 link_config_dirs() {
     print_status "Linking configuration directories..."
-    
+
     # Create ~/.config directory if it doesn't exist
     mkdir -p "$HOME/.config"
-    
+
     # Config directories to link
     # Format: "source:target"
     local config_dirs=(
@@ -152,11 +154,36 @@ link_config_dirs() {
         ".config/kitty:$HOME/.config/kitty"
         ".config/wezterm:$HOME/.config/wezterm"
     )
-    
+
     for entry in "${config_dirs[@]}"; do
         IFS=':' read -r source target <<< "$entry"
         source="$DOTFILES_DIR/$source"
-        
+
+        if [[ -e "$source" ]]; then
+            create_symlink "$source" "$target"
+        fi
+    done
+}
+
+# Function to link bin scripts to ~/.local/bin
+link_bin_scripts() {
+    print_status "Linking bin scripts to ~/.local/bin..."
+
+    # Create ~/.local/bin directory if it doesn't exist
+    mkdir -p "$HOME/.local/bin"
+
+    # Bin scripts to link (without .sh extension for the symlink name)
+    # Format: "source:target_name"
+    local bin_scripts=(
+        "bin/cz.sh:cz"
+        "bin/ccy.sh:ccy"
+    )
+
+    for entry in "${bin_scripts[@]}"; do
+        IFS=':' read -r source target_name <<< "$entry"
+        source="$DOTFILES_DIR/$source"
+        target="$HOME/.local/bin/$target_name"
+
         if [[ -e "$source" ]]; then
             create_symlink "$source" "$target"
         fi
@@ -188,6 +215,12 @@ show_symlinks() {
     if [[ -d "$HOME/.claude" ]]; then
         echo -e "\n  ${GREEN}Claude configuration:${NC}"
         find "$HOME/.claude" -maxdepth 1 -type l -exec bash -c 'echo -e "  ${BLUE}$(basename "{}")${NC} → $(readlink "{}")"' \;
+    fi
+
+    # Check OpenCode config
+    if [[ -L "$HOME/.config/opencode/skill" ]]; then
+        echo -e "\n  ${GREEN}OpenCode configuration:${NC}"
+        echo -e "  ${BLUE}skill${NC} → $(readlink "$HOME/.config/opencode/skill")"
     fi
     
     # Check .config directory
@@ -223,6 +256,7 @@ main() {
             link_dotfiles
             link_claude_config
             link_config_dirs
+            link_bin_scripts
             echo ""
             print_status "✓ All symlinks created successfully!"
             echo ""

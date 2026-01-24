@@ -21,6 +21,30 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+link_bin_scripts() {
+    local bin_dir="$HOME/.local/bin"
+    mkdir -p "$bin_dir"
+
+    local scripts=("cz:cz.sh" "ccy:ccy.sh")
+    for entry in "${scripts[@]}"; do
+        IFS=':' read -r name file <<< "$entry"
+        local source="$DOTFILES_DIR/bin/$file"
+        local target="$bin_dir/$name"
+
+        [[ ! -f "$source" ]] && continue
+
+        if [[ -L "$target" ]]; then
+            [[ "$(readlink "$target")" == "$source" ]] && continue
+            rm "$target"
+        elif [[ -e "$target" ]]; then
+            mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+
+        ln -sf "$source" "$target"
+        print_status "Linked $name → $target"
+    done
+}
+
 usage() {
     cat <<'EOF'
 Usage: sync-zshrc.sh [options]
@@ -195,6 +219,8 @@ if [[ $python_status -ne 0 ]]; then
 fi
 
 print_status "Injected dotfiles zsh block into ~/.zshrc"
+
+link_bin_scripts
 
 if [[ $WITH_DEPS -eq 1 ]]; then
     if [[ ! -x "$INSTALL_SCRIPT" ]]; then

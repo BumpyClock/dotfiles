@@ -25,7 +25,8 @@
       "Bash(pacman -Q:*)",
       "Bash(aconfmgr:*)",
       "Bash(sudo aconfmgr:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(pwsh:*)"
     ],
     "deny": [],
     "defaultMode": "bypassPermissions"
