@@ -158,6 +158,11 @@ function Invoke-LinkClaudeConfig {
     if (-not (Test-Path $codexDir)) {
         New-Item -ItemType Directory -Path $codexDir -Force | Out-Null
     }
+
+    $opencodeDir = "$env:USERPROFILE\.config\opencode"
+    if (-not (Test-Path $opencodeDir)) {
+        New-Item -ItemType Directory -Path $opencodeDir -Force | Out-Null
+    }
     
     # Items that remain stored under .claude in the repo
     $claudeItems = @(
@@ -180,7 +185,7 @@ function Invoke-LinkClaudeConfig {
         @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
         @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) },
-        @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills")) }
+        @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills"), (Join-Path $opencodeDir "skill")) }
     )
     
     foreach ($link in $aiLinks) {
@@ -247,18 +252,44 @@ function Invoke-LinkWindowsTerminal {
 # Function to link PowerShell profiles
 function Invoke-LinkPowerShellProfiles {
     Write-Status "Linking PowerShell profiles..."
-    
+
     # PowerShell profile locations
     $profilePaths = @(
         @{source=".config\powershell\profile.ps1"; target=$PROFILE}
         @{source=".config\powershell\profile.ps1"; target="$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"}
     )
-    
+
     foreach ($entry in $profilePaths) {
         $source = Join-Path $DOTFILES_DIR $entry.source
-        
+
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $entry.target | Out-Null
+        }
+    }
+}
+
+# Function to link bin scripts to ~/.local/bin
+function Invoke-LinkBinScripts {
+    Write-Status "Linking bin scripts to ~/.local/bin..."
+
+    $binDir = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path $binDir)) {
+        New-Item -ItemType Directory -Path $binDir -Force | Out-Null
+    }
+
+    # Bin scripts to link
+    # Format: @{source="relative_path"; target_name="name_without_extension"}
+    $binScripts = @(
+        @{source="bin\cz.ps1"; target_name="cz.ps1"}
+        @{source="bin\ccy.ps1"; target_name="ccy.ps1"}
+    )
+
+    foreach ($entry in $binScripts) {
+        $source = Join-Path $DOTFILES_DIR $entry.source
+        $target = Join-Path $binDir $entry.target_name
+
+        if (Test-Path $source) {
+            New-Symlink -Source $source -Target $target | Out-Null
         }
     }
 }
@@ -353,6 +384,13 @@ function Show-Symlinks {
         }
     }
 
+    $opencodeSkill = Get-SymlinkItem -Path (Join-Path "$env:USERPROFILE\.config\opencode" "skill")
+    if ($opencodeSkill) {
+        Write-Host "`n  OpenCode configuration:" -ForegroundColor $colors.Green
+        Write-Host "  skill" -ForegroundColor $colors.Blue -NoNewline
+        Write-Host " -> $($opencodeSkill.Target)"
+    }
+
     $configDir = "$env:USERPROFILE\.config"
     if (Test-Path $configDir) {
         $configItems = @("starship.toml", "nvim", "alacritty", "wezterm")
@@ -405,6 +443,26 @@ function Show-Symlinks {
 
             Write-Host "  $(Split-Path -Leaf $profilePath)" -ForegroundColor $colors.Blue -NoNewline
             Write-Host " -> $($item.Target)"
+        }
+    }
+
+    $binDir = "$env:USERPROFILE\.local\bin"
+    if (Test-Path $binDir) {
+        $binScripts = @("cz.ps1", "ccy.ps1")
+        $binPrinted = $false
+
+        foreach ($script in $binScripts) {
+            $path = Join-Path $binDir $script
+            $item = Get-SymlinkItem -Path $path
+            if ($item) {
+                if (-not $binPrinted) {
+                    Write-Host "`n  Bin scripts:" -ForegroundColor $colors.Green
+                    $binPrinted = $true
+                }
+
+                Write-Host "  $script" -ForegroundColor $colors.Blue -NoNewline
+                Write-Host " -> $($item.Target)"
+            }
         }
     }
 }
@@ -470,7 +528,8 @@ else {
     Invoke-LinkConfigDirs
     Invoke-LinkWindowsTerminal
     Invoke-LinkPowerShellProfiles
-    
+    Invoke-LinkBinScripts
+
     Write-Host ""
     Write-Status "OK All symlinks created successfully!" -Color Green
     Write-Host ""

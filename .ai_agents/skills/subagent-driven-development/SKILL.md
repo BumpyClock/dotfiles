@@ -7,9 +7,9 @@ description: Use when executing implementation plans with independent tasks in t
 
 Act as an orchestrator: run coding agents, review their work, and loop until tasks are complete.
 
-Codex-specific instructions are in `references/codex-specific-instructions.md`. If you're codex or codex-cli, read that file and follow it.
+Codex-specific instructions are in `./references/codex-specific-instructions.md`. Only read if you're codex or codex-cli, read that file and follow it.
 
-Claude-specific instructions are in `references/claude-specific-instructions.md`. If you're claude or claude-cli, read that file and follow it.
+Claude-specific instructions are in `./references/claude-specific-instructions.md`. Only read if you're claude or claude-cli, read that file and follow it.
 
 ## Chain of Thought Process (Always Follow This)
 
@@ -37,8 +37,9 @@ Claude-specific instructions are in `references/claude-specific-instructions.md`
 - Create a follow-up prompt for the task in.
 - If the task is too big break it down into smaller sub-tasks that are manageable for the coding agent.
 - Create a detailed and precise prompt for the coding agent using the prompt creation flow.
+- Define clear interfaces, public signatures of functions so multiple agents can work in parallel reliably without guessing what public signatures are. This is critical when implementing backend and frontend work in parallel. You must define the interfaces and API surface and pass it to agents context.
 - Save the prompt in `.ai_agents/session_context/{todaysdate}/{hour}/coding-agent-prompts/` and pass it to the coding agent using `cat`.
-- Spawn the coding agent with a long timeout of 30minutes.
+- Spawn the coding agent. It may run for a while without any output, so be patient.
 
 **Review the work**
 - Review the agent's work. If it looks good, continue with the next task.
@@ -64,12 +65,8 @@ Remember: the agent has no context of this conversation, so prompts must include
 
 ## Agent Spawning Command
 
-Use the task tool or bash tool to spawn agents:
+Use the task tool or bash tool if needed to spawn the sub-agents.
 
-```bash
-claude --model claude-opus-4-5 -p "[Full context + Specific task + All interfaces + Dependencies]"
-```
 
 Set a long timeout since agents can take a while to complete tasks.
 If needed, spin up multiple agents in parallel for truly independent tasks.
-

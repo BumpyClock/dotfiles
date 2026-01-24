@@ -265,6 +265,8 @@ create_symlinks() {
         [ -f "$DOTFILES_DIR/.ai_agents/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/.ai_agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
         [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.claude/docs"
         [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.codex/docs"
+        mkdir -p "$HOME/.opencode"
+        [ -d "$DOTFILES_DIR/.ai_agents/skills" ] && ln -sf "$DOTFILES_DIR/.ai_agents/skills" "$HOME/.opencode/skill"
     else
         print_warning "No .ai_agents directory found in dotfiles"
     fi
