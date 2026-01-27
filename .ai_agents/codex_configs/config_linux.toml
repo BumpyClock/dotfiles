@@ -1,0 +1,26 @@
+model = "gpt-5.1-codex-max"
+model_reasoning_effort = "xhigh"
+
+
+[projects."/home/adityasharma/.codex"]
+trust_level = "trusted"
+
+[features]
+web_search_request = true
+unified_exec = true
+
+
+
+[mcp_servers.code-tools]
+command = "pnpx"
+args = ["code-tools-mcp@latest"]
+startup_timeout_ms = 30_000
+
+[mcp_servers.archon]
+url ="http://localhost:8051/mcp"
+
+[mcp_servers.exa-search]
+command = "pnpx"
+args = ["mcp-remote" , "https://mcp.exa.ai/mcp"]
+startup_timeout_ms = 30_000
+env = { "EXA_API_KEY" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
