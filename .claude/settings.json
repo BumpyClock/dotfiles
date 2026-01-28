@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "AUTO_TOOL_SEARCH": "auto:5"
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
@@ -124,7 +127,7 @@
       "mcp__archon__rag_read_full_page",
       "WebFetch(domain:platform.openai.com)",
       "Bash(mkdir:*)",
-      "Bash(go mod tidy:*)",
+      "Bash(go:*)",
       "WebFetch(domain:github.com)",
       "Bash(go run:*)",
       "Bash(go list:*)",
@@ -146,11 +149,7 @@
       "Bash(go build:*)",
       "Bash(git checkout:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(gh workflow run:*)",
-      "Bash(gh run list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh pr review-comment:*)",
-      "Bash(gh pr comment:*)",
+      "Bash(gh:*)",
       "mcp__lspMCP__getSymbolDefinition",
       "mcp__lspMCP__codemap",
       "mcp__lspMCP__semanticSearch",
@@ -173,13 +172,9 @@
     "type": "command",
     "command": "ccline"
   },
-  "env": {
-    "AUTO_TOOL_SEARCH" :"auto:5"
-  },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
     "ralph-wiggum@claude-plugins-official": true,
-    "agent-deck@agent-deck": true,
     "code-review@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true
   },
@@ -187,6 +182,5 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  },
-  "model": "sonnet"
+  }
 }
