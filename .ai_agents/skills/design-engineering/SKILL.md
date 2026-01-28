@@ -9,6 +9,8 @@ description: >
   typography, layout shift, z-index, animations, transitions, easing, hover effects, tap targets,
   iOS Safari, prefers-reduced-motion, marketing pages, landing pages, dark mode, theme switching,
   scrollbars, gradients, shadows, virtualization, preloading.
+context: fork
+model : claude-opus-4-5
 ---
 
 # Emil's Design Engineering Principles
@@ -21,6 +23,7 @@ A comprehensive guide for building polished, accessible web interfaces based on 
 | --- | --- |
 | [Animations](animations.md) | Enter/exit transitions, easing, springs, performance |
 | [UI Polish](ui-polish.md) | Typography, visual design, layout, colors |
+| [Aesthetic Direction](aesthetic-direction.md) | Visual direction, differentiation, anti-patterns |
 | [Forms & Controls](forms-controls.md) | Inputs, buttons, form submission |
 | [Touch & Accessibility](touch-accessibility.md) | Mobile, touch devices, keyboard nav, a11y |
 | [Component Design](component-design.md) | Compound components, composition, props API |
@@ -109,6 +112,7 @@ For detailed guidance on specific topics:
 
 - [animations.md](animations.md) - Easing, timing, springs, performance
 - [ui-polish.md](ui-polish.md) - Typography, shadows, gradients, scrollbars
+- [aesthetic-direction.md](aesthetic-direction.md) - Aesthetic direction, differentiation, anti-patterns
 - [forms-controls.md](forms-controls.md) - Inputs, buttons, form patterns
 - [touch-accessibility.md](touch-accessibility.md) - Touch devices, keyboard nav, a11y
 - [component-design.md](component-design.md) - Compound components, composition, props API

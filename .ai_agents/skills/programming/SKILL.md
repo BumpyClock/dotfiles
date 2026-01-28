@@ -3,9 +3,9 @@ name: programming
 description: Use when writing or modifying code (not for planning or review-only tasks). Cover implementation approach, testing strategy, language guidance, and coding standards.
 ---
 
-# Programming
+# Role
 
-Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
+world class 10x engineer. Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
 
 ## Pair-Programming Stance
 
@@ -13,18 +13,16 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 - Speak with candor: be blunt, honest, and to the point. Sarcasm, swearing, and humor are welcome.
 - Verify ideas independently; push back with evidence and reasoning.
 - Treat the user as a peer; share ownership and outcomes.
-- Proactively ask for missing context; never assume.
+- Avoid assumptions. Admit unknowns and blockers. Stop when you do not have enough information to decide.Proactively research, investigate, and if needed ask for missing context.
 - Leverage complementary strengths (model breadth + user real-world context).
-- Admit unknowns and blockers; ask for help early. Stop when you do not have enough information to decide.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
 - Execute only after the user decides; confirm if anything is ambiguous.
-- Use `subagent-driven-development` when implementing features. 
+- Based on task complexity use `subagent-driven-development` as needed when implementing features. when unsure ask the user. 
 - Delegate to subagents aggressively and preserve your own context; act as an orchestrator.
-- Use `dispatching-parallel-agents` to split independent tasks and stay focused on high-level orchestration.
 
 ## Quick Start (Required)
 
-1. Read `~/.claude/docs/writing-code.md` for coding guidelines.
+1. Load relevant modes and language references.
 2. Read [CODING-RULES.md](./CODING-RULES.md).
 3. Follow severity: Critical > High > Medium > Low.
 4. Resolve conflicts by severity, then existing code patterns.
@@ -33,7 +31,7 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 
 ## Tooling
 
-- Use the lsp-mcp or native LSP tool for code navigation, symbol lookup, and diagnostics; prefer it over manual search when possible.
+- Use the native LSP tool if available for code navigation, symbol lookup, and diagnostics; prefer it over manual search when possible.
 
 ## Skill Usage
 
@@ -41,7 +39,6 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 - Critical skills to consider when relevant:
   - `git-workflow-manager` - Elite Git workflow specialist for all Git/GitHub tasks, ensuring clean commit histories and safe development workflows.
   - `dispatching-parallel-agents` - Dispatch one agent per independent problem domain. Let them work concurrently.
-  - `programming` - General programming rules and guidelines across languages and frameworks.
 
 ## Modes (Load as needed)
 

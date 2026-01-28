@@ -11,6 +11,8 @@ description: >
   entrance/exit animations, page transitions, stagger, will-change, GPU acceleration,
   prefers-reduced-motion, modal/dropdown/tooltip/popover/drawer animations, gesture animations,
   drag interactions, button press feel, "feels janky", "make it smooth".
+context: fork
+model : claude-opus-4-5
 ---
 
 # Web Animation Design
