@@ -1,8 +1,8 @@
-# Claude Code - Z.AI wrapper
-# Launches Claude with Z.AI API settings
+# ABOUTME: Claude Code - Z.AI wrapper template
+# ABOUTME: This file is a template - link-dotfiles.ps1 generates the actual script with API key
 
 $Host.UI.RawUI.WindowTitle = "Claude Code - Zai"
-$env:ANTHROPIC_AUTH_TOKEN = "REDACTED_API_KEY"
+$env:ANTHROPIC_AUTH_TOKEN = "__ANTHROPIC_AUTH_TOKEN__"
 $env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
 $env:API_TIMEOUT_MS = "3000000"
 $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7"

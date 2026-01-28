@@ -49,6 +49,23 @@ function Write-Action {
 # Set DOTFILES_DIR to script location (root)
 $script:DOTFILES_DIR = $PSScriptRoot
 
+# Function to initialize git submodules
+function Initialize-Submodules {
+    Write-Status "Initializing git submodules..."
+    
+    Push-Location $DOTFILES_DIR
+    try {
+        git submodule update --init --recursive 2>&1 | Out-Null
+        Write-Status "Git submodules initialized"
+    }
+    catch {
+        Write-Warning "Failed to initialize git submodules: $_"
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Get-SymlinkItem {
     param(
         [string]$Path
@@ -271,29 +288,61 @@ function Invoke-LinkPowerShellProfiles {
     }
 }
 
-# Function to link bin scripts to ~/.local/bin
-function Invoke-LinkBinScripts {
-    Write-Status "Linking bin scripts to ~/.local/bin..."
+# Function to install bin scripts to ~/.local/bin (dynamically generated with API keys)
+function Install-BinScripts {
+    Write-Status "Installing bin scripts to ~/.local/bin..."
 
     $binDir = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path $binDir)) {
         New-Item -ItemType Directory -Path $binDir -Force | Out-Null
     }
 
-    # Bin scripts to link
-    # Format: @{source="relative_path"; target_name="name_without_extension"}
-    $binScripts = @(
-        @{source="bin\cz.ps1"; target_name="cz.ps1"}
-        @{source="bin\ccy.ps1"; target_name="ccy.ps1"}
-    )
+    # Check for secrets submodule
+    $secretsFile = Join-Path $DOTFILES_DIR "secrets\anthropic.ps1"
+    $apiKey = $null
 
-    foreach ($entry in $binScripts) {
-        $source = Join-Path $DOTFILES_DIR $entry.source
-        $target = Join-Path $binDir $entry.target_name
-
-        if (Test-Path $source) {
-            New-Symlink -Source $source -Target $target | Out-Null
+    if (Test-Path $secretsFile) {
+        # Source secrets file to get API key
+        Write-Status "Loading API key from secrets submodule..."
+        . $secretsFile
+        $apiKey = $env:ANTHROPIC_AUTH_TOKEN
+    }
+    else {
+        Write-Warning "Secrets submodule not found at: $secretsFile"
+        $response = Read-Host "Do you want to install the cz script anyway? (y/n)"
+        
+        if ($response -eq 'y' -or $response -eq 'Y') {
+            $apiKey = Read-Host "Enter your Z.ai API key"
+            if ([string]::IsNullOrWhiteSpace($apiKey)) {
+                Write-Warning "No API key provided, skipping cz script generation"
+                $apiKey = $null
+            }
         }
+        else {
+            Write-Status "Skipping cz script generation"
+        }
+    }
+
+    # Generate cz.ps1 with API key if available
+    if ($apiKey) {
+        $czTemplate = Join-Path $DOTFILES_DIR "shell\bin\powershell\cz.ps1"
+        $czTarget = Join-Path $binDir "cz.ps1"
+        
+        if (Test-Path $czTemplate) {
+            $content = Get-Content -Path $czTemplate -Raw
+            $content = $content -replace '__ANTHROPIC_AUTH_TOKEN__', $apiKey
+            Set-Content -Path $czTarget -Value $content -Force
+            Write-Action "Generated: $czTarget"
+        }
+    }
+
+    # Copy ccy.ps1 directly (no secrets needed)
+    $ccySource = Join-Path $DOTFILES_DIR "shell\bin\powershell\ccy.ps1"
+    $ccyTarget = Join-Path $binDir "ccy.ps1"
+    
+    if (Test-Path $ccySource) {
+        Copy-Item -Path $ccySource -Destination $ccyTarget -Force
+        Write-Action "Copied: $ccyTarget"
     }
 }
 
@@ -525,13 +574,16 @@ else {
         exit 1
     }
     
+    # Initialize submodules first
+    Initialize-Submodules
+    
     Write-Status "Creating dotfile symlinks..."
     Invoke-LinkDotfiles
     Invoke-LinkClaudeConfig
     Invoke-LinkConfigDirs
     Invoke-LinkWindowsTerminal
     Invoke-LinkPowerShellProfiles
-    Invoke-LinkBinScripts
+    Install-BinScripts
 
     Write-Host ""
     Write-Status "OK All symlinks created successfully!" -Color Green

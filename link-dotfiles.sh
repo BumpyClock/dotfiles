@@ -29,6 +29,17 @@ print_action() {
 # Detect dotfiles directory (where this script is located)
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Function to initialize git submodules
+initialize_submodules() {
+    print_status "Initializing git submodules..."
+    
+    pushd "$DOTFILES_DIR" > /dev/null
+    git submodule update --init --recursive 2>/dev/null || print_warning "Failed to initialize git submodules"
+    popd > /dev/null
+    
+    print_status "Git submodules initialized"
+}
+
 # Function to create a symlink with backup
 create_symlink() {
     local source="$1"
@@ -165,29 +176,58 @@ link_config_dirs() {
     done
 }
 
-# Function to link bin scripts to ~/.local/bin
-link_bin_scripts() {
-    print_status "Linking bin scripts to ~/.local/bin..."
+# Function to install bin scripts to ~/.local/bin (dynamically generated with API keys)
+install_bin_scripts() {
+    print_status "Installing bin scripts to ~/.local/bin..."
 
     # Create ~/.local/bin directory if it doesn't exist
     mkdir -p "$HOME/.local/bin"
 
-    # Bin scripts to link (without .sh extension for the symlink name)
-    # Format: "source:target_name"
-    local bin_scripts=(
-        "bin/cz.sh:cz"
-        "bin/ccy.sh:ccy"
-    )
+    # Check for secrets submodule
+    local secrets_file="$DOTFILES_DIR/secrets/anthropic.sh"
+    local api_key=""
 
-    for entry in "${bin_scripts[@]}"; do
-        IFS=':' read -r source target_name <<< "$entry"
-        source="$DOTFILES_DIR/$source"
-        target="$HOME/.local/bin/$target_name"
-
-        if [[ -e "$source" ]]; then
-            create_symlink "$source" "$target"
+    if [[ -f "$secrets_file" ]]; then
+        # Source secrets file to get API key
+        print_status "Loading API key from secrets submodule..."
+        source "$secrets_file"
+        api_key="$ANTHROPIC_AUTH_TOKEN"
+    else
+        print_warning "Secrets submodule not found at: $secrets_file"
+        read -p "Do you want to install the cz script anyway? (y/n) " response
+        
+        if [[ "$response" == "y" || "$response" == "Y" ]]; then
+            read -p "Enter your Z.ai API key: " api_key
+            if [[ -z "$api_key" ]]; then
+                print_warning "No API key provided, skipping cz script generation"
+                api_key=""
+            fi
+        else
+            print_status "Skipping cz script generation"
         fi
-    done
+    fi
+
+    # Generate cz script with API key if available
+    if [[ -n "$api_key" ]]; then
+        local cz_template="$DOTFILES_DIR/shell/bin/zsh/cz.sh"
+        local cz_target="$HOME/.local/bin/cz"
+        
+        if [[ -f "$cz_template" ]]; then
+            sed "s/__ANTHROPIC_AUTH_TOKEN__/$api_key/g" "$cz_template" > "$cz_target"
+            chmod +x "$cz_target"
+            print_action "Generated: $cz_target"
+        fi
+    fi
+
+    # Copy ccy script directly (no secrets needed)
+    local ccy_source="$DOTFILES_DIR/shell/bin/zsh/ccy.sh"
+    local ccy_target="$HOME/.local/bin/ccy"
+    
+    if [[ -f "$ccy_source" ]]; then
+        cp "$ccy_source" "$ccy_target"
+        chmod +x "$ccy_target"
+        print_action "Copied: $ccy_target"
+    fi
 }
 
 # Function to show current symlinks
@@ -252,11 +292,14 @@ main() {
             echo "Without options, creates/updates all symlinks"
             ;;
         *)
+            # Initialize submodules first
+            initialize_submodules
+            
             print_status "Creating dotfile symlinks..."
             link_dotfiles
             link_claude_config
             link_config_dirs
-            link_bin_scripts
+            install_bin_scripts
             echo ""
             print_status "✓ All symlinks created successfully!"
             echo ""

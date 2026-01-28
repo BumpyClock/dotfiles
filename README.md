@@ -84,7 +84,24 @@ cd dotfiles
 - PowerShell scripts for Windows
 - Consistent configuration across platforms
 
-## 🔄 Keeping Up to Date
+## � API Keys and Secrets
+
+The `cz` script (Claude with Z.AI) requires an API key. The `link-dotfiles` scripts handle this automatically:
+
+1. **With secrets submodule access**: API key is loaded from `secrets/anthropic.ps1` or `secrets/anthropic.sh`
+2. **Without secrets submodule access**: You'll be prompted to enter your Z.ai API key manually
+
+The generated scripts are written to `~/.local/bin/` with the API key embedded.
+
+### Windows Execution Policy
+
+For Windows users, you may need to set the execution policy to run scripts from `~/.local/bin`:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+## �🔄 Keeping Up to Date
 
 ```bash
 # Pull latest changes including submodules
