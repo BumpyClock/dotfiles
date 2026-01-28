@@ -5,7 +5,7 @@ param(
     [string]$TargetPath,
     
     [Parameter(Mandatory=$false)]
-    [string]$SourcePath = "$PSScriptRoot\.github"
+    [string]$SourcePath = "$PSScriptRoot\..\../.github"
 )
 
 # Resolve paths

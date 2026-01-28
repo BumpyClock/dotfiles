@@ -6,8 +6,8 @@
 SCRIPT_DIR="${0%/*}"
 
 # Source Anthropic credentials from secrets submodule
-# Adjust path relative to zshrc.d directory
-SECRETS_DIR="$(cd "$SCRIPT_DIR/../secrets" && pwd)"
+# Adjust path relative to config/shell/zsh directory
+SECRETS_DIR="$(cd "$SCRIPT_DIR/../../../secrets" && pwd)"
 
 if [ -f "$SECRETS_DIR/anthropic.sh" ]; then
     source "$SECRETS_DIR/anthropic.sh"

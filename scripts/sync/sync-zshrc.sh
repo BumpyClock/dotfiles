@@ -92,10 +92,10 @@ if [[ $WITH_DEPS -eq 1 && $MODE == "remove" ]]; then
     exit 1
 fi
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SNIPPET_DIR="$DOTFILES_DIR/zshrc.d"
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SNIPPET_DIR="$DOTFILES_DIR/config/shell/zsh"
 ZSHRC_FILE="$HOME/.zshrc"
-INSTALL_SCRIPT="$DOTFILES_DIR/install-zsh-deps.sh"
+INSTALL_SCRIPT="$DOTFILES_DIR/scripts/setup/install-zsh-deps.sh"
 
 if [[ $MODE == "apply" && ! -f "$SNIPPET_DIR/shared.zsh" ]]; then
     print_error "Missing required snippet: $SNIPPET_DIR/shared.zsh"
