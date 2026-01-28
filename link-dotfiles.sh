@@ -149,6 +149,50 @@ link_claude_config() {
     fi
 }
 
+# Function to link GitHub Copilot configuration
+link_copilot_config() {
+    print_status "Linking GitHub Copilot configuration..."
+
+    # Create ~/.copilot directory if it doesn't exist
+    mkdir -p "$HOME/.copilot"
+
+    local ai_dir="$DOTFILES_DIR/.ai_agents"
+
+    if [[ -d "$ai_dir/prompts" ]]; then
+        create_symlink "$ai_dir/prompts" "$HOME/.copilot/prompts"
+    fi
+
+    if [[ -f "$ai_dir/AGENTS.md" ]]; then
+        create_symlink "$ai_dir/AGENTS.md" "$HOME/.copilot/instructions.md"
+    fi
+
+    if [[ -d "$ai_dir/docs" ]]; then
+        create_symlink "$ai_dir/docs" "$HOME/.copilot/docs"
+    fi
+
+    if [[ -d "$ai_dir/skills" ]]; then
+        create_symlink "$ai_dir/skills" "$HOME/.copilot/skills"
+    fi
+}
+
+# Function to link GitHub configuration
+link_github_config() {
+    print_status "Linking GitHub configuration..."
+
+    # Create ~/.github directory if it doesn't exist
+    mkdir -p "$HOME/.github"
+
+    local github_dir="$DOTFILES_DIR/.github"
+
+    if [[ -f "$github_dir/copilot-instructions.md" ]]; then
+        create_symlink "$github_dir/copilot-instructions.md" "$HOME/.github/copilot-instructions.md"
+    fi
+
+    if [[ -d "$github_dir/prompts" ]]; then
+        create_symlink "$github_dir/prompts" "$HOME/.github/prompts"
+    fi
+}
+
 # Function to link config directories
 link_config_dirs() {
     print_status "Linking configuration directories..."
@@ -183,40 +227,75 @@ install_bin_scripts() {
     # Create ~/.local/bin directory if it doesn't exist
     mkdir -p "$HOME/.local/bin"
 
-    # Check for secrets submodule
-    local secrets_file="$DOTFILES_DIR/secrets/anthropic.sh"
-    local api_key=""
+    # Check for GLM secrets submodule
+    local glm_secrets_file="$DOTFILES_DIR/secrets/claude-code/glm/glm.sh"
+    local glm_api_key=""
 
-    if [[ -f "$secrets_file" ]]; then
+    if [[ -f "$glm_secrets_file" ]]; then
         # Source secrets file to get API key
-        print_status "Loading API key from secrets submodule..."
-        source "$secrets_file"
-        api_key="$ANTHROPIC_AUTH_TOKEN"
+        print_status "Loading GLM API key from secrets submodule..."
+        source "$glm_secrets_file"
+        glm_api_key="$ANTHROPIC_AUTH_TOKEN"
     else
-        print_warning "Secrets submodule not found at: $secrets_file"
+        print_warning "GLM secrets not found at: $glm_secrets_file"
         read -p "Do you want to install the cz script anyway? (y/n) " response
         
         if [[ "$response" == "y" || "$response" == "Y" ]]; then
-            read -p "Enter your Z.ai API key: " api_key
-            if [[ -z "$api_key" ]]; then
+            read -p "Enter your Z.ai GLM API key: " glm_api_key
+            if [[ -z "$glm_api_key" ]]; then
                 print_warning "No API key provided, skipping cz script generation"
-                api_key=""
+                glm_api_key=""
             fi
         else
             print_status "Skipping cz script generation"
         fi
     fi
 
-    # Generate cz script with API key if available
-    if [[ -n "$api_key" ]]; then
+    # Generate cz script with GLM API key if available
+    if [[ -n "$glm_api_key" ]]; then
         local cz_template="$DOTFILES_DIR/shell/bin/zsh/cz.sh"
         local cz_target="$HOME/.local/bin/cz"
         
         if [[ -f "$cz_template" ]]; then
-            sed "s/__ANTHROPIC_AUTH_TOKEN__/$api_key/g" "$cz_template" > "$cz_target"
+            sed "s/__ANTHROPIC_AUTH_TOKEN__/$glm_api_key/g" "$cz_template" > "$cz_target"
             chmod +x "$cz_target"
             print_action "Generated: $cz_target"
         fi
+    fi
+
+    # Check for Kimi secrets submodule
+    local kimi_secrets_file="$DOTFILES_DIR/secrets/claude-code/kimi/kimi.sh"
+    local kimi_api_key=""
+    local kimi_base_url=""
+    local kimi_model=""
+
+    if [[ -f "$kimi_secrets_file" ]]; then
+        # Source secrets file to get Kimi config
+        print_status "Loading Kimi API key from secrets submodule..."
+        source "$kimi_secrets_file"
+        kimi_api_key="$ANTHROPIC_AUTH_TOKEN"
+        kimi_base_url="$ANTHROPIC_BASE_URL"
+        kimi_model="$ANTHROPIC_DEFAULT_SONNET_MODEL"
+    else
+        print_warning "Kimi secrets not found at: $kimi_secrets_file"
+        print_status "Skipping ck script generation (configure kimi.sh first)"
+    fi
+
+    # Generate ck script with Kimi config if available and not placeholder
+    if [[ -n "$kimi_api_key" && "$kimi_api_key" != "__KIMI_AUTH_TOKEN__" ]]; then
+        local ck_template="$DOTFILES_DIR/shell/bin/zsh/ck.sh"
+        local ck_target="$HOME/.local/bin/ck"
+        
+        if [[ -f "$ck_template" ]]; then
+            sed -e "s|__KIMI_AUTH_TOKEN__|$kimi_api_key|g" \
+                -e "s|__KIMI_BASE_URL__|$kimi_base_url|g" \
+                -e "s|__KIMI_MODEL__|$kimi_model|g" \
+                "$ck_template" > "$ck_target"
+            chmod +x "$ck_target"
+            print_action "Generated: $ck_target"
+        fi
+    else
+        print_warning "Kimi not configured (placeholders detected), skipping ck script generation"
     fi
 
     # Copy ccy script directly (no secrets needed)
@@ -263,6 +342,24 @@ show_symlinks() {
         echo -e "  ${BLUE}skill${NC} → $(readlink "$HOME/.config/opencode/skill")"
     fi
 
+    # Check Copilot config
+    if [[ -d "$HOME/.copilot" ]]; then
+        local copilot_links=$(find "$HOME/.copilot" -maxdepth 1 -type l 2>/dev/null)
+        if [[ -n "$copilot_links" ]]; then
+            echo -e "\n  ${GREEN}GitHub Copilot configuration:${NC}"
+            find "$HOME/.copilot" -maxdepth 1 -type l -exec bash -c 'echo -e "  ${BLUE}$(basename "{}")${NC} → $(readlink "{}")"' \;
+        fi
+    fi
+
+    # Check GitHub config
+    if [[ -d "$HOME/.github" ]]; then
+        local github_links=$(find "$HOME/.github" -maxdepth 1 -type l 2>/dev/null)
+        if [[ -n "$github_links" ]]; then
+            echo -e "\n  ${GREEN}GitHub configuration:${NC}"
+            find "$HOME/.github" -maxdepth 1 -type l -exec bash -c 'echo -e "  ${BLUE}$(basename "{}")${NC} → $(readlink "{}")"' \;
+        fi
+    fi
+
     # Check .config directory
     if [[ -d "$HOME/.config" ]]; then
         echo -e "\n  ${GREEN}Config directories:${NC}"
@@ -298,6 +395,8 @@ main() {
             print_status "Creating dotfile symlinks..."
             link_dotfiles
             link_claude_config
+            link_copilot_config
+            link_github_config
             link_config_dirs
             install_bin_scripts
             echo ""
