@@ -173,6 +173,10 @@ link_copilot_config() {
     if [[ -d "$ai_dir/skills" ]]; then
         create_symlink "$ai_dir/skills" "$HOME/.copilot/skills"
     fi
+
+    if [[ -d "$DOTFILES_DIR/.claude/agents" ]]; then
+        create_symlink "$DOTFILES_DIR/.claude/agents" "$HOME/.copilot/agents"
+    fi
 }
 
 # Function to link GitHub configuration
@@ -190,6 +194,10 @@ link_github_config() {
 
     if [[ -d "$github_dir/prompts" ]]; then
         create_symlink "$github_dir/prompts" "$HOME/.github/prompts"
+    fi
+
+    if [[ -d "$DOTFILES_DIR/.claude/agents" ]]; then
+        create_symlink "$DOTFILES_DIR/.claude/agents" "$HOME/.github/agents"
     fi
 }
 

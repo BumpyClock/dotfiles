@@ -1,7 +1,6 @@
 ---
 name: codebase-investigator
 description: Use this agent when you need to locate specific code patterns, understand how features are implemented, trace data flow through the application, or find relevant code sections for debugging or enhancement.
-tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillShell
 model: haiku
 color: green
 ---

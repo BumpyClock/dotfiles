@@ -234,7 +234,8 @@ function Invoke-LinkCopilotConfig {
         @{ Source = Join-Path $aiDir "prompts"; Target = Join-Path $copilotDir "prompts" },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Target = Join-Path $copilotDir "instructions.md" },
         @{ Source = Join-Path $aiDir "docs"; Target = Join-Path $copilotDir "docs" },
-        @{ Source = Join-Path $aiDir "skills"; Target = Join-Path $copilotDir "skills" }
+        @{ Source = Join-Path $aiDir "skills"; Target = Join-Path $copilotDir "skills" },
+        @{ Source = Join-Path $DOTFILES_DIR ".claude\agents"; Target = Join-Path $copilotDir "agents" }
     )
     
     foreach ($link in $copilotLinks) {
@@ -265,6 +266,12 @@ function Invoke-LinkGitHubConfig {
         if (Test-Path $link.Source) {
             New-Symlink -Source $link.Source -Target $link.Target | Out-Null
         }
+    }
+
+    $agentsSource = Join-Path $DOTFILES_DIR ".claude\agents"
+    $agentsTarget = Join-Path $githubDir "agents"
+    if (Test-Path $agentsSource) {
+        New-Symlink -Source $agentsSource -Target $agentsTarget | Out-Null
     }
 }
 
