@@ -257,6 +257,7 @@ install_bin_scripts() {
         local cz_target="$HOME/.local/bin/cz"
         
         if [[ -f "$cz_template" ]]; then
+            rm -f "$cz_target"
             sed "s/__ANTHROPIC_AUTH_TOKEN__/$glm_api_key/g" "$cz_template" > "$cz_target"
             chmod +x "$cz_target"
             print_action "Generated: $cz_target"
@@ -287,6 +288,7 @@ install_bin_scripts() {
         local ck_target="$HOME/.local/bin/ck"
         
         if [[ -f "$ck_template" ]]; then
+            rm -f "$ck_target"
             sed -e "s|__KIMI_AUTH_TOKEN__|$kimi_api_key|g" \
                 -e "s|__KIMI_BASE_URL__|$kimi_base_url|g" \
                 -e "s|__KIMI_MODEL__|$kimi_model|g" \
@@ -303,6 +305,7 @@ install_bin_scripts() {
     local ccy_target="$HOME/.local/bin/ccy"
     
     if [[ -f "$ccy_source" ]]; then
+        rm -f "$ccy_target"
         cp "$ccy_source" "$ccy_target"
         chmod +x "$ccy_target"
         print_action "Copied: $ccy_target"

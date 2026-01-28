@@ -1,3 +1,6 @@
 [submodule "agents"]
 	path = agents
 	url = https://github.com/wshobson/agents.git
+[submodule "secrets"]
+	path = secrets
+	url = https://github.com/BumpyClock/dotfiles-secrets

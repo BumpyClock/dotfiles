@@ -22,3 +22,7 @@
   What I tried: Added a daily task tracker requirement and updated workflow/guardrails examples to reference it
   Outcome: Worked; progress tracking now survives compaction via a date-based task-tracker file
   Next time: Keep the tracker format minimal and update it on every state change
+- Context: link-dotfiles.sh fails when dangling symlinks exist at write targets
+  What I tried: Added `rm -f "$target"` before each sed/cp write to cz, ck, ccy targets
+  Outcome: Worked; removes stale symlinks so redirected writes go to fresh regular files
+  Next time: Always remove existing file/symlink before writing to a generated script target
