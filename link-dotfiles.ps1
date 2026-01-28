@@ -46,6 +46,26 @@ function Write-Action {
     Write-Host "[ACTION] $Message" -ForegroundColor $colors.Blue
 }
 
+# Set DOTFILES_DIR to script location (root)
+$script:DOTFILES_DIR = $PSScriptRoot
+
+# Function to initialize git submodules
+function Initialize-Submodules {
+    Write-Status "Initializing git submodules..."
+    
+    Push-Location $DOTFILES_DIR
+    try {
+        git submodule update --init --recursive 2>&1 | Out-Null
+        Write-Status "Git submodules initialized"
+    }
+    catch {
+        Write-Warning "Failed to initialize git submodules: $_"
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Get-SymlinkItem {
     param(
         [string]$Path
@@ -198,6 +218,56 @@ function Invoke-LinkClaudeConfig {
     }
 }
 
+# Function to link GitHub Copilot configuration
+function Invoke-LinkCopilotConfig {
+    Write-Status "Linking GitHub Copilot configuration..."
+    
+    # Create ~/.copilot directory if it doesn't exist
+    $copilotDir = "$env:USERPROFILE\.copilot"
+    if (-not (Test-Path $copilotDir)) {
+        New-Item -ItemType Directory -Path $copilotDir -Force | Out-Null
+    }
+    
+    $aiDir = Join-Path $DOTFILES_DIR ".ai_agents"
+    
+    $copilotLinks = @(
+        @{ Source = Join-Path $aiDir "prompts"; Target = Join-Path $copilotDir "prompts" },
+        @{ Source = Join-Path $aiDir "AGENTS.md"; Target = Join-Path $copilotDir "instructions.md" },
+        @{ Source = Join-Path $aiDir "docs"; Target = Join-Path $copilotDir "docs" },
+        @{ Source = Join-Path $aiDir "skills"; Target = Join-Path $copilotDir "skills" }
+    )
+    
+    foreach ($link in $copilotLinks) {
+        if (Test-Path $link.Source) {
+            New-Symlink -Source $link.Source -Target $link.Target | Out-Null
+        }
+    }
+}
+
+# Function to link GitHub configuration
+function Invoke-LinkGitHubConfig {
+    Write-Status "Linking GitHub configuration..."
+    
+    # Create ~/.github directory if it doesn't exist
+    $githubDir = "$env:USERPROFILE\.github"
+    if (-not (Test-Path $githubDir)) {
+        New-Item -ItemType Directory -Path $githubDir -Force | Out-Null
+    }
+    
+    $repoGithubDir = Join-Path $DOTFILES_DIR ".github"
+    
+    $githubLinks = @(
+        @{ Source = Join-Path $repoGithubDir "copilot-instructions.md"; Target = Join-Path $githubDir "copilot-instructions.md" },
+        @{ Source = Join-Path $repoGithubDir "prompts"; Target = Join-Path $githubDir "prompts" }
+    )
+    
+    foreach ($link in $githubLinks) {
+        if (Test-Path $link.Source) {
+            New-Symlink -Source $link.Source -Target $link.Target | Out-Null
+        }
+    }
+}
+
 # Function to link config directories
 function Invoke-LinkConfigDirs {
     Write-Status "Linking configuration directories..."
@@ -268,29 +338,103 @@ function Invoke-LinkPowerShellProfiles {
     }
 }
 
-# Function to link bin scripts to ~/.local/bin
-function Invoke-LinkBinScripts {
-    Write-Status "Linking bin scripts to ~/.local/bin..."
+# Function to install bin scripts to ~/.local/bin (dynamically generated with API keys)
+function Install-BinScripts {
+    Write-Status "Installing bin scripts to ~/.local/bin..."
 
     $binDir = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path $binDir)) {
-        New-Item -ItemType Directory -Path $binDir -Force | Out-Null
+        New-Item -ItemType Directory -Path $binDir -Force -ErrorAction SilentlyContinue | Out-Null
+    }
+    # Ensure the directory actually exists before proceeding
+    if (-not (Test-Path $binDir)) {
+        Write-Error "Failed to create bin directory: $binDir"
+        return
     }
 
-    # Bin scripts to link
-    # Format: @{source="relative_path"; target_name="name_without_extension"}
-    $binScripts = @(
-        @{source="bin\cz.ps1"; target_name="cz.ps1"}
-        @{source="bin\ccy.ps1"; target_name="ccy.ps1"}
-    )
+    # Check for GLM secrets submodule
+    $glmSecretsFile = Join-Path $DOTFILES_DIR "secrets\claude-code\glm\glm.ps1"
+    $glmApiKey = $null
 
-    foreach ($entry in $binScripts) {
-        $source = Join-Path $DOTFILES_DIR $entry.source
-        $target = Join-Path $binDir $entry.target_name
-
-        if (Test-Path $source) {
-            New-Symlink -Source $source -Target $target | Out-Null
+    if (Test-Path $glmSecretsFile) {
+        # Source secrets file to get API key
+        Write-Status "Loading GLM API key from secrets submodule..."
+        . $glmSecretsFile
+        $glmApiKey = $env:ANTHROPIC_AUTH_TOKEN
+    }
+    else {
+        Write-Warning "GLM secrets not found at: $glmSecretsFile"
+        $response = Read-Host "Do you want to install the cz script anyway? (y/n)"
+        
+        if ($response -eq 'y' -or $response -eq 'Y') {
+            $glmApiKey = Read-Host "Enter your Z.ai GLM API key"
+            if ([string]::IsNullOrWhiteSpace($glmApiKey)) {
+                Write-Warning "No API key provided, skipping cz script generation"
+                $glmApiKey = $null
+            }
         }
+        else {
+            Write-Status "Skipping cz script generation"
+        }
+    }
+
+    # Generate cz.ps1 with GLM API key if available
+    if ($glmApiKey) {
+        $czTemplate = Join-Path $DOTFILES_DIR "shell\bin\powershell\cz.ps1"
+        $czTarget = Join-Path $binDir "cz.ps1"
+        
+        if (Test-Path $czTemplate) {
+            $content = Get-Content -Path $czTemplate -Raw
+            $content = $content -replace '__ANTHROPIC_AUTH_TOKEN__', $glmApiKey
+            Set-Content -Path $czTarget -Value $content -Force
+            Write-Action "Generated: $czTarget"
+        }
+    }
+
+    # Check for Kimi secrets submodule
+    $kimiSecretsFile = Join-Path $DOTFILES_DIR "secrets\claude-code\kimi\kimi.ps1"
+    $kimiApiKey = $null
+    $kimiBaseUrl = $null
+    $kimiModel = $null
+
+    if (Test-Path $kimiSecretsFile) {
+        # Source secrets file to get Kimi config
+        Write-Status "Loading Kimi API key from secrets submodule..."
+        . $kimiSecretsFile
+        $kimiApiKey = $env:ANTHROPIC_AUTH_TOKEN
+        $kimiBaseUrl = $env:ANTHROPIC_BASE_URL
+        $kimiModel = $env:ANTHROPIC_DEFAULT_SONNET_MODEL
+    }
+    else {
+        Write-Warning "Kimi secrets not found at: $kimiSecretsFile"
+        Write-Status "Skipping ck script generation (configure kimi.ps1 first)"
+    }
+
+    # Generate ck.ps1 with Kimi config if available and not placeholder
+    if ($kimiApiKey -and $kimiApiKey -ne "__KIMI_AUTH_TOKEN__") {
+        $ckTemplate = Join-Path $DOTFILES_DIR "shell\bin\powershell\ck.ps1"
+        $ckTarget = Join-Path $binDir "ck.ps1"
+        
+        if (Test-Path $ckTemplate) {
+            $content = Get-Content -Path $ckTemplate -Raw
+            $content = $content -replace '__KIMI_AUTH_TOKEN__', $kimiApiKey
+            $content = $content -replace '__KIMI_BASE_URL__', $kimiBaseUrl
+            $content = $content -replace '__KIMI_MODEL__', $kimiModel
+            Set-Content -Path $ckTarget -Value $content -Force
+            Write-Action "Generated: $ckTarget"
+        }
+    }
+    else {
+        Write-Warning "Kimi not configured (placeholders detected), skipping ck script generation"
+    }
+
+    # Copy ccy.ps1 directly (no secrets needed)
+    $ccySource = Join-Path $DOTFILES_DIR "shell\bin\powershell\ccy.ps1"
+    $ccyTarget = Join-Path $binDir "ccy.ps1"
+    
+    if (Test-Path $ccySource) {
+        Copy-Item -Path $ccySource -Destination $ccyTarget -Force
+        Write-Action "Copied: $ccyTarget"
     }
 }
 
@@ -391,6 +535,34 @@ function Show-Symlinks {
         Write-Host " -> $($opencodeSkill.Target)"
     }
 
+    $copilotDir = "$env:USERPROFILE\.copilot"
+    $copilotLinks = @()
+    if (Test-Path $copilotDir) {
+        $copilotLinks = Get-ChildItem $copilotDir -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
+    }
+
+    if ($copilotLinks.Count -gt 0) {
+        Write-Host "`n  GitHub Copilot configuration:" -ForegroundColor $colors.Green
+        foreach ($link in $copilotLinks) {
+            Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($link.Target)"
+        }
+    }
+
+    $githubDir = "$env:USERPROFILE\.github"
+    $githubLinks = @()
+    if (Test-Path $githubDir) {
+        $githubLinks = Get-ChildItem $githubDir -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }
+    }
+
+    if ($githubLinks.Count -gt 0) {
+        Write-Host "`n  GitHub configuration:" -ForegroundColor $colors.Green
+        foreach ($link in $githubLinks) {
+            Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
+            Write-Host " -> $($link.Target)"
+        }
+    }
+
     $configDir = "$env:USERPROFILE\.config"
     if (Test-Path $configDir) {
         $configItems = @("starship.toml", "nvim", "alacritty", "wezterm")
@@ -448,7 +620,7 @@ function Show-Symlinks {
 
     $binDir = "$env:USERPROFILE\.local\bin"
     if (Test-Path $binDir) {
-        $binScripts = @("cz.ps1", "ccy.ps1")
+        $binScripts = @("cz.ps1", "ck.ps1", "ccy.ps1")
         $binPrinted = $false
 
         foreach ($script in $binScripts) {
@@ -522,13 +694,18 @@ else {
         exit 1
     }
     
+    # Initialize submodules first
+    Initialize-Submodules
+    
     Write-Status "Creating dotfile symlinks..."
     Invoke-LinkDotfiles
     Invoke-LinkClaudeConfig
+    Invoke-LinkCopilotConfig
+    Invoke-LinkGitHubConfig
     Invoke-LinkConfigDirs
     Invoke-LinkWindowsTerminal
     Invoke-LinkPowerShellProfiles
-    Invoke-LinkBinScripts
+    Install-BinScripts
 
     Write-Host ""
     Write-Status "OK All symlinks created successfully!" -Color Green

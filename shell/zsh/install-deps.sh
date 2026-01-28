@@ -244,8 +244,8 @@ install_additional_tools() {
 # Create symlinks for dotfiles
 create_symlinks() {
     print_status "Linking supporting configuration files..."
-    # Detect dotfiles directory (where this script is located)
-    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Detect dotfiles directory (parent of shell/zsh)
+    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
     print_status "Detected dotfiles directory: $DOTFILES_DIR"
     # Create ~/.claude directory if it doesn't exist
     mkdir -p "$HOME/.claude"

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-# Default source path (same directory as script)
+# Default source path (dotfiles root .github)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_PATH="${SOURCE_PATH:-$SCRIPT_DIR/.github}"
+DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SOURCE_PATH="${SOURCE_PATH:-$DOTFILES_ROOT/.github}"
 
 # Check if target path is provided
 if [ $# -eq 0 ]; then
