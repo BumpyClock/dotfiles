@@ -1,71 +1,37 @@
-# Scripts
+# General Utility Scripts
 
-This directory contains utility scripts for setting up and synchronizing dotfiles.
+Scripts for non-shell-specific tasks. For shell-specific scripts, see `shell/{zsh,powershell}/`.
 
-## Directory Structure
+## Available Scripts
 
-### `setup/`
-Initial setup and installation scripts:
+### `setup-github-runner.sh`
+Sets up GitHub Actions runner as a service on Linux/macOS systems.
 
-- **`install-zsh-deps.sh`** - Installs zsh, oh-my-zsh, plugins, and related tools (eza, starship, fnm, pnpm, ast-grep)
-- **`setup-github-runner.sh`** - Sets up GitHub Actions runner as a service (Linux/macOS)
-
-### `sync/`
-Synchronization and linking scripts:
-
-- **`link-dotfiles.sh`** / **`link-dotfiles.ps1`** - Creates symlinks for dotfiles to their target locations
-- **`sync-zshrc.sh`** - Injects/removes dotfiles zsh configuration into `~/.zshrc`
-- **`sync-github-folder.sh`** / **`sync-github-folder.ps1`** - Syncs `.github` folder to projects
-
-## Usage
-
-### Initial Setup (Unix/Linux/macOS)
-
+**Usage:**
 ```bash
-# Install all zsh dependencies and tools
-./setup/install-zsh-deps.sh
-
-# Link dotfiles to home directory
-./sync/link-dotfiles.sh
-
-# Sync zsh configuration to ~/.zshrc
-./sync/sync-zshrc.sh --with-deps
+sudo ./setup-github-runner.sh
 ```
 
-### Initial Setup (Windows/PowerShell)
+Requires sudo for creating service users and installing as a system service.
 
-```powershell
-# Link dotfiles to home directory (requires admin)
-.\sync\link-dotfiles.ps1
+### `sync-github-folder.sh` / `sync-github-folder.ps1`
+Syncs the `.github` folder from this dotfiles repo to other projects.
 
-# Sync .github folder to a project
-.\sync\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
-```
-
-### Sync Scripts
-
+**Usage:**
 ```bash
-# Update zsh configuration in ~/.zshrc
-./sync/sync-zshrc.sh
+# Unix/Linux/macOS
+./sync-github-folder.sh /path/to/project
 
-# Remove dotfiles zsh block from ~/.zshrc
-./sync/sync-zshrc.sh --remove
-
-# Link .github folder to a project
-./sync/sync-github-folder.sh /path/to/project
+# Windows/PowerShell
+.\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
 ```
 
-### GitHub Actions Runner
+Provides options to:
+1. Create symbolic links (recommended - stays in sync)
+2. Copy files (independent copy)
 
-```bash
-# Set up GitHub Actions runner (requires sudo)
-sudo ./setup/setup-github-runner.sh
-```
+## Shell-Specific Scripts
 
-## Notes
-
-- Setup scripts should be run once during initial system configuration
-- Sync scripts can be run repeatedly to update configurations
-- All scripts automatically detect the dotfiles root directory
-- PowerShell scripts may require administrator privileges for creating symlinks
-- Cross-platform scripts exist for both bash and PowerShell where applicable
+For shell configuration management scripts, see:
+- [shell/zsh/](../shell/zsh/) - `install-deps.sh`, `sync-config.sh`
+- Root level - `link-dotfiles.sh`, `link-dotfiles.ps1`

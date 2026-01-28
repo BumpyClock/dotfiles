@@ -26,8 +26,8 @@ print_action() {
     echo -e "${BLUE}[ACTION]${NC} $1"
 }
 
-# Detect dotfiles directory (parent of scripts/sync)
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# Detect dotfiles directory (where this script is located)
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Function to create a symlink with backup
 create_symlink() {

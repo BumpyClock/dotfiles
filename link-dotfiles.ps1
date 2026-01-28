@@ -46,8 +46,8 @@ function Write-Action {
     Write-Host "[ACTION] $Message" -ForegroundColor $colors.Blue
 }
 
-# Set DOTFILES_DIR to parent of scripts/sync
-$script:DOTFILES_DIR = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+# Set DOTFILES_DIR to script location (root)
+$script:DOTFILES_DIR = $PSScriptRoot
 
 function Get-SymlinkItem {
     param(

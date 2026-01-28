@@ -2,7 +2,7 @@
 
 # Default source path (dotfiles root .github)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SOURCE_PATH="${SOURCE_PATH:-$DOTFILES_ROOT/.github}"
 
 # Check if target path is provided

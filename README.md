@@ -6,11 +6,15 @@ Personal dotfiles and configuration management for cross-platform development en
 
 ```
 dotfiles/
-├── config/              # Configuration files
-│   └── shell/           # Shell configurations (zsh, powershell)
-├── scripts/             # Utility scripts
-│   ├── setup/           # Initial setup and installation
-│   └── sync/            # Synchronization and linking
+├── shell/               # Shell configurations and scripts
+│   ├── zsh/             # Zsh configs + install-deps.sh, sync-config.sh
+│   └── powershell/      # PowerShell profile
+├── scripts/             # General utility scripts
+│   ├── setup-github-runner.sh
+│   ├── sync-github-folder.sh
+│   └── sync-github-folder.ps1
+├── link-dotfiles.ps1    # Top-level for Windows accessibility
+├── link-dotfiles.sh     # Top-level for Unix/Linux/macOS
 ├── bin/                 # Executable scripts (added to PATH)
 ├── docs/                # Documentation and guides
 ├── secrets/             # Secret management (git submodule)
@@ -29,13 +33,13 @@ git clone --recurse-submodules https://github.com/BumpyClock/dotfiles.git
 cd dotfiles
 
 # Install dependencies and set up zsh
-./scripts/setup/install-zsh-deps.sh
+./shell/zsh/install-deps.sh
 
 # Link dotfiles to home directory
-./scripts/sync/link-dotfiles.sh
+./link-dotfiles.sh
 
 # Sync zsh configuration
-./scripts/sync/sync-zshrc.sh
+./shell/zsh/sync-config.sh
 ```
 
 ### Windows/PowerShell
@@ -46,16 +50,16 @@ git clone --recurse-submodules https://github.com/BumpyClock/dotfiles.git
 cd dotfiles
 
 # Link dotfiles (requires admin privileges)
-.\scripts\sync\link-dotfiles.ps1
+.\link-dotfiles.ps1
 
 # Sync .github folder to projects
-.\scripts\sync\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
+.\scripts\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
 ```
 
 ## 📚 Documentation
 
-- [Config Documentation](config/README.md) - Shell configuration details
-- [Scripts Documentation](scripts/README.md) - Script usage and reference
+- [Shell Documentation](shell/README.md) - Shell configuration and script details
+- [Scripts Documentation](scripts/README.md) - General utility scripts
 - [Development Guides](docs/) - Development workflows and best practices
 
 ## 🔧 Key Features
@@ -87,15 +91,15 @@ cd dotfiles
 git pull --recurse-submodules
 
 # Re-sync configurations
-./scripts/sync/sync-zshrc.sh
-./scripts/sync/link-dotfiles.sh
+./shell/zsh/sync-config.sh
+./link-dotfiles.sh
 ```
 
 ## 🛠️ Customization
 
-1. **Zsh**: Edit files in `config/shell/zsh/`
-2. **PowerShell**: Edit `config/shell/powershell/Microsoft.PowerShell_profile.ps1`
-3. **Scripts**: Add new scripts to appropriate `scripts/` subdirectory
+1. **Zsh**: Edit files in `shell/zsh/`
+2. **PowerShell**: Edit `shell/powershell/Microsoft.PowerShell_profile.ps1`
+3. **Scripts**: Add new scripts to `scripts/` or appropriate shell directory
 4. **Bin**: Add executable scripts to `bin/` for PATH access
 
 After making changes, re-run the appropriate sync script.
