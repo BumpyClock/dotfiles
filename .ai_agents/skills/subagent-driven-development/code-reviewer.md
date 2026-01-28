@@ -47,6 +47,7 @@ git diff {BASE_SHA}..{HEAD_SHA}
 - Edge cases covered?
 - Integration tests where needed?
 - All tests passing?
+- If plan requires unit/integration/e2e, is each present or explicitly authorized to skip?
 
 **Requirements:**
 - All plan requirements met?

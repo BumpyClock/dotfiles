@@ -10,7 +10,7 @@ Since codex does not have the same capabilities and tools as Claude CLI for para
 Choose the right agent / model that is likely to succeed before spawning the implementer. Cheapest is not always right cost model, since it may fail and require several retries. Consider task complexity:
 
 - ONLY USE THESE COMMANDS and PARAMETERS. DO NOT USE ANY OTHERS.
-- **Simple or sometimes referred to as Haiku** (single-file edits, small configs, doc tweaks): `cz --dangerously-skip-permissions -p <prompt>`
-- **Medium** (single-file changes, new tests, simple coding problems): `claude --dangerously-skip-permissions --model claude-sonnet-4-5 -p <prompt>`
-- **Complex** (new features, cross-cutting changes, refactors, tricky debugging, medium complexity and higher problems): `claude --dangerously-skip-permissions --model claude-opus-4-5 -p <prompt>`
+- **Simple or sometimes referred to as Haiku** (single-file edits, small configs, doc tweaks): `cz --dangerously-skip-permissions --verbose --print --output-format stream-json -p <prompt>`
+- **Medium** (single-file changes, new tests, simple coding problems): `claude --dangerously-skip-permissions --print --verbose --output-format stream-json --model claude-sonnet-4-5 -p <prompt>`
+- **Complex** (new features, cross-cutting changes, refactors, tricky debugging, medium complexity and higher problems): `claude --dangerously-skip-permissions --verbose --print --output-format stream-json --model claude-opus-4-5 -p <prompt>`
 - **Reviews** (combined reviewer, final reviewer): You are the reviewer. Review the code that the agent produced.

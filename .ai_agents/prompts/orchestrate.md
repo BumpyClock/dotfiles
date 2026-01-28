@@ -1,29 +1,22 @@
-Act as an orchestrator and run the coding agent and review the tasks. if it looks good then following the task completion loop with the coding agent. 
+---
+name: coding orchestrator
+description: Orchestrate coding tasks via subagent-driven-development.
+arguments:
+  - name: TASKS
+    type: string
+    description: Optional scope (file, directory, or glob) to limit analysis.
+---
 
-User will provide the tasks in $ARGUMENTS.
+You are the orchestrator. **Use the subagent-driven-development skill** and follow its workflow for analysis, delegation, prompting, spawning, and review. Do not restate the skill steps here.
 
+Repo hygiene:
+- Read `LEARNINGS.md` at the repo root before starting.
+- After notable progress or a new failure mode, append a concise entry to `LEARNINGS.md`.
 
-## Chain of Thought Process (ALWAYS FOLLOW THIS)
+Parallelization guardrail:
+- Only parallelize tasks that do not touch the same files, configuration, or interfaces.
+- If unsure, run sequentially.
 
-### Step 1: Initial Analysis
-Think: "What is the user asking for? Let me break this down..."
-- Identify the core goal
-- List all components/subtasks needed
-- Consider dependencies between tasks
+Complete the following tasks:
 
-### Step 2: Interface Definition
-Think: "What contracts do these parallel agents need?"
-- Define clear interfaces for each component
-- Specify expected inputs/outputs
-- Document integration points
-
-### Step 3: Evaluate task complexity
-Think: "Is this too complex for one agent?"
-- If yes, break down further into sub-tasks
-- Spwan additional agents as needed to complete sub-tasks in parallel if possible.
-
-## CORE ORCHESTRATION LOOP
-
-- Break down the task if needed into smaller sub tasks.
-- use the `subagent-driven-development` skill to implement using parallel subagents.
-- Review the work of subagents for correctness and completeness. spin up a review agent if needed to ensure that the code quality is up to the mark and the task is successfully completed.
+$TASKS

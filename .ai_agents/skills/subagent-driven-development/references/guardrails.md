@@ -15,6 +15,7 @@
 ## Red Flags
 
 **Never:**
+- Start implementation before interfaces are defined.
 - Skip review or allow skipping spec compliance or code quality checks.
 - Proceed with unfixed issues or open review items.
 - Dispatch parallel implementers that edit the same files.
@@ -23,6 +24,9 @@
 - Accept "close enough" on spec compliance or quality.
 - Skip review loops or replace real review with implementer self-review.
 - Split review into separate steps; spec + quality must be covered together.
+- Skip a test type (unit/integration/e2e) without explicit user authorization.
+- Ask subagents to make architecture decisions for you.
+- Let the task tracker drift; update it on every state change.
 
 **If subagent asks questions:**
 - Answer clearly and completely; add context as needed.

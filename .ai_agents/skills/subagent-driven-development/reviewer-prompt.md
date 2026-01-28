@@ -26,6 +26,7 @@ Additional instructions:
   - Compare implementation to requirements line by line.
   - Call out missing, extra, or misunderstood requirements.
   - Use file:line references for every issue.
+  - Verify required test types (unit/integration/e2e) are present or explicitly authorized to skip.
 
   Output requirements:
   - Add a "Spec Compliance" section at the top with PASS (spec compliant) or FAIL (issues found).

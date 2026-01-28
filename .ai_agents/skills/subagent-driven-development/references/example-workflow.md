@@ -9,11 +9,13 @@ You: I'm using Subagent-Driven Development to execute this plan.
 [Read plan file once: docs/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
+[Create .ai_agents/session_context/{todaysdate}/task-tracker.md and list tasks with status=planned]
 
 Task 1: Hook installation script
 
 [Get Task 1 text and context (already extracted)]
 [Create prompt file in .ai_agents/coding-agent-prompts/ using ./implementer-prompt.md]
+[Update task-tracker.md: Task 1 status=in_progress, add prompt link]
 [Spawn implementer subagent with: claude --model claude-sonnet-4-5-20250929 -p <prompt>]
 
 Implementer: "Before I begin - should the hook be installed at user or system level?"
@@ -33,6 +35,7 @@ Implementer: "Got it. Implementing now..."
 Reviewer: ✅ Spec compliant, code quality approved (Strengths: Good test coverage, clean. Issues: None.)
 
 [Confirm summary file exists]
+[Update task-tracker.md: Task 1 status=done, add report links]
 [Mark Task 1 complete]
 
 Task 2: Recovery modes
@@ -62,6 +65,7 @@ Implementer: Removed --json flag, added progress reporting, extracted PROGRESS_I
 Reviewer: ✅ Spec compliant, code quality approved
 
 [Confirm summary file exists]
+[Update task-tracker.md: Task 2 status=done, add report links]
 [Mark Task 2 complete]
 
 ...

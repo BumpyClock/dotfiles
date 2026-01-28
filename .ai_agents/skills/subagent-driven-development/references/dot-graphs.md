@@ -39,18 +39,21 @@ digraph process {
         "Reviewer approves spec compliance + code quality?" [shape=diamond];
         "Implementer subagent fixes review issues" [shape=box];
         "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" [shape=box];
+        "Update task tracker status + links (.ai_agents/session_context/{todaysdate}/task-tracker.md)" [shape=box];
         "Mark task complete in TodoWrite" [shape=box];
     }
 
     "Load orchestrator prompt" [shape=box];
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
+    "Create/Update daily task tracker (.ai_agents/session_context/{todaysdate}/task-tracker.md)" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Stop and report failure after 10 iterations" [shape=box];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use superpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
     "Load orchestrator prompt" -> "Read plan, extract all tasks with full text, note context, create TodoWrite";
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Create implementer prompt file (.ai_agents/session_context/{todaysdate}/coding-agent-prompts/...) using ./implementer-prompt.md";
+    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Create/Update daily task tracker (.ai_agents/session_context/{todaysdate}/task-tracker.md)";
+    "Create/Update daily task tracker (.ai_agents/session_context/{todaysdate}/task-tracker.md)" -> "Create implementer prompt file (.ai_agents/session_context/{todaysdate}/coding-agent-prompts/...) using ./implementer-prompt.md";
     "Create implementer prompt file (.ai_agents/session_context/{todaysdate}/coding-agent-prompts/...) using ./implementer-prompt.md" -> "Spawn implementer subagent (choose model per complexity; see Model Selection)";
     "Spawn implementer subagent (choose model per complexity; see Model Selection)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
@@ -62,7 +65,8 @@ digraph process {
     "Implementer subagent fixes review issues" -> "Dispatch combined reviewer subagent (./reviewer-prompt.md)" [label="re-review"];
     "Implementer subagent fixes review issues" -> "Stop and report failure after 10 iterations" [label="if >10 loops"];
     "Reviewer approves spec compliance + code quality?" -> "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" [label="yes"];
-    "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" -> "Mark task complete in TodoWrite";
+    "Confirm agent summary in .ai_agents/session_context/{todaysdate}/task-{taskid}.md" -> "Update task tracker status + links (.ai_agents/session_context/{todaysdate}/task-tracker.md)";
+    "Update task tracker status + links (.ai_agents/session_context/{todaysdate}/task-tracker.md)" -> "Mark task complete in TodoWrite";
     "Mark task complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Create implementer prompt file (.ai_agents/session_context/{todaysdate}/coding-agent-prompts/...) using ./implementer-prompt.md" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];

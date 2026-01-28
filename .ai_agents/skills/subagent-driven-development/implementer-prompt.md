@@ -22,6 +22,8 @@ Task tool (general-purpose):
     - The requirements or acceptance criteria
     - The approach or implementation strategy
     - Dependencies or assumptions
+    - Test expectations (unit/integration/e2e) or TDD requirements
+    - Whether any test type can be skipped
     - Anything unclear in the task description
 
     **Ask them now.** Raise any concerns before starting work.
@@ -30,7 +32,7 @@ Task tool (general-purpose):
 
     Once you're clear on requirements:
     1. Implement exactly what the task specifies
-    2. Write tests (following TDD if task says to)
+    2. Write tests (follow the specified unit/integration/e2e plan and TDD requirements; do not skip test types without explicit authorization)
     3. Verify implementation works
     4. Commit your work
     5. Self-review (see below)
