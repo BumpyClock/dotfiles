@@ -13,9 +13,9 @@ context: fork
 model : claude-opus-4-5
 ---
 
-# Emil's Design Engineering Principles
+# Design Engineering Principles
 
-A comprehensive guide for building polished, accessible web interfaces based on Emil Kowalski's design engineering practices.
+A comprehensive guide for building polished, accessible web interfaces 
 
 ## Quick Reference
 

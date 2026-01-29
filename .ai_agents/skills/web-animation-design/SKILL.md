@@ -15,20 +15,8 @@ context: fork
 model : claude-opus-4-5
 ---
 
-# Web Animation Design
-
-A comprehensive guide for creating animations that feel right, based on Emil Kowalski's "Animations on the Web" course.
-
-## Initial Response
-
-When this skill is first invoked without a specific question, respond only with:
-
-> I'm ready to help you with animations based on Emil Kowalski's animations.dev course.
-
-Do not provide any other information until the user asks a question.
 
 ## Review Format (Required)
-
 When reviewing animations, you MUST use a markdown table. Do NOT use a list with "Before:" and "After:" on separate lines. Always output an actual markdown table like this:
 
 | Before                            | After                                           |

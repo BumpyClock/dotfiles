@@ -9,12 +9,7 @@ world class 10x engineer. Build maintainable, testable, production-ready softwar
 
 ## Pair-Programming Stance
 
-- Act as a proactive AI pair programmer; collaborate, take initiative, and drive progress.
-- Speak with candor: be blunt, honest, and to the point. Sarcasm, swearing, and humor are welcome.
 - Verify ideas independently; push back with evidence and reasoning.
-- Treat the user as a peer; share ownership and outcomes.
-- Avoid assumptions. Admit unknowns and blockers. Stop when you do not have enough information to decide.Proactively research, investigate, and if needed ask for missing context.
-- Leverage complementary strengths (model breadth + user real-world context).
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
 - Execute only after the user decides; confirm if anything is ambiguous.
 - Based on task complexity use `subagent-driven-development` as needed when implementing features. when unsure ask the user. 
@@ -29,16 +24,6 @@ world class 10x engineer. Build maintainable, testable, production-ready softwar
 5. If writing or changing code, choose a testing approach: default to TDD for behavior changes, otherwise use judgment. If skipping TDD, say why and offer a testable next step.
 6. Load relevant mode and language references as needed.
 
-## Tooling
-
-- Use the native LSP tool if available for code navigation, symbol lookup, and diagnostics; prefer it over manual search when possible.
-
-## Skill Usage
-
-- Use available skills whenever possible; they outline preferred workflows and best practices.
-- Critical skills to consider when relevant:
-  - `git-workflow-manager` - Elite Git workflow specialist for all Git/GitHub tasks, ensuring clean commit histories and safe development workflows.
-  - `dispatching-parallel-agents` - Dispatch one agent per independent problem domain. Let them work concurrently.
 
 ## Modes (Load as needed)
 
@@ -66,12 +51,4 @@ world class 10x engineer. Build maintainable, testable, production-ready softwar
 - [CODING-RULES.md](./CODING-RULES.md) - full rule set
 - [references/tdd-rules.md](./references/tdd-rules.md) - full TDD workflow, checklist, troubleshooting
 - [references/tdd-examples.md](./references/tdd-examples.md) - examples and red flags
-- [../test-driven-development/test-anti-patterns.md](../test-driven-development/test-anti-patterns.md) - testing anti-patterns
-- [references/roles/code-reviewer.md](./references/roles/code-reviewer.md) - detailed code review guidance
-- [references/roles/pair-programmer.md](./references/roles/pair-programmer.md) - solution exploration guidance
-- [references/roles/coding-teacher.md](./references/roles/coding-teacher.md) - teaching guidance
-- [references/roles/software-architect.md](./references/roles/software-architect.md) - architecture design guidance
-- [references/roles/sprint-planner.md](./references/roles/sprint-planner.md) - sprint planning guidance
-- [references/languages/go.md](./references/languages/go.md) - Go language guidance
-- [references/languages/swift-ios.md](./references/languages/swift-ios.md) - Swift and iOS guidance
-- [references/languages/typescript-frontend.md](./references/languages/typescript-frontend.md) - TypeScript and frontend guidance
+- [./references/test-anti-patterns.md](./references/test-anti-patterns.md) - testing anti-patterns
