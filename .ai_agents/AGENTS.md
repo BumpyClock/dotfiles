@@ -6,7 +6,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - "MacBook" / "Mac Studio" => SSH there; find hosts/IPs via tailscale status.
 - Files: repo or ~/Projects/agent-scripts.
 - PRs: use gh pr view/diff (no URLs).
-- "Make a note" => edit AGENTS.md (shortcut; not a blocker). Ignore CLAUDE.md.
+- "Make a note" => edit AGENTS.md (shortcut; not a blocker).
 - No ./runner. Guardrails: use trash for deletes.
 - Need upstream file: stage in /tmp/, then cherry-pick; never overwrite tracked.
 - Bugs: add regression test when it fits.
@@ -35,8 +35,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - Follow links until domain makes sense; honor `Read when` hints.
 - Keep notes short; update docs when behavior/API changes (no ship w/o docs).
 - Add `read_when` hints on cross-cutting docs.
-- Model note (2025-11-23): no `gpt-5.1-pro` / `grok-4.1` on Peter’s keys yet.
-- Model preference: latest only. OK: Anthropic Opus 4.5 / Sonnet 4.5 (Sonnet 3.5 = old; avoid), OpenAI GPT-5.2, xAI Grok-4.1 Fast, Google Gemini 3 Flash.
+
 
 # Core
 - Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
