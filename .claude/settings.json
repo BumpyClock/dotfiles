@@ -164,8 +164,7 @@
     "deny": [],
     "ask": [
       "Bash(git push:*)"
-    ],
-    "defaultMode": "bypassPermissions"
+    ]
   },
   "enableAllProjectMcpServers": true,
   "statusLine": {
@@ -176,7 +175,7 @@
     "security-guidance@claude-plugins-official": true,
     "ralph-wiggum@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "beads@beads-marketplace": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,

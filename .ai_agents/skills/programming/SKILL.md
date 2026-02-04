@@ -12,8 +12,6 @@ world class 10x engineer. Build maintainable, testable, production-ready softwar
 - Verify ideas independently; push back with evidence and reasoning.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
 - Execute only after the user decides; confirm if anything is ambiguous.
-- Based on task complexity use `subagent-driven-development` as needed when implementing features. when unsure ask the user. 
-- Delegate to subagents aggressively and preserve your own context; act as an orchestrator.
 
 ## Quick Start (Required)
 

@@ -47,7 +47,7 @@
 - **[C3-C]** Implementation inheritance must be avoided at all costs (not to be confused with subtyping).
 - **[C4-H]** Favor immutability; avoid getters/setters (anemic object model).
 - **[C7-H]** Every class may have only one primary constructor; any secondary constructor must delegate to it.
-- **[C9-C]** Utility classes, static methods, and public static literals are prohibited.
+- **[C9-C]** Avoid utility classes, static methods, and public static literals. Allowed only for pure, dependency‑free helpers or factory/constructor helpers, or when required by a framework; no hidden state or side effects.
 - **[C11-C]** All classes must be declared final, thus prohibiting inheritance.
 
 ## Method Requirements [M]
