@@ -32,11 +32,11 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Function to initialize git submodules
 initialize_submodules() {
     print_status "Initializing git submodules..."
-    
+
     pushd "$DOTFILES_DIR" > /dev/null
     git submodule update --init --recursive 2>/dev/null || print_warning "Failed to initialize git submodules"
     popd > /dev/null
-    
+
     print_status "Git submodules initialized"
 }
 
@@ -147,6 +147,11 @@ link_claude_config() {
         mkdir -p "$HOME/.config/opencode"
         create_symlink "$ai_dir/skills" "$HOME/.config/opencode/skills"
     fi
+
+    # Symlink the entire .ai_agents directory to ~/.ai_agents
+    if [[ -d "$ai_dir" ]]; then
+        create_symlink "$ai_dir" "$HOME/.ai_agents"
+    fi
 }
 
 # Function to link GitHub Copilot configuration
@@ -247,7 +252,7 @@ install_bin_scripts() {
     else
         print_warning "GLM secrets not found at: $glm_secrets_file"
         read -p "Do you want to install the cz script anyway? (y/n) " response
-        
+
         if [[ "$response" == "y" || "$response" == "Y" ]]; then
             read -p "Enter your Z.ai GLM API key: " glm_api_key
             if [[ -z "$glm_api_key" ]]; then
@@ -263,7 +268,7 @@ install_bin_scripts() {
     if [[ -n "$glm_api_key" ]]; then
         local cz_template="$DOTFILES_DIR/shell/bin/zsh/cz.sh"
         local cz_target="$HOME/.local/bin/cz"
-        
+
         if [[ -f "$cz_template" ]]; then
             rm -f "$cz_target"
             sed "s/__ANTHROPIC_AUTH_TOKEN__/$glm_api_key/g" "$cz_template" > "$cz_target"
@@ -294,7 +299,7 @@ install_bin_scripts() {
     if [[ -n "$kimi_api_key" && "$kimi_api_key" != "__KIMI_AUTH_TOKEN__" ]]; then
         local ck_template="$DOTFILES_DIR/shell/bin/zsh/ck.sh"
         local ck_target="$HOME/.local/bin/ck"
-        
+
         if [[ -f "$ck_template" ]]; then
             rm -f "$ck_target"
             sed -e "s|__KIMI_AUTH_TOKEN__|$kimi_api_key|g" \
@@ -311,7 +316,7 @@ install_bin_scripts() {
     # Copy ccy script directly (no secrets needed)
     local ccy_source="$DOTFILES_DIR/shell/bin/zsh/ccy.sh"
     local ccy_target="$HOME/.local/bin/ccy"
-    
+
     if [[ -f "$ccy_source" ]]; then
         rm -f "$ccy_target"
         cp "$ccy_source" "$ccy_target"
@@ -402,7 +407,7 @@ main() {
         *)
             # Initialize submodules first
             initialize_submodules
-            
+
             print_status "Creating dotfile symlinks..."
             link_dotfiles
             link_claude_config

@@ -26,3 +26,11 @@
   What I tried: Added `rm -f "$target"` before each sed/cp write to cz, ck, ccy targets
   Outcome: Worked; removes stale symlinks so redirected writes go to fresh regular files
   Next time: Always remove existing file/symlink before writing to a generated script target
+- Context: Add WinUI 3 skill templates for agents
+  What I tried: Drafted WinUI 3 view refactor, concurrency, and system backdrop skills with checklists/snippets
+  Outcome: New skills added under .ai_agents/skills
+  Next time: Add version-specific notes when Windows App SDK changes
+- Context: Consolidate WinUI guidance into single skill
+  What I tried: Built winui3-csharp-app skill with indexed references; removed per-topic skills
+  Outcome: Single top-level skill with focused references
+  Next time: Add packaging step once usage is validated

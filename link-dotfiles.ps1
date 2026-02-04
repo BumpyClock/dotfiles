@@ -3,11 +3,11 @@
 param(
     [Parameter()]
     [switch]$Show,
-    
+
     [Parameter()]
     [Alias("h")]
     [switch]$Help,
-    
+
     [Parameter()]
     [string]$ProjectAgents
 )
@@ -52,7 +52,7 @@ $script:DOTFILES_DIR = $PSScriptRoot
 # Function to initialize git submodules
 function Initialize-Submodules {
     Write-Status "Initializing git submodules..."
-    
+
     Push-Location $DOTFILES_DIR
     try {
         git submodule update --init --recursive 2>&1 | Out-Null
@@ -93,19 +93,19 @@ function New-Symlink {
         [string]$Source,
         [string]$Target
     )
-    
+
     # Check if source exists
     if (-not (Test-Path $Source)) {
         Write-Warning "Source does not exist: $Source"
         return $false
     }
-    
+
     # Ensure parent directory exists
     $parentDir = Split-Path -Parent $Target
     if ($parentDir -and -not (Test-Path $parentDir)) {
         New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
     }
-    
+
     # If target is already a symlink, check if it points to the correct source
     if ((Test-Path $Target) -and ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
         $currentTarget = (Get-Item $Target -Force).Target
@@ -117,17 +117,17 @@ function New-Symlink {
             Remove-Item $Target -Force
         }
     }
-    
+
     # If target exists and is not a symlink, back it up
     if ((Test-Path $Target) -and -not ((Get-Item $Target -Force -ErrorAction SilentlyContinue).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
         $backup = "${Target}.backup.$(Get-Date -Format 'yyyyMMdd_HHmmss')"
         Write-Warning "Backing up existing file: $Target -> $backup"
         Move-Item -Path $Target -Destination $backup -Force
     }
-    
+
     # Determine if source is a directory or file
     $isDirectory = (Get-Item $Source).PSIsContainer
-    
+
     try {
         if ($isDirectory) {
             New-Item -ItemType SymbolicLink -Path $Target -Target $Source -Force | Out-Null
@@ -146,18 +146,18 @@ function New-Symlink {
 # Function to link all dotfiles
 function Invoke-LinkDotfiles {
     Write-Status "Dotfiles directory: $DOTFILES_DIR"
-    
+
     # Define dotfiles to link
     # Format: @{source="relative_path"; target="absolute_path"}
     $dotfiles = @(
         @{source=".gitconfig"; target="$env:USERPROFILE\.gitconfig"}
         @{source=".gitignore_global"; target="$env:USERPROFILE\.gitignore_global"}
     )
-    
+
     # Link each dotfile
     foreach ($entry in $dotfiles) {
         $source = Join-Path $DOTFILES_DIR $entry.source
-        
+
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $entry.target | Out-Null
         }
@@ -167,13 +167,13 @@ function Invoke-LinkDotfiles {
 # Function to link Claude configuration
 function Invoke-LinkClaudeConfig {
     Write-Status "Linking Claude configuration..."
-    
+
     # Create ~/.claude and ~/.codex directories if they don't exist
     $claudeDir = "$env:USERPROFILE\.claude"
     if (-not (Test-Path $claudeDir)) {
         New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
     }
-    
+
     $codexDir = "$env:USERPROFILE\.codex"
     if (-not (Test-Path $codexDir)) {
         New-Item -ItemType Directory -Path $codexDir -Force | Out-Null
@@ -183,31 +183,37 @@ function Invoke-LinkClaudeConfig {
     if (-not (Test-Path $opencodeDir)) {
         New-Item -ItemType Directory -Path $opencodeDir -Force | Out-Null
     }
-    
+
     # Items that remain stored under .claude in the repo
     $claudeItems = @(
         "agents",
         "settings.json"
     )
-    
+
     foreach ($item in $claudeItems) {
         $source = Join-Path $DOTFILES_DIR ".claude\$item"
         $target = Join-Path $claudeDir $item
-        
+
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $target | Out-Null
         }
     }
-    
+
     $aiDir = Join-Path $DOTFILES_DIR ".ai_agents"
-    
+
+    # Link .ai_agents directory to ~/.ai_agents
+    $aiAgentsTarget = "$env:USERPROFILE\.ai_agents"
+    if (Test-Path $aiDir) {
+        New-Symlink -Source $aiDir -Target $aiAgentsTarget | Out-Null
+    }
+
     $aiLinks = @(
         @{ Source = Join-Path $aiDir "prompts"; Targets = @((Join-Path $claudeDir "commands"), (Join-Path $codexDir "prompts")) },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Targets = @((Join-Path $claudeDir "CLAUDE.md"), (Join-Path $codexDir "AGENTS.md")) },
         @{ Source = Join-Path $aiDir "docs"; Targets = @((Join-Path $claudeDir "docs"), (Join-Path $codexDir "docs")) },
         @{ Source = Join-Path $aiDir "skills"; Targets = @((Join-Path $claudeDir "skills"), (Join-Path $codexDir "skills"), (Join-Path $opencodeDir "skill")) }
     )
-    
+
     foreach ($link in $aiLinks) {
         $source = $link.Source
         if (Test-Path $source) {
@@ -221,15 +227,15 @@ function Invoke-LinkClaudeConfig {
 # Function to link GitHub Copilot configuration
 function Invoke-LinkCopilotConfig {
     Write-Status "Linking GitHub Copilot configuration..."
-    
+
     # Create ~/.copilot directory if it doesn't exist
     $copilotDir = "$env:USERPROFILE\.copilot"
     if (-not (Test-Path $copilotDir)) {
         New-Item -ItemType Directory -Path $copilotDir -Force | Out-Null
     }
-    
+
     $aiDir = Join-Path $DOTFILES_DIR ".ai_agents"
-    
+
     $copilotLinks = @(
         @{ Source = Join-Path $aiDir "prompts"; Target = Join-Path $copilotDir "prompts" },
         @{ Source = Join-Path $aiDir "AGENTS.md"; Target = Join-Path $copilotDir "instructions.md" },
@@ -237,7 +243,7 @@ function Invoke-LinkCopilotConfig {
         @{ Source = Join-Path $aiDir "skills"; Target = Join-Path $copilotDir "skills" },
         @{ Source = Join-Path $DOTFILES_DIR ".claude\agents"; Target = Join-Path $copilotDir "agents" }
     )
-    
+
     foreach ($link in $copilotLinks) {
         if (Test-Path $link.Source) {
             New-Symlink -Source $link.Source -Target $link.Target | Out-Null
@@ -248,20 +254,20 @@ function Invoke-LinkCopilotConfig {
 # Function to link GitHub configuration
 function Invoke-LinkGitHubConfig {
     Write-Status "Linking GitHub configuration..."
-    
+
     # Create ~/.github directory if it doesn't exist
     $githubDir = "$env:USERPROFILE\.github"
     if (-not (Test-Path $githubDir)) {
         New-Item -ItemType Directory -Path $githubDir -Force | Out-Null
     }
-    
+
     $repoGithubDir = Join-Path $DOTFILES_DIR ".github"
-    
+
     $githubLinks = @(
         @{ Source = Join-Path $repoGithubDir "copilot-instructions.md"; Target = Join-Path $githubDir "copilot-instructions.md" },
         @{ Source = Join-Path $repoGithubDir "prompts"; Target = Join-Path $githubDir "prompts" }
     )
-    
+
     foreach ($link in $githubLinks) {
         if (Test-Path $link.Source) {
             New-Symlink -Source $link.Source -Target $link.Target | Out-Null
@@ -278,13 +284,13 @@ function Invoke-LinkGitHubConfig {
 # Function to link config directories
 function Invoke-LinkConfigDirs {
     Write-Status "Linking configuration directories..."
-    
+
     # Create ~/.config directory if it doesn't exist
     $configDir = "$env:USERPROFILE\.config"
     if (-not (Test-Path $configDir)) {
         New-Item -ItemType Directory -Path $configDir -Force | Out-Null
     }
-    
+
     # Config directories to link
     # Format: @{source="relative_path"; target="absolute_path"}
     $configDirs = @(
@@ -293,10 +299,10 @@ function Invoke-LinkConfigDirs {
         @{source=".config\alacritty"; target="$configDir\alacritty"}
         @{source=".config\wezterm"; target="$configDir\wezterm"}
     )
-    
+
     foreach ($entry in $configDirs) {
         $source = Join-Path $DOTFILES_DIR $entry.source
-        
+
         if (Test-Path $source) {
             New-Symlink -Source $source -Target $entry.target | Out-Null
         }
@@ -306,16 +312,16 @@ function Invoke-LinkConfigDirs {
 # Function to link Windows Terminal settings
 function Invoke-LinkWindowsTerminal {
     Write-Status "Linking Windows Terminal configuration..."
-    
+
     # Windows Terminal settings locations (both stable and preview)
     $terminalPaths = @(
         "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState",
         "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState"
     )
-    
+
     $settingsFile = ".config\windows-terminal\settings.json"
     $source = Join-Path $DOTFILES_DIR $settingsFile
-    
+
     if (Test-Path $source) {
         foreach ($terminalPath in $terminalPaths) {
             if (Test-Path $terminalPath) {
@@ -372,7 +378,7 @@ function Install-BinScripts {
     else {
         Write-Warning "GLM secrets not found at: $glmSecretsFile"
         $response = Read-Host "Do you want to install the cz script anyway? (y/n)"
-        
+
         if ($response -eq 'y' -or $response -eq 'Y') {
             $glmApiKey = Read-Host "Enter your Z.ai GLM API key"
             if ([string]::IsNullOrWhiteSpace($glmApiKey)) {
@@ -389,7 +395,7 @@ function Install-BinScripts {
     if ($glmApiKey) {
         $czTemplate = Join-Path $DOTFILES_DIR "shell\bin\powershell\cz.ps1"
         $czTarget = Join-Path $binDir "cz.ps1"
-        
+
         if (Test-Path $czTemplate) {
             $content = Get-Content -Path $czTemplate -Raw
             $content = $content -replace '__ANTHROPIC_AUTH_TOKEN__', $glmApiKey
@@ -421,7 +427,7 @@ function Install-BinScripts {
     if ($kimiApiKey -and $kimiApiKey -ne "__KIMI_AUTH_TOKEN__") {
         $ckTemplate = Join-Path $DOTFILES_DIR "shell\bin\powershell\ck.ps1"
         $ckTarget = Join-Path $binDir "ck.ps1"
-        
+
         if (Test-Path $ckTemplate) {
             $content = Get-Content -Path $ckTemplate -Raw
             $content = $content -replace '__KIMI_AUTH_TOKEN__', $kimiApiKey
@@ -438,7 +444,7 @@ function Install-BinScripts {
     # Copy ccy.ps1 directly (no secrets needed)
     $ccySource = Join-Path $DOTFILES_DIR "shell\bin\powershell\ccy.ps1"
     $ccyTarget = Join-Path $binDir "ccy.ps1"
-    
+
     if (Test-Path $ccySource) {
         Copy-Item -Path $ccySource -Destination $ccyTarget -Force
         Write-Action "Copied: $ccyTarget"
@@ -448,38 +454,38 @@ function Install-BinScripts {
 # Function to link agents folder to project directory
 function Invoke-LinkProjectAgents {
     param([string]$ProjectPath)
-    
+
     Write-Status "Linking agents folder to project directory..."
-    
+
     # Validate project path
     if (-not (Test-Path $ProjectPath)) {
         Write-Error "Project directory does not exist: $ProjectPath"
         return $false
     }
-    
+
     # Check if it's a valid directory
     if (-not (Get-Item $ProjectPath).PSIsContainer) {
         Write-Error "Project path is not a directory: $ProjectPath"
         return $false
     }
-    
+
     # Source agents folder
     $agentsSource = Join-Path $DOTFILES_DIR ".claude\agents"
     if (-not (Test-Path $agentsSource)) {
         Write-Error "Agents folder not found in dotfiles: $agentsSource"
         return $false
     }
-    
+
     # Target path in project directory
     $claudeProjectDir = Join-Path $ProjectPath ".claude"
     $agentsTarget = Join-Path $claudeProjectDir "agents"
-    
+
     # Create .claude directory in project if it doesn't exist
     if (-not (Test-Path $claudeProjectDir)) {
         New-Item -ItemType Directory -Path $claudeProjectDir -Force | Out-Null
         Write-Status "Created .claude directory in project: $claudeProjectDir"
     }
-    
+
     # Create the symlink
     if (New-Symlink -Source $agentsSource -Target $agentsTarget) {
         Write-Status "Successfully linked agents folder to project: $ProjectPath"
@@ -533,6 +539,13 @@ function Show-Symlinks {
             Write-Host "  $($link.Name)" -ForegroundColor $colors.Blue -NoNewline
             Write-Host " -> $($link.Target)"
         }
+    }
+
+    $aiAgentsLink = Get-SymlinkItem -Path "$env:USERPROFILE\.ai_agents"
+    if ($aiAgentsLink) {
+        Write-Host "`n  AI Agents configuration:" -ForegroundColor $colors.Green
+        Write-Host "  .ai_agents" -ForegroundColor $colors.Blue -NoNewline
+        Write-Host " -> $($aiAgentsLink.Target)"
     }
 
     $opencodeSkill = Get-SymlinkItem -Path (Join-Path "$env:USERPROFILE\.config\opencode" "skill")
@@ -680,7 +693,7 @@ elseif ($ProjectAgents) {
         Write-Host "Please run PowerShell as Administrator and try again"
         exit 1
     }
-    
+
     # Link agents folder to project directory
     if (Invoke-LinkProjectAgents -ProjectPath $ProjectAgents) {
         Write-Host ""
@@ -700,10 +713,10 @@ else {
         Write-Host "Please run PowerShell as Administrator and try again"
         exit 1
     }
-    
+
     # Initialize submodules first
     Initialize-Submodules
-    
+
     Write-Status "Creating dotfile symlinks..."
     Invoke-LinkDotfiles
     Invoke-LinkClaudeConfig

@@ -12,7 +12,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - Bugs: add regression test when it fits.
 - Keep files <~500 LOC; split/refactor as needed.
 - Commits: Conventional Commits (feat|fix|refactor|build|ci|chore|docs|style|perf|test).
-- Subagents: read docs/subagent.md.
+- Subagents: read "~/.ai_agents/docs/subagent.md".
 - Editor: code <path>.
 - CI: gh run list/view (rerun/fix til green).
 - Prefer end-to-end verify; if blocked, say what's missing.
@@ -26,9 +26,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 ## Screenshots (“use a screenshot”)
 - Pick newest PNG in `~/Desktop` or `~/Downloads`.
 - Verify it’s the right UI (ignore filename).
-- Size: `sips -g pixelWidth -g pixelHeight <file>` (prefer 2×).
-- Optimize: `imageoptim <file>` (install: `brew install imageoptim-cli`).
-- Replace asset; keep dimensions; commit; run gate; verify CI.
+
 
 ## Docs
 - Start: run docs list (`docs:list` script, or `bin/docs-list` here if present; ignore if not installed); open docs before coding.
