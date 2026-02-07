@@ -24,6 +24,7 @@
 - **[G13-C]** Never implement fallbacks or workarounds for failing tests; fix the underlying issue.
 - **[G14-C]** For behavior changes, tests must thoroughly verify desired outcomes; think about tests before implementing a feature.
 - **[G15-H]** Plan first, code later; this minimizes wasted effort and improves correctness.
+- **[G18-C]** When implementing, consider efficiency, security, scalability and optimizations Think like a Performance Architect rather than a computer progessior..
 
 ## Architecture & Structure [A]
 
