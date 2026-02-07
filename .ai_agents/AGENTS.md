@@ -10,7 +10,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - No ./runner. Guardrails: use trash for deletes.
 - Need upstream file: stage in /tmp/, then cherry-pick; never overwrite tracked.
 - Bugs: add regression test when it fits.
-- Keep files <~500 LOC; split/refactor as needed.
+- Keep files <~500 LOC; split/refactor as needed. Proactively offer refactor suggestions; delete/archive unused files.
 - Commits: Conventional Commits (feat|fix|refactor|build|ci|chore|docs|style|perf|test).
 - Subagents: read "~/.ai_agents/docs/subagent.md".
 - Editor: code <path>.
@@ -21,7 +21,6 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - Web: search early; quote exact errors; prefer 2024–2026 sources; fallback Firecrawl (pnpm mcp:*) / mcporter. 
    - Save search results and findings in docs/learned/<topic>.md so that learnings persist compaction.
    - Read / search docs & docs/learned/<topic>.md before coding.
-- Oracle: run npx -y @steipete/oracle --help once/session before first use.
 - Style: telegraph. Drop filler/grammar. Min tokens (global AGENTS + replies).
 
 
