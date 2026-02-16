@@ -1,4 +1,3 @@
-Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 
 # Agent Protocols
 - Workspace: ~/Projects. Missing BumpyClock repo: clone https://github.com/BumpyClock/<repo>.git.
@@ -22,7 +21,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
    - Save search results and findings in docs/learned/<topic>.md so that learnings persist compaction.
    - Read / search docs & docs/learned/<topic>.md before coding.
 - Style: telegraph. Drop filler/grammar. Min tokens (global AGENTS + replies).
-
+- Use parallel subagents / agent teams to perform tasks faster and preserve context. See subagent.md for details.
 
 ## Screenshots (“use a screenshot”)
 - Pick newest PNG in `~/Desktop` or `~/Downloads`.
