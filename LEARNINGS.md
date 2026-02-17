@@ -34,3 +34,27 @@
   What I tried: Built winui3-csharp-app skill with indexed references; removed per-topic skills
   Outcome: Single top-level skill with focused references
   Next time: Add packaging step once usage is validated
+- Context: codex-beads-loop live output readability
+  What I tried: Replaced per-event console logging with an ANSI in-place renderer that updates one header and per-agent status rows
+  Outcome: Worked; terminal output is stable and easier to scan during long runs
+  Next time: Keep `ink` optional unless full interactive controls are needed
+- Context: codex-beads-loop parallel live preview density
+  What I tried: Changed the live renderer to keep a rolling per-agent buffer of preview entries (`--preview` lines each)
+  Outcome: Worked; parallel runs now show independent 3-line windows per agent instead of one shared stream
+  Next time: Keep renderer-mode throttling separate from non-render log throttling
+- Context: codex-beads-loop parallel spawn control
+  What I tried: Replaced eager `Promise.all` launch with staged launch gates tied to first response (and completion fallback) per started agent
+  Outcome: Worked; agents now start one-by-one as responses begin, avoiding all-at-once startup spikes
+  Next time: Keep readiness gating tolerant to early process exits to avoid deadlocks
+- Context: codex-beads-loop provider-agnostic refactor
+  What I tried: Split monolithic loop into `core/*` and `providers/*`, added provider adapter interface/registry, and moved codex parsing/args into `providers/codex.ts`
+  Outcome: Worked; entrypoint is thin and `--provider` now selects adapter behavior (codex implemented)
+  Next time: Add claude/copilot adapters by implementing the same `ProviderAdapter` contract
+- Context: rename loop runtime to ouroboros + config hierarchy
+  What I tried: Renamed entrypoint to `scripts/ralph-loop/ouroboros.ts` and added config loading from `~/.ouroboros` (global + git-root-derived project config)
+  Outcome: Worked; merge precedence is `CLI > project > global > provider defaults` and run fails fast outside a git repo
+  Next time: Keep config schema flat and typed to minimize ambiguity across providers
+- Context: live beads visibility in ouroboros
+  What I tried: Added `bd list --json --all --limit 0` snapshot loading, rendered remaining-bead summary in live UI, and mapped agent-picked beads by matching referenced issue IDs
+  Outcome: Worked with graceful fallback when no beads DB is present
+  Next time: When adding more providers, keep picked-bead attribution source-agnostic by matching against known bead IDs

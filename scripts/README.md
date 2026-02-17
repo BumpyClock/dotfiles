@@ -4,6 +4,22 @@ Scripts for non-shell-specific tasks. For shell-specific scripts, see `shell/{zs
 
 ## Available Scripts
 
+### `ralph-loop/ouroboros.ts`
+Provider-driven loop runner with staged parallel startup, live rich terminal rendering, and beads-aware progress summaries.
+
+**Usage:**
+```bash
+# Source
+bun scripts/ralph-loop/ouroboros.ts --help
+
+# Compiled executable (installed)
+ouroboros --help
+```
+
+Config files:
+- Global: `~/.ouroboros/config.json`
+- Project: `~/.ouroboros/projects/<derived-git-root-key>.json`
+
 ### `setup-github-runner.sh`
 Sets up GitHub Actions runner as a service on Linux/macOS systems.
 
