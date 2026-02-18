@@ -1,12 +1,10 @@
-Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
-
 # Agent Protocols
 - Workspace: ~/Projects. Missing BumpyClock repo: clone https://github.com/BumpyClock/<repo>.git.
 - 3rd-party/OSS (non-BumpyClock): clone under ~/Projects/oss.
 - "MacBook" / "Mac Studio" => SSH there; find hosts/IPs via tailscale status.
 - Files: repo or ~/Projects/agent-scripts.
 - PRs: use gh pr view/diff (no URLs).
-- "Make a note" => edit AGENTS.md (shortcut; not a blocker).
+- "Make a note" => edit LEARNINGS.md (shortcut; not a blocker).
 - No ./runner. Guardrails: use trash for deletes.
 - Need upstream file: stage in /tmp/, then cherry-pick; never overwrite tracked.
 - Bugs: add regression test when it fits.
@@ -48,8 +46,7 @@ Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - After notable progress or a new failure mode: append a short entry
 - Keep entries concise. Never include secrets, sensitive URLs, or personal data.
 
-# Skills / modes (if supported by the runtime)
+# Skills / modes 
 - Use "programming" only when actively writing/modifying code.
 - Use "ux-designer" when implementing or changing user-facing UI/UX (provide brief UX rationale).
-- Use "subagent-driven-development" for larger changes to preserve context and parallelize safely.
-- If skills/modes aren’t available in the environment, follow the intent of the above rules and state what you’re doing instead.
+
