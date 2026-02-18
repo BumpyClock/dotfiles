@@ -9,6 +9,8 @@ description: Operational guide for Tasque (tsq) local task tracking and manageme
 
 Use Tasque for creating and managing tasks, features, and epics. These will persist across sessions and devices. Use tsq cli to create and manage tasks.
 
+Add `--json` to any command for stable automation output
+
 ## CORE TASK CREATION RULES
 - Include specs when possible
 - Use a consistent title format
@@ -82,10 +84,6 @@ Use `tsq` for durable local task tracking.
 - Negation: `-status:closed` (use `--` separator: `tsq search -- -status:closed`)
 - Bare words match title substring
 
-## JSON mode
-
-Add `--json` to any command for stable automation output:
-`{"schema_version":1,"command":"tsq ...","ok":true,"data":{}}`
 
 ## Restart durability
 
