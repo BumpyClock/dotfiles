@@ -180,9 +180,9 @@
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
   "teammateMode": "in-process",
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  },
-  "skipDangerousModePermissionPrompt": true
+  }
 }
