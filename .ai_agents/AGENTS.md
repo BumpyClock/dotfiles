@@ -44,11 +44,13 @@
 # Learnings (per-repo)
 - Maintain a `LEARNINGS.md` at the repository root (create if missing).
 - On start: read `LEARNINGS.md` to avoid repeating ineffective approaches.
-- After notable progress or a new failure mode: append a short entry
+- After notable progress or a new failure mode: append a short entry.
+- Keep entries **evergreen and durable** — record architectural decisions, design rationale, pitfalls, and failure modes that will stay relevant.
+- **Do NOT** add transient changelog entries ("added X feature", "fixed Y bug", "renamed A to B"). Those belong in git commits and release notes, not learnings.
+- Periodically consolidate: merge related entries, drop anything that's now obvious or captured elsewhere (e.g. in the repo's spec/docs).
 - Keep entries concise. Never include secrets, sensitive URLs, or personal data.
 
-# Skills / modes (if supported by the runtime)
+# Skills / modes
 - Use "programming" only when actively writing/modifying code.
 - Use "ux-designer" when implementing or changing user-facing UI/UX (provide brief UX rationale).
-- Use "subagent-driven-development" for larger changes to preserve context and parallelize safely.
-- If skills/modes aren’t available in the environment, follow the intent of the above rules and state what you’re doing instead.
+
