@@ -167,8 +167,6 @@
       "Bash(git push:*)"
     ]
   },
-    "teammateMode": "in-process",
-
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -182,6 +180,8 @@
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "teammateMode": "in-process",
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
   }
