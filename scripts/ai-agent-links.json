@@ -5,7 +5,14 @@
     "skills": "skills",
     "docs": "docs",
     "agents": "agents",
-    "claude_settings": ".claude/settings.json"
+    "claude_settings": ".claude/settings.json",
+    "codex_config": ".codex/config.toml",
+    "codex_planner": ".codex/planner_config.toml",
+    "codex_developer": ".codex/developer_config.toml",
+    "codex_developer_lite": ".codex/developer_lite_config.toml",
+    "codex_reviewer": ".codex/reviewer_config.toml",
+    "codex_researcher": ".codex/researcher_config.toml",
+    "codex_explore": ".codex/explore_config.toml"
   },
   "targets": [
     {
@@ -47,6 +54,34 @@
     {
       "source": "skills",
       "path": "~/.codex/skills"
+    },
+    {
+      "source": "codex_config",
+      "path": "~/.codex/config.toml"
+    },
+    {
+      "source": "codex_planner",
+      "path": "~/.codex/planner_config.toml"
+    },
+    {
+      "source": "codex_developer",
+      "path": "~/.codex/developer_config.toml"
+    },
+    {
+      "source": "codex_developer_lite",
+      "path": "~/.codex/developer_lite_config.toml"
+    },
+    {
+      "source": "codex_reviewer",
+      "path": "~/.codex/reviewer_config.toml"
+    },
+    {
+      "source": "codex_researcher",
+      "path": "~/.codex/researcher_config.toml"
+    },
+    {
+      "source": "codex_explore",
+      "path": "~/.codex/explore_config.toml"
     },
     {
       "source": "skills",

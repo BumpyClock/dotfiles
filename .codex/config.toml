@@ -1,0 +1,80 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
+web_search = "live"
+personality = "pragmatic"
+suppress_unstable_features_warning = true
+tui.status_line = ["model-with-reasoning", "context-remaining", "codex-version", "session-id", "memory-progress"]
+
+#Agents configuration
+[agents]
+max_threads = 24
+
+[agents.planner]
+config_file = "planner_config.toml"
+description = "Planner agent for managing tasks and workflows"
+
+[agents.developer]
+config_file = "developer_config.toml"
+description = "Developer agent for coding and debugging"
+
+[agents.developer_lite]
+config_file = "developer_lite_config.toml"
+description = "Lite developer agent for coding and debugging"
+
+[agents.reviewer]
+config_file = "reviewer_config.toml"
+description = "Reviewer agent for code review and feedback"
+
+[agents.researcher]
+config_file = "researcher_config.toml"
+description = "Researcher agent for conducting experiments and analysis"
+
+[agents.explore]
+config_file = "explore_config.toml"
+description = "Explore agent for exploring new ideas and concepts"
+
+
+[notice.model_migrations]
+"gpt-5.1-codex-max" = "gpt-5.2-codex"
+"gpt-5.2" = "gpt-5.2-codex"
+
+[projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
+trust_level = "trusted"
+
+[features]
+collaboration_modes = true
+unified_exec = true
+shell_snapshot = true
+powershell_utf8 = true
+steer = true
+personality = true
+multi_agent = true
+
+[mcp_servers.exa-search]
+command = "bunx"
+args = [ "mcp-remote", "https://mcp.exa.ai/mcp" ]
+startup_timeout_sec = 20
+
+  [mcp_servers.exa-search.env]
+  APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming"
+  ComSpec = "C:\\Windows\\System32\\cmd.exe"
+  EXA_API_KEY = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989"
+  HOME = "C:\\Users\\adityasharma"
+  LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local"
+  SystemRoot = "C:\\Windows"
+
+[mcp_servers.code-tools]
+command = "bunx"
+args = [ "code-tools-mcp@latest" ]
+startup_timeout_sec = 40
+
+# [mcp_servers.fla-ui-mcp]
+# command = "C:\\\\Users\\\\adityasharma\\\\Projects\\\\oss\\\\FlaUI-MCP\\\\src\\\\FlaUI.Mcp\\\\bin\\\\Debug\\\\net8.0-windows\\\\FlaUI.Mcp.exe"
+
+# [mcp_servers."playwriter"]
+# command = "bunx"
+# args = [ "playwriter@latest" ]
+# startup_timeout_sec = 40
+
+# [mcp_servers."playwriter".env]
+# PLAYWRITER_AUTO_ENABLE = "1"
