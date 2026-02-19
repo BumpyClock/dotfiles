@@ -58,3 +58,7 @@
   What I tried: Added `bd list --json --all --limit 0` snapshot loading, rendered remaining-bead summary in live UI, and mapped agent-picked beads by matching referenced issue IDs
   Outcome: Worked with graceful fallback when no beads DB is present
   Next time: When adding more providers, keep picked-bead attribution source-agnostic by matching against known bead IDs
+- Context: Cross-platform dotfile linking on Windows without mandatory elevation
+  What I tried: Standardized directory links to Windows junctions and added file-link fallback from symlink to hardlink when policy blocks symlink creation
+  Outcome: Worked; directory linking no longer depends on elevated shell, and file linking remains functional under stricter Windows policies
+  Next time: Keep link-status checks aware of both symlink/junction and hardlink states to preserve idempotency

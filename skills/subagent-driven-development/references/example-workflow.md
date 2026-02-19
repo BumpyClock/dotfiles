@@ -1,11 +1,11 @@
 # Example Workflow
 
-Use this as a reference example when running the orchestration loop in `.ai_agents/prompts/orchestrate.md`.
+Use this as a reference example when running the orchestration loop in `prompts/orchestrate.md`.
 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Load orchestrator prompt: .ai_agents/prompts/orchestrate.md]
+[Load orchestrator prompt: prompts/orchestrate.md]
 [Read plan file once: docs/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]

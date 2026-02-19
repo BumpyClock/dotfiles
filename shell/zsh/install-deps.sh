@@ -247,30 +247,29 @@ create_symlinks() {
     # Detect dotfiles directory (parent of shell/zsh)
     DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
     print_status "Detected dotfiles directory: $DOTFILES_DIR"
-    # Create ~/.claude directory if it doesn't exist
-    mkdir -p "$HOME/.claude"
-    # Symlink Claude files if they exist
-    if [ -d "$DOTFILES_DIR/.claude" ]; then
-        [ -d "$DOTFILES_DIR/.claude/agents" ] && ln -sf "$DOTFILES_DIR/.claude/agents" "$HOME/.claude/agents"
-        [ -f "$DOTFILES_DIR/.claude/settings.json" ] && ln -sf "$DOTFILES_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
-    else
-        print_warning "No .claude directory found in dotfiles"
+
+    if command -v bun >/dev/null 2>&1; then
+        bun "$DOTFILES_DIR/scripts/link-dotfiles/link-dotfiles.ts" --dotfiles-dir "$DOTFILES_DIR" --setup both --skip-submodules
+        print_status "Symlinks created successfully via Bun linker"
+        return
     fi
 
-    if [ -d "$DOTFILES_DIR/.ai_agents" ]; then
-        mkdir -p "$HOME/.codex"
-        [ -d "$DOTFILES_DIR/.ai_agents/prompts" ] && ln -sf "$DOTFILES_DIR/.ai_agents/prompts" "$HOME/.claude/commands"
-        [ -d "$DOTFILES_DIR/.ai_agents/prompts" ] && ln -sf "$DOTFILES_DIR/.ai_agents/prompts" "$HOME/.codex/prompts"
-        [ -f "$DOTFILES_DIR/.ai_agents/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/.ai_agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
-        [ -f "$DOTFILES_DIR/.ai_agents/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/.ai_agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
-        [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.claude/docs"
-        [ -d "$DOTFILES_DIR/.ai_agents/docs" ] && ln -sf "$DOTFILES_DIR/.ai_agents/docs" "$HOME/.codex/docs"
-        mkdir -p "$HOME/.opencode"
-        [ -d "$DOTFILES_DIR/.ai_agents/skills" ] && ln -sf "$DOTFILES_DIR/.ai_agents/skills" "$HOME/.opencode/skill"
-    else
-        print_warning "No .ai_agents directory found in dotfiles"
-    fi
-    print_status "Symlinks created successfully"
+    print_warning "bun not found; applying minimal fallback links only"
+    mkdir -p "$HOME/.claude" "$HOME/.codex" "$HOME/.copilot" "$HOME/.config/opencode" "$HOME/.ai_agents"
+    [ -d "$DOTFILES_DIR/agents" ] && ln -sf "$DOTFILES_DIR/agents" "$HOME/.claude/agents"
+    [ -f "$DOTFILES_DIR/.claude/settings.json" ] && ln -sf "$DOTFILES_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
+    [ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.claude/commands"
+    [ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.codex/prompts"
+    [ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+    [ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.codex/AGENTS.md"
+    [ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.claude/docs"
+    [ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.codex/docs"
+    [ -d "$DOTFILES_DIR/skills" ] && ln -sf "$DOTFILES_DIR/skills" "$HOME/.config/opencode/skills"
+    [ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.ai_agents/prompts"
+    [ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.ai_agents/AGENTS.md"
+    [ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.ai_agents/docs"
+    [ -d "$DOTFILES_DIR/skills" ] && ln -sf "$DOTFILES_DIR/skills" "$HOME/.ai_agents/skills"
+    print_status "Fallback links created successfully"
 }
 
 # Main installation

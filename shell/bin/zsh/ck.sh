@@ -1,6 +1,6 @@
 #!/bin/bash
 # ABOUTME: Claude Code - Kimi wrapper template
-# ABOUTME: This file is a template - link-dotfiles.sh generates the actual script with API key
+# ABOUTME: This file is a template - scripts/link-dotfiles/setup-dotfiles.ts generates the actual script with API key
 
 printf '\033]0;%s\007' 'Claude Code - Kimi'
 export ANTHROPIC_AUTH_TOKEN="__KIMI_AUTH_TOKEN__"

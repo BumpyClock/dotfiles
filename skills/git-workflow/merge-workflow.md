@@ -248,7 +248,7 @@ gh pr checks {pr_number}
 gh run view {run_id} --log-failed
 ```
 
-See: `.ai_agents/skills/gh-fix-ci/SKILL.md`
+See: `skills/git-workflow/gh-fix-ci.md`
 
 ---
 

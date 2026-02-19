@@ -80,8 +80,8 @@ alias claude-yolo='claude --dangerously-skip-permissions'
 claude-monitor() { command claude-monitor --plan max20 "$@" }
 alias cmon='claude-monitor'
 
-# Note: cz and ccy are now standalone scripts in bin/, symlinked to ~/.local/bin
-# Run link-dotfiles.sh to create the symlinks
+# Note: cz and ccy are generated/synced into ~/.local/bin by:
+# bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
 
 # =============================================================================
 # DEVELOPMENT SHORTCUTS (essentials only)

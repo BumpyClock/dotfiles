@@ -1,5 +1,5 @@
 # ABOUTME: Claude Code - Z.AI wrapper template
-# ABOUTME: This file is a template - link-dotfiles.ps1 generates the actual script with API key
+# ABOUTME: This file is a template - scripts/link-dotfiles/setup-dotfiles.ts generates the actual script with API key
 
 $Host.UI.RawUI.WindowTitle = "Claude Code - Zai"
 $env:ANTHROPIC_AUTH_TOKEN = "__ANTHROPIC_AUTH_TOKEN__"

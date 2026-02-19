@@ -94,7 +94,7 @@ git worktree list
 git worktree remove ../project-feature
 ```
 
-See: `.ai_agents/skills/git-work-trees/SKILL.md`
+See: `skills/git-work-trees/SKILL.md`
 
 ---
 

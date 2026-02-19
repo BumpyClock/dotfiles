@@ -1,53 +1,52 @@
 # General Utility Scripts
 
-Scripts for non-shell-specific tasks. For shell-specific scripts, see `shell/{zsh,powershell}/`.
+## Link Dotfiles
 
-## Available Scripts
+`link-dotfiles/` contains the Bun-based linker workflow.
+
+```bash
+# Interactive: choose dotfiles, ai-agents, or both
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
+
+# Non-interactive
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup ai-agents
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+
+# Show current status
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
+```
+
+Internal scripts:
+- `scripts/link-dotfiles/setup-dotfiles.ts`
+- `scripts/link-dotfiles/setup-ai-agents.ts`
+- `scripts/ai-agent-links.json`
+
+Windows behavior:
+- Directory links use junctions (no elevation required).
+- File-link attempts fall back to hardlinks if symlink policy blocks them.
+
+## Other Scripts
 
 ### `ralph-loop/ouroboros.ts`
-Provider-driven loop runner with staged parallel startup, live rich terminal rendering, and beads-aware progress summaries.
 
-**Usage:**
 ```bash
-# Source
 bun scripts/ralph-loop/ouroboros.ts --help
-
-# Compiled executable (installed)
 ouroboros --help
 ```
 
-Config files:
-- Global: `~/.ouroboros/config.json`
-- Project: `~/.ouroboros/projects/<derived-git-root-key>.json`
-
 ### `setup-github-runner.sh`
-Sets up GitHub Actions runner as a service on Linux/macOS systems.
 
-**Usage:**
 ```bash
 sudo ./setup-github-runner.sh
 ```
 
-Requires sudo for creating service users and installing as a system service.
-
 ### `sync-github-folder.sh` / `sync-github-folder.ps1`
-Syncs the `.github` folder from this dotfiles repo to other projects.
 
-**Usage:**
 ```bash
-# Unix/Linux/macOS
 ./sync-github-folder.sh /path/to/project
-
-# Windows/PowerShell
-.\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
 ```
 
-Provides options to:
-1. Create symbolic links (recommended - stays in sync)
-2. Copy files (independent copy)
-
-## Shell-Specific Scripts
-
-For shell configuration management scripts, see:
-- [shell/zsh/](../shell/zsh/) - `install-deps.sh`, `sync-config.sh`
-- Root level - `link-dotfiles.sh`, `link-dotfiles.ps1`
+```powershell
+.\sync-github-folder.ps1 -TargetPath "C:\path\to\project"
+```

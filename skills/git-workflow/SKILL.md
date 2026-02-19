@@ -29,7 +29,7 @@ Modular git workflow management using Conventional Commits and GitHub Flow.
 Based on the user's task, read the relevant sub-file for detailed instructions:
 
 ```
-.ai_agents/skills/git-workflow/
+skills/git-workflow/
 ├── create-pr.md          # PR creation workflow
 ├── review-comments.md    # Handling PR feedback
 ├── commit-workflow.md    # Conventional commits

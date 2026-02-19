@@ -1,0 +1,96 @@
+{
+  "sources": {
+    "instructions": "AGENTS.md",
+    "prompts": "prompts",
+    "skills": "skills",
+    "docs": "docs",
+    "agents": "agents",
+    "claude_settings": ".claude/settings.json"
+  },
+  "targets": [
+    {
+      "source": "agents",
+      "path": "~/.claude/agents"
+    },
+    {
+      "source": "claude_settings",
+      "path": "~/.claude/settings.json"
+    },
+    {
+      "source": "prompts",
+      "path": "~/.claude/commands"
+    },
+    {
+      "source": "instructions",
+      "path": "~/.claude/CLAUDE.md"
+    },
+    {
+      "source": "docs",
+      "path": "~/.claude/docs"
+    },
+    {
+      "source": "skills",
+      "path": "~/.claude/skills"
+    },
+    {
+      "source": "prompts",
+      "path": "~/.codex/prompts"
+    },
+    {
+      "source": "instructions",
+      "path": "~/.codex/AGENTS.md"
+    },
+    {
+      "source": "docs",
+      "path": "~/.codex/docs"
+    },
+    {
+      "source": "skills",
+      "path": "~/.codex/skills"
+    },
+    {
+      "source": "skills",
+      "path": "~/.config/opencode/skills"
+    },
+    {
+      "source": "prompts",
+      "path": "~/.copilot/prompts"
+    },
+    {
+      "source": "instructions",
+      "path": "~/.copilot/instructions.md"
+    },
+    {
+      "source": "docs",
+      "path": "~/.copilot/docs"
+    },
+    {
+      "source": "skills",
+      "path": "~/.copilot/skills"
+    },
+    {
+      "source": "agents",
+      "path": "~/.copilot/agents"
+    },
+    {
+      "source": "prompts",
+      "path": "~/.ai_agents/prompts",
+      "optional": true
+    },
+    {
+      "source": "instructions",
+      "path": "~/.ai_agents/AGENTS.md",
+      "optional": true
+    },
+    {
+      "source": "docs",
+      "path": "~/.ai_agents/docs",
+      "optional": true
+    },
+    {
+      "source": "skills",
+      "path": "~/.ai_agents/skills",
+      "optional": true
+    }
+  ]
+}
