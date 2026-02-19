@@ -5,88 +5,37 @@ description: Operational guide for Tasque (tsq) local task tracking and manageme
 
 <!-- tsq-managed-skill:v1 -->
 
-# Tasque Skill
-
-Use Tasque for creating and managing tasks, features, and epics. These will persist across sessions and devices. Use tsq cli to create and manage tasks.
-
-Add `--json` to any command for stable automation output
-
-## CORE TASK CREATION RULES
-- Include specs when possible
-- Use a consistent title format
-- Assign a priority level
-- Use a consistent label format
-- Create Dependencies links
-- Plan so that the tasks can be completed in parallel using sub-agents. Think through the dependencies and how they can be completed in parallel.
-- Prioritize tasks based on their importance and urgency.
-- Break tasks into smaller sub-tasks when possible.
-- Create new tasks as needed. When navigating the codebase if you discover a bug or a feature that needs to be implemented, create a new task for it.
-
-- Use the `tsq` command-line interface to create and manage tasks.
-
-Use `tsq` for durable local task tracking.
-
-## Core loop
-
-1. `tsq ready`
-2. `tsq show <id>`
-3. `tsq update <id> --status in_progress`
-4. `tsq update <id> --status closed`
-
-## Create and inspect
-
-- `tsq create "Title" --kind task|feature|epic -p 0..3 [--external-ref <ref>]`
-- `tsq show <id>`
-- `tsq list [--status S] [--assignee A] [--external-ref R] [--kind K] [--label L] [--tree [--full]]`
-- `tsq search "status:open label:bug some title text"`
-- `tsq doctor`
-- `tsq watch [--once] [--interval N] [--status ...] [--assignee A] [--tree]`
-
-## Close and reopen
-
-- `tsq close <id> [<id2> ...] [--reason <text>]` — close one or more tasks
-- `tsq reopen <id> [<id2> ...]` — reopen closed tasks (not canceled)
-
-## History
-
-- `tsq history <id> [--limit N] [--type <event-type>] [--actor <name>] [--since <iso>]`
-
-## Specs
-
-- `tsq spec attach <id> --text "<markdown>"` for short inline specs
-- `tsq spec attach <id> --file <path>` to ingest an existing markdown file
-- `tsq spec attach <id> --stdin` to ingest piped markdown content
-- `tsq spec check <id>` to validate fingerprint + required sections diagnostics
-- `tsq update <id> --claim --require-spec` to enforce a passing spec check before claiming
-- Never manually write `.tasque/specs/<id>/spec.md`; always use `tsq spec attach` so canonical path + metadata stay consistent
-
-## Labels
-
-- `tsq label add <id> <label>` — add label (lowercase, [a-z0-9:_/-], max 64)
-- `tsq label remove <id> <label>`
-- `tsq label list` — all labels with counts
-
-## Dependencies and relations
-
-- `tsq dep add <child> <blocker>` means child waits on blocker
-- `tsq dep remove <child> <blocker>`
-- `tsq dep tree <id> [--direction up|down|both] [--depth N]` — dependency graph
-- `tsq link add <src> <dst> --type relates_to|replies_to|duplicates|supersedes`
-- `tsq link remove <src> <dst> --type relates_to|replies_to|duplicates|supersedes`
-- `tsq duplicate <id> --of <canonical-id> [--reason <text>]` to canonicalize duplicates without dependency rewiring
-- `tsq duplicates [--limit <n>]` for dry-run duplicate candidate scaffolding
-- `tsq supersede <old-id> --with <new-id> [--reason <text>]`
-
-## Search
-
-- `tsq search "<query>"` — structured query with implicit AND
-- Fields: `id`, `title`, `status`, `kind`, `priority`, `assignee`, `external_ref`, `parent`, `label`, `ready`
-- Negation: `-status:closed` (use `--` separator: `tsq search -- -status:closed`)
-- Bare words match title substring
 
 
-## Restart durability
+Durable task tracking via `tsq`.
 
-- Canonical history is append-only: `.tasque/events.jsonl`
-- Derived cache is rebuildable: `.tasque/tasks.jsonl`
-- State recovers by replaying snapshot + event tail after restart
+- Local-first and repo-local (`.tasque/`), so tracking works offline with no external service.
+- Append-only JSONL history is git-friendly and auditable across agent sessions.
+- Durable restart/replay model survives context compaction and crashes.
+- Lane-aware readiness plus typed dependencies makes parallel sub-agent execution explicit and safe.
+- Stable `--json` output keeps agent automation predictable.
+- Survive context compaction, session restarts, and crashes.
+
+## What to do by default
+
+1. Run `tsq ready --lane planning` and `tsq ready --lane coding`.
+2. Pick a task with `tsq show <id>`.
+3. If planning is incomplete, collaborate with the user and attach/update spec.
+4. Mark planning done: `tsq update <id> --planning planned`.
+5. Claim/start work: `tsq update <id> --claim [--assignee <name>]` then `tsq update <id> --status in_progress`.
+6. Close when complete: `tsq update <id> --status closed`.
+
+## Required habits
+
+- Keep lifecycle `status` and `planning_state` separate.
+- Add dependencies so parallel work is explicit (`blocks` vs `starts_after`).
+- Break work into small tasks that can run in parallel across sub-agents.
+- Create new tasks for discovered bugs/follow-ups instead of leaving TODOs in chat.
+- Prefer `--json` for automation and tool-to-tool handoffs.
+
+## Read when needed
+
+- Planning/deferred semantics and lane-ready behavior: `references/planning-workflow.md`
+- Full CLI command catalog and option matrix: `references/command-reference.md`
+- Task authoring checklist and naming/labeling standards: `references/task-authoring-checklist.md`
+- JSON schema and storage/durability model: `references/machine-output-and-durability.md`
