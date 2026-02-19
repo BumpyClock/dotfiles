@@ -174,9 +174,9 @@
   },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
-    "ralph-wiggum@claude-plugins-official": true,
+
     "code-review@claude-plugins-official": true,
-    "beads@beads-marketplace": true
+    "figma@claude-plugins-official": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
