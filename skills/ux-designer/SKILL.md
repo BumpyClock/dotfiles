@@ -1,6 +1,7 @@
 ---
 name: ux-designer
 description: Create UX design documentation, layout specs, interaction flows, and style guides without implementation code. Use when the user needs a UX/UI design, wireframe, design system, or accessibility-focused plan for a page, feature, or product, regardless of framework or component library.
+context: fork
 ---
 
 # Core Workflow

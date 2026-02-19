@@ -62,3 +62,7 @@
   What I tried: Standardized directory links to Windows junctions and added file-link fallback from symlink to hardlink when policy blocks symlink creation
   Outcome: Worked; directory linking no longer depends on elevated shell, and file linking remains functional under stricter Windows policies
   Next time: Keep link-status checks aware of both symlink/junction and hardlink states to preserve idempotency
+- Context: Nested skill suites are hard to discover without a parent index
+  What I tried: Added a top-level `SKILL.md` that routes to child skills with explicit `read_when` hints
+  Outcome: Worked; agents can discover the suite from one entrypoint and choose the most specific child skill
+  Next time: For any directory that groups multiple skills, add a parent index skill early to prevent routing misses

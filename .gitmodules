@@ -1,4 +1,4 @@
-[submodule "agents"]
+[submodule "agents-reference"]
 	path = agents-reference
 	url = https://github.com/wshobson/agents.git
 [submodule "secrets"]

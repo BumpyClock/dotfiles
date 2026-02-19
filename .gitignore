@@ -17,3 +17,4 @@ node_modules/
 ./lsp-mcp/logs/*
 ./lsp-mcp/semanticSearch/*
 .lsp-mcp/
+.DS_Store
