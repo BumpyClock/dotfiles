@@ -1,5 +1,5 @@
-model = "gpt-5.3-codex"
-model_reasoning_effort = "high"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "xhigh"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
@@ -33,10 +33,25 @@ description = "Researcher agent for conducting experiments and analysis"
 config_file = "explore_config.toml"
 description = "Explore agent for exploring new ideas and concepts"
 
+[agents.ux-designer]
+config_file = "ux-designer_config.toml"
+description = "UX Designer agent for creating and reviewing user experience."
+
+[agents.git_ops]
+config_file = "git_ops_config.toml"
+description = "Git Ops agent for managing git operations"
+
+[agent.architect]
+config_file = "architect_config.toml"
+description = "Architect agent to decompose hard problems into buildable pieces"
+
+## END AGENT CONFIG
+
 
 [notice.model_migrations]
 "gpt-5.1-codex-max" = "gpt-5.2-codex"
 "gpt-5.2" = "gpt-5.2-codex"
+"gpt-5.2-codex" = "gpt-5.3-codex"
 
 [projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
 trust_level = "trusted"
@@ -67,6 +82,7 @@ startup_timeout_sec = 20
 command = "bunx"
 args = [ "code-tools-mcp@latest" ]
 startup_timeout_sec = 40
+env = { CODE_TOOLS_MCP_ALLOW_ANY_PATHS="true"}
 
 # [mcp_servers.fla-ui-mcp]
 # command = "C:\\\\Users\\\\adityasharma\\\\Projects\\\\oss\\\\FlaUI-MCP\\\\src\\\\FlaUI.Mcp\\\\bin\\\\Debug\\\\net8.0-windows\\\\FlaUI.Mcp.exe"

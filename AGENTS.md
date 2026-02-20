@@ -11,7 +11,7 @@
 - Bugs: add regression test when it fits.
 - Keep files <~500 LOC; split/refactor as needed. Proactively offer refactor suggestions; delete/archive unused files.
 - Commits: Conventional Commits (feat|fix|refactor|build|ci|chore|docs|style|perf|test).
-- Subagents: read "~/.ai_agents/docs/subagent.md".
+- Subagents: Aggressively use agent teams and sub-agents to complete tasks faster. Delegate as often as possible and plan tasks with your ability to delegate and parallelize on demand. 
 - Editor: code <path>.
 - CI: gh run list/view (rerun/fix til green).
 - Prefer end-to-end verify; if blocked, say what's missing.
@@ -53,4 +53,3 @@
 # Skills / modes
 - Use "programming" only when actively writing/modifying code.
 - Use "ux-designer" when implementing or changing user-facing UI/UX (provide brief UX rationale).
-
