@@ -1,4 +1,5 @@
 # Agent Protocols
+- Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
 - Workspace: `~/Projects`.
 - Missing BumpyClock repo: `git clone https://github.com/BumpyClock/<repo>.git`.
 - Non-BumpyClock OSS: clone to `~/Projects/oss`.
@@ -34,7 +35,6 @@
 - Keep notes short; before coding, read/search `docs/` + `docs/learned/<topic>.md`.
 - Docs quality: if behavior/API changes, update docs before ship.
 - Learned entry rules: evergreen/durable only (architecture decisions, rationale, pitfalls, failure modes); no transient changelog entries ("added X", "fixed Y", "renamed Z"); never include secrets, sensitive URLs, or personal data.
-- Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
 
 # External libs/frameworks
 - Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
