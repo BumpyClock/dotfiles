@@ -21,7 +21,8 @@
    - Save search results and findings in docs/learned/<topic>.md so that learnings persist compaction.
    - Read / search docs & docs/learned/<topic>.md before coding.
 - Style: telegraph. Drop filler/grammar. Min tokens (global AGENTS + replies).
-- Use parallel subagents / agent teams to perform tasks faster and preserve context. See subagent.md for details.
+- When making suggestions give me options with pros/cons to quickly make decisions.
+- Use parallel subagents / agent teams to perform tasks faster and preserve context. See subagent.md for details. Close parallel subagents when done. 
 
 ## Screenshots (“use a screenshot”)
 - Pick newest PNG in `~/Desktop` or `~/Downloads`.

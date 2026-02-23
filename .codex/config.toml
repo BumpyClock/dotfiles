@@ -4,6 +4,8 @@ web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
 tui.status_line = ["model-with-reasoning", "context-remaining", "session-id", "current-dir", "git-branch", "five-hour-limit", "weekly-limit", "context-window-size"]
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 
 #Agents configuration
 [agents]
@@ -53,10 +55,14 @@ description = "Architect agent to decompose hard problems into buildable pieces"
 "gpt-5.2" = "gpt-5.2-codex"
 "gpt-5.2-codex" = "gpt-5.3-codex"
 
+
 [projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
 trust_level = "trusted"
 
 [projects."C:\\Users\\adityasharma\\Projects\\Digests-Windows"]
+trust_level = "trusted"
+
+[projects.'C:\Users\adityasharma']
 trust_level = "trusted"
 
 [features]
