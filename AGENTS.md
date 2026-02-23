@@ -1,56 +1,48 @@
-
 # Agent Protocols
-- Workspace: ~/Projects. Missing BumpyClock repo: clone https://github.com/BumpyClock/<repo>.git.
-- 3rd-party/OSS (non-BumpyClock): clone under ~/Projects/oss.
-- "MacBook" / "Mac Studio" => SSH there; find hosts/IPs via tailscale status.
-- Files: repo or ~/Projects/agent-scripts.
-- PRs: use gh pr view/diff (no URLs).
-- "Make a note" => edit LEARNINGS.md (shortcut; not a blocker).
-- No ./runner. Guardrails: use trash for deletes.
-- Need upstream file: stage in /tmp/, then cherry-pick; never overwrite tracked.
-- Bugs: add regression test when it fits.
-- Keep files <~500 LOC; split/refactor as needed. Proactively offer refactor suggestions; delete/archive unused files.
-- Commits: Conventional Commits (feat|fix|refactor|build|ci|chore|docs|style|perf|test).
-- Subagents: Aggressively use agent teams and sub-agents to complete tasks faster. Delegate as often as possible and plan tasks with your ability to delegate and parallelize on demand. 
-- Editor: code <path>.
-- CI: gh run list/view (rerun/fix til green).
-- Prefer end-to-end verify; if blocked, say what's missing.
+- Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
+- Workspace: `~/Projects`.
+- Missing BumpyClock repo: `git clone https://github.com/BumpyClock/<repo>.git`.
+- Non-BumpyClock OSS: clone to `~/Projects/oss`.
+- Known hosts `"framed"` / `"adityas-macbook-pro"`: SSH there.
+- Other clients: SSH there; find host/IP via `tailscale status`.
+- Use `tasque` for task management/tracking.
+- Put files in repo or `~/Projects/dotfiles`.
+- PRs: `gh pr view` / `gh pr diff`; no browser URLs.
+- "Make a note": update `LEARNINGS.md` (shortcut; not blocking).
+- No `./runner`.
+- Deletes go to trash.
+- Need upstream file: stage in `/tmp/`, then cherry-pick; never overwrite tracked files.
+- Bugs: add regression test when appropriate.
+- Keep files <= ~500 LOC; split/refactor as needed; suggest refactors proactively; delete/archive unused files.
+- If you find a large file, create a tracking task.
+- Commits: Conventional Commits (`feat|fix|refactor|build|ci|chore|docs|style|perf|test`).
+- Subagents: default to agent teams + parallel subagents; delegate + parallelize aggressively to go faster + preserve context.
+- Editor: `code <path>`.
+- CI: `gh run list` / `gh run view`; rerun/fix until green.
+- Prefer end-to-end verification; if blocked, state what is missing.
 - New deps: quick health check (recent releases/commits, adoption).
-- Slash cmds: ~/.codex/prompts/.
-- Web: search early; quote exact errors; prefer 2024–2026 sources; fallback Firecrawl (pnpm mcp:*) / mcporter. 
-   - Save search results and findings in docs/learned/<topic>.md so that learnings persist compaction.
-   - Read / search docs & docs/learned/<topic>.md before coding.
-- Style: telegraph. Drop filler/grammar. Min tokens (global AGENTS + replies).
-- When making suggestions give me options with pros/cons to quickly make decisions.
-- Use parallel subagents / agent teams to perform tasks faster and preserve context. See subagent.md for details. Close parallel subagents when done. 
+- Slash commands: `~/.codex/prompts/` (Codex) or `~/.claude/prompts/` (Claude).
 
-## Screenshots (“use a screenshot”)
+
+## Screenshots ("use a screenshot")
 - Pick newest PNG in `~/Desktop` or `~/Downloads`.
-- Verify it’s the right UI (ignore filename).
-
+- Verify UI is correct (ignore filename).
 
 ## Docs
-- Start: open docs before coding.
-- Follow links until domain makes sense; honor `Read when` hints.
-- Keep notes short; update docs when behavior/API changes (no ship w/o docs).
-- Add `read_when` hints on cross-cutting docs.
+- Before coding: open `docs/`, then follow links until domain is clear (`Read when` hints first).
+- Learned docs: maintain `docs/learned/LEARNINGS.md` (create if missing); split by topic into `docs/learned/<topic>.md`; add `read_when` hints for cross-cutting docs.
+- Research: search early; quote exact errors; prefer 2024-2026 sources; fallback Brave Search; save findings in `docs/learned/<topic>.md`.
+- Keep notes short; before coding, read/search `docs/` + `docs/learned/<topic>.md`.
+- Docs quality: if behavior/API changes, update docs before ship.
+- Learned entry rules: evergreen/durable only (architecture decisions, rationale, pitfalls, failure modes); no transient changelog entries ("added X", "fixed Y", "renamed Z"); never include secrets, sensitive URLs, or personal data.
 
-
-# Core
+# External libs/frameworks
 - Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
-  - Evaluate options by: maintenance cadence, community adoption, docs quality, license, and compatibility with the project's stack.
-  - When multiple good options exist, propose 2–3 with clear pros/cons and a recommendation.
-  - Prefer the latest versions of libraries unless there are compatability concerns. 
+  - Evaluate options by maintenance cadence, adoption, docs quality, license, and stack compatibility.
+  - If multiple good options exist, propose 2-3 with clear pros/cons and a recommendation.
+  - Prefer latest library versions unless compatibility concerns.
 
-# Learnings (per-repo)
-- Maintain a `LEARNINGS.md` at the repository root (create if missing).
-- On start: read `LEARNINGS.md` to avoid repeating ineffective approaches.
-- After notable progress or a new failure mode: append a short entry.
-- Keep entries **evergreen and durable** — record architectural decisions, design rationale, pitfalls, and failure modes that will stay relevant.
-- **Do NOT** add transient changelog entries ("added X feature", "fixed Y bug", "renamed A to B"). Those belong in git commits and release notes, not learnings.
-- Periodically consolidate: merge related entries, drop anything that's now obvious or captured elsewhere (e.g. in the repo's spec/docs).
-- Keep entries concise. Never include secrets, sensitive URLs, or personal data.
 
 # Skills / modes
-- Use "programming" only when actively writing/modifying code.
-- Use "ux-designer" when implementing or changing user-facing UI/UX (provide brief UX rationale).
+- Use `programming` only when actively writing/modifying code.
+- Use `ux-designer` when implementing/changing user-facing UI/UX (add brief UX rationale).

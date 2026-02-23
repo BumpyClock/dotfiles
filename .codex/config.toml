@@ -62,7 +62,7 @@ trust_level = "trusted"
 [projects."C:\\Users\\adityasharma\\Projects\\Digests-Windows"]
 trust_level = "trusted"
 
-[projects.'C:\Users\adityasharma']
+[projects."/Users/adityasharma/Projects/Digests/Digests-Swift"]
 trust_level = "trusted"
 
 [features]
@@ -73,6 +73,7 @@ powershell_utf8 = true
 steer = true
 personality = true
 multi_agent = true
+prevent_idle_sleep = true
 
 [mcp_servers.exa-search]
 command = "bunx"
