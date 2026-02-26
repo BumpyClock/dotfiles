@@ -5,8 +5,6 @@ description: Operational guide for Tasque (tsq) local task tracking and manageme
 
 <!-- tsq-managed-skill:v1 -->
 
-
-
 Durable task tracking via `tsq`.
 
 - Local-first and repo-local (`.tasque/`), so tracking works offline with no external service.
@@ -15,9 +13,9 @@ Durable task tracking via `tsq`.
 - Lane-aware readiness plus typed dependencies makes parallel sub-agent execution explicit and safe.
 - Stable `--json` output keeps agent automation predictable.
 - Survive context compaction, session restarts, and crashes.
-
+- TodoWrite or similar tool -> in-session task and progress tracking. `tasque` durable , session and compaction resilient task tracking and management. Use `tasque` for tracking work across agent sessions, with durable progress memory.
+- 
 ## What to do by default
-
 1. Run `tsq ready --lane planning` and `tsq ready --lane coding`.
 2. Pick a task with `tsq show <id>`.
 3. If planning is incomplete, collaborate with the user and attach/update spec.
