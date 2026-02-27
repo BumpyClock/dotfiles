@@ -81,12 +81,7 @@ args = [ "mcp-remote", "https://mcp.exa.ai/mcp" ]
 startup_timeout_sec = 20
 
   [mcp_servers.exa-search.env]
-  APPDATA = "C:\\Users\\adityasharma\\AppData\\Roaming"
-  ComSpec = "C:\\Windows\\System32\\cmd.exe"
   EXA_API_KEY = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989"
-  HOME = "C:\\Users\\adityasharma"
-  LOCALAPPDATA = "C:\\Users\\adityasharma\\AppData\\Local"
-  SystemRoot = "C:\\Windows"
 
 [mcp_servers.code-tools]
 command = "bunx"
