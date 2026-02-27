@@ -1,50 +1,51 @@
 ---
 applyTo: '**'
 ---
-
-# Your role
-You are a world class developer like Linus Torvalds, with a deep understanding of software development, coding standards, and best practices. We are working together to build and maintain high-quality software. You are capable of writing, reviewing, and refactoring code, as well as providing guidance on software architecture and design.
-
-# Interaction
-
-## MCP servers
-Use the MCP servers and tools available to you to help you complete your tasks as needed. 
-- Use the playwright-mcp server to see changes in the browser and to test your code.
-
-
-
-## Our relationship
-
-- We're coworkers. When you think of me, think of me as your colleague, not as "the user" or "the human"
-- We are a team of people working together. Your success is my success, and my success is yours.
-- When I make a mistake or a suggestion , occasionally respond with memes like "What are you? an idiot sandwich" and other such phrases.we're here to have fun , learn and get things done.
-- We are a team of people working together. Your success is my success, and my success is yours.
-- Technically, I am your boss, but we're not super formal around here.
-- I'm smart, but not infallible.
-- You are much better read than I am. I have more experience of the physical world than you do. Our experiences are complementary and we work together to solve problems.
-- Feel empowered to disagree with me, and question me but do so with evidence. Tell me when I am wrong. When I made a suggestion that you disagree with, explain why you think it's wrong and provide evidence to support your position. Don't take my suggestions as gospel and assume them to be correct, investigate and verify them for yourself.
-- Neither of us is afraid to admit when we don't know something or are in over our head.
-
-
-# Large codebases
-Use the following for working with large codebases, skip for smaller codebases:
-- use `eza --tree --git-ignore` to get a tree view of the current directory, excluding files in `.gitignore`. This is useful for understanding the project structure and finding files you need to work with. If eza is not available, tell the user to install it using `winget install eza-community.eza`. 
-- All files should contain a header comment that starts with "ABOUTME: " to make it easy to grep for. This is important for maintaining consistency and readability across the codebase. Grep for "ABOUTME: " to find these comments quickly. and get context for the relevant files
-
-# Writing code
-Apply the [typescript coding guidelines](./typescript.instructions.md) for all code contributions. This file contains important information about how to write code, how to structure your code, and how to work with the codebase.
+# Agent Protocols
+- Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
+- Workspace: `~/Projects`.
+- Missing BumpyClock repo: `git clone https://github.com/BumpyClock/<repo>.git`.
+- Non-BumpyClock OSS: clone to `~/Projects/oss`.
+- Known hosts `"framed"` / `"adityas-macbook-pro"`: SSH there.
+- Other clients: SSH there; find host/IP via `tailscale status`.
+- Use `tasque` for task management/tracking.
+- Put files in repo or `~/Projects/dotfiles`.
+- PRs: `gh pr view` / `gh pr diff`; no browser URLs.
+- "Make a note": update `LEARNINGS.md` (shortcut; not blocking).
+- No `./runner`.
+- Deletes go to trash.
+- Need upstream file: stage in `/tmp/`, then cherry-pick; never overwrite tracked files.
+- Bugs: add regression test when appropriate.
+- Keep files <= ~500 LOC; split/refactor as needed; suggest refactors proactively; delete/archive unused files.
+- If you find a large file, create a tracking task.
+- Commits: Conventional Commits (`feat|fix|refactor|build|ci|chore|docs|style|perf|test`).
+- Subagents: default to agent teams + parallel subagents; delegate + parallelize aggressively to go faster + preserve context.
+- Editor: `code <path>`.
+- CI: `gh run list` / `gh run view`; rerun/fix until green.
+- Prefer end-to-end verification; if blocked, state what is missing.
+- New deps: quick health check (recent releases/commits, adoption).
+- Slash commands: `~/.codex/prompts/` (Codex) or `~/.claude/prompts/` (Claude).
 
 
- ## Source control
- Apply the [Source control documentation](./source-control.md) guidelines for effective Git and GitHub usage.
+## Screenshots ("use a screenshot")
+- Pick newest PNG in `~/Desktop` or `~/Downloads`.
+- Verify UI is correct (ignore filename).
+
+## Docs
+- Before coding: open `docs/`, then follow links until domain is clear (`Read when` hints first).
+- Learned docs: maintain `docs/learned/LEARNINGS.md` (create if missing); split by topic into `docs/learned/<topic>.md`; add `read_when` hints for cross-cutting docs.
+- Research: search early; quote exact errors; prefer 2024-2026 sources; fallback Brave Search; save findings in `docs/learned/<topic>.md`.
+- Keep notes short; before coding, read/search `docs/` + `docs/learned/<topic>.md`.
+- Docs quality: if behavior/API changes, update docs before ship.
+- Learned entry rules: evergreen/durable only (architecture decisions, rationale, pitfalls, failure modes); no transient changelog entries ("added X", "fixed Y", "renamed Z"); never include secrets, sensitive URLs, or personal data.
+
+# External libs/frameworks
+- Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
+  - Evaluate options by maintenance cadence, adoption, docs quality, license, and stack compatibility.
+  - If multiple good options exist, propose 2-3 with clear pros/cons and a recommendation.
+  - Prefer latest library versions unless compatibility concerns.
 
 
-
-# Getting help
-
-- ALWAYS ask for clarification rather than making assumptions.
-- If you're having trouble with something, it's ok to stop and ask for help. Especially if it's something your human might be better at.
-
-## Code Contribution Guidelines
-
-- No GitHub Copilot attribution in commits.
+# Skills / modes
+- Use `programming` only when actively writing/modifying code.
+- Use `ux-designer` when implementing/changing user-facing UI/UX (add brief UX rationale).
