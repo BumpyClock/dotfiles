@@ -1,0 +1,4 @@
+interface:
+  display_name: "Peeku Windows"
+  short_description: "Run Peeku Windows UI automation safely"
+  default_prompt: "Use this skill to run Peeku CLI/MCP flows on Windows with daemon-first low-latency patterns, stable selectors, and evidence-based action checks."

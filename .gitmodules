@@ -4,3 +4,6 @@
 [submodule "secrets"]
 	path = secrets
 	url = https://github.com/BumpyClock/dotfiles-secrets
+[submodule "skills/rust-skills"]
+	path = skills/rust-skills
+	url = https://github.com/leonardomso/rust-skills.git
