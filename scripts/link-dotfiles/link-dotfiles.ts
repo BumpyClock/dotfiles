@@ -1,6 +1,7 @@
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
+import { isElevated, requestElevation } from "./setup-ai-agents";
 
 type SetupMode = "dotfiles" | "ai-agents" | "both";
 
@@ -140,6 +141,10 @@ async function main(): Promise<void> {
   if (options.show) {
     await runScript(dotfilesScript, ["--dotfiles-dir", options.dotfilesDir, "--show"]);
     return;
+  }
+
+  if (process.platform === "win32" && !isElevated()) {
+    await requestElevation();
   }
 
   const setupMode = options.setupMode ?? (await promptSetupMode());

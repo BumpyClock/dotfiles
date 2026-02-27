@@ -1,4 +1,4 @@
-import { link, lstat, mkdir, readFile, readlink, rename, rm, symlink } from "node:fs/promises";
+import { lstat, mkdir, readFile, readlink, rename, rm, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -138,6 +138,47 @@ export async function pathExists(targetPath: string): Promise<boolean> {
   }
 }
 
+export function isElevated(): boolean {
+  if (process.platform !== "win32") return true;
+  const result = Bun.spawnSync(["net", "session"], { stdout: "ignore", stderr: "ignore" });
+  return result.exitCode === 0;
+}
+
+export async function requestElevation(): Promise<never> {
+  const args = process.argv.slice(1);
+
+  // Prefer gsudo (stays in same terminal)
+  const gsudoCheck = Bun.spawnSync(["where", "gsudo"], { stdout: "ignore", stderr: "ignore" });
+  if (gsudoCheck.exitCode === 0) {
+    console.log("[INFO] Requesting elevation via gsudo...");
+    const proc = Bun.spawn(["gsudo", process.execPath, ...args], {
+      stdin: "inherit",
+      stdout: "inherit",
+      stderr: "inherit",
+    });
+    process.exit(await proc.exited);
+  }
+
+  // Fallback: UAC prompt via Start-Process (opens new window)
+  console.log("[INFO] Requesting elevation via UAC...");
+  console.log("[INFO] Script output will appear in a new administrator window.");
+
+  const cwd = process.cwd().replace(/'/g, "''");
+  const escapedArgs = args.map((a) => `\`"${a}\`"`).join(" ");
+
+  const proc = Bun.spawn(
+    [
+      "powershell",
+      "-NoProfile",
+      "-Command",
+      `$p = Start-Process -Verb RunAs -PassThru -Wait -WorkingDirectory '${cwd}' -FilePath '${process.execPath}' -ArgumentList '${escapedArgs}'; exit $p.ExitCode`,
+    ],
+    { stdout: "inherit", stderr: "inherit" },
+  );
+
+  process.exit(await proc.exited);
+}
+
 function backupSuffix(): string {
   const now = new Date();
   const date = now.toISOString().replace(/[-:]/g, "").replace(/\..+$/, "");
@@ -161,43 +202,24 @@ async function isHardLinkedFile(sourcePath: string, targetPath: string): Promise
   }
 }
 
-async function createLink(sourcePath: string, targetPath: string, sourceIsDirectory: boolean): Promise<"symlink" | "junction" | "hardlink"> {
+async function createLink(sourcePath: string, targetPath: string, sourceIsDirectory: boolean): Promise<"symlink" | "junction"> {
   if (sourceIsDirectory) {
     const linkType = process.platform === "win32" ? "junction" : "dir";
     await symlink(sourcePath, targetPath, linkType);
     return process.platform === "win32" ? "junction" : "symlink";
   }
 
-  if (process.platform !== "win32") {
-    await symlink(sourcePath, targetPath, "file");
-    return "symlink";
-  }
-
-  try {
-    await symlink(sourcePath, targetPath, "file");
-    return "symlink";
-  } catch (error) {
-    const nodeError = error as NodeJS.ErrnoException;
-    if (nodeError.code !== "EPERM" && nodeError.code !== "EACCES") {
-      throw error;
-    }
-
-    await link(sourcePath, targetPath);
-    console.log(`[INFO] File symlink blocked by Windows policy; using hardlink: ${targetPath}`);
-    return "hardlink";
-  }
+  await symlink(sourcePath, targetPath, "file");
+  return "symlink";
 }
 
 export async function ensureLinked(sourcePath: string, targetPath: string): Promise<void> {
   const sourceStat = await lstat(sourcePath);
   const existingLinkTarget = await getSymlinkTarget(targetPath);
-  if (existingLinkTarget && normalizeForCompare(existingLinkTarget) === normalizeForCompare(sourcePath)) {
-    console.log(`[SKIP] Already linked: ${targetPath}`);
-    return;
-  }
-
   if (!sourceStat.isDirectory() && !existingLinkTarget && (await isHardLinkedFile(sourcePath, targetPath))) {
-    console.log(`[SKIP] Already linked (hardlink): ${targetPath}`);
+    console.log(`[INFO] Upgrading stale hardlink to symlink: ${targetPath}`);
+  } else if (existingLinkTarget && normalizeForCompare(existingLinkTarget) === normalizeForCompare(sourcePath)) {
+    console.log(`[SKIP] Already linked: ${targetPath}`);
     return;
   }
 
@@ -207,6 +229,9 @@ export async function ensureLinked(sourcePath: string, targetPath: string): Prom
     if (existingLinkTarget) {
       await rm(targetPath, { force: true, recursive: true });
       console.log(`[INFO] Removed stale symlink: ${targetPath}`);
+    } else if (!sourceStat.isDirectory() && (await isHardLinkedFile(sourcePath, targetPath))) {
+      await rm(targetPath, { force: true });
+      console.log(`[INFO] Removed stale hardlink: ${targetPath}`);
     } else {
       const backupPath = `${targetPath}${backupSuffix()}`;
       await rename(targetPath, backupPath);
@@ -222,7 +247,11 @@ export async function ensureLinked(sourcePath: string, targetPath: string): Prom
       const nodeError = error as NodeJS.ErrnoException;
       if (nodeError.code === "EPERM" || nodeError.code === "EACCES") {
         throw new Error(
-          `Windows permission error while linking ${targetPath}. Directory links use junctions (no elevation); file links may need Developer Mode or elevated shell.`,
+          `Cannot create symlink for ${targetPath}.\n` +
+            `  On Windows, file symlinks require either:\n` +
+            `    1. Developer Mode: Settings > System > For developers > Developer Mode\n` +
+            `    2. Running this script in an elevated (Administrator) shell\n` +
+            `  Directory links use junctions and work without elevation.`,
         );
       }
     }
