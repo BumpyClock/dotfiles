@@ -12,7 +12,10 @@
     "codex_developer_lite": ".codex/developer_lite_config.toml",
     "codex_reviewer": ".codex/reviewer_config.toml",
     "codex_researcher": ".codex/researcher_config.toml",
-    "codex_explore": ".codex/explore_config.toml"
+    "codex_explore": ".codex/explore_config.toml",
+    "codex_architect": ".codex/architect_config.toml",
+    "codex_git_ops": ".codex/git_ops_config.toml",
+    "codex_ux_designer": ".codex/ux-designer_config.toml"
   },
   "targets": [
     {
@@ -82,6 +85,18 @@
     {
       "source": "codex_explore",
       "path": "~/.codex/explore_config.toml"
+    },
+    {
+      "source": "codex_architect",
+      "path": "~/.codex/architect_config.toml"
+    },
+    {
+      "source": "codex_git_ops",
+      "path": "~/.codex/git_ops_config.toml"
+    },
+    {
+      "source": "codex_ux_designer",
+      "path": "~/.codex/ux-designer_config.toml"
     },
     {
       "source": "skills",
