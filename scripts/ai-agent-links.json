@@ -15,7 +15,12 @@
     "codex_explore": ".codex/explore_config.toml",
     "codex_architect": ".codex/architect_config.toml",
     "codex_git_ops": ".codex/git_ops_config.toml",
-    "codex_ux_designer": ".codex/ux-designer_config.toml"
+    "codex_ux_designer": ".codex/ux-designer_config.toml",
+    "codex_code_simplifier": ".codex/code-simplifier_config.toml",
+    "codex_comment_analyzer": ".codex/comment-analyzer_config.toml",
+    "codex_pr_test_analyzer": ".codex/pr-test-analyzer_config.toml",
+    "codex_silent_failure_hunter": ".codex/silent-failure-hunter_config.toml",
+    "codex_type_design_analyzer": ".codex/type-design-analyzer_config.toml"
   },
   "targets": [
     {
@@ -97,6 +102,26 @@
     {
       "source": "codex_ux_designer",
       "path": "~/.codex/ux-designer_config.toml"
+    },
+    {
+      "source": "codex_code_simplifier",
+      "path": "~/.codex/code-simplifier_config.toml"
+    },
+    {
+      "source": "codex_comment_analyzer",
+      "path": "~/.codex/comment-analyzer_config.toml"
+    },
+    {
+      "source": "codex_pr_test_analyzer",
+      "path": "~/.codex/pr-test-analyzer_config.toml"
+    },
+    {
+      "source": "codex_silent_failure_hunter",
+      "path": "~/.codex/silent-failure-hunter_config.toml"
+    },
+    {
+      "source": "codex_type_design_analyzer",
+      "path": "~/.codex/type-design-analyzer_config.toml"
     },
     {
       "source": "skills",
