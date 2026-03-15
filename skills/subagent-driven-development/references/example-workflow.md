@@ -1,78 +1,19 @@
 # Example Workflow
 
-Use this as a reference example when running the orchestration loop in `prompts/orchestrate.md`.
+Short example of the loop.
 
 ```
-You: I'm using Subagent-Driven Development to execute this plan.
-
-[Load orchestrator prompt: prompts/orchestrate.md]
-[Read plan file once: docs/plans/feature-plan.md]
-[Extract all 5 tasks with full text and context]
-[Create TodoWrite with all tasks]
-[Create .ai_agents/session_context/{todaysdate}/task-tracker.md and list tasks with status=planned]
-
-Task 1: Hook installation script
-
-[Get Task 1 text and context (already extracted)]
-[Create prompt file in .ai_agents/coding-agent-prompts/ using ./implementer-prompt.md]
-[Update task-tracker.md: Task 1 status=in_progress, add prompt link]
-[Spawn implementer subagent with: claude --model claude-sonnet-4-5-20250929 -p <prompt>]
-
-Implementer: "Before I begin - should the hook be installed at user or system level?"
-
-You: "User level (~/.config/superpowers/hooks/)"
-
-Implementer: "Got it. Implementing now..."
-[Later] Implementer:
-  - Implemented install-hook command
-  - Added tests, 5/5 passing
-  - Self-review: Found I missed --force flag, added it
-  - Committed
-  - Wrote summary to .ai_agents/session_context/{todaysdate}/task-1.md
-
-[Create reviewer prompt file using ./reviewer-prompt.md with full requirements, acceptance criteria, implementer report, base/head SHAs, diff/changed files, and test results]
-[Dispatch combined reviewer]
-Reviewer: ✅ Spec compliant, code quality approved (Strengths: Good test coverage, clean. Issues: None.)
-
-[Confirm summary file exists]
-[Update task-tracker.md: Task 1 status=done, add report links]
-[Mark Task 1 complete]
-
-Task 2: Recovery modes
-
-[Get Task 2 text and context (already extracted)]
-[Create prompt file in .ai_agents/coding-agent-prompts/ using ./implementer-prompt.md]
-[Spawn implementer subagent with: claude --model claude-sonnet-4-5-20250929 -p <prompt>]
-
-Implementer: [No questions, proceeds]
-Implementer:
-  - Added verify/repair modes
-  - 8/8 tests passing
-  - Self-review: All good
-  - Committed
-
-[Create reviewer prompt file using ./reviewer-prompt.md with full requirements, acceptance criteria, implementer report, base/head SHAs, diff/changed files, and test results]
-[Dispatch combined reviewer]
-Reviewer: ❌ Issues:
-  - Missing: Progress reporting (spec says "report every 100 items")
-  - Extra: Added --json flag (not requested)
-  - Quality (Important): Magic number (100)
-
-[Implementer fixes issues]
-Implementer: Removed --json flag, added progress reporting, extracted PROGRESS_INTERVAL constant
-
-[Reviewer reviews again]
-Reviewer: ✅ Spec compliant, code quality approved
-
-[Confirm summary file exists]
-[Update task-tracker.md: Task 2 status=done, add report links]
-[Mark Task 2 complete]
-
-...
-
-[After all tasks]
-[Dispatch final code-reviewer]
-Final reviewer: All requirements met, ready to merge
-
-Done!
+1. Read plan once. Split into small owned tasks.
+2. Define shared interfaces first.
+3. Create `tsq` items. Mark ready vs blocked.
+4. Dispatch implementer A with full task text, owned files, contracts, tests.
+5. Implementer asks one question. Orchestrator answers and updates prompt.
+6. Implementer returns summary, changed files, tests run, open issues.
+7. Dispatch reviewer with requirements, diff context, test results.
+8. Reviewer fails task for one missing acceptance criterion.
+9. Send fix task back to implementer.
+10. Reviewer passes.
+11. Mark task done in `tsq`.
+12. Integrate approved tasks in dependency order.
+13. Run final checks across the full plan.
 ```

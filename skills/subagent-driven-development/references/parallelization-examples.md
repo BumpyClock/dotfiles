@@ -1,71 +1,30 @@
 # Parallelization Examples (Optional)
 
-Use these only when you need concrete templates for interface-first parallelization.
+Use when a task feels splittable but the boundaries are fuzzy.
 
-## Example 1: API Feature
+## Split by Layer
 
-Goal: Add a REST API for user management.
+- Lock controller/service/repo boundaries first.
+- Give each agent one layer.
+- Keep one agent on integration tests.
 
-Interface definitions:
-```typescript
-interface IUserController {
-  getUser(id: string): Promise<User>
-  createUser(data: CreateUserDto): Promise<User>
-  updateUser(id: string, data: UpdateUserDto): Promise<User>
-}
+## Split by Surface
 
-interface IUserService {
-  findById(id: string): Promise<User | null>
-  create(data: CreateUserDto): Promise<User>
-  update(id: string, data: UpdateUserDto): Promise<User>
-}
+- UI components
+- State/data layer
+- API/client layer
+- Tests per surface
 
-interface IUserRepository {
-  findOne(id: string): Promise<UserEntity | null>
-  save(entity: UserEntity): Promise<UserEntity>
-}
-```
+Works only if props, API shapes, and ownership are explicit.
 
-Parallel assignments:
-- Agent 1: Controller implementation with mocked service
-- Agent 2: Service implementation with mocked repository
-- Agent 3: Repository implementation with database
-- Agent 4: Unit tests for all three
-- Agent 5: Integration tests
+## Split by Failure Cluster
 
-## Example 2: Frontend Feature
+- One agent per bug/root cause.
+- One agent for regression tests if shared files stay minimal.
+- One integrator to merge and rerun checks.
 
-Goal: Add a shopping cart.
+## Do Not Split
 
-Interface definitions:
-```typescript
-interface CartState {
-  items: CartItem[]
-  total: number
-  loading: boolean
-}
-
-interface CartProps {
-  onCheckout: () => void
-  onItemRemove: (id: string) => void
-}
-
-interface CartApi {
-  getCart(): Promise<Cart>
-  addItem(productId: string, quantity: number): Promise<CartItem>
-  removeItem(itemId: string): Promise<void>
-}
-```
-
-Parallel assignments:
-- Agent 1: Cart UI components
-- Agent 2: State management
-- Agent 3: API integration layer
-- Agent 4: Component tests
-- Agent 5: State management tests
-
-## Problem-Solving Pattern
-
-1. Analysis agent identifies root cause.
-2. Parallel fix agents each address one issue.
-3. Integration agent merges fixes and reruns tests.
+- Same file set.
+- Same public interface still in flux.
+- High-churn refactors where each task will collide.

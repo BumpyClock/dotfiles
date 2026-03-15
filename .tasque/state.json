@@ -12,13 +12,27 @@
       "created_at": "2026-03-09T18:05:09.850Z",
       "updated_at": "2026-03-09T18:10:37.855Z",
       "closed_at": "2026-03-09T18:10:37.855Z"
+    },
+    "tsq-jp8na3qh": {
+      "id": "tsq-jp8na3qh",
+      "kind": "task",
+      "title": "Refine subagent-driven-development skill instructions",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-03-14T18:07:26.321Z",
+      "updated_at": "2026-03-14T18:10:16.713Z",
+      "closed_at": "2026-03-14T18:10:16.713Z"
     }
   },
   "deps": {},
   "links": {},
   "child_counters": {},
   "created_order": [
-    "tsq-gcw8fqh5"
+    "tsq-gcw8fqh5",
+    "tsq-jp8na3qh"
   ],
-  "applied_events": 2
+  "applied_events": 5
 }

@@ -1,98 +1,80 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session, orchestrating per-task implementer/reviewer subagents.
-summary: "Multi-agent system directives and coordination rules. Master reference for agent behavior."
-read_when:
-  - Coordinating subagents or running tmux-based agent sessions.
+description: Use when executing a defined implementation plan with multiple mostly-independent tasks in the current session. Orchestrate implementer and reviewer subagents, parallelize safe work, keep architecture and integration in the orchestrator.
 ---
 
 # Subagent-Driven Development
 
-Role: orchestrator. Run coding agents, review work, loop until complete.
+Role: orchestrator. Decompose, dispatch, review, integrate, verify.
 
-- Pick right agent size. `developer-lite` for easy/medium. `developer` for hard.
+## Orchestrator Owns
 
-## Persistent Task Tracker (Required)
+- Plan decomposition.
+- Interfaces, contracts, acceptance criteria.
+- Architecture and product decisions.
+- Dependency ordering.
+- Integration.
+- Final verification.
 
-Maintain daily task tracker; survives compaction.
+## Core Rules
 
-- Use `tasque` for persistent task list.
-- Each sub-agent: claim task, mark in progress.
-- When done + reviewed + acceptable: mark done.
-- If user tasks you to finish: get details from `tasque`.
+- Use `tasque` for durable tracking.
+- Split by ownership. Parallel agents should not edit the same files or interfaces.
+- Define interfaces and acceptance before dispatch.
+- Give each subagent the full task text and local context. Do not make subagents hunt through plan files.
+- Keep decisions in orchestrator. Subagents implement, test, review, research.
+- Require tests for behavior changes. Skip only for clearly mechanical work or explicit approval.
+- Review every implementation with a separate reviewer agent.
+- Loop until pass. If the task stays stuck after repeated review/fix cycles, stop and surface the blocker.
+- Pick the smallest capable agent.
 
-## Orchestration Planning Checklist (Always Follow This)
+## Flow
 
-### Step 1: Initial Analysis
-- Identify core goal + success criteria.
-- List components/subtasks.
-- Consider data flows + dependencies.
-- Note tests + constraints.
+1. Analyze
+- Identify goal, success criteria, constraints, dependencies, shared surfaces, test needs.
+- Break work into small tasks with clean ownership.
 
-### Step 2: Interface Definition (Parallelization Enabler)
-- Define public interfaces/APIs before implementation.
-- Specify inputs/outputs/behaviors.
-- Document integration points + failure modes.
-- Provide mock contracts so tasks proceed independently.
+2. Define contracts
+- Lock public interfaces, data shapes, integration order, non-goals.
+- Add enough detail for independent execution.
 
-### Step 3: Test Strategy
-- Enumerate unit/integration/e2e tests.
-- Require TDD for new behavior or bug fixes; skip only for mechanical edits and note why.
-- If any test type "not applicable": request explicit user authorization before skipping.
-- Plan tests that can be written in parallel.
+3. Track
+- Create or update `tsq` tasks.
+- Model blockers explicitly.
+- Mark active work `in_progress`; close only after review and verification.
 
-### Step 4: Parallelization Plan
-- If too complex for one agent: break down further.
-- Create succinct dependency graph.
-- Decide parallelizable vs dependent tasks.
-- Plan order by dependencies (independent first).
-- Avoid parallel agents touching same files/config/interfaces.
-- Spawn additional agents in parallel whenever possible.
+4. Dispatch implementer
+- Assign one owned task.
+- Include task, context, owned files, contracts, constraints, tests, deliverables.
+- Tell the agent to ask questions early and avoid autonomous architecture changes.
 
-### Step 5: Integration Strategy
-- Define integration points + order.
-- Identify conflicts.
-- Assign integration task/agent.
-- Plan final review + re-test after integration.
+5. Review
+- Dispatch a separate reviewer with requirements, changed files, diff context, test results.
+- Reviewer checks spec compliance first, then code quality and test coverage.
+- If review fails, send targeted fixes back through an implementer.
 
-## Core Orchestration Loop
+6. Integrate
+- Merge approved task work in dependency order.
+- Re-run impacted tests after integration.
 
-**Define work**
-- Decide what to delegate (impl/testing/research); keep architecture decisions in orchestrator.
-- Create task prompt.
-- If too big: split into smaller sub-tasks.
-- Create detailed, precise prompt using prompt creation flow.
-- Define clear interfaces/public function signatures for parallel work. Critical for backend+frontend parallelization. Pass API surface in context.
-- Include test expectations (unit/integration/e2e) + TDD requirements.
+7. Finish
+- Run final end-to-end checks for the plan.
+- Close `tsq` items with outcome notes.
+- Report blockers, residual risk, and follow-up work.
 
-**Review the work**
-- Review agent output. If good: proceed.
-- If not good or drifts: create new prompt, call agent to fix.
-- Agent lacks previous prompt context; include sufficient context + details.
-- Stay in review until satisfied.
-- If agent cannot meet requirements after 10 steps: break loop, report to user.
-- Do not accept missing tests unless user explicitly authorized skipping.
-- Update task tracker with review status + reviewer report links after each review.
+## Prompt Contract
 
-**Post-task steps**
-- Update todo list; mark task completed. If external task list: update completion status.
-- Update daily task tracker with final status, links, short outcome note.
-- Start next task.
-- Repeat until delegated tasks finished.
-
-Remember: agent has no context of this conversation; prompts must include sufficient context + details.
-
-## Prompt Creation Flow
-
-- Agent not great at decisions; you decide, be explicit.
-- Read needed code to decide implementation details.
-- Prompts must be detailed + precise; avoid clarifications.
-- If task too big: split; prompt per sub-task.
-- Include interface definitions, mock strategy, test plan (unit/integration/e2e).
-- Call out TDD requirements + explicit authorization to skip tests.
+- Full task statement. Paste it.
+- Why it exists.
+- Exact acceptance criteria.
+- Owned files or module boundary.
+- Interfaces or contracts to honor.
+- Constraints and non-goals.
+- Test expectations.
+- Required deliverable format: summary, files changed, tests run, open issues.
 
 ## References
 
-- Interface-first parallelization examples: `./references/parallelization-examples.md`.
-- Guardrails + red flags: `./references/guardrails.md`.
-- End-to-end orchestration example: `./references/example-workflow.md`.
+- Red flags: `./references/guardrails.md`
+- Example loop: `./references/example-workflow.md`
+- Parallel split patterns: `./references/parallelization-examples.md`
