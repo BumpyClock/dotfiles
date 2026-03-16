@@ -1,17 +1,17 @@
 {
   "tasks": {
-    "tsq-gcw8fqh5": {
-      "id": "tsq-gcw8fqh5",
+    "tsq-6jvxhtfw": {
+      "id": "tsq-6jvxhtfw",
       "kind": "task",
-      "title": "Adapt review-pr prompt for whole-codebase improvement analysis",
+      "title": "Fold codex planner config into architect config",
       "notes": [],
       "status": "closed",
       "priority": 2,
-      "planning_state": "needs_planning",
+      "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-09T18:05:09.850Z",
-      "updated_at": "2026-03-09T18:10:37.855Z",
-      "closed_at": "2026-03-09T18:10:37.855Z"
+      "created_at": "2026-03-16T19:07:12.281Z",
+      "updated_at": "2026-03-16T19:10:11.271Z",
+      "closed_at": "2026-03-16T19:10:11.271Z"
     },
     "tsq-jp8na3qh": {
       "id": "tsq-jp8na3qh",
@@ -25,6 +25,32 @@
       "created_at": "2026-03-14T18:07:26.321Z",
       "updated_at": "2026-03-14T18:10:16.713Z",
       "closed_at": "2026-03-14T18:10:16.713Z"
+    },
+    "tsq-gcw8fqh5": {
+      "id": "tsq-gcw8fqh5",
+      "kind": "task",
+      "title": "Adapt review-pr prompt for whole-codebase improvement analysis",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "needs_planning",
+      "labels": [],
+      "created_at": "2026-03-09T18:05:09.850Z",
+      "updated_at": "2026-03-09T18:10:37.855Z",
+      "closed_at": "2026-03-09T18:10:37.855Z"
+    },
+    "tsq-ds7ks1db": {
+      "id": "tsq-ds7ks1db",
+      "kind": "task",
+      "title": "Fold planner agent into architect agent",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-03-16T18:55:59.954Z",
+      "updated_at": "2026-03-16T18:57:02.048Z",
+      "closed_at": "2026-03-16T18:57:02.048Z"
     }
   },
   "deps": {},
@@ -32,7 +58,9 @@
   "child_counters": {},
   "created_order": [
     "tsq-gcw8fqh5",
-    "tsq-jp8na3qh"
+    "tsq-jp8na3qh",
+    "tsq-ds7ks1db",
+    "tsq-6jvxhtfw"
   ],
-  "applied_events": 5
+  "applied_events": 10
 }

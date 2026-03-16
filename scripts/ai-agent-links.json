@@ -7,7 +7,6 @@
     "agents": "agents",
     "claude_settings": ".claude/settings.json",
     "codex_config": ".codex/config.toml",
-    "codex_planner": ".codex/planner_config.toml",
     "codex_developer": ".codex/developer_config.toml",
     "codex_developer_lite": ".codex/developer_lite_config.toml",
     "codex_reviewer": ".codex/reviewer_config.toml",
@@ -66,10 +65,6 @@
     {
       "source": "codex_config",
       "path": "~/.codex/config.toml"
-    },
-    {
-      "source": "codex_planner",
-      "path": "~/.codex/planner_config.toml"
     },
     {
       "source": "codex_developer",
