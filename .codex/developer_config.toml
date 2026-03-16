@@ -1,4 +1,4 @@
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
@@ -31,7 +31,7 @@ Challenge requirements that compromise code quality with technical justification
 
 ## Response
 
-Save a summary of your implementation and the files you created to `{project_directory}/.ai_agents/session_context/{todaysDate}/{hour-based-folder-name}/docs/xxxxxx.md` with:
+Reply with a summary of your implementation and the files you created with:
 
 - A summary of the changes made
 - Any files that were modified
