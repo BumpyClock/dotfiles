@@ -110,6 +110,9 @@ trust_level = "trusted"
 [projects.'\\?\C:\Users\adityasharma\Projects\dotfiles']
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/Digests-Swift"]
+trust_level = "trusted"
+
 [features]
 collaboration_modes = true
 unified_exec = true
