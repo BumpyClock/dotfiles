@@ -10,6 +10,8 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
 **Scope / Focus (optional):** "$ARGUMENTS"
 
+**Primary directive:** Use parallel specialized sub-agents and agent teams to review the entire codebase and look for stale legacy code, dead code, bridges for legacy code to new code, hard coded values, orphan code paths, and logical inconsistencies.
+
 ## Analysis Workflow:
 
 1. **Determine Analysis Scope**
@@ -24,6 +26,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - **complexity** - Unnecessary complexity, hard-to-follow control flow, oversized files
    - **duplication** - Repeated logic, copy-paste patterns, near-duplicate modules
    - **dead-code** - Unused files, stale abstractions, code that can be deleted
+   - **legacy dode** - Old patterns, compatibility bridges, or technical debt hotspots, hard coded values, or orphan code paths
    - **tests** - Coverage gaps, weak assertions, high-risk untested behavior
    - **errors** - Silent failures, swallowed exceptions, weak error reporting
    - **types** - Weak invariants, leaky models, unclear type boundaries
@@ -131,38 +134,6 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 /analyze-codebase-improvements tests deps
 ```
 
-## Agent Descriptions:
-
-**reviewer**:
-- General code quality and design review
-- Bugs, maintainability issues, unclear boundaries
-- Project guideline compliance
-
-**pr-test-analyzer**:
-- Critical coverage gaps
-- Weak or misleading tests
-- High-risk behavior with insufficient verification
-
-**comment-analyzer**:
-- Comment accuracy vs current code
-- Documentation drift
-- High-maintenance or misleading comments
-
-**silent-failure-hunter**:
-- Swallowed errors
-- Missing logging/context
-- Failure paths that hide real problems
-
-**type-design-analyzer**:
-- Weak invariants
-- Type/API boundary issues
-- Data model clarity and encapsulation
-
-**code-simplifier**:
-- Areas with too much indirection
-- Duplicate or over-abstracted code
-- Smaller, clearer alternatives
-
 ## Tips:
 
 - Prefer high-leverage findings over exhaustive nitpicks
@@ -171,29 +142,6 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 - Validate opportunities against existing project patterns and local rules
 - For large repos, analyze one subsystem at a time and compare results
 
-## Workflow Integration:
-
-**Quarterly code health sweep:**
-```text
-1. Run: /analyze-codebase-improvements
-2. Convert top opportunities into tasks
-3. Tackle quick wins first
-4. Plan strategic refactors separately
-```
-
-**Before a major refactor:**
-```text
-1. Run: /analyze-codebase-improvements path/to/area architecture simplify
-2. Confirm the highest-leverage changes
-3. Break large refactors into staged tasks
-```
-
-**When maintenance cost feels too high:**
-```text
-1. Run: /analyze-codebase-improvements area duplication complexity dead-code
-2. Validate the top pain points
-3. Delete, simplify, then refactor only where needed
-```
 
 ## Notes:
 
