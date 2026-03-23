@@ -11,7 +11,7 @@ Default day-to-day playbook.
 ## When to use tsq
 
 - Use `tsq` for multi-step, multi-session, dependency-blocked, shared-agent work.
-- Use transient checklist for short linear single-session work.
+- Use transient checklist, or inbuild todoWrite / task tool for short linear single-session work.
 
 ## Session routine (default)
 
