@@ -22,6 +22,7 @@
 - Prefer end-to-end verification; if blocked, state what is missing.
 - New deps: quick health check (recent releases/commits, adoption).
 - Slash commands: `~/.codex/prompts/` (Codex) or `~/.claude/prompts/` (Claude).
+- use `web_search` and `web_fetch` cli commands from `web-skill` for web search and web fetch
 
 
 ## Screenshots ("use a screenshot")
