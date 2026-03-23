@@ -1,4 +1,4 @@
-model = "gpt-5.4"
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
@@ -8,7 +8,6 @@ tui.notifications = true
 tui.notification_method = "auto"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-service_tier = "fast"
 # model_context_window = 800000
 # model_auto_compact_token_limit = 700000
 commit_attribution = ""
@@ -111,6 +110,15 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/adityasharma/Projects/Digests-Swift"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/sysadmin"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/book-recos"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/making-with-ai"]
 trust_level = "trusted"
 
 [features]
