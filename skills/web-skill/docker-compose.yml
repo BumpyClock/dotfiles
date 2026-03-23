@@ -1,0 +1,160 @@
+name: webskill
+
+services:
+  # ── SearXNG stack (port 8899) ──────────────────────────────────
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: webskill-searxng
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8899:8080"
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8899/
+    depends_on:
+      - valkey
+    networks:
+      - webskill
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  valkey:
+    image: docker.io/valkey/valkey:8-alpine
+    container_name: webskill-valkey
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    networks:
+      - webskill
+    volumes:
+      - valkey-data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  # ── Firecrawl stack (port 8898) ────────────────────────────────
+  firecrawl-api:
+    image: ghcr.io/firecrawl/firecrawl:latest
+    container_name: webskill-firecrawl-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8898:3002"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "3002"
+      INTERNAL_PORT: "3002"
+      REDIS_URL: redis://firecrawl-redis:6379
+      REDIS_RATE_LIMIT_URL: redis://firecrawl-redis:6379
+      PLAYWRIGHT_MICROSERVICE_URL: http://playwright:3000/scrape
+      USE_DB_AUTHENTICATION: "false"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      NUQ_RABBITMQ_URL: amqp://rabbitmq:5672
+      SEARXNG_ENDPOINT: http://searxng:8080
+      NUM_WORKERS_PER_QUEUE: "4"
+      CRAWL_CONCURRENT_REQUESTS: "10"
+      MAX_CONCURRENT_JOBS: "5"
+      ENV: local
+    command: node dist/src/harness.js --start-docker
+    depends_on:
+      firecrawl-redis:
+        condition: service_started
+      playwright:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    networks:
+      - webskill
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  playwright:
+    image: ghcr.io/firecrawl/playwright-service:latest
+    container_name: webskill-playwright
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      BLOCK_MEDIA: "true"
+    networks:
+      - webskill
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  firecrawl-redis:
+    image: redis:alpine
+    container_name: webskill-firecrawl-redis
+    command: redis-server --bind 0.0.0.0
+    restart: unless-stopped
+    networks:
+      - webskill
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: webskill-rabbitmq
+    command: rabbitmq-server
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - webskill
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: webskill-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./nuq-init.sql:/docker-entrypoint-initdb.d/010-nuq.sql:ro
+    networks:
+      - webskill
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+networks:
+  webskill:
+    driver: bridge
+
+volumes:
+  valkey-data:
+  postgres-data:
