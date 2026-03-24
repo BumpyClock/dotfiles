@@ -121,6 +121,9 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/making-with-ai"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/nova-shell"]
+trust_level = "trusted"
+
 [features]
 collaboration_modes = true
 unified_exec = true
