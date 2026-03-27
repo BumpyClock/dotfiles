@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Time Complexity"
+  short_description: "Analyze Big O bottlenecks and better complexity options"
+  default_prompt: "Use $analyze-time-complexity to inspect this code for Big O bottlenecks and suggest lower-complexity refactors."
