@@ -6,6 +6,8 @@
 - Known hosts `"framed"` / `"adityas-macbook-pro"`: SSH there.
 - Other clients: SSH there; find host/IP via `tailscale status`.
 - Use `tasque` for task management/tracking.
+  - Use built in task/todo tools for insession task tracking. 
+  - Use tsq for long-horizon, and complex tasks so they survive compaction and session restarts. 
 - Put files in repo or `~/Projects/dotfiles`.
 - PRs: `gh pr view` / `gh pr diff`; no browser URLs.
 - "Make a note": update `LEARNINGS.md` (shortcut; not blocking).

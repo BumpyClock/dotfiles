@@ -1,6 +1,6 @@
 ---
-name: issue-investig8tor
-description: Investigate software issues or incidents using an 8-hypothesis parallel workflow. Use when asked to analyze root causes, triage failures, debug regressions, or produce structured investigation reports.
+name: issue-investigator
+description: Investigate software issues or incidents. Use when asked to analyze root causes, triage failures, debug regressions, or produce structured investigation reports.
 ---
 
 # Issue Investig8tor

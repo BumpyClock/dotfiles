@@ -14,63 +14,17 @@ commit_attribution = ""
 plan_mode_reasoning_effort = "high"
 service_tier = "fast"
 
-#Agents configuration
-[agents]
-max_threads = 24
+[features]
+collaboration_modes = true
+unified_exec = true
+shell_snapshot = true
+powershell_utf8 = true
+steer = true
+personality = true
+multi_agent = true
+prevent_idle_sleep = true
+apps = false
 
-[agents.developer]
-config_file = "developer_config.toml"
-description = "Developer agent for coding and debugging for medium and hard tasks"
-
-[agents.developer_lite]
-config_file = "developer_lite_config.toml"
-description = "Lite developer agent for coding and debugging simpler tasks"
-
-[agents.reviewer]
-config_file = "reviewer_config.toml"
-description = "Code review and feedback"
-
-[agents.researcher]
-config_file = "researcher_config.toml"
-description = "Conducting web research and analysis"
-
-[agents.explore]
-config_file = "explore_config.toml"
-description = "Explore codebase and find the right information"
-
-[agents.ux-designer]
-config_file = "ux-designer_config.toml"
-description = "Create and reviewing user experience."
-
-[agents.git_ops]
-config_file = "git_ops_config.toml"
-description = "Conducting and managing git operations"
-
-[agents.architect]
-config_file = "architect_config.toml"
-description = "Plan tasks, epics for efficient implementation and decompose hard problems into buildable pieces"
-
-[agents.code-simplifier]
-config_file = "code-simplifier_config.toml"
-description = "Code simplifier for reducing complexity and improving readability"
-
-[agents.comment-analyzer]
-config_file = "comment-analyzer_config.toml"
-description = "Adding/reviewing and improving code comments"
-
-[agents.pr-test-analyzer]
-config_file = "pr-test-analyzer_config.toml"
-description = "Analyzing test coverage in pull requests"
-
-[agents.silent-failure-hunter]
-config_file = "silent-failure-hunter_config.toml"
-description = "Detecting swallowed errors and silent failures"
-
-[agents.type-design-analyzer]
-config_file = "type-design-analyzer_config.toml"
-description = "Creating & reviewing type definitions and design patterns"
-
-## END AGENT CONFIG
 
 
 [notice.model_migrations]
@@ -134,15 +88,65 @@ trust_level = "trusted"
 [projects."/Users/adityasharma"]
 trust_level = "trusted"
 
-[features]
-collaboration_modes = true
-unified_exec = true
-shell_snapshot = true
-powershell_utf8 = true
-steer = true
-personality = true
-multi_agent = true
-prevent_idle_sleep = true
+
+
+#Agents configuration
+[agents]
+max_threads = 24
+
+[agents.developer]
+config_file = "developer_config.toml"
+description = "Developer agent for coding and debugging for medium and hard tasks"
+
+[agents.developer_lite]
+config_file = "developer_lite_config.toml"
+description = "Lite developer agent for coding and debugging simpler tasks"
+
+[agents.reviewer]
+config_file = "reviewer_config.toml"
+description = "Code review and feedback"
+
+[agents.researcher]
+config_file = "researcher_config.toml"
+description = "Conducting web research and analysis"
+
+[agents.explore]
+config_file = "explore_config.toml"
+description = "Explore codebase and find the right information"
+
+[agents.ux-designer]
+config_file = "ux-designer_config.toml"
+description = "Create and reviewing user experience."
+
+[agents.git_ops]
+config_file = "git_ops_config.toml"
+description = "Conducting and managing git operations"
+
+[agents.architect]
+config_file = "architect_config.toml"
+description = "Plan tasks, epics for efficient implementation and decompose hard problems into buildable pieces"
+
+[agents.code-simplifier]
+config_file = "code-simplifier_config.toml"
+description = "Code simplifier for reducing complexity and improving readability"
+
+[agents.comment-analyzer]
+config_file = "comment-analyzer_config.toml"
+description = "Adding/reviewing and improving code comments"
+
+[agents.pr-test-analyzer]
+config_file = "pr-test-analyzer_config.toml"
+description = "Analyzing test coverage in pull requests"
+
+[agents.silent-failure-hunter]
+config_file = "silent-failure-hunter_config.toml"
+description = "Detecting swallowed errors and silent failures"
+
+[agents.type-design-analyzer]
+config_file = "type-design-analyzer_config.toml"
+description = "Creating & reviewing type definitions and design patterns"
+
+## END AGENT CONFIG
 
 # [mcp_servers.exa-search]
 # url = "https://mcp.exa.ai/mcp"
