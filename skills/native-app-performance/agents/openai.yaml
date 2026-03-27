@@ -1,0 +1,4 @@
+interface:
+  display_name: "Native App Performance"
+  short_description: "Help with Native App Performance tasks"
+  default_prompt: "Use $native-app-performance to help with Native App Performance tasks."

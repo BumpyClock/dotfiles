@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue Investig8tor"
+  short_description: "Help with Issue Investig8tor tasks"
+  default_prompt: "Use $issue-investig8tor to help with Issue Investig8tor tasks."

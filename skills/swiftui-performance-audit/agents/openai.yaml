@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI Performance Audit"
+  short_description: "Help with SwiftUI Performance Audit tasks"
+  default_prompt: "Use $swiftui-performance-audit to help with SwiftUI Performance Audit tasks."

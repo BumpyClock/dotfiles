@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC App Create UI"
+  short_description: "Help with ASC App Create UI tasks"
+  default_prompt: "Use $asc-app-create-ui to help with ASC App Create UI tasks."

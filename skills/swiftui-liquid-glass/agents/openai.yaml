@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI Liquid Glass"
+  short_description: "Help with SwiftUI Liquid Glass tasks"
+  default_prompt: "Use $swiftui-liquid-glass to help with SwiftUI Liquid Glass tasks."

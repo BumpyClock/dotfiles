@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Xcode Build"
+  short_description: "Help with ASC Xcode Build tasks"
+  default_prompt: "Use $asc-xcode-build to help with ASC Xcode Build tasks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Subscription Localization"
+  short_description: "Help with ASC Subscription Localization tasks"
+  default_prompt: "Use $asc-subscription-localization to help with ASC Subscription Localization tasks."

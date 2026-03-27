@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Workflow"
+  short_description: "Help with Git Workflow tasks"
+  default_prompt: "Use $git-workflow to help with Git Workflow tasks."

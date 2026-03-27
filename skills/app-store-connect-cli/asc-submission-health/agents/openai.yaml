@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Submission Health"
+  short_description: "Help with ASC Submission Health tasks"
+  default_prompt: "Use $asc-submission-health to help with ASC Submission Health tasks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI View Refactor"
+  short_description: "Help with SwiftUI View Refactor tasks"
+  default_prompt: "Use $swiftui-view-refactor to help with SwiftUI View Refactor tasks."

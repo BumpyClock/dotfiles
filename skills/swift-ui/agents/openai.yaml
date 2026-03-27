@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI"
+  short_description: "Help with SwiftUI tasks and workflows"
+  default_prompt: "Use $swift-ui to help with SwiftUI tasks and workflows."

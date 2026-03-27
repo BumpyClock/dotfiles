@@ -1,0 +1,4 @@
+interface:
+  display_name: "CodeRabbit Review"
+  short_description: "Help with CodeRabbit Review tasks"
+  default_prompt: "Use $coderabbit-review-skill to help with CodeRabbit Review tasks."

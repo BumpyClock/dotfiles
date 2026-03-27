@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenTUI"
+  short_description: "Help with OpenTUI tasks and workflows"
+  default_prompt: "Use $opentui to help with OpenTUI tasks and workflows."

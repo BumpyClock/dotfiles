@@ -1,3 +1,4 @@
 interface:
   display_name: "react-doctor"
   short_description: "Diagnose and fix React codebase health issues"
+  default_prompt: "Use $react-doctor to diagnose React codebase health issues."

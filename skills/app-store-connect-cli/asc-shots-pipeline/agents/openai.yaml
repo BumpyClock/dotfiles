@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Shots Pipeline"
+  short_description: "Help with ASC Shots Pipeline tasks"
+  default_prompt: "Use $asc-shots-pipeline to help with ASC Shots Pipeline tasks."

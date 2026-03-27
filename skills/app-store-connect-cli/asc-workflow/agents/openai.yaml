@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Workflow"
+  short_description: "Help with ASC Workflow tasks"
+  default_prompt: "Use $asc-workflow to help with ASC Workflow tasks."

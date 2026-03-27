@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Concurrency Expert"
+  short_description: "Help with Swift Concurrency Expert tasks"
+  default_prompt: "Use $swift-concurrency-expert to help with Swift Concurrency Expert tasks."

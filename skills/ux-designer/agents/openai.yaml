@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ux Designer"
+  short_description: "Help with Ux Designer tasks"
+  default_prompt: "Use $ux-designer to help with Ux Designer tasks."

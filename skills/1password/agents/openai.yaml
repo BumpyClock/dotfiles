@@ -1,0 +1,4 @@
+interface:
+  display_name: "1Password"
+  short_description: "Help with 1Password tasks"
+  default_prompt: "Use $1password to help with 1Password tasks."

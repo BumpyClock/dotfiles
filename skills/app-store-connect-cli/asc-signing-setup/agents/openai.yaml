@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Signing Setup"
+  short_description: "Help with ASC Signing Setup tasks"
+  default_prompt: "Use $asc-signing-setup to help with ASC Signing Setup tasks."

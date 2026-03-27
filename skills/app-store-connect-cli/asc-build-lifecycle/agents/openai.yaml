@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Build Lifecycle"
+  short_description: "Help with ASC Build Lifecycle tasks"
+  default_prompt: "Use $asc-build-lifecycle to help with ASC Build Lifecycle tasks."

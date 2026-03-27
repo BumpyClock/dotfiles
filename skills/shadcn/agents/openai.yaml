@@ -1,0 +1,4 @@
+interface:
+  display_name: "shadcn/ui Install and Configure"
+  short_description: "Help with shadcn/ui Install and Configure tasks"
+  default_prompt: "Use $shadcn-install-and-configure to help with shadcn/ui Install and Configure tasks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Id Resolver"
+  short_description: "Help with ASC Id Resolver tasks"
+  default_prompt: "Use $asc-id-resolver to help with ASC Id Resolver tasks."

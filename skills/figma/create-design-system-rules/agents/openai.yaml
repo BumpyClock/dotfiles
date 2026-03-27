@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Design System Rules"
+  short_description: "Help with Create Design System Rules tasks"
+  default_prompt: "Use $create-design-system-rules to help with Create Design System Rules tasks."

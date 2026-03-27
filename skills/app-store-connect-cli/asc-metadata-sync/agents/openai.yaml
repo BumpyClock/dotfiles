@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Metadata Sync"
+  short_description: "Help with ASC Metadata Sync tasks"
+  default_prompt: "Use $asc-metadata-sync to help with ASC Metadata Sync tasks."

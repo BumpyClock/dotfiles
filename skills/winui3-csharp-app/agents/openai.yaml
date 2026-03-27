@@ -1,0 +1,4 @@
+interface:
+  display_name: "WinUI 3 C# App"
+  short_description: "Help with WinUI 3 C# App tasks"
+  default_prompt: "Use $winui3-csharp-app to help with WinUI 3 C# App tasks."

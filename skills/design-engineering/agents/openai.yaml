@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Engineering"
+  short_description: "Help with Design Engineering tasks"
+  default_prompt: "Use $design-engineering to help with Design Engineering tasks."

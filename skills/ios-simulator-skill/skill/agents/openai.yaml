@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Simulator Skill"
+  short_description: "Help with iOS Simulator Skill tasks"
+  default_prompt: "Use $ios-simulator-skill to help with iOS Simulator Skill tasks."

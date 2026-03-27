@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Notarization"
+  short_description: "Help with ASC Notarization tasks"
+  default_prompt: "Use $asc-notarization to help with ASC Notarization tasks."

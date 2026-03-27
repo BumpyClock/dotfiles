@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tasque"
+  short_description: "Help with Tasque tasks and workflows"
+  default_prompt: "Use $tasque to help with Tasque tasks and workflows."

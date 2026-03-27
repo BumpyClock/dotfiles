@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPUI"
+  short_description: "Help with GPUI tasks and workflows"
+  default_prompt: "Use $gpui to help with GPUI tasks and workflows."

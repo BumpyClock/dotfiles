@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Skill"
+  short_description: "Help with Web Skill tasks"
+  default_prompt: "Use $web-skill to help with Web Skill tasks."

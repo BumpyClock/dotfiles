@@ -1,0 +1,4 @@
+interface:
+  display_name: "Programming"
+  short_description: "Help with Programming tasks"
+  default_prompt: "Use $programming to help with Programming tasks."

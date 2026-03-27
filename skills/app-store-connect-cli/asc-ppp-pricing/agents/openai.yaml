@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC PPP Pricing"
+  short_description: "Help with ASC PPP Pricing tasks"
+  default_prompt: "Use $asc-ppp-pricing to help with ASC PPP Pricing tasks."

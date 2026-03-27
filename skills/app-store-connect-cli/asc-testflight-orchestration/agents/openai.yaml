@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASC Testflight Orchestration"
+  short_description: "Help with ASC Testflight Orchestration tasks"
+  default_prompt: "Use $asc-testflight-orchestration to help with ASC Testflight Orchestration tasks."
