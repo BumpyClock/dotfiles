@@ -317,29 +317,80 @@ if (-not $DryRun -and (Test-Path $PROFILE)) {
     }
 }
 
+# ─── Nerd Font ──────────────────────────────────────────────────────────────
+
+Write-Step "FiraCode Nerd Font"
+$fontName = "FiraCode"
+# Check if already installed by looking in the user fonts folder
+$userFontsDir = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
+$firaInstalled = (Test-Path $userFontsDir) -and
+    (Get-ChildItem $userFontsDir -Filter "*FiraCode*Nerd*" -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0
+
+if (-not $firaInstalled) {
+    # Also check system fonts
+    $sysFontsDir = "$env:SystemRoot\Fonts"
+    $firaInstalled = (Get-ChildItem $sysFontsDir -Filter "*FiraCode*Nerd*" -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0
+}
+
+if ($firaInstalled) {
+    Write-Skip "FiraCode Nerd Font already installed"
+} elseif ($DryRun) {
+    Write-Warn "[DRY RUN] Would install FiraCode Nerd Font via oh-my-posh"
+} elseif (Test-CommandAvailable oh-my-posh) {
+    oh-my-posh font install $fontName
+    Write-Ok "FiraCode Nerd Font installed"
+} else {
+    Write-Warn "oh-my-posh not on PATH yet — restart shell, then run: oh-my-posh font install $fontName"
+}
+
 # ─── Windows Terminal: set pwsh as default ──────────────────────────────────
 
 Write-Step "Windows Terminal default profile"
 $wtSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 $pwshGuid = "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
 
+$nerdFontFace = "FiraCode Nerd Font"
+
 if (Test-Path $wtSettingsPath) {
     $wtSettings = Get-Content $wtSettingsPath -Raw | ConvertFrom-Json
+    $wtChanged = $false
+
+    # Set default profile to pwsh
     if ($wtSettings.defaultProfile -eq $pwshGuid) {
         Write-Skip "PowerShell 7 is already the default profile"
+    } elseif ($DryRun) {
+        Write-Warn "[DRY RUN] Would set Windows Terminal default profile to PowerShell 7"
     } else {
-        if ($DryRun) {
-            Write-Warn "[DRY RUN] Would set Windows Terminal default profile to PowerShell 7"
-        } else {
-            # Backup current settings
-            $wtBackup = "$wtSettingsPath.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-            Copy-Item $wtSettingsPath $wtBackup
-            Write-Ok "Backed up Windows Terminal settings to $wtBackup"
+        $wtSettings.defaultProfile = $pwshGuid
+        $wtChanged = $true
+        Write-Ok "Set PowerShell 7 as default Windows Terminal profile"
+    }
 
-            $wtSettings.defaultProfile = $pwshGuid
-            $wtSettings | ConvertTo-Json -Depth 100 | Set-Content $wtSettingsPath -Encoding utf8
-            Write-Ok "Set PowerShell 7 as default Windows Terminal profile"
+    # Set font for all profiles via defaults
+    $currentFont = $wtSettings.profiles.defaults.font.face ?? $null
+    if ($currentFont -eq $nerdFontFace) {
+        Write-Skip "Font already set to $nerdFontFace"
+    } elseif ($DryRun) {
+        Write-Warn "[DRY RUN] Would set Windows Terminal font to $nerdFontFace"
+    } else {
+        # Ensure profiles.defaults.font object exists
+        if (-not $wtSettings.profiles.defaults) {
+            $wtSettings.profiles | Add-Member -NotePropertyName "defaults" -NotePropertyValue ([PSCustomObject]@{}) -Force
         }
+        if (-not $wtSettings.profiles.defaults.font) {
+            $wtSettings.profiles.defaults | Add-Member -NotePropertyName "font" -NotePropertyValue ([PSCustomObject]@{}) -Force
+        }
+        $wtSettings.profiles.defaults.font | Add-Member -NotePropertyName "face" -NotePropertyValue $nerdFontFace -Force
+        $wtChanged = $true
+        Write-Ok "Set Windows Terminal font to $nerdFontFace"
+    }
+
+    # Write settings if changed
+    if ($wtChanged -and -not $DryRun) {
+        $wtBackup = "$wtSettingsPath.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        Copy-Item $wtSettingsPath $wtBackup
+        Write-Ok "Backed up Windows Terminal settings to $wtBackup"
+        $wtSettings | ConvertTo-Json -Depth 100 | Set-Content $wtSettingsPath -Encoding utf8
     }
 } else {
     Write-Warn "Windows Terminal settings not found — installing Windows Terminal"
@@ -362,8 +413,6 @@ Write-Host @"
 
 Next steps:
   1. Restart your terminal (or run: . `$PROFILE)
-  2. Install a Nerd Font for icons:  oh-my-posh font install
-  3. Set the Nerd Font in your terminal settings
 
 Optional (if not installed via -Optional flag):
   • Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex
