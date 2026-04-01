@@ -1,12 +1,11 @@
-#Requires -Version 7.0
 <#
 .SYNOPSIS
     Setup script for the PowerShell profile environment.
 
 .DESCRIPTION
     Installs all required and optional tools referenced by
-    Microsoft.PowerShell_profile.ps1. Run with -Optional to also install
-    soft-dependency tools (Go, Bun, Docker, Miniconda, etc.).
+    Microsoft.PowerShell_profile.ps1. Works on both PowerShell 5.1 and 7+.
+    Will install PowerShell 7 if not already present.
 
 .PARAMETER Optional
     Install optional/soft-dependency tools in addition to the core set.
@@ -21,6 +20,12 @@
     .\setup.ps1              # core tools only
     .\setup.ps1 -Optional    # core + optional tools
     .\setup.ps1 -DryRun      # preview what would happen
+
+.NOTES
+    If you get an execution policy error, run this first:
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+    Or bypass for a single run:
+        powershell -ExecutionPolicy Bypass -File .\setup.ps1
 #>
 [CmdletBinding()]
 param(
@@ -50,7 +55,7 @@ function Install-WingetPackage {
         [string]$DisplayName
     )
     # First check: is the command already on PATH?
-    $cmdName = $DisplayName ?? ($Id -split '\.' | Select-Object -Last 1)
+    $cmdName = if ($DisplayName) { $DisplayName } else { ($Id -split '\.' | Select-Object -Last 1) }
     if (Test-CommandAvailable $cmdName) {
         Write-Skip "$Id already installed (found '$cmdName' on PATH)"
         return
@@ -367,7 +372,7 @@ if (Test-Path $wtSettingsPath) {
     }
 
     # Set font for all profiles via defaults
-    $currentFont = $wtSettings.profiles.defaults.font.face ?? $null
+    $currentFont = if ($wtSettings.profiles.defaults.font.face) { $wtSettings.profiles.defaults.font.face } else { $null }
     if ($currentFont -eq $nerdFontFace) {
         Write-Skip "Font already set to $nerdFontFace"
     } elseif ($DryRun) {
