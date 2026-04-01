@@ -49,8 +49,16 @@ function Install-WingetPackage {
         [string]$Id,
         [string]$DisplayName
     )
-    if (Test-CommandAvailable ($DisplayName ?? ($Id -split '\.' | Select-Object -Last 1))) {
-        Write-Skip "$Id already installed"
+    # First check: is the command already on PATH?
+    $cmdName = $DisplayName ?? ($Id -split '\.' | Select-Object -Last 1)
+    if (Test-CommandAvailable $cmdName) {
+        Write-Skip "$Id already installed (found '$cmdName' on PATH)"
+        return
+    }
+    # Second check: is the package registered with winget?
+    $listed = winget list --id $Id --accept-source-agreements 2>$null
+    if ($LASTEXITCODE -eq 0 -and $listed -match [regex]::Escape($Id)) {
+        Write-Skip "$Id already installed (found in winget list)"
         return
     }
     if ($DryRun) {
@@ -86,6 +94,27 @@ Write-Host "╚═════════════════════�
 
 if ($DryRun) {
     Write-Warn "DRY RUN MODE — nothing will be installed`n"
+}
+
+# Enable Developer Mode (allows symlinks without admin, sideloading, etc.)
+Write-Step "Developer Mode"
+$devModeKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
+$devModeEnabled = (Get-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
+
+if ($devModeEnabled) {
+    Write-Skip "Developer Mode already enabled"
+} elseif ($DryRun) {
+    Write-Warn "[DRY RUN] Would enable Developer Mode via registry"
+} else {
+    try {
+        if (-not (Test-Path $devModeKey)) {
+            New-Item -Path $devModeKey -Force | Out-Null
+        }
+        Set-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -Value 1 -Type DWord
+        Write-Ok "Developer Mode enabled"
+    } catch {
+        Write-Warn "Could not enable Developer Mode — run this script as Administrator"
+    }
 }
 
 # Verify winget is available
@@ -207,7 +236,7 @@ if ($Optional) {
     }
 }
 
-# ─── Profile symlink ───────────────────────────────────────────────────────
+# ─── Profile copy ─────────────────────────────────────────────────────────
 
 Write-Step "Profile setup"
 $profileDir  = Split-Path $PROFILE -Parent
@@ -223,28 +252,29 @@ if (-not (Test-Path $profileDir)) {
 }
 
 if (Test-Path $PROFILE) {
-    $existing = Get-Item $PROFILE
-    if ($existing.LinkType -eq 'SymbolicLink' -and $existing.Target -eq $profileSrc) {
-        Write-Skip "Profile already symlinked"
+    # Check if content already matches
+    $srcHash = (Get-FileHash $profileSrc).Hash
+    $dstHash = (Get-FileHash $PROFILE).Hash
+    if ($srcHash -eq $dstHash) {
+        Write-Skip "Profile already up to date"
     } else {
         $backupPath = "$PROFILE.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         if ($DryRun) {
             Write-Warn "[DRY RUN] Would backup existing profile to $backupPath"
-            Write-Warn "[DRY RUN] Would symlink $PROFILE -> $profileSrc"
+            Write-Warn "[DRY RUN] Would copy profile to $PROFILE"
         } else {
             Copy-Item $PROFILE $backupPath
             Write-Ok "Backed up existing profile to $backupPath"
-            Remove-Item $PROFILE -Force
-            New-Item -ItemType SymbolicLink -Path $PROFILE -Target $profileSrc | Out-Null
-            Write-Ok "Symlinked profile: $PROFILE -> $profileSrc"
+            Copy-Item $profileSrc $PROFILE -Force
+            Write-Ok "Copied profile to $PROFILE"
         }
     }
 } else {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would symlink $PROFILE -> $profileSrc"
+        Write-Warn "[DRY RUN] Would copy profile to $PROFILE"
     } else {
-        New-Item -ItemType SymbolicLink -Path $PROFILE -Target $profileSrc | Out-Null
-        Write-Ok "Symlinked profile: $PROFILE -> $profileSrc"
+        Copy-Item $profileSrc $PROFILE -Force
+        Write-Ok "Copied profile to $PROFILE"
     }
 }
 
