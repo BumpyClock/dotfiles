@@ -91,6 +91,34 @@ function Install-PSModule {
     Write-Ok "Module $Name installed"
 }
 
+function Unblock-ManagedFile {
+    param(
+        [string]$Path,
+        [string]$Label
+    )
+
+    if (-not (Test-Path $Path)) {
+        return
+    }
+
+    if ($DryRun) {
+        Write-Warn "(DRY RUN) Would unblock $Label at $Path"
+        return
+    }
+
+    if (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
+        Write-Skip "Unblock-File not available for $Label"
+        return
+    }
+
+    try {
+        Unblock-File -Path $Path -ErrorAction Stop
+        Write-Ok "Unblocked $Label at $Path"
+    } catch {
+        Write-Warn "Could not unblock $Label at $Path"
+    }
+}
+
 function Test-ObjectProperty {
     param(
         [psobject]$Object,
@@ -122,12 +150,29 @@ function Get-DocumentsDirectory {
     $documentsDir
 }
 
+function Get-DocumentsDirectoryCandidates {
+    $documentsDir = Get-DocumentsDirectory
+    $candidates = @($documentsDir)
+
+    foreach ($oneDriveRoot in @($env:OneDrive, $env:OneDriveConsumer, $env:OneDriveCommercial)) {
+        if (-not [string]::IsNullOrWhiteSpace($oneDriveRoot)) {
+            $candidates += (Join-Path $oneDriveRoot "Documents")
+        }
+    }
+
+    $existingCandidates = $candidates | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    $existingCandidates | Select-Object -Unique
+}
+
 function Sync-ManagedFile {
     param(
         [string]$SourcePath,
         [string]$DestinationPath,
         [string]$Label
     )
+
+    $sourceContent = Get-Content $SourcePath -Raw
+    $destinationExists = Test-Path $DestinationPath
 
     $destinationDir = Split-Path $DestinationPath -Parent
     if (-not (Test-Path $destinationDir)) {
@@ -139,10 +184,10 @@ function Sync-ManagedFile {
         }
     }
 
-    if (Test-Path $DestinationPath) {
-        $srcHash = (Get-FileHash $SourcePath).Hash
-        $dstHash = (Get-FileHash $DestinationPath).Hash
-        if ($srcHash -eq $dstHash) {
+    if ($destinationExists) {
+        $destinationContent = Get-Content $DestinationPath -Raw
+        if ($sourceContent -ceq $destinationContent) {
+            Unblock-ManagedFile -Path $DestinationPath -Label $Label
             Write-Skip "$Label already up to date"
             return
         }
@@ -150,21 +195,48 @@ function Sync-ManagedFile {
         $backupPath = "$DestinationPath.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         if ($DryRun) {
             Write-Warn "(DRY RUN) Would backup existing $Label to $backupPath"
-            Write-Warn "(DRY RUN) Would copy $Label to $DestinationPath"
+            Write-Warn "(DRY RUN) Would update $Label at $DestinationPath"
         } else {
             Copy-Item $DestinationPath $backupPath
             Write-Ok "Backed up $Label to $backupPath"
-            Copy-Item $SourcePath $DestinationPath -Force
-            Write-Ok "Copied $Label to $DestinationPath"
+            Set-Content -Path $DestinationPath -Value $sourceContent -Encoding utf8
+            Write-Ok "Updated $Label at $DestinationPath"
         }
+        Unblock-ManagedFile -Path $DestinationPath -Label $Label
         return
     }
 
     if ($DryRun) {
-        Write-Warn "(DRY RUN) Would copy $Label to $DestinationPath"
+        Write-Warn "(DRY RUN) Would create $Label at $DestinationPath"
     } else {
-        Copy-Item $SourcePath $DestinationPath -Force
-        Write-Ok "Copied $Label to $DestinationPath"
+        Set-Content -Path $DestinationPath -Value $sourceContent -Encoding utf8
+        Write-Ok "Created $Label at $DestinationPath"
+    }
+
+    Unblock-ManagedFile -Path $DestinationPath -Label $Label
+}
+
+function Write-ExecutionPolicyGuidance {
+    $policies = Get-ExecutionPolicy -List
+    $machinePolicy = ($policies | Where-Object { $_.Scope -eq "MachinePolicy" } | Select-Object -First 1).ExecutionPolicy
+    $userPolicy = ($policies | Where-Object { $_.Scope -eq "UserPolicy" } | Select-Object -First 1).ExecutionPolicy
+    $effectivePolicy = Get-ExecutionPolicy
+
+    if ($machinePolicy -eq "AllSigned" -or $userPolicy -eq "AllSigned") {
+        Write-Warn "Execution policy is enforced as AllSigned by policy; unblocking is not enough"
+        Write-Warn "Use a signed profile or change policy centrally"
+        return
+    }
+
+    if ($effectivePolicy -eq "AllSigned") {
+        Write-Warn "Execution policy is AllSigned; unsigned profiles will still fail after unblock"
+        Write-Warn "Run: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force"
+        return
+    }
+
+    if ($effectivePolicy -eq "Restricted") {
+        Write-Warn "Execution policy is Restricted; profile scripts will not run"
+        Write-Warn "Run: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force"
     }
 }
 
@@ -213,27 +285,6 @@ Write-Host "+=============================================+" -ForegroundColor Ma
 
 if ($DryRun) {
     Write-Warn "DRY RUN MODE -- nothing will be installed"
-}
-
-# Enable Developer Mode (allows symlinks without admin, sideloading, etc.)
-Write-Step "Developer Mode"
-$devModeKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
-$devModeEnabled = (Get-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
-
-if ($devModeEnabled) {
-    Write-Skip "Developer Mode already enabled"
-} elseif ($DryRun) {
-    Write-Warn "(DRY RUN) Would enable Developer Mode via registry"
-} else {
-    try {
-        if (-not (Test-Path $devModeKey)) {
-            New-Item -Path $devModeKey -Force | Out-Null
-        }
-        Set-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -Value 1 -Type DWord
-        Write-Ok "Developer Mode enabled"
-    } catch {
-        Write-Warn "Could not enable Developer Mode -- run this script as Administrator"
-    }
 }
 
 # Verify winget is available
@@ -364,7 +415,8 @@ if ($Optional) {
 
 Write-Step "Profile setup"
 $profileSrc = Join-Path $PSScriptRoot "Microsoft.PowerShell_profile.ps1"
-$documentsDir = Get-DocumentsDirectory
+$documentsDirs = Get-DocumentsDirectoryCandidates
+$documentsDir = $documentsDirs[0]
 $profileTargets = @(
     @{
         Label = "Windows PowerShell profile"
@@ -379,6 +431,15 @@ $profileTargets = @(
 foreach ($profileTarget in $profileTargets) {
     Sync-ManagedFile -SourcePath $profileSrc -DestinationPath $profileTarget.Path -Label $profileTarget.Label
 }
+
+foreach ($candidateDocumentsDir in $documentsDirs) {
+    foreach ($profileSubDir in @("WindowsPowerShell", "PowerShell")) {
+        $candidateProfilePath = Join-Path $candidateDocumentsDir "$profileSubDir\Microsoft.PowerShell_profile.ps1"
+        Unblock-ManagedFile -Path $candidateProfilePath -Label "$profileSubDir profile"
+    }
+}
+
+Write-ExecutionPolicyGuidance
 
 # --- oh-my-posh theme -------------------------------------------------------
 
@@ -400,6 +461,11 @@ if (Test-Path $themeFile) {
         Invoke-WebRequest -Uri $draculaUrl -OutFile $themeFile
         Write-Ok "Downloaded Dracula theme to $themeFile"
     }
+}
+
+foreach ($candidateDocumentsDir in $documentsDirs) {
+    $candidateThemePath = Join-Path $candidateDocumentsDir "PowerShell\Themes\dracula.omp.json"
+    Unblock-ManagedFile -Path $candidateThemePath -Label "Dracula theme"
 }
 
 # --- Nerd Font ---------------------------------------------------------------
