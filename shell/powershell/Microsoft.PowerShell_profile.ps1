@@ -12,10 +12,6 @@ if (-not $global:FNM_DONE) {
     }
 }
 
-# Chocolatey completions
-$chocoProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path $chocoProfile) { Import-Module $chocoProfile }
-
 # Terminal Icons auto-install and lazy-load
 if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
     Write-Host "Installing Terminal-Icons..." -ForegroundColor Yellow
@@ -36,10 +32,6 @@ Set-PSReadLineOption @PSReadLineOptions
 # UTF-8 encoding for better compatibility
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 
-# Conda only when explicitly requested
-function Use-Conda {
-    & "$HOME\miniconda3\Scripts\conda.exe" shell.powershell hook | Out-String | iex
-}
 
 # =============================================================================
 # UTILITY FUNCTIONS
@@ -60,7 +52,7 @@ function Reload-Profile { & $PROFILE }
 
 # System utilities
 function Get-PubIP { (Invoke-WebRequest -Uri "http://ifconfig.me/ip").Content.Trim() }
-function uptime { 
+function uptime {
     $bootTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
     $uptime = (Get-Date) - $bootTime
     Write-Host "Uptime: $($uptime.Days) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes" -ForegroundColor Green
@@ -73,7 +65,7 @@ function mkcd($dir) { New-Item -ItemType Directory -Name $dir -Force | Set-Locat
 
 # Unix-like commands
 function which($name) { Get-Command $name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Definition }
-function grep($regex, $dir) { 
+function grep($regex, $dir) {
     if ($dir) { Get-ChildItem $dir | Select-String $regex }
     else { $input | Select-String $regex }
 }
@@ -194,7 +186,7 @@ if (-not $ezaCommand) {
         "$env:ProgramFiles\eza\eza.exe",
         "$env:ProgramFiles(x86)\eza\eza.exe"
     )
-    
+
     foreach ($path in $possiblePaths) {
         if (Test-Path $path) {
             $ezaDir = Split-Path $path -Parent
@@ -229,11 +221,6 @@ if (Get-Command go -ErrorAction SilentlyContinue) {
     }
 }
 
-# Task Master aliases
-if (Get-Command task-master -ErrorAction SilentlyContinue) {
-    Set-Alias tm task-master
-    Set-Alias taskmaster task-master
-}
 
 # Bun environment (if installed)
 if (Test-Path "$env:USERPROFILE\.bun") {

@@ -286,8 +286,9 @@ if (Test-Path $PROFILE) {
 # ─── oh-my-posh theme ──────────────────────────────────────────────────────
 
 Write-Step "oh-my-posh theme"
-$themeDir  = "$HOME\OneDrive\Documents\PowerShell\Themes"
-$themeFile = "$themeDir\dracula.omp.json"
+# Place theme next to the profile in the standard PowerShell config directory
+$themeDir  = Join-Path $profileDir "Themes"
+$themeFile = Join-Path $themeDir "dracula.omp.json"
 
 if (Test-Path $themeFile) {
     Write-Skip "Dracula theme already exists at $themeFile"
@@ -301,6 +302,18 @@ if (Test-Path $themeFile) {
         $draculaUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/dracula.omp.json"
         Invoke-WebRequest -Uri $draculaUrl -OutFile $themeFile
         Write-Ok "Downloaded Dracula theme to $themeFile"
+    }
+}
+
+# Patch the profile to point to the correct theme location
+if (-not $DryRun -and (Test-Path $PROFILE)) {
+    $profileContent = Get-Content $PROFILE -Raw
+    $oneDriveThemePath = '$HOME\OneDrive\Documents\PowerShell\Themes\dracula.omp.json'
+    $standardThemePath = '$HOME\Documents\PowerShell\Themes\dracula.omp.json'
+    if ($profileContent -match [regex]::Escape($oneDriveThemePath)) {
+        $profileContent = $profileContent.Replace($oneDriveThemePath, $standardThemePath)
+        Set-Content $PROFILE $profileContent -Encoding utf8
+        Write-Ok "Updated profile theme path to $standardThemePath"
     }
 }
 
