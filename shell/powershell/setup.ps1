@@ -419,5 +419,5 @@ Write-Host "Next steps:" -ForegroundColor DarkGray
 Write-Host "  1. Restart your terminal (or run: . `$PROFILE)" -ForegroundColor DarkGray
 Write-Host "" -ForegroundColor DarkGray
 Write-Host "Optional (if not installed via -Optional flag):" -ForegroundColor DarkGray
-Write-Host "  * Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex" -ForegroundColor DarkGray
+Write-Host ('  * Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex') -ForegroundColor DarkGray
 Write-Host ""
