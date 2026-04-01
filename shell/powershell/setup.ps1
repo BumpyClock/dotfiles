@@ -67,7 +67,7 @@ function Install-WingetPackage {
         return
     }
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install: $Id"
+        Write-Warn "(DRY RUN) Would install: $Id"
         return
     }
     Write-Host "  Installing $Id ..." -ForegroundColor Yellow
@@ -83,7 +83,7 @@ function Install-PSModule {
         return
     }
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install module: $Name"
+        Write-Warn "(DRY RUN) Would install module: $Name"
         return
     }
     Write-Host "  Installing module $Name ..." -ForegroundColor Yellow
@@ -109,7 +109,7 @@ $devModeEnabled = (Get-ItemProperty -Path $devModeKey -Name AllowDevelopmentWith
 if ($devModeEnabled) {
     Write-Skip "Developer Mode already enabled"
 } elseif ($DryRun) {
-    Write-Warn "[DRY RUN] Would enable Developer Mode via registry"
+    Write-Warn "(DRY RUN) Would enable Developer Mode via registry"
 } else {
     try {
         if (-not (Test-Path $devModeKey)) {
@@ -171,7 +171,7 @@ if (Test-CommandAvailable fnm) {
     fnm env --shell powershell | Out-String | Invoke-Expression
 
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install Node.js LTS via fnm"
+        Write-Warn "(DRY RUN) Would install Node.js LTS via fnm"
     } else {
         fnm install --lts
         fnm default lts-latest
@@ -190,14 +190,14 @@ if (Test-CommandAvailable pnpm) {
     Write-Skip "pnpm already installed"
 } elseif (Test-CommandAvailable corepack) {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install pnpm via corepack"
+        Write-Warn "(DRY RUN) Would install pnpm via corepack"
     } else {
         corepack enable
         corepack prepare pnpm@latest --activate
         Write-Ok "pnpm activated via corepack"
     }
 } else {
-    Write-Warn "corepack not found — restart your shell, then run: corepack enable && corepack prepare pnpm@latest --activate"
+    Write-Warn "corepack not found — restart your shell, then run: corepack enable; corepack prepare pnpm@latest --activate"
 }
 
 # ─── Bun (profile lines 239-242) ──────────────────────────────────────────
@@ -205,7 +205,7 @@ if (Test-CommandAvailable pnpm) {
 Write-Step "Bun"
 if (-not (Test-Path "$env:USERPROFILE\.bun")) {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install Bun"
+        Write-Warn "(DRY RUN) Would install Bun"
     } else {
         Write-Host "  Installing Bun ..." -ForegroundColor Yellow
         irm bun.sh/install.ps1 | iex
@@ -233,7 +233,7 @@ if ($Optional) {
     # Chocolatey (profile lines 16-17, completions only)
     if (-not (Test-CommandAvailable choco)) {
         if ($DryRun) {
-            Write-Warn "[DRY RUN] Would install Chocolatey"
+            Write-Warn "(DRY RUN) Would install Chocolatey"
         } else {
             Write-Host "  Installing Chocolatey ..." -ForegroundColor Yellow
             Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -254,7 +254,7 @@ $profileSrc  = Join-Path $PSScriptRoot "Microsoft.PowerShell_profile.ps1"
 
 if (-not (Test-Path $profileDir)) {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would create directory: $profileDir"
+        Write-Warn "(DRY RUN) Would create directory: $profileDir"
     } else {
         New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
         Write-Ok "Created profile directory: $profileDir"
@@ -270,8 +270,8 @@ if (Test-Path $PROFILE) {
     } else {
         $backupPath = "$PROFILE.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         if ($DryRun) {
-            Write-Warn "[DRY RUN] Would backup existing profile to $backupPath"
-            Write-Warn "[DRY RUN] Would copy profile to $PROFILE"
+            Write-Warn "(DRY RUN) Would backup existing profile to $backupPath"
+            Write-Warn "(DRY RUN) Would copy profile to $PROFILE"
         } else {
             Copy-Item $PROFILE $backupPath
             Write-Ok "Backed up existing profile to $backupPath"
@@ -281,7 +281,7 @@ if (Test-Path $PROFILE) {
     }
 } else {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would copy profile to $PROFILE"
+        Write-Warn "(DRY RUN) Would copy profile to $PROFILE"
     } else {
         Copy-Item $profileSrc $PROFILE -Force
         Write-Ok "Copied profile to $PROFILE"
@@ -299,7 +299,7 @@ if (Test-Path $themeFile) {
     Write-Skip "Dracula theme already exists at $themeFile"
 } else {
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would download Dracula theme to $themeFile"
+        Write-Warn "(DRY RUN) Would download Dracula theme to $themeFile"
     } else {
         if (-not (Test-Path $themeDir)) {
             New-Item -ItemType Directory -Path $themeDir -Force | Out-Null
@@ -340,7 +340,7 @@ if (-not $firaInstalled) {
 if ($firaInstalled) {
     Write-Skip "FiraCode Nerd Font already installed"
 } elseif ($DryRun) {
-    Write-Warn "[DRY RUN] Would install FiraCode Nerd Font via oh-my-posh"
+    Write-Warn "(DRY RUN) Would install FiraCode Nerd Font via oh-my-posh"
 } elseif (Test-CommandAvailable oh-my-posh) {
     oh-my-posh font install $fontName
     Write-Ok "FiraCode Nerd Font installed"
@@ -364,7 +364,7 @@ if (Test-Path $wtSettingsPath) {
     if ($wtSettings.defaultProfile -eq $pwshGuid) {
         Write-Skip "PowerShell 7 is already the default profile"
     } elseif ($DryRun) {
-        Write-Warn "[DRY RUN] Would set Windows Terminal default profile to PowerShell 7"
+        Write-Warn "(DRY RUN) Would set Windows Terminal default profile to PowerShell 7"
     } else {
         $wtSettings.defaultProfile = $pwshGuid
         $wtChanged = $true
@@ -376,7 +376,7 @@ if (Test-Path $wtSettingsPath) {
     if ($currentFont -eq $nerdFontFace) {
         Write-Skip "Font already set to $nerdFontFace"
     } elseif ($DryRun) {
-        Write-Warn "[DRY RUN] Would set Windows Terminal font to $nerdFontFace"
+        Write-Warn "(DRY RUN) Would set Windows Terminal font to $nerdFontFace"
     } else {
         # Ensure profiles.defaults.font object exists
         if (-not $wtSettings.profiles.defaults) {
@@ -400,7 +400,7 @@ if (Test-Path $wtSettingsPath) {
 } else {
     Write-Warn "Windows Terminal settings not found — installing Windows Terminal"
     if ($DryRun) {
-        Write-Warn "[DRY RUN] Would install Microsoft.WindowsTerminal"
+        Write-Warn "(DRY RUN) Would install Microsoft.WindowsTerminal"
     } else {
         Install-WingetPackage -Id "Microsoft.WindowsTerminal" -DisplayName "wt"
         # Settings file is created on first launch; prompt user
@@ -414,12 +414,10 @@ Write-Host "`n╔═════════════════════
 Write-Host "║   Setup complete!                            ║" -ForegroundColor Green
 Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Green
 
-Write-Host @"
-
-Next steps:
-  1. Restart your terminal (or run: . `$PROFILE)
-
-Optional (if not installed via -Optional flag):
-  • Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex
-
-"@ -ForegroundColor DarkGray
+Write-Host ""
+Write-Host "Next steps:" -ForegroundColor DarkGray
+Write-Host "  1. Restart your terminal (or run: . `$PROFILE)" -ForegroundColor DarkGray
+Write-Host "" -ForegroundColor DarkGray
+Write-Host "Optional (if not installed via -Optional flag):" -ForegroundColor DarkGray
+Write-Host "  * Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex" -ForegroundColor DarkGray
+Write-Host ""
