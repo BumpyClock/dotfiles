@@ -142,7 +142,7 @@ if (-not (Test-CommandAvailable git)) {
 
 Write-Step "Core tools"
 
-# PowerShell 7+ (required — script uses #Requires -Version 7.0)
+# PowerShell 7+ (profile targets pwsh)
 Install-WingetPackage -Id "Microsoft.PowerShell" -DisplayName "pwsh"
 
 # oh-my-posh — prompt theme engine (profile line 2)
