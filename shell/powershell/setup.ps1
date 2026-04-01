@@ -91,6 +91,34 @@ function Install-PSModule {
     Write-Ok "Module $Name installed"
 }
 
+function Unblock-ManagedFile {
+    param(
+        [string]$Path,
+        [string]$Label
+    )
+
+    if (-not (Test-Path $Path)) {
+        return
+    }
+
+    if ($DryRun) {
+        Write-Warn "(DRY RUN) Would unblock $Label at $Path"
+        return
+    }
+
+    if (-not (Get-Command Unblock-File -ErrorAction SilentlyContinue)) {
+        Write-Skip "Unblock-File not available for $Label"
+        return
+    }
+
+    try {
+        Unblock-File -Path $Path -ErrorAction Stop
+        Write-Ok "Unblocked $Label at $Path"
+    } catch {
+        Write-Warn "Could not unblock $Label at $Path"
+    }
+}
+
 function Test-ObjectProperty {
     param(
         [psobject]$Object,
@@ -143,6 +171,7 @@ function Sync-ManagedFile {
         $srcHash = (Get-FileHash $SourcePath).Hash
         $dstHash = (Get-FileHash $DestinationPath).Hash
         if ($srcHash -eq $dstHash) {
+            Unblock-ManagedFile -Path $DestinationPath -Label $Label
             Write-Skip "$Label already up to date"
             return
         }
@@ -157,6 +186,7 @@ function Sync-ManagedFile {
             Copy-Item $SourcePath $DestinationPath -Force
             Write-Ok "Copied $Label to $DestinationPath"
         }
+        Unblock-ManagedFile -Path $DestinationPath -Label $Label
         return
     }
 
@@ -166,6 +196,8 @@ function Sync-ManagedFile {
         Copy-Item $SourcePath $DestinationPath -Force
         Write-Ok "Copied $Label to $DestinationPath"
     }
+
+    Unblock-ManagedFile -Path $DestinationPath -Label $Label
 }
 
 function Get-WindowsTerminalSettingsPath {
@@ -213,27 +245,6 @@ Write-Host "+=============================================+" -ForegroundColor Ma
 
 if ($DryRun) {
     Write-Warn "DRY RUN MODE -- nothing will be installed"
-}
-
-# Enable Developer Mode (allows symlinks without admin, sideloading, etc.)
-Write-Step "Developer Mode"
-$devModeKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
-$devModeEnabled = (Get-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
-
-if ($devModeEnabled) {
-    Write-Skip "Developer Mode already enabled"
-} elseif ($DryRun) {
-    Write-Warn "(DRY RUN) Would enable Developer Mode via registry"
-} else {
-    try {
-        if (-not (Test-Path $devModeKey)) {
-            New-Item -Path $devModeKey -Force | Out-Null
-        }
-        Set-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -Value 1 -Type DWord
-        Write-Ok "Developer Mode enabled"
-    } catch {
-        Write-Warn "Could not enable Developer Mode -- run this script as Administrator"
-    }
 }
 
 # Verify winget is available
@@ -401,6 +412,8 @@ if (Test-Path $themeFile) {
         Write-Ok "Downloaded Dracula theme to $themeFile"
     }
 }
+
+Unblock-ManagedFile -Path $themeFile -Label "Dracula theme"
 
 # --- Nerd Font ---------------------------------------------------------------
 

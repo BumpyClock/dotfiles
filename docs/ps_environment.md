@@ -7,6 +7,13 @@ The PowerShell profile automatically installs these tools if missing:
 - **GitHub CLI** - GitHub command line tool (`winget install GitHub.cli -h`)
 - **Terminal-Icons** - PowerShell module for file icons
 
+## Installer Behavior
+- `shell/powershell/setup.ps1` copies the profile into both current-user targets:
+  `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1` and
+  `Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
+- The installer does not require symlinks or Developer Mode
+- The installer unblocks copied profile/theme files so PowerShell execution policy does not reject them as downloaded scripts
+
 ## Development Workflow Commands
 
 ### Package Management (pnpm)
