@@ -1,5 +1,14 @@
 # Theme – lazy load on first prompt
-oh-my-posh init pwsh --config "$HOME\OneDrive\Documents\PowerShell\Themes\dracula.omp.json" | iex
+$documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
+$themeCandidates = @(
+    (Join-Path $documentsDir "PowerShell\Themes\dracula.omp.json"),
+    (Join-Path $HOME "OneDrive\Documents\PowerShell\Themes\dracula.omp.json")
+) | Select-Object -Unique
+$themePath = $themeCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $themePath) {
+    $themePath = $themeCandidates[0]
+}
+oh-my-posh init pwsh --config $themePath | iex
 
 # Node (only once per session)
 if (-not $global:FNM_DONE) {

@@ -25,7 +25,7 @@
     If you get an execution policy error, run this first:
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
     Or bypass for a single run:
-        powershell -ExecutionPolicy Bypass -File .\setup.ps1
+        powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 #>
 [CmdletBinding()]
 param(
@@ -89,6 +89,119 @@ function Install-PSModule {
     Write-Host "  Installing module $Name ..." -ForegroundColor Yellow
     Install-Module -Name $Name -Scope CurrentUser -Force -SkipPublisherCheck
     Write-Ok "Module $Name installed"
+}
+
+function Test-ObjectProperty {
+    param(
+        [psobject]$Object,
+        [string]$Name
+    )
+
+    $null -ne $Object -and $Object.PSObject.Properties.Name -contains $Name
+}
+
+function Set-ObjectPropertyValue {
+    param(
+        [psobject]$Object,
+        [string]$Name,
+        $Value
+    )
+
+    if (Test-ObjectProperty -Object $Object -Name $Name) {
+        $Object.$Name = $Value
+    } else {
+        $Object | Add-Member -NotePropertyName $Name -NotePropertyValue $Value -Force
+    }
+}
+
+function Get-DocumentsDirectory {
+    $documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
+    if ([string]::IsNullOrWhiteSpace($documentsDir)) {
+        throw "Could not resolve the current user's Documents directory"
+    }
+    $documentsDir
+}
+
+function Sync-ManagedFile {
+    param(
+        [string]$SourcePath,
+        [string]$DestinationPath,
+        [string]$Label
+    )
+
+    $destinationDir = Split-Path $DestinationPath -Parent
+    if (-not (Test-Path $destinationDir)) {
+        if ($DryRun) {
+            Write-Warn "(DRY RUN) Would create directory: $destinationDir"
+        } else {
+            New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+            Write-Ok "Created directory: $destinationDir"
+        }
+    }
+
+    if (Test-Path $DestinationPath) {
+        $srcHash = (Get-FileHash $SourcePath).Hash
+        $dstHash = (Get-FileHash $DestinationPath).Hash
+        if ($srcHash -eq $dstHash) {
+            Write-Skip "$Label already up to date"
+            return
+        }
+
+        $backupPath = "$DestinationPath.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        if ($DryRun) {
+            Write-Warn "(DRY RUN) Would backup existing $Label to $backupPath"
+            Write-Warn "(DRY RUN) Would copy $Label to $DestinationPath"
+        } else {
+            Copy-Item $DestinationPath $backupPath
+            Write-Ok "Backed up $Label to $backupPath"
+            Copy-Item $SourcePath $DestinationPath -Force
+            Write-Ok "Copied $Label to $DestinationPath"
+        }
+        return
+    }
+
+    if ($DryRun) {
+        Write-Warn "(DRY RUN) Would copy $Label to $DestinationPath"
+    } else {
+        Copy-Item $SourcePath $DestinationPath -Force
+        Write-Ok "Copied $Label to $DestinationPath"
+    }
+}
+
+function Get-WindowsTerminalSettingsPath {
+    $candidates = @(
+        (Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"),
+        (Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json"),
+        (Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminalCanary_8wekyb3d8bbwe\LocalState\settings.json"),
+        (Join-Path $env:LOCALAPPDATA "Microsoft\Windows Terminal\settings.json")
+    )
+
+    $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+}
+
+function Get-WindowsTerminalPwshProfileId {
+    param([psobject]$Settings)
+
+    $profiles = @()
+    if (Test-ObjectProperty -Object $Settings -Name "profiles") {
+        if (Test-ObjectProperty -Object $Settings.profiles -Name "list") {
+            $profiles = @($Settings.profiles.list)
+        } elseif ($Settings.profiles -is [System.Array]) {
+            $profiles = @($Settings.profiles)
+        }
+    }
+
+    $pwshProfile = $profiles | Where-Object {
+        ((Test-ObjectProperty -Object $_ -Name "source") -and $_.source -eq "Windows.Terminal.PowershellCore") -or
+        ((Test-ObjectProperty -Object $_ -Name "commandline") -and $_.commandline -match '(?i)(^|[\\/])pwsh(\.exe)?(\s|$)') -or
+        ((Test-ObjectProperty -Object $_ -Name "name") -and $_.name -match '^PowerShell(?:\s+7)?$')
+    } | Select-Object -First 1
+
+    if ($pwshProfile -and (Test-ObjectProperty -Object $pwshProfile -Name "guid") -and $pwshProfile.guid) {
+        return $pwshProfile.guid
+    }
+
+    "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
 }
 
 # --- Pre-flight checks ------------------------------------------------------
@@ -250,50 +363,28 @@ if ($Optional) {
 # --- Profile copy ------------------------------------------------------------
 
 Write-Step "Profile setup"
-$profileDir  = Split-Path $PROFILE -Parent
-$profileSrc  = Join-Path $PSScriptRoot "Microsoft.PowerShell_profile.ps1"
+$profileSrc = Join-Path $PSScriptRoot "Microsoft.PowerShell_profile.ps1"
+$documentsDir = Get-DocumentsDirectory
+$profileTargets = @(
+    @{
+        Label = "Windows PowerShell profile"
+        Path  = Join-Path $documentsDir "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+    },
+    @{
+        Label = "PowerShell 7 profile"
+        Path  = Join-Path $documentsDir "PowerShell\Microsoft.PowerShell_profile.ps1"
+    }
+)
 
-if (-not (Test-Path $profileDir)) {
-    if ($DryRun) {
-        Write-Warn "(DRY RUN) Would create directory: $profileDir"
-    } else {
-        New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
-        Write-Ok "Created profile directory: $profileDir"
-    }
-}
-
-if (Test-Path $PROFILE) {
-    # Check if content already matches
-    $srcHash = (Get-FileHash $profileSrc).Hash
-    $dstHash = (Get-FileHash $PROFILE).Hash
-    if ($srcHash -eq $dstHash) {
-        Write-Skip "Profile already up to date"
-    } else {
-        $backupPath = "$PROFILE.backup.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-        if ($DryRun) {
-            Write-Warn "(DRY RUN) Would backup existing profile to $backupPath"
-            Write-Warn "(DRY RUN) Would copy profile to $PROFILE"
-        } else {
-            Copy-Item $PROFILE $backupPath
-            Write-Ok "Backed up existing profile to $backupPath"
-            Copy-Item $profileSrc $PROFILE -Force
-            Write-Ok "Copied profile to $PROFILE"
-        }
-    }
-} else {
-    if ($DryRun) {
-        Write-Warn "(DRY RUN) Would copy profile to $PROFILE"
-    } else {
-        Copy-Item $profileSrc $PROFILE -Force
-        Write-Ok "Copied profile to $PROFILE"
-    }
+foreach ($profileTarget in $profileTargets) {
+    Sync-ManagedFile -SourcePath $profileSrc -DestinationPath $profileTarget.Path -Label $profileTarget.Label
 }
 
 # --- oh-my-posh theme -------------------------------------------------------
 
 Write-Step "oh-my-posh theme"
-# Place theme next to the profile in the standard PowerShell config directory
-$themeDir  = Join-Path $profileDir "Themes"
+# Place theme in the shared PowerShell documents directory used by the profile
+$themeDir  = Join-Path $documentsDir "PowerShell\Themes"
 $themeFile = Join-Path $themeDir "dracula.omp.json"
 
 if (Test-Path $themeFile) {
@@ -308,18 +399,6 @@ if (Test-Path $themeFile) {
         $draculaUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/dracula.omp.json"
         Invoke-WebRequest -Uri $draculaUrl -OutFile $themeFile
         Write-Ok "Downloaded Dracula theme to $themeFile"
-    }
-}
-
-# Patch the profile to point to the correct theme location
-if (-not $DryRun -and (Test-Path $PROFILE)) {
-    $profileContent = Get-Content $PROFILE -Raw
-    $oneDriveThemePath = '$HOME\OneDrive\Documents\PowerShell\Themes\dracula.omp.json'
-    $standardThemePath = '$HOME\Documents\PowerShell\Themes\dracula.omp.json'
-    if ($profileContent -match [regex]::Escape($oneDriveThemePath)) {
-        $profileContent = $profileContent.Replace($oneDriveThemePath, $standardThemePath)
-        Set-Content $PROFILE $profileContent -Encoding utf8
-        Write-Ok "Updated profile theme path to $standardThemePath"
     }
 }
 
@@ -352,29 +431,35 @@ if ($firaInstalled) {
 # --- Windows Terminal: set pwsh as default -----------------------------------
 
 Write-Step "Windows Terminal default profile"
-$wtSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-$pwshGuid = "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
-
+$wtSettingsPath = Get-WindowsTerminalSettingsPath
 $nerdFontFace = "FiraCode Nerd Font"
 
-if (Test-Path $wtSettingsPath) {
+if ($wtSettingsPath) {
     $wtSettings = Get-Content $wtSettingsPath -Raw | ConvertFrom-Json
     $wtChanged = $false
+    $pwshGuid = Get-WindowsTerminalPwshProfileId -Settings $wtSettings
+    $currentDefaultProfile = $null
+    if (Test-ObjectProperty -Object $wtSettings -Name "defaultProfile") {
+        $currentDefaultProfile = $wtSettings.defaultProfile
+    }
 
     # Set default profile to pwsh
-    if ($wtSettings.defaultProfile -eq $pwshGuid) {
+    if ($currentDefaultProfile -eq $pwshGuid) {
         Write-Skip "PowerShell 7 is already the default profile"
     } elseif ($DryRun) {
         Write-Warn "(DRY RUN) Would set Windows Terminal default profile to PowerShell 7"
     } else {
-        $wtSettings.defaultProfile = $pwshGuid
+        Set-ObjectPropertyValue -Object $wtSettings -Name "defaultProfile" -Value $pwshGuid
         $wtChanged = $true
         Write-Ok "Set PowerShell 7 as default Windows Terminal profile"
     }
 
     # Set font for all profiles via defaults
     $currentFont = $null
-    if ($wtSettings.profiles -and $wtSettings.profiles.defaults -and $wtSettings.profiles.defaults.font) {
+    if ((Test-ObjectProperty -Object $wtSettings -Name "profiles") -and
+        (Test-ObjectProperty -Object $wtSettings.profiles -Name "defaults") -and
+        (Test-ObjectProperty -Object $wtSettings.profiles.defaults -Name "font") -and
+        (Test-ObjectProperty -Object $wtSettings.profiles.defaults.font -Name "face")) {
         $currentFont = $wtSettings.profiles.defaults.font.face
     }
     if ($currentFont -eq $nerdFontFace) {
@@ -382,14 +467,17 @@ if (Test-Path $wtSettingsPath) {
     } elseif ($DryRun) {
         Write-Warn "(DRY RUN) Would set Windows Terminal font to $nerdFontFace"
     } else {
+        if (-not (Test-ObjectProperty -Object $wtSettings -Name "profiles")) {
+            $wtSettings | Add-Member -NotePropertyName "profiles" -NotePropertyValue ([PSCustomObject]@{}) -Force
+        }
         # Ensure profiles.defaults.font object exists
-        if (-not $wtSettings.profiles.defaults) {
+        if (-not (Test-ObjectProperty -Object $wtSettings.profiles -Name "defaults")) {
             $wtSettings.profiles | Add-Member -NotePropertyName "defaults" -NotePropertyValue ([PSCustomObject]@{}) -Force
         }
-        if (-not $wtSettings.profiles.defaults.font) {
+        if (-not (Test-ObjectProperty -Object $wtSettings.profiles.defaults -Name "font")) {
             $wtSettings.profiles.defaults | Add-Member -NotePropertyName "font" -NotePropertyValue ([PSCustomObject]@{}) -Force
         }
-        $wtSettings.profiles.defaults.font | Add-Member -NotePropertyName "face" -NotePropertyValue $nerdFontFace -Force
+        Set-ObjectPropertyValue -Object $wtSettings.profiles.defaults.font -Name "face" -Value $nerdFontFace
         $wtChanged = $true
         Write-Ok "Set Windows Terminal font to $nerdFontFace"
     }
