@@ -19,3 +19,4 @@ skills/.system/
 ./lsp-mcp/semanticSearch/*
 .lsp-mcp/
 .DS_Store
+*.zip

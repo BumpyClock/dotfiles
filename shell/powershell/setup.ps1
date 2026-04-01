@@ -37,12 +37,12 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# ─── Helpers ────────────────────────────────────────────────────────────────
+# --- Helpers ----------------------------------------------------------------
 
-function Write-Step  { param([string]$msg) Write-Host "`n▸ $msg" -ForegroundColor Cyan }
-function Write-Ok    { param([string]$msg) Write-Host "  ✓ $msg" -ForegroundColor Green }
-function Write-Skip  { param([string]$msg) Write-Host "  ⏭ $msg" -ForegroundColor DarkGray }
-function Write-Warn  { param([string]$msg) Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
+function Write-Step  { param([string]$msg) Write-Host ("`n> " + $msg) -ForegroundColor Cyan }
+function Write-Ok    { param([string]$msg) Write-Host ("  [OK]   " + $msg) -ForegroundColor Green }
+function Write-Skip  { param([string]$msg) Write-Host ("  [SKIP] " + $msg) -ForegroundColor DarkGray }
+function Write-Warn  { param([string]$msg) Write-Host ("  [WARN] " + $msg) -ForegroundColor Yellow }
 
 function Test-CommandAvailable {
     param([string]$Name)
@@ -91,14 +91,15 @@ function Install-PSModule {
     Write-Ok "Module $Name installed"
 }
 
-# ─── Pre-flight checks ─────────────────────────────────────────────────────
+# --- Pre-flight checks ------------------------------------------------------
 
-Write-Host "`n╔══════════════════════════════════════════════╗" -ForegroundColor Magenta
-Write-Host "║   PowerShell Profile Setup                   ║" -ForegroundColor Magenta
-Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Magenta
+Write-Host ""
+Write-Host "+=============================================+" -ForegroundColor Magenta
+Write-Host "|   PowerShell Profile Setup                  |" -ForegroundColor Magenta
+Write-Host "+=============================================+" -ForegroundColor Magenta
 
 if ($DryRun) {
-    Write-Warn "DRY RUN MODE — nothing will be installed`n"
+    Write-Warn "DRY RUN MODE -- nothing will be installed"
 }
 
 # Enable Developer Mode (allows symlinks without admin, sideloading, etc.)
@@ -118,14 +119,14 @@ if ($devModeEnabled) {
         Set-ItemProperty -Path $devModeKey -Name AllowDevelopmentWithoutDevLicense -Value 1 -Type DWord
         Write-Ok "Developer Mode enabled"
     } catch {
-        Write-Warn "Could not enable Developer Mode — run this script as Administrator"
+        Write-Warn "Could not enable Developer Mode -- run this script as Administrator"
     }
 }
 
 # Verify winget is available
 if (-not (Test-CommandAvailable winget)) {
-    Write-Host "`n✖ winget is required but not found." -ForegroundColor Red
-    Write-Host "  Install 'App Installer' from the Microsoft Store, then re-run." -ForegroundColor Red
+    Write-Host "`n[X] winget is required but not found." -ForegroundColor Red
+    Write-Host "    Install 'App Installer' from the Microsoft Store, then re-run." -ForegroundColor Red
     exit 1
 }
 
@@ -138,23 +139,23 @@ if (-not (Test-CommandAvailable git)) {
                 [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
-# ─── Core tools (required by profile) ──────────────────────────────────────
+# --- Core tools (required by profile) ---------------------------------------
 
 Write-Step "Core tools"
 
 # PowerShell 7+ (profile targets pwsh)
 Install-WingetPackage -Id "Microsoft.PowerShell" -DisplayName "pwsh"
 
-# oh-my-posh — prompt theme engine (profile line 2)
+# oh-my-posh -- prompt theme engine (profile line 2)
 Install-WingetPackage -Id "JanDeDobbeleer.OhMyPosh" -DisplayName "oh-my-posh"
 
-# fnm — fast Node manager (profile lines 5-13)
+# fnm -- fast Node manager (profile lines 5-13)
 Install-WingetPackage -Id "Schniz.fnm" -DisplayName "fnm"
 
 # GitHub CLI (profile lines 118-121)
 Install-WingetPackage -Id "GitHub.cli" -DisplayName "gh"
 
-# eza — modern ls replacement (profile lines 188-222)
+# eza -- modern ls replacement (profile lines 188-222)
 Install-WingetPackage -Id "eza-community.eza" -DisplayName "eza"
 
 # VS Code (used for Edit-Profile, code-here, code-diff)
@@ -163,7 +164,7 @@ Install-WingetPackage -Id "Microsoft.VisualStudioCode" -DisplayName "code"
 # GitHub Copilot CLI
 Install-WingetPackage -Id "GitHub.Copilot" -DisplayName "github-copilot"
 
-# ─── Node.js via fnm ───────────────────────────────────────────────────────
+# --- Node.js via fnm --------------------------------------------------------
 
 Write-Step "Node.js (via fnm)"
 if (Test-CommandAvailable fnm) {
@@ -180,10 +181,10 @@ if (Test-CommandAvailable fnm) {
         Write-Ok "Node.js LTS installed via fnm"
     }
 } else {
-    Write-Warn "fnm not yet in PATH — restart your shell, then run: fnm install --lts"
+    Write-Warn "fnm not yet in PATH -- restart your shell, then run: fnm install --lts"
 }
 
-# ─── pnpm (used heavily in profile lines 92-111) ──────────────────────────
+# --- pnpm (used heavily in profile lines 92-111) ----------------------------
 
 Write-Step "pnpm"
 if (Test-CommandAvailable pnpm) {
@@ -197,10 +198,10 @@ if (Test-CommandAvailable pnpm) {
         Write-Ok "pnpm activated via corepack"
     }
 } else {
-    Write-Warn "corepack not found — restart your shell, then run: corepack enable; corepack prepare pnpm@latest --activate"
+    Write-Warn "corepack not found -- restart your shell, then run: corepack enable; corepack prepare pnpm@latest --activate"
 }
 
-# ─── Bun (profile lines 239-242) ──────────────────────────────────────────
+# --- Bun (profile lines 239-242) --------------------------------------------
 
 Write-Step "Bun"
 if (-not (Test-Path "$env:USERPROFILE\.bun")) {
@@ -215,7 +216,7 @@ if (-not (Test-Path "$env:USERPROFILE\.bun")) {
     Write-Skip "Bun already installed"
 }
 
-# ─── PowerShell modules ────────────────────────────────────────────────────
+# --- PowerShell modules -----------------------------------------------------
 
 if (-not $SkipModules) {
     Write-Step "PowerShell modules"
@@ -225,7 +226,7 @@ if (-not $SkipModules) {
     Install-PSModule -Name "PSReadLine"
 }
 
-# ─── Optional tools ────────────────────────────────────────────────────────
+# --- Optional tools ----------------------------------------------------------
 
 if ($Optional) {
     Write-Step "Optional tools"
@@ -246,7 +247,7 @@ if ($Optional) {
     }
 }
 
-# ─── Profile copy ─────────────────────────────────────────────────────────
+# --- Profile copy ------------------------------------------------------------
 
 Write-Step "Profile setup"
 $profileDir  = Split-Path $PROFILE -Parent
@@ -288,7 +289,7 @@ if (Test-Path $PROFILE) {
     }
 }
 
-# ─── oh-my-posh theme ──────────────────────────────────────────────────────
+# --- oh-my-posh theme -------------------------------------------------------
 
 Write-Step "oh-my-posh theme"
 # Place theme next to the profile in the standard PowerShell config directory
@@ -322,7 +323,7 @@ if (-not $DryRun -and (Test-Path $PROFILE)) {
     }
 }
 
-# ─── Nerd Font ──────────────────────────────────────────────────────────────
+# --- Nerd Font ---------------------------------------------------------------
 
 Write-Step "FiraCode Nerd Font"
 $fontName = "FiraCode"
@@ -345,10 +346,10 @@ if ($firaInstalled) {
     oh-my-posh font install $fontName
     Write-Ok "FiraCode Nerd Font installed"
 } else {
-    Write-Warn "oh-my-posh not on PATH yet — restart shell, then run: oh-my-posh font install $fontName"
+    Write-Warn "oh-my-posh not on PATH yet -- restart shell, then run: oh-my-posh font install $fontName"
 }
 
-# ─── Windows Terminal: set pwsh as default ──────────────────────────────────
+# --- Windows Terminal: set pwsh as default -----------------------------------
 
 Write-Step "Windows Terminal default profile"
 $wtSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
@@ -372,7 +373,10 @@ if (Test-Path $wtSettingsPath) {
     }
 
     # Set font for all profiles via defaults
-    $currentFont = if ($wtSettings.profiles.defaults.font.face) { $wtSettings.profiles.defaults.font.face } else { $null }
+    $currentFont = $null
+    if ($wtSettings.profiles -and $wtSettings.profiles.defaults -and $wtSettings.profiles.defaults.font) {
+        $currentFont = $wtSettings.profiles.defaults.font.face
+    }
     if ($currentFont -eq $nerdFontFace) {
         Write-Skip "Font already set to $nerdFontFace"
     } elseif ($DryRun) {
@@ -398,7 +402,7 @@ if (Test-Path $wtSettingsPath) {
         $wtSettings | ConvertTo-Json -Depth 100 | Set-Content $wtSettingsPath -Encoding utf8
     }
 } else {
-    Write-Warn "Windows Terminal settings not found — installing Windows Terminal"
+    Write-Warn "Windows Terminal settings not found -- installing Windows Terminal"
     if ($DryRun) {
         Write-Warn "(DRY RUN) Would install Microsoft.WindowsTerminal"
     } else {
@@ -408,16 +412,17 @@ if (Test-Path $wtSettingsPath) {
     }
 }
 
-# ─── Summary ────────────────────────────────────────────────────────────────
+# --- Summary -----------------------------------------------------------------
 
-Write-Host "`n╔══════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║   Setup complete!                            ║" -ForegroundColor Green
-Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host ""
+Write-Host "+=============================================+" -ForegroundColor Green
+Write-Host "|   Setup complete!                           |" -ForegroundColor Green
+Write-Host "+=============================================+" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor DarkGray
-Write-Host "  1. Restart your terminal (or run: . `$PROFILE)" -ForegroundColor DarkGray
-Write-Host "" -ForegroundColor DarkGray
+Write-Host ('  1. Restart your terminal (or run: . $PROFILE)') -ForegroundColor DarkGray
+Write-Host ""
 Write-Host "Optional (if not installed via -Optional flag):" -ForegroundColor DarkGray
 Write-Host ('  * Chocolatey:  irm https://community.chocolatey.org/install.ps1 | iex') -ForegroundColor DarkGray
 Write-Host ""
