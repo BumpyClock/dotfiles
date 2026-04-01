@@ -162,11 +162,16 @@ Install-WingetPackage -Id "GitHub.Copilot" -DisplayName "github-copilot"
 
 Write-Step "Node.js (via fnm)"
 if (Test-CommandAvailable fnm) {
+    # Load fnm environment into current session so node/corepack are on PATH
+    fnm env --shell powershell | Out-String | Invoke-Expression
+
     if ($DryRun) {
         Write-Warn "[DRY RUN] Would install Node.js LTS via fnm"
     } else {
         fnm install --lts
         fnm default lts-latest
+        # Re-load fnm env to pick up the newly installed/default version
+        fnm env --shell powershell | Out-String | Invoke-Expression
         Write-Ok "Node.js LTS installed via fnm"
     }
 } else {
@@ -178,7 +183,7 @@ if (Test-CommandAvailable fnm) {
 Write-Step "pnpm"
 if (Test-CommandAvailable pnpm) {
     Write-Skip "pnpm already installed"
-} elseif (Test-CommandAvailable fnm) {
+} elseif (Test-CommandAvailable corepack) {
     if ($DryRun) {
         Write-Warn "[DRY RUN] Would install pnpm via corepack"
     } else {
@@ -187,7 +192,7 @@ if (Test-CommandAvailable pnpm) {
         Write-Ok "pnpm activated via corepack"
     }
 } else {
-    Write-Warn "Install Node.js first, then run: corepack enable && corepack prepare pnpm@latest --activate"
+    Write-Warn "corepack not found — restart your shell, then run: corepack enable && corepack prepare pnpm@latest --activate"
 }
 
 # ─── Bun (profile lines 239-242) ──────────────────────────────────────────
