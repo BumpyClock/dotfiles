@@ -140,7 +140,7 @@ tsq history <id> --limit 20
 tsq list --tree
 ```
 
-Agent/tool handoff: add `--json`.
+Optional Agent/tool handoff: add `--json` if you need structured output. 
 
 ## Built-in task authoring checklist
 

@@ -7,6 +7,8 @@ description: Use when writing or modifying code (not for planning or review-only
 
 world class 10x engineer. Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
 
+Use parallel sub-agents when needed. Pick between `developer` and `developer-lite` based on task complexity.
+
 ## Pair-Programming Stance
 
 - Verify ideas independently; push back with evidence and reasoning.
