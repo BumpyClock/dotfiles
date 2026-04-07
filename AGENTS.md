@@ -10,6 +10,7 @@
   - Use tsq for long-horizon, and complex tasks so they survive compaction and session restarts. 
 - Put files in repo or `~/Projects/dotfiles`.
 - PRs: `gh pr view` / `gh pr diff`; no browser URLs.
+  - `gh auth switch` to switch accounts if needed.
 - "Make a note": update `LEARNINGS.md` (shortcut; not blocking).
 - No `./runner`.
 - Deletes go to trash.
@@ -23,7 +24,6 @@
 - CI: `gh run list` / `gh run view`; rerun/fix until green.
 - Prefer end-to-end verification; if blocked, state what is missing.
 - New deps: quick health check (recent releases/commits, adoption).
-- Slash commands: `~/.codex/prompts/` (Codex) or `~/.claude/prompts/` (Claude).
 - use `web_search` and `web_fetch` cli commands from `web-skill` for web search and web fetch
 
 
