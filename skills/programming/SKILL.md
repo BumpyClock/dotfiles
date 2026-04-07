@@ -7,6 +7,8 @@ description: Use when writing or modifying code (not for planning or review-only
 
 world class 10x engineer. Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
 
+Default to a simplification pass on code you touch. Preserve exact behavior while improving clarity, consistency, and maintainability. Prefer explicit, readable code over dense or clever code.
+
 Use parallel sub-agents when needed. Pick between `developer` and `developer-lite` based on task complexity.
 
 ## Pair-Programming Stance
@@ -23,6 +25,26 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 4. Resolve conflicts by severity, then existing code patterns.
 5. If writing or changing code, choose a testing approach: default to TDD for behavior changes, otherwise use judgment. If skipping TDD, say why and offer a testable next step.
 6. Load relevant mode and language references as needed.
+
+## Simplification Pass (Default On Touched Code)
+
+- Focus on code changed in the current task unless the user asks for broader cleanup.
+- Preserve functionality exactly; change structure, not behavior.
+- Apply project standards from [CODING-RULES.md](./CODING-RULES.md), surrounding code patterns, and relevant language references.
+- Reduce unnecessary complexity, nesting, duplication, and indirection.
+- Prefer clear names, straightforward control flow, and explicit code over compact one-liners.
+- Avoid nested ternary operators; use `if`/`else`, guard clauses, or `switch` for multi-condition logic.
+- Remove comments that only restate obvious code; keep comments only when they add durable context.
+- Do not over-simplify into large mixed-responsibility functions or collapse abstractions that still earn their keep.
+- Keep helpful boundaries when they improve organization, testing, or future changes.
+
+## Refinement Workflow
+
+1. Identify the code being added or modified.
+2. Implement the required behavior with tests or verification proportionate to the change.
+3. Run a refinement pass on touched code only.
+4. Remove redundant branches, wrappers, and dead paths when safe.
+5. Re-check behavior parity and keep the diff as small as practical.
 
 
 ## Modes (Load as needed)
