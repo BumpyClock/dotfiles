@@ -8,9 +8,10 @@ The PowerShell profile automatically installs these tools if missing:
 - **Terminal-Icons** - PowerShell module for file icons
 
 ## Installer Behavior
-- `shell/powershell/setup.ps1` writes the repo profile content into both current-user targets:
+- `shell/powershell/setup.ps1` contains the managed profile content and writes it into both current-user targets:
   `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1` and
   `Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
+- Documents resolution prefers the actual Windows Documents special folder, then OneDrive-backed `Documents` candidates, then `$HOME\Documents`
 - The installer also unblocks matching OneDrive-backed profile/theme paths when they exist
 - The installer does not require symlinks or Developer Mode
 - The installer unblocks copied profile/theme files so PowerShell execution policy does not reject them as downloaded scripts

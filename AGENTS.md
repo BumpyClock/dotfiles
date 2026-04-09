@@ -10,7 +10,7 @@
   - Use tsq for long-horizon, and complex tasks so they survive compaction and session restarts. 
 - Put files in repo or `~/Projects/dotfiles`.
 - PRs: `gh pr view` / `gh pr diff`; no browser URLs.
-  - `gh auth switch` to switch accounts if needed.
+  - `gh auth switch` to switch between accounts when needed (e.g. for PRs in forks).
 - "Make a note": update `LEARNINGS.md` (shortcut; not blocking).
 - No `./runner`.
 - Deletes go to trash.

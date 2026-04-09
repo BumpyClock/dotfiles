@@ -8,8 +8,8 @@ tui.notifications = true
 tui.notification_method = "auto"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-# model_context_window = 800000
-# model_auto_compact_token_limit = 700000
+model_context_window = 800000
+model_auto_compact_token_limit = 700000
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
 service_tier = "fast"
@@ -91,6 +91,12 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/roci"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/notes"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/PersonalAssistant"]
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -132,6 +138,10 @@ description = "Plan tasks, epics for efficient implementation and decompose hard
 [agents.code-simplifier]
 config_file = "code-simplifier_config.toml"
 description = "Code simplifier for reducing complexity and improving readability"
+
+[agents.code-simplifer]
+config_file = "code-simplifer_config.toml"
+description = "Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise."
 
 [agents.comment-analyzer]
 config_file = "comment-analyzer_config.toml"

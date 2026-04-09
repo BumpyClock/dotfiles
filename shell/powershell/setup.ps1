@@ -143,7 +143,7 @@ function Set-ObjectPropertyValue {
 }
 
 function Get-DocumentsDirectory {
-    $documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
+    $documentsDir = Get-DocumentsDirectoryCandidates | Select-Object -First 1
     if ([string]::IsNullOrWhiteSpace($documentsDir)) {
         throw "Could not resolve the current user's Documents directory"
     }
@@ -151,42 +151,309 @@ function Get-DocumentsDirectory {
 }
 
 function Get-DocumentsDirectoryCandidates {
-    $documentsDir = Get-DocumentsDirectory
-    $candidates = @($documentsDir)
+    $candidates = @()
+    $shellDocumentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
+    if (-not [string]::IsNullOrWhiteSpace($shellDocumentsDir)) {
+        $candidates += $shellDocumentsDir
+    }
 
-    foreach ($oneDriveRoot in @($env:OneDrive, $env:OneDriveConsumer, $env:OneDriveCommercial)) {
+    foreach ($oneDriveRoot in @($env:OneDriveCommercial, $env:OneDriveConsumer, $env:OneDrive)) {
         if (-not [string]::IsNullOrWhiteSpace($oneDriveRoot)) {
-            $candidates += (Join-Path $oneDriveRoot "Documents")
+            $candidates += [System.IO.Path]::Combine($oneDriveRoot, "Documents")
         }
     }
 
-    $existingCandidates = $candidates | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-    $existingCandidates | Select-Object -Unique
+    if (-not [string]::IsNullOrWhiteSpace($HOME)) {
+        $candidates += [System.IO.Path]::Combine($HOME, "Documents")
+    }
+
+    $candidates |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        ForEach-Object { [System.IO.Path]::GetFullPath($_) } |
+        Select-Object -Unique
+}
+
+function Get-ManagedProfileContent {
+    @'
+# Theme – lazy load on first prompt
+$documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
+$themeCandidates = @(
+    (Join-Path $documentsDir "PowerShell\Themes\dracula.omp.json"),
+    (Join-Path $HOME "OneDrive\Documents\PowerShell\Themes\dracula.omp.json")
+) | Select-Object -Unique
+$themePath = $themeCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $themePath) {
+    $themePath = $themeCandidates[0]
+}
+oh-my-posh init pwsh --config $themePath | iex
+
+# Node (only once per session)
+if (-not $global:FNM_DONE) {
+    if (Get-Command fnm -ErrorAction SilentlyContinue) {
+        fnm env --shell powershell | Out-String | iex
+        $global:FNM_DONE = $true
+    } else {
+        Write-Host "fnm not found. Installing..." -ForegroundColor Yellow
+        winget install Schniz.fnm -h
+    }
+}
+
+# Terminal Icons auto-install and lazy-load
+if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
+    Write-Host "Installing Terminal-Icons..." -ForegroundColor Yellow
+    Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
+}
+Register-EngineEvent -SourceIdentifier PowerShell.OnCommandLookupFailed `
+    -Action { Import-Module Terminal-Icons -ErrorAction SilentlyContinue }
+
+# Enhanced PSReadLine settings
+Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -EditMode Windows
+$PSReadLineOptions = @{
+    MaximumHistoryCount = 10000
+    HistoryNoDuplicates = $true
+    BellStyle = "None"
+}
+Set-PSReadLineOption @PSReadLineOptions
+
+# UTF-8 encoding for better compatibility
+$PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
+
+
+# =============================================================================
+# UTILITY FUNCTIONS
+# =============================================================================
+
+# Context function for LLMs
+function Get-Context {
+    $currentPath = Get-Location
+    $currentDateTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Write-Host "Working Directory: $currentPath"
+    Write-Host "Current Date/Time: $currentDateTime"
+}
+Set-Alias ctx Get-Context
+
+# Profile Management
+function Edit-Profile { code $PROFILE }
+function Reload-Profile { & $PROFILE }
+
+# System utilities
+function Get-PubIP { (Invoke-WebRequest -Uri "http://ifconfig.me/ip").Content.Trim() }
+function uptime {
+    $bootTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+    $uptime = (Get-Date) - $bootTime
+    Write-Host "Uptime: $($uptime.Days) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes" -ForegroundColor Green
+}
+
+# File operations
+function touch($file) { "" | Out-File $file -Encoding UTF8 }
+function nf($name) { New-Item -ItemType "file" -Path . -Name $name }
+function mkcd($dir) { New-Item -ItemType Directory -Name $dir -Force | Set-Location }
+
+# Unix-like commands
+function which($name) { Get-Command $name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Definition }
+function grep($regex, $dir) {
+    if ($dir) { Get-ChildItem $dir | Select-String $regex }
+    else { $input | Select-String $regex }
+}
+function df { Get-Volume }
+function sudo($command) { Start-Process pwsh -Verb runAs -ArgumentList "-Command $command" }
+
+# Process management
+function pstree { Get-Process | Format-Table -AutoSize }
+function pkill($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
+
+# =============================================================================
+# PNPM & WEB DEVELOPMENT SHORTCUTS
+# =============================================================================
+
+# Package manager aliases
+Set-Alias pn pnpm
+Set-Alias pnx "pnpm dlx"
+
+# Development workflow shortcuts (pnpm-focused)
+function dev { pnpm dev }
+function build { pnpm build }
+function preview { pnpm preview }
+function test { pnpm test }
+function lint { pnpm lint }
+function format { pnpm format }
+
+# Package management shortcuts
+function pi($package) { pnpm install $package }
+function pid($package) { pnpm install --save-dev $package }
+function pu($package) { if ($package) { pnpm update $package } else { pnpm update } }
+function pr($package) { pnpm remove $package }
+
+# Project shortcuts
+function clean-deps { Remove-Item node_modules -Recurse -Force; pnpm install }
+function fresh-start { Remove-Item node_modules, pnpm-lock.yaml -Recurse -Force; pnpm install }
+
+# =============================================================================
+# GIT & GITHUB CLI SHORTCUTS
+# =============================================================================
+
+# GitHub CLI auto-install
+if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+    Write-Host "GitHub CLI not found. Installing..." -ForegroundColor Yellow
+    winget install GitHub.cli -h
+}
+
+# Basic Git shortcuts
+function gs { git status }
+function ga($file) { if ($file) { git add $file } else { git add . } }
+function gc($message) { git commit -m $message }
+function gp { git push }
+function gpl { git pull }
+function gb { git branch }
+function gco($branch) { git checkout $branch }
+function gcom($message) { git add .; git commit -m $message }
+function lazyg($message) { git add .; git commit -m $message; git push }
+
+# GitHub CLI shortcuts
+function repo-view { gh repo view --web }
+function repo-clone($repo) { gh repo clone $repo }
+function repo-create($name) { gh repo create $name --public }
+function repo-fork { gh repo fork --clone }
+
+# Issues
+function issues { gh issue list }
+function issue-view($number) { gh issue view $number }
+function issue-create($title, $body) { gh issue create --title $title --body $body }
+function issue-close($number) { gh issue close $number }
+
+# Pull Requests
+function prs { gh pr list }
+function pr-view($number) { if ($number) { gh pr view $number } else { gh pr view } }
+function pr-create { gh pr create }
+function pr-checkout($number) { gh pr checkout $number }
+function pr-merge($number) { if ($number) { gh pr merge $number } else { gh pr merge } }
+function pr-diff($number) { if ($number) { gh pr diff $number } else { gh pr diff } }
+
+# Releases
+function releases { gh release list }
+function release-view($tag) { gh release view $tag }
+function release-create($tag) { gh release create $tag }
+
+# Workflow shortcuts
+function workflows { gh workflow list }
+function workflow-run($workflow) { gh workflow run $workflow }
+function runs { gh run list }
+function run-view($id) { gh run view $id }
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+
+# VS Code shortcuts
+function code-here { code . }
+function code-diff($file1, $file2) { code --diff $file1 $file2 }
+
+# Docker shortcuts
+function docker-clean { docker system prune -f }
+function docker-logs($container) { docker logs -f $container }
+
+# Navigation shortcuts
+function docs { Set-Location ~\Documents }
+function desktop { Set-Location ~\Desktop }
+function downloads { Set-Location ~\Downloads }
+
+# =============================================================================
+# EXISTING ALIASES
+# =============================================================================
+
+# eza aliases
+# Try to find eza in various locations
+$ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
+if (-not $ezaCommand) {
+    # Check common winget install locations
+    $possiblePaths = @(
+        "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\eza-community.eza_Microsoft.Winget.Source_8wekyb3d8bbwe\eza.exe",
+        "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe",
+        "$env:ProgramFiles\eza\eza.exe",
+        "$env:ProgramFiles(x86)\eza\eza.exe"
+    )
+
+    foreach ($path in $possiblePaths) {
+        if (Test-Path $path) {
+            $ezaDir = Split-Path $path -Parent
+            if ($env:Path -notlike "*$ezaDir*") {
+                $env:Path = "$ezaDir;$env:Path"
+            }
+            break
+        }
+    }
+    $ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
+}
+
+if ($ezaCommand) {
+    function ls-eza { eza --long --group-directories-first --icons --color }
+    Set-Alias ls ls-eza
+
+    function ll { eza -l --all --group-directories-first --icons }
+    function la { eza -la --group-directories-first --icons }
+
+    function ls-tree-eza { eza --tree --git-ignore --show-symlinks --icons --hyperlink}
+    Set-Alias lt ls-tree-eza
+} else {
+    Write-Host "eza not found. Installing..." -ForegroundColor Yellow
+    winget install eza-community.eza -h
+}
+
+# Go environment setup
+if (Get-Command go -ErrorAction SilentlyContinue) {
+    $goPath = go env GOPATH
+    if ($goPath -and (Test-Path "$goPath\bin")) {
+        $env:PATH += ";$goPath\bin"
+    }
+}
+
+
+# Bun environment (if installed)
+if (Test-Path "$env:USERPROFILE\.bun") {
+    $env:BUN_INSTALL = "$env:USERPROFILE\.bun"
+    $env:PATH += ";$env:BUN_INSTALL\bin"
+}
+
+function Start-PnpmDev { pnpm dev }
+Set-Alias pnd Start-PnpmDev
+function claude-yolo { claude --dangerously-skip-permissions @args }
+function claude-monitor-plan-max-20 { claude-monitor --plan max20 @args }
+Set-Alias cmon claude-monitor-plan-max-20
+
+# Claude wrappers from ~/.local/bin
+$localBin = "$env:USERPROFILE\.local\bin"
+if (Test-Path "$localBin\cz.ps1") {
+    function cz { & "$env:USERPROFILE\.local\bin\cz.ps1" @args }
+}
+if (Test-Path "$localBin\ccy.ps1") {
+    function ccy { & "$env:USERPROFILE\.local\bin\ccy.ps1" @args }
+}
+'@
 }
 
 function Sync-ManagedFile {
     param(
-        [string]$SourcePath,
+        [string]$SourceContent,
         [string]$DestinationPath,
         [string]$Label
     )
 
-    $sourceContent = Get-Content $SourcePath -Raw
-    $destinationExists = Test-Path $DestinationPath
+    $DestinationPath = [System.IO.Path]::GetFullPath($DestinationPath)
+    $destinationExists = [System.IO.File]::Exists($DestinationPath)
+    $destinationDir = [System.IO.Path]::GetDirectoryName($DestinationPath)
 
-    $destinationDir = Split-Path $DestinationPath -Parent
-    if (-not (Test-Path $destinationDir)) {
+    if (-not [System.IO.Directory]::Exists($destinationDir)) {
         if ($DryRun) {
             Write-Warn "(DRY RUN) Would create directory: $destinationDir"
         } else {
-            New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+            [System.IO.Directory]::CreateDirectory($destinationDir) | Out-Null
             Write-Ok "Created directory: $destinationDir"
         }
     }
 
     if ($destinationExists) {
-        $destinationContent = Get-Content $DestinationPath -Raw
-        if ($sourceContent -ceq $destinationContent) {
+        $destinationContent = [System.IO.File]::ReadAllText($DestinationPath)
+        if ($SourceContent -ceq $destinationContent) {
             Unblock-ManagedFile -Path $DestinationPath -Label $Label
             Write-Skip "$Label already up to date"
             return
@@ -197,9 +464,9 @@ function Sync-ManagedFile {
             Write-Warn "(DRY RUN) Would backup existing $Label to $backupPath"
             Write-Warn "(DRY RUN) Would update $Label at $DestinationPath"
         } else {
-            Copy-Item $DestinationPath $backupPath
+            [System.IO.File]::Copy($DestinationPath, $backupPath, $true)
             Write-Ok "Backed up $Label to $backupPath"
-            Set-Content -Path $DestinationPath -Value $sourceContent -Encoding utf8
+            [System.IO.File]::WriteAllText($DestinationPath, $SourceContent, (New-Object System.Text.UTF8Encoding $false))
             Write-Ok "Updated $Label at $DestinationPath"
         }
         Unblock-ManagedFile -Path $DestinationPath -Label $Label
@@ -209,7 +476,7 @@ function Sync-ManagedFile {
     if ($DryRun) {
         Write-Warn "(DRY RUN) Would create $Label at $DestinationPath"
     } else {
-        Set-Content -Path $DestinationPath -Value $sourceContent -Encoding utf8
+        [System.IO.File]::WriteAllText($DestinationPath, $SourceContent, (New-Object System.Text.UTF8Encoding $false))
         Write-Ok "Created $Label at $DestinationPath"
     }
 
@@ -414,27 +681,27 @@ if ($Optional) {
 # --- Profile copy ------------------------------------------------------------
 
 Write-Step "Profile setup"
-$profileSrc = Join-Path $PSScriptRoot "Microsoft.PowerShell_profile.ps1"
+$profileContent = Get-ManagedProfileContent
 $documentsDirs = Get-DocumentsDirectoryCandidates
 $documentsDir = $documentsDirs[0]
 $profileTargets = @(
     @{
         Label = "Windows PowerShell profile"
-        Path  = Join-Path $documentsDir "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+        Path  = [System.IO.Path]::Combine($documentsDir, "WindowsPowerShell", "Microsoft.PowerShell_profile.ps1")
     },
     @{
         Label = "PowerShell 7 profile"
-        Path  = Join-Path $documentsDir "PowerShell\Microsoft.PowerShell_profile.ps1"
+        Path  = [System.IO.Path]::Combine($documentsDir, "PowerShell", "Microsoft.PowerShell_profile.ps1")
     }
 )
 
 foreach ($profileTarget in $profileTargets) {
-    Sync-ManagedFile -SourcePath $profileSrc -DestinationPath $profileTarget.Path -Label $profileTarget.Label
+    Sync-ManagedFile -SourceContent $profileContent -DestinationPath $profileTarget.Path -Label $profileTarget.Label
 }
 
 foreach ($candidateDocumentsDir in $documentsDirs) {
     foreach ($profileSubDir in @("WindowsPowerShell", "PowerShell")) {
-        $candidateProfilePath = Join-Path $candidateDocumentsDir "$profileSubDir\Microsoft.PowerShell_profile.ps1"
+        $candidateProfilePath = [System.IO.Path]::Combine($candidateDocumentsDir, $profileSubDir, "Microsoft.PowerShell_profile.ps1")
         Unblock-ManagedFile -Path $candidateProfilePath -Label "$profileSubDir profile"
     }
 }
@@ -445,8 +712,8 @@ Write-ExecutionPolicyGuidance
 
 Write-Step "oh-my-posh theme"
 # Place theme in the shared PowerShell documents directory used by the profile
-$themeDir  = Join-Path $documentsDir "PowerShell\Themes"
-$themeFile = Join-Path $themeDir "dracula.omp.json"
+$themeDir  = [System.IO.Path]::Combine($documentsDir, "PowerShell", "Themes")
+$themeFile = [System.IO.Path]::Combine($themeDir, "dracula.omp.json")
 
 if (Test-Path $themeFile) {
     Write-Skip "Dracula theme already exists at $themeFile"
@@ -454,8 +721,8 @@ if (Test-Path $themeFile) {
     if ($DryRun) {
         Write-Warn "(DRY RUN) Would download Dracula theme to $themeFile"
     } else {
-        if (-not (Test-Path $themeDir)) {
-            New-Item -ItemType Directory -Path $themeDir -Force | Out-Null
+        if (-not [System.IO.Directory]::Exists($themeDir)) {
+            [System.IO.Directory]::CreateDirectory($themeDir) | Out-Null
         }
         $draculaUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/dracula.omp.json"
         Invoke-WebRequest -Uri $draculaUrl -OutFile $themeFile
@@ -464,7 +731,7 @@ if (Test-Path $themeFile) {
 }
 
 foreach ($candidateDocumentsDir in $documentsDirs) {
-    $candidateThemePath = Join-Path $candidateDocumentsDir "PowerShell\Themes\dracula.omp.json"
+    $candidateThemePath = [System.IO.Path]::Combine($candidateDocumentsDir, "PowerShell", "Themes", "dracula.omp.json")
     Unblock-ManagedFile -Path $candidateThemePath -Label "Dracula theme"
 }
 

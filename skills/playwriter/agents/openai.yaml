@@ -1,4 +1,0 @@
-interface:
-  display_name: "Playwriter"
-  short_description: "Help with Playwriter tasks"
-  default_prompt: "Use $playwriter to help with Playwriter tasks."

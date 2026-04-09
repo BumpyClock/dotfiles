@@ -16,6 +16,7 @@
     "codex_git_ops": ".codex/git_ops_config.toml",
     "codex_ux_designer": ".codex/ux-designer_config.toml",
     "codex_code_simplifier": ".codex/code-simplifier_config.toml",
+    "codex_code_simplifer": ".codex/code-simplifer_config.toml",
     "codex_comment_analyzer": ".codex/comment-analyzer_config.toml",
     "codex_pr_test_analyzer": ".codex/pr-test-analyzer_config.toml",
     "codex_silent_failure_hunter": ".codex/silent-failure-hunter_config.toml",
@@ -103,6 +104,10 @@
       "path": "~/.codex/code-simplifier_config.toml"
     },
     {
+      "source": "codex_code_simplifer",
+      "path": "~/.codex/code-simplifer_config.toml"
+    },
+    {
       "source": "codex_comment_analyzer",
       "path": "~/.codex/comment-analyzer_config.toml"
     },
@@ -128,7 +133,7 @@
     },
     {
       "source": "instructions",
-      "path": "~/.copilot/instructions.md"
+      "path": "~/.copilot/copilot-instructions.md"
     },
     {
       "source": "docs",

@@ -160,7 +160,8 @@
       "mcp__lspMCP__callHierarchy",
       "mcp__lspMCP__hover",
       "mcp__lspMCP__hoverBySymbol",
-      "mcp__lspMCP__findSymbol"
+      "mcp__lspMCP__findSymbol",
+      "Bash(gh:auth *)"
     ],
     "deny": [],
     "ask": [
