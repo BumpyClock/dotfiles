@@ -1,4 +1,7 @@
-model = "gpt-5.3-codex-spark"
+name = "developer"
+description = "Developer agent for coding and debugging for medium and hard tasks"
+
+model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"

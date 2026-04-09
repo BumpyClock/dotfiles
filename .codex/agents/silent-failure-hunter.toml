@@ -1,3 +1,6 @@
+name = "silent-failure-hunter"
+description = "Detecting swallowed errors and silent failures"
+
 model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"

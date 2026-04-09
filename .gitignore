@@ -20,3 +20,4 @@ skills/.system/
 .lsp-mcp/
 .DS_Store
 *.zip
+node_modules/

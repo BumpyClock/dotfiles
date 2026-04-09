@@ -22,6 +22,9 @@ Internal scripts:
 - `scripts/link-dotfiles/setup-ai-agents.ts`
 - `scripts/ai-agent-links.json`
 
+During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`.
+TypeScript/Bun entrypoints are compiled into native binaries, and non-TypeScript shebang scripts are linked in place.
+
 Windows behavior:
 - Directory links use junctions (no elevation required).
 - File-link attempts fall back to hardlinks if symlink policy blocks them.

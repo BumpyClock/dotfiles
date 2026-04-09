@@ -11,6 +11,7 @@ dotfiles/
 ├── skills/
 ├── skills_archive/
 ├── agent-scripts/
+├── tools/                     # Bun-based TypeScript helpers
 ├── codex_configs/
 ├── serena_config/
 ├── agents/                    # local agent definitions linked to ~/.claude/agents
@@ -77,6 +78,9 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfile
 
 AI-agent destination mappings are defined in `scripts/ai-agent-links.json`.
 
+During setup, installable CLI sources in `tools/` are also published into `~/.local/bin`.
+TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
+
 ## Submodules
 
 ```bash
@@ -87,3 +91,4 @@ git submodule update --init --recursive
 
 - Zsh config sync is managed by `shell/zsh/sync-config.sh`.
 - `scripts/sync-github-folder.{sh,ps1}` remain available for project-level `.github` syncing.
+- `tools/trash.ts` moves files and directories to the system trash on macOS, Windows, and Linux; Linux support is best-effort through the underlying XDG-compatible backend.

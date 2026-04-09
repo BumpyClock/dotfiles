@@ -1,3 +1,6 @@
+name = "researcher"
+description = "Conducting web research and analysis"
+
 model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "high"
 web_search = "live"

@@ -37,7 +37,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    Based on changes:
    - **Always applicable**: code-reviewer (general quality)
    - **If test files changed**: pr-test-analyzer
-   - **If comments/docs added**: comment-analyzer
+   - **If comments/docs added**: technical-writer
    - **If error handling changed**: silent-failure-hunter
    - **If types added/modified**: type-design-analyzer
    - **After passing review**: code-simplifier (polish and refine)
@@ -114,10 +114,10 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
 ## Agent Descriptions:
 
-**comment-analyzer**:
+**technical-writer**:
 - Verifies comment accuracy vs code
-- Identifies comment rot
-- Checks documentation completeness
+- Identifies comment rot and redundant comments
+- Checks language-appropriate code documentation coverage
 
 **pr-test-analyzer**:
 - Reviews behavioral test coverage

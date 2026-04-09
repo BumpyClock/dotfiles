@@ -1,11 +1,12 @@
+name = "code-simplifier"
+description = "Code simplifier for reducing complexity and improving readability"
+
 model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
 tui.status_line = ["model-with-reasoning", "context-remaining", "codex-version", "session-id", "memory-progress"]
-
-sandbox_mode = "read-only"
 
 developer_instructions = """
 

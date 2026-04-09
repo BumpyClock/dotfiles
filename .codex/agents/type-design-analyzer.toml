@@ -1,3 +1,6 @@
+name = "type-design-analyzer"
+description = "Creating & reviewing type definitions and design patterns"
+
 model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"

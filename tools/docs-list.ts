@@ -1,14 +1,94 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env bun
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const docsListFile = fileURLToPath(import.meta.url);
 const docsListDir = dirname(docsListFile);
-const DOCS_DIR = join(docsListDir, '..', 'docs');
+const USAGE = `Usage: docs-list [--dotfiles-dir <path>]
+
+List markdown docs in the dotfiles repo and print summary metadata.
+
+Options:
+  --dotfiles-dir <path>  Explicit dotfiles repository root
+  -h, --help             Show help`;
 
 const EXCLUDED_DIRS = new Set(['archive', 'research']);
+
+function parseArgs(argv: string[]): { dotfilesDir?: string } {
+  let dotfilesDir: string | undefined;
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--help' || arg === '-h') {
+      console.log(USAGE);
+      process.exit(0);
+    }
+
+    if (arg === '--dotfiles-dir') {
+      const value = argv[i + 1];
+      if (!value) {
+        console.error('Error: missing value for --dotfiles-dir');
+        process.exit(2);
+      }
+
+      dotfilesDir = value;
+      i += 1;
+      continue;
+    }
+
+    console.error(`Error: unknown argument: ${arg}`);
+    console.error('Use --help for usage');
+    process.exit(2);
+  }
+
+  return { dotfilesDir };
+}
+
+function isDotfilesRoot(dirPath: string): boolean {
+  return existsSync(join(dirPath, 'docs')) && existsSync(join(dirPath, 'AGENTS.md'));
+}
+
+function findDotfilesRoot(startDir: string): string | null {
+  let currentDir = startDir;
+
+  while (true) {
+    if (isDotfilesRoot(currentDir)) {
+      return currentDir;
+    }
+
+    const parentDir = dirname(currentDir);
+    if (parentDir === currentDir) {
+      return null;
+    }
+
+    currentDir = parentDir;
+  }
+}
+
+function resolveDocsDir(dotfilesDir?: string): string {
+  if (dotfilesDir) {
+    return join(dotfilesDir, 'docs');
+  }
+
+  const dotfilesFromEnv = process.env.DOTFILES_DIR;
+  if (dotfilesFromEnv) {
+    return join(dotfilesFromEnv, 'docs');
+  }
+
+  const dotfilesFromCwd = findDotfilesRoot(process.cwd());
+  if (dotfilesFromCwd) {
+    return join(dotfilesFromCwd, 'docs');
+  }
+
+  const sourceRelativeDocsDir = join(docsListDir, '..', 'docs');
+  if (existsSync(sourceRelativeDocsDir)) {
+    return sourceRelativeDocsDir;
+  }
+
+  throw new Error('Could not locate docs directory; pass --dotfiles-dir or run inside the dotfiles repo');
+}
 
 function compactStrings(values: unknown[]): string[] {
   const result: string[] = [];
@@ -122,24 +202,31 @@ function extractMetadata(fullPath: string): {
   return { summary: normalized, readWhen };
 }
 
-console.log('Listing all markdown files in docs folder:');
+function main(): void {
+  const options = parseArgs(process.argv.slice(2));
+  const docsDir = resolveDocsDir(options.dotfilesDir);
 
-const markdownFiles = walkMarkdownFiles(DOCS_DIR);
+  console.log('Listing all markdown files in docs folder:');
 
-for (const relativePath of markdownFiles) {
-  const fullPath = join(DOCS_DIR, relativePath);
-  const { summary, readWhen, error } = extractMetadata(fullPath);
-  if (summary) {
-    console.log(`${relativePath} - ${summary}`);
-    if (readWhen.length > 0) {
-      console.log(`  Read when: ${readWhen.join('; ')}`);
+  const markdownFiles = walkMarkdownFiles(docsDir);
+
+  for (const relativePath of markdownFiles) {
+    const fullPath = join(docsDir, relativePath);
+    const { summary, readWhen, error } = extractMetadata(fullPath);
+    if (summary) {
+      console.log(`${relativePath} - ${summary}`);
+      if (readWhen.length > 0) {
+        console.log(`  Read when: ${readWhen.join('; ')}`);
+      }
+    } else {
+      const reason = error ? ` - [${error}]` : '';
+      console.log(`${relativePath}${reason}`);
     }
-  } else {
-    const reason = error ? ` - [${error}]` : '';
-    console.log(`${relativePath}${reason}`);
   }
+
+  console.log(
+    '\nReminder: keep docs up to date as behavior changes. When your task matches any "Read when" hint above (React hooks, cache directives, database work, tests, etc.), read that doc before coding, and suggest new coverage when it is missing.'
+  );
 }
 
-console.log(
-  '\nReminder: keep docs up to date as behavior changes. When your task matches any "Read when" hint above (React hooks, cache directives, database work, tests, etc.), read that doc before coding, and suggest new coverage when it is missing.'
-);
+main();

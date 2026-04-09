@@ -30,8 +30,8 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - **tests** - Coverage gaps, weak assertions, high-risk untested behavior
    - **errors** - Silent failures, swallowed exceptions, weak error reporting
    - **types** - Weak invariants, leaky models, unclear type boundaries
-   - **comments** - Incorrect, stale, or high-maintenance comments/docs
-   - **docs** - Docs/config drift, missing setup or architecture guidance
+   - **comments** - Incorrect, stale, redundant, or high-maintenance comments; missing code-level documentation
+   - **docs** - Docs/config drift, missing setup, architecture, or API guidance
    - **deps** - Unused, outdated, overlapping, or unnecessary dependencies
    - **simplify** - Places where smaller, clearer code would help most
    - **all** - Run all applicable analyses (default)
@@ -47,7 +47,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    Based on repository shape and requested focus:
    - **Always applicable**: `reviewer` for general code quality and design issues
    - **If tests exist or look thin**: `pr-test-analyzer` for critical test gaps
-   - **If comments/docs matter**: `comment-analyzer`
+   - **If comments/docs matter**: `technical-writer`
    - **If error handling is important**: `silent-failure-hunter`
    - **If types/models/APIs are central**: `type-design-analyzer`
    - **If complexity or duplication stands out**: `code-simplifier`
@@ -68,6 +68,17 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - Require specific file/symbol references
    - Ask for the smallest viable improvement, not a full rewrite
    - Ask it to separate quick wins from strategic refactors
+
+   For `technical-writer` passes:
+   - When focus includes `comments`, `docs`, or `all`, invoke `technical-writer`
+   - Require it to validate all existing comments in scope for accuracy, value, and drift
+   - Require it to classify stale comments, redundant comments, and missing documentation coverage separately
+   - Require it to audit language-appropriate documentation standards, for example:
+     - JSDoc/TSDoc for TypeScript and JavaScript
+     - docstrings for Python
+     - Go doc comments for exported Go symbols
+     - rustdoc for public Rust APIs
+     - `///` DocC-style comments for public Swift APIs
 
 6. **Validate and Rank Opportunities**
 
@@ -106,7 +117,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - Code, configs, abstractions, or dependencies that can likely be removed
 
    ## Test / Docs / Dependency Gaps
-   - Missing coverage, stale docs, or toolchain cleanup opportunities
+   - Missing coverage, stale docs, missing API documentation, or toolchain cleanup opportunities
 
    ## Questions / Assumptions
    - Anything uncertain that needs confirmation before acting

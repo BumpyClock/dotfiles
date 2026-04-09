@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
+import { installTools, showToolStatus } from "./install-tools";
 import { ensureLinked, linkAiAgents, pathExists, showAiAgentLinks } from "./setup-ai-agents";
 
 type CliOptions = {
@@ -442,6 +443,8 @@ async function showStatus(dotfilesDir: string): Promise<void> {
     configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
     dotfilesDir,
   });
+
+  await showToolStatus(dotfilesDir);
 }
 
 async function main(): Promise<void> {
@@ -482,6 +485,7 @@ async function main(): Promise<void> {
   }
 
   await linkWebSkillScripts(dotfilesDir);
+  await installTools(dotfilesDir);
 
   info("All linking tasks completed");
 }

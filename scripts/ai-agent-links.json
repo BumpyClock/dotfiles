@@ -1,26 +1,14 @@
 {
   "sources": {
     "instructions": "AGENTS.md",
+    "tools_reference": "tools.md",
     "prompts": "prompts",
     "skills": "skills",
     "docs": "docs",
     "agents": "agents",
     "claude_settings": ".claude/settings.json",
     "codex_config": ".codex/config.toml",
-    "codex_developer": ".codex/developer_config.toml",
-    "codex_developer_lite": ".codex/developer_lite_config.toml",
-    "codex_reviewer": ".codex/reviewer_config.toml",
-    "codex_researcher": ".codex/researcher_config.toml",
-    "codex_explore": ".codex/explore_config.toml",
-    "codex_architect": ".codex/architect_config.toml",
-    "codex_git_ops": ".codex/git_ops_config.toml",
-    "codex_ux_designer": ".codex/ux-designer_config.toml",
-    "codex_code_simplifier": ".codex/code-simplifier_config.toml",
-    "codex_code_simplifer": ".codex/code-simplifer_config.toml",
-    "codex_comment_analyzer": ".codex/comment-analyzer_config.toml",
-    "codex_pr_test_analyzer": ".codex/pr-test-analyzer_config.toml",
-    "codex_silent_failure_hunter": ".codex/silent-failure-hunter_config.toml",
-    "codex_type_design_analyzer": ".codex/type-design-analyzer_config.toml"
+    "codex_agents": ".codex/agents"
   },
   "targets": [
     {
@@ -40,6 +28,10 @@
       "path": "~/.claude/CLAUDE.md"
     },
     {
+      "source": "tools_reference",
+      "path": "~/.claude/tools.md"
+    },
+    {
       "source": "docs",
       "path": "~/.claude/docs"
     },
@@ -56,6 +48,10 @@
       "path": "~/.codex/AGENTS.md"
     },
     {
+      "source": "tools_reference",
+      "path": "~/.codex/tools.md"
+    },
+    {
       "source": "docs",
       "path": "~/.codex/docs"
     },
@@ -68,64 +64,16 @@
       "path": "~/.codex/config.toml"
     },
     {
-      "source": "codex_developer",
-      "path": "~/.codex/developer_config.toml"
-    },
-    {
-      "source": "codex_developer_lite",
-      "path": "~/.codex/developer_lite_config.toml"
-    },
-    {
-      "source": "codex_reviewer",
-      "path": "~/.codex/reviewer_config.toml"
-    },
-    {
-      "source": "codex_researcher",
-      "path": "~/.codex/researcher_config.toml"
-    },
-    {
-      "source": "codex_explore",
-      "path": "~/.codex/explore_config.toml"
-    },
-    {
-      "source": "codex_architect",
-      "path": "~/.codex/architect_config.toml"
-    },
-    {
-      "source": "codex_git_ops",
-      "path": "~/.codex/git_ops_config.toml"
-    },
-    {
-      "source": "codex_ux_designer",
-      "path": "~/.codex/ux-designer_config.toml"
-    },
-    {
-      "source": "codex_code_simplifier",
-      "path": "~/.codex/code-simplifier_config.toml"
-    },
-    {
-      "source": "codex_code_simplifer",
-      "path": "~/.codex/code-simplifer_config.toml"
-    },
-    {
-      "source": "codex_comment_analyzer",
-      "path": "~/.codex/comment-analyzer_config.toml"
-    },
-    {
-      "source": "codex_pr_test_analyzer",
-      "path": "~/.codex/pr-test-analyzer_config.toml"
-    },
-    {
-      "source": "codex_silent_failure_hunter",
-      "path": "~/.codex/silent-failure-hunter_config.toml"
-    },
-    {
-      "source": "codex_type_design_analyzer",
-      "path": "~/.codex/type-design-analyzer_config.toml"
+      "source": "codex_agents",
+      "path": "~/.codex/agents"
     },
     {
       "source": "skills",
       "path": "~/.config/opencode/skills"
+    },
+    {
+      "source": "tools_reference",
+      "path": "~/.config/opencode/tools.md"
     },
     {
       "source": "prompts",
@@ -134,6 +82,10 @@
     {
       "source": "instructions",
       "path": "~/.copilot/copilot-instructions.md"
+    },
+    {
+      "source": "tools_reference",
+      "path": "~/.copilot/tools.md"
     },
     {
       "source": "docs",
@@ -155,6 +107,11 @@
     {
       "source": "instructions",
       "path": "~/.ai_agents/AGENTS.md",
+      "optional": true
+    },
+    {
+      "source": "tools_reference",
+      "path": "~/.ai_agents/tools.md",
       "optional": true
     },
     {

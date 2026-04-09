@@ -168,6 +168,7 @@
       "Bash(git push:*)"
     ]
   },
+  "model": "opus[1m]",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -177,8 +178,7 @@
     "security-guidance@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "explanatory-output-style@claude-plugins-official": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
@@ -187,6 +187,5 @@
   "teammateMode": "in-process",
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  },
-  "model": "opus[1m]"
+  }
 }

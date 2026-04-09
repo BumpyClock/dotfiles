@@ -1,4 +1,7 @@
-model = "gpt-5.4"
+name = "developer_lite"
+description = "Lite developer agent for coding and debugging simpler tasks"
+
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"

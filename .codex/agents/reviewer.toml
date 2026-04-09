@@ -1,3 +1,6 @@
+name = "reviewer"
+description = "Code review and feedback"
+
 model = "gpt-5.4"
 model_reasoning_effort = "high"
 web_search = "live"

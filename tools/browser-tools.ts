@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env bun
 
 /**
  * Minimal Chrome DevTools helpers inspired by Mario Zechner's
@@ -9,7 +9,7 @@
  */
 import { Command } from 'commander';
 import { execSync, spawn } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
@@ -24,6 +24,81 @@ type AsyncFunctionCtor = new (...args: string[]) => (...fnArgs: unknown[]) => Pr
 const DEFAULT_PORT = 9222;
 const DEFAULT_PROFILE_DIR = path.join(os.homedir(), '.cache', 'scraping');
 const DEFAULT_CHROME_BIN = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const DEFAULT_CHROME_USER_DATA_DIR = path.join(os.homedir(), 'Library', 'Application Support', 'Google', 'Chrome');
+
+export type ChromeProfileMode = 'temporary' | 'copied' | 'real';
+
+type ChromeProfileSettings = {
+  mode: ChromeProfileMode;
+  userDataDir: string;
+};
+
+export function resolveChromeProfileSettings(options: {
+  profile: boolean;
+  realProfile: boolean;
+  profileDir: string;
+}): ChromeProfileSettings {
+  const { profile, realProfile, profileDir } = options;
+  if (profile && realProfile) {
+    throw new Error('--profile and --real-profile cannot be used together');
+  }
+
+  if (realProfile) {
+    return {
+      mode: 'real',
+      userDataDir: DEFAULT_CHROME_USER_DATA_DIR,
+    };
+  }
+
+  return {
+    mode: profile ? 'copied' : 'temporary',
+    userDataDir: profileDir,
+  };
+}
+
+export function buildChromeLaunchArgs(options: {
+  port: number;
+  userDataDir: string;
+  profileDirectory?: string;
+}): string[] {
+  const args = [
+    `--remote-debugging-port=${options.port}`,
+    `--user-data-dir=${options.userDataDir}`,
+    '--no-first-run',
+    '--disable-popup-blocking',
+  ];
+
+  if (options.profileDirectory) {
+    args.push(`--profile-directory=${options.profileDirectory}`);
+  }
+
+  return args;
+}
+
+function chromeStartModeSuffix(mode: ChromeProfileMode, profileDirectory?: string): string {
+  if (mode === 'copied') {
+    return profileDirectory ? ` (profile copied: ${profileDirectory})` : ' (profile copied)';
+  }
+
+  if (mode === 'real') {
+    return profileDirectory ? ` (real profile: ${profileDirectory})` : ' (real profile)';
+  }
+
+  return '';
+}
+
+function isChromeRunning(): boolean {
+  try {
+    const output = execSync('ps -ax -o command=', { encoding: 'utf8' });
+    return output
+      .split('\n')
+      .map((line) => line.trim())
+      .some((command) => /Google Chrome(?:\.app\/Contents\/MacOS\/Google Chrome)?(?:\s|$)/.test(command));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to inspect running Chrome processes: ${message}`);
+  }
+}
 
 function browserURL(port: number): string {
   return `http://localhost:${port}`;
@@ -56,14 +131,18 @@ program
   .description('Launch Chrome with remote debugging enabled.')
   .option('-p, --port <number>', 'Remote debugging port (default: 9222)', (value) => Number.parseInt(value, 10), DEFAULT_PORT)
   .option('--profile', 'Copy your default Chrome profile before launch.', false)
+  .option('--real-profile', 'Use the live Chrome user-data directory for sites that require your signed-in session.', false)
   .option('--profile-dir <path>', 'Directory for the temporary Chrome profile.', DEFAULT_PROFILE_DIR)
+  .option('--profile-directory <name>', 'Chrome profile directory name, such as Default or "Profile 1".')
   .option('--chrome-path <path>', 'Path to the Chrome binary.', DEFAULT_CHROME_BIN)
   .option('--kill-existing', 'Stop any running Google Chrome before launch (default: false).', false)
   .action(async (options) => {
-    const { port, profile, profileDir, chromePath, killExisting } = options as {
+    const { port, profile, realProfile, profileDir, profileDirectory, chromePath, killExisting } = options as {
       port: number;
       profile: boolean;
+      realProfile: boolean;
       profileDir: string;
+      profileDirectory?: string;
       chromePath: string;
       killExisting: boolean;
     };
@@ -76,13 +155,21 @@ program
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    execSync(`mkdir -p "${profileDir}"`);
-    if (profile) {
-      const source = `${path.join(os.homedir(), 'Library', 'Application Support', 'Google', 'Chrome')}/`;
-      execSync(`rsync -a --delete "${source}" "${profileDir}/"`, { stdio: 'ignore' });
+
+    const profileSettings = resolveChromeProfileSettings({ profile, realProfile, profileDir });
+    if (profileSettings.mode === 'real' && !killExisting && isChromeRunning()) {
+      throw new Error('--real-profile requires Chrome to be closed first or use --kill-existing');
     }
 
-    spawn(chromePath, [`--remote-debugging-port=${port}`, `--user-data-dir=${profileDir}`, '--no-first-run', '--disable-popup-blocking'], {
+    if (profileSettings.mode !== 'real') {
+      await mkdir(profileDir, { recursive: true });
+    }
+
+    if (profileSettings.mode === 'copied') {
+      execSync(`rsync -a --delete "${DEFAULT_CHROME_USER_DATA_DIR}/" "${profileDir}/"`, { stdio: 'ignore' });
+    }
+
+    spawn(chromePath, buildChromeLaunchArgs({ port, userDataDir: profileSettings.userDataDir, profileDirectory }), {
       detached: true,
       stdio: 'ignore',
     }).unref();
@@ -103,7 +190,7 @@ program
       console.error(`✗ Failed to start Chrome on port ${port}`);
       process.exit(1);
     }
-    console.log(`✓ Chrome listening on http://localhost:${port}${profile ? ' (profile copied)' : ''}`);
+    console.log(`✓ Chrome listening on http://localhost:${port}${chromeStartModeSuffix(profileSettings.mode, profileDirectory)}`);
   });
 
 program
@@ -1041,4 +1128,6 @@ function fetchJson(url: string, timeoutMs = 2000): Promise<unknown> {
   });
 }
 
-program.parseAsync(process.argv);
+if (import.meta.main) {
+  program.parseAsync(process.argv);
+}
