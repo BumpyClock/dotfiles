@@ -26,7 +26,7 @@
 - New deps: quick health check (recent releases/commits, adoption).
 - use `web_search` and `web_fetch` cli commands from `web-skill` for web search and web fetch
 - use subagents whenever possible to speed up tasks. Prioritize time efficiency by delegating and doing tasks in parallel when possible. 
-- read tools.md for available tools.
+- read `~/Projects/dotfiles/tools.md` for available tools.
 
 ## Priorities
 - Do not introduce shims, compatibility layers, or temporary bridges.
