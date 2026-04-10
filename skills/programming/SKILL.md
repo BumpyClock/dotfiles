@@ -25,6 +25,7 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 4. Resolve conflicts by severity, then existing code patterns.
 5. If writing or changing code, choose a testing approach: default to TDD for behavior changes, otherwise use judgment. If skipping TDD, say why and offer a testable next step.
 6. Load relevant mode and language references as needed.
+7. Run the technical-writer agent on edited files to make sure code is properly documented.
 
 ## Simplification Pass (Default On Touched Code)
 
@@ -45,6 +46,7 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 3. Run a refinement pass on touched code only.
 4. Remove redundant branches, wrappers, and dead paths when safe.
 5. Re-check behavior parity and keep the diff as small as practical.
+
 
 
 ## Modes (Load as needed)

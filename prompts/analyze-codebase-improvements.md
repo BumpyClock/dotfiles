@@ -10,7 +10,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
 **Scope / Focus (optional):** "$ARGUMENTS"
 
-**Primary directive:** Use parallel specialized sub-agents and agent teams to review the entire codebase and look for stale legacy code, dead code, bridges for legacy code to new code, hard coded values, orphan code paths, and logical inconsistencies.
+**Primary directive:** Use parallel specialized sub-agents and agent teams to review the entire codebase and look for stale legacy code, dead code, bridges for legacy code to new code, hard coded values, orphan code paths, logical inconsistencies, and meaningful time-complexity bottlenecks.
 
 ## Analysis Workflow:
 
@@ -24,9 +24,10 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
    - **architecture** - Boundaries, module structure, coupling, layering issues
    - **complexity** - Unnecessary complexity, hard-to-follow control flow, oversized files
+   - **time-complexity** - Algorithmic hot paths, nested scans, repeated recomputation, avoidable Big O costs
    - **duplication** - Repeated logic, copy-paste patterns, near-duplicate modules
    - **dead-code** - Unused files, stale abstractions, code that can be deleted
-   - **legacy dode** - Old patterns, compatibility bridges, or technical debt hotspots, hard coded values, or orphan code paths
+   - **legacy-code** - Old patterns, compatibility bridges, or technical debt hotspots, hard coded values, or orphan code paths
    - **tests** - Coverage gaps, weak assertions, high-risk untested behavior
    - **errors** - Silent failures, swallowed exceptions, weak error reporting
    - **types** - Weak invariants, leaky models, unclear type boundaries
@@ -51,6 +52,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - **If error handling is important**: `silent-failure-hunter`
    - **If types/models/APIs are central**: `type-design-analyzer`
    - **If complexity or duplication stands out**: `code-simplifier`
+   - **If time-complexity matters**: quantify current Big O costs, identify the exact loops or repeated operations causing them, and only recommend lower-complexity refactors when the trade-off is justified
 
 5. **Launch Analysis Agents**
 
@@ -79,6 +81,11 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
      - Go doc comments for exported Go symbols
      - rustdoc for public Rust APIs
      - `///` DocC-style comments for public Swift APIs
+
+   For `time-complexity` passes:
+   - Analyze all requested code in scope; do not stop at the first hotspot
+   - Include current complexity, bottlenecking operation, lower-complexity alternative, expected new complexity, and space/readability trade-offs
+   - Say when an optimization is not worth doing because the gain is negligible or the implementation cost is too high
 
 6. **Validate and Rank Opportunities**
 
@@ -123,6 +130,14 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - Anything uncertain that needs confirmation before acting
    ```
 
+   For time-complexity findings, add:
+   - **Current complexity**
+   - **Bottleneck**
+   - **Lower-complexity alternative**
+   - **Expected new complexity**
+   - **Space/readability trade-offs**
+   - **Why it is or is not worth doing**
+
 ## Usage Examples:
 
 **Whole repo scan (default):**
@@ -133,6 +148,11 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 **Limit to a directory + focus areas:**
 ```text
 /analyze-codebase-improvements src architecture duplication
+```
+
+**Focus on algorithmic hotspots:**
+```text
+/analyze-codebase-improvements src time-complexity
 ```
 
 **Review prompt/docs hygiene only:**
@@ -152,6 +172,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 - Ignore generated or vendored code unless the user asks about it
 - Validate opportunities against existing project patterns and local rules
 - For large repos, analyze one subsystem at a time and compare results
+- Do not recommend asymptotic optimizations that add churn without a meaningful win
 
 
 ## Notes:

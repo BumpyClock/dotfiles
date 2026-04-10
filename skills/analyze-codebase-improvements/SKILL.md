@@ -1,6 +1,6 @@
 ---
 name: analyze-codebase-improvements
-description: Analyze a repository for high-value maintainability, correctness, testing, documentation, dependency, and simplification opportunities without changing code. Use when the user wants a whole-codebase improvement scan, a scoped cleanup review, or a ranked list of high-leverage refactors, deletions, or modernization work.
+description: Analyze a repository for high-value maintainability, correctness, testing, documentation, dependency, performance, and simplification opportunities without changing code. Use when the user wants a whole-codebase improvement scan, a scoped cleanup review, a ranked list of high-leverage refactors, deletions, or modernization work, or a time-complexity and performance-oriented analysis.
 ---
 
 # Analyze Codebase Improvements
@@ -18,6 +18,7 @@ Use this skill for analysis-only repo reviews. Do not make code changes.
 
 - `architecture` - boundaries, module structure, coupling, layering
 - `complexity` - hard-to-follow control flow, oversized files, needless abstraction
+- `time-complexity` - algorithmic hot paths, repeated scans, nested lookups, unnecessary recomputation
 - `duplication` - repeated logic, copy-paste code, near-duplicate modules
 - `dead-code` - unused files, stale abstractions, removable code paths
 - `legacy-code` - old patterns, compatibility bridges, hard-coded values, orphan flows
@@ -40,10 +41,16 @@ Use this skill for analysis-only repo reviews. Do not make code changes.
    - validate all existing comments in scope for accuracy, drift, and long-term value
    - separate stale comments, redundant comments, and missing documentation coverage
    - audit language-appropriate documentation standards such as JSDoc/TSDoc for TypeScript and JavaScript, docstrings for Python, Go doc comments for exported Go symbols, rustdoc for public Rust APIs, and `///` DocC-style comments for public Swift APIs
-6. If subagents are available and allowed in the current session, split the work into bounded parallel passes. Otherwise, perform equivalent local passes by subsystem or focus area.
-7. Require concrete evidence for every finding: file paths, symbols, repeated patterns, or specific failure modes.
-8. Merge duplicate findings. Drop speculative, style-only, or low-signal feedback.
-9. Rank remaining opportunities by impact, effort, confidence, and regression risk.
+6. When focus includes `time-complexity` or `all`, inspect hot functions, loop nests, traversals, searches, sorts, repeated allocations, and repeated recomputation. For each worthwhile item:
+   - identify the current time complexity
+   - name the exact operation driving the cost
+   - propose a lower-complexity alternative when it materially helps
+   - call out space, readability, preprocessing, caching, or behavior trade-offs
+   - say when an optimization is not worth the churn
+7. If subagents are available and allowed in the current session, split the work into bounded parallel passes. Otherwise, perform equivalent local passes by subsystem or focus area.
+8. Require concrete evidence for every finding: file paths, symbols, repeated patterns, hot operations, or specific failure modes.
+9. Merge duplicate findings. Drop speculative, style-only, or low-signal feedback.
+10. Rank remaining opportunities by impact, effort, confidence, and regression risk.
 
 ## Output Format
 
@@ -78,6 +85,15 @@ Use this structure:
 - Uncertainties that need confirmation
 ```
 
+For `time-complexity` findings, include these extra fields inside the relevant item:
+
+- Current complexity: ...
+- Bottleneck: ...
+- Lower-complexity alternative: ...
+- Expected new complexity: ...
+- Space/readability trade-offs: ...
+- Worth doing?: ...
+
 ## Rules
 
 - Analysis only; do not modify code.
@@ -86,3 +102,4 @@ Use this structure:
 - Validate findings against existing patterns and local repo rules.
 - Separate quick wins from strategic refactors.
 - Report uncertainty explicitly when confidence is low.
+- Do not force an optimization when the asymptotic win is negligible or the trade-off is poor.

@@ -1,8 +1,8 @@
 ---
 name: git-workflow
-description: Preferred way to use git - PRs, commits, branches, merges, PR comments, and CI checks. Use for any git/GitHub task. any time the user asks for any action that requires interacting with git/GitHub like commit, push, comments, create PR, or fix CI.
+description: Preferred way to use git - PRs, commits, branches, worktrees, merges, PR comments, and CI checks. Use for any git/GitHub task, including isolated worktree setup for feature work, or any time the user asks for an action that requires interacting with git/GitHub like commit, push, comments, create PR, or fix CI.
 context: fork
-model : claude-haiku-4-5
+model : claude-sonnet-4-6
 ---
 
 spin up a dedicated sub-agent to perform git-workflow tasks requested by the user. 
@@ -19,6 +19,7 @@ Modular git workflow management using Conventional Commits and GitHub Flow.
 | Review Comments | `review-comments.md` | Fetching, triaging, and addressing PR feedback |
 | Commits | `commit-workflow.md` | Writing conventional commits, staging, amending |
 | Branches | `branch-management.md` | Creating, naming, and cleaning up branches |
+| Worktrees | `worktree-management.md` | Creating isolated worktrees safely for parallel work |
 | Merging | `merge-workflow.md` | Merge strategies, conflict resolution, cleanup |
 | Changelog | `add-changelog.md` | Setting up or updating a project changelog |
 | Address PR Comments | `gh-address-comments.md` | Handle PR review/issue comments with gh CLI |
@@ -34,6 +35,7 @@ skills/git-workflow/
 ├── review-comments.md    # Handling PR feedback
 ├── commit-workflow.md    # Conventional commits
 ├── branch-management.md  # GitHub Flow branching
+├── worktree-management.md # Isolated worktree setup
 ├── merge-workflow.md     # Merge strategies
 ├── add-changelog.md      # Changelog setup and updates
 ├── gh-address-comments.md # Address PR review/issue comments
@@ -50,8 +52,3 @@ skills/git-workflow/
 **Branch Prefixes:** `feature/`, `fix/`, `hotfix/`
 
 **PR Type Prefixes:** `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`
-
-## Related Skills
-
-- `git-work-trees` - Isolated worktree setup for parallel work
-- `coderabbit-review` - Automated code review with CodeRabbit

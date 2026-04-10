@@ -5,26 +5,50 @@ description: Run a codereview using coderabbit cli and review the output.
 
 # CodeRabbit Review
 
-Run the command `coderabbit --prompt-only > .ai_agents/coderabbit_output.txt` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working. Give it a timeout of up to 5 minutes since it can take a while on large codebases.
+Run the command `coderabbit review --agent` and wait for it to finish (it may take a while). If it's slow, run it in the background and keep working. Give it a timeout of up to 5 minutes since it can take a while on large codebases.
 
-Redirect its output to a file, e.g., `coderabbit --prompt-only > .ai_agents/coderabbit_output.txt`. Read the file once the command completes. If the file already exists, delete it first to avoid confusion.
+## CLI help
+coderabbit review --help
+Usage: coderabbit review [options]
 
-the coderabbit cli is installed and available in PATH.
+AI-driven code review for the current git repository
+
+Options:
+  -V, --version            output the version number
+  --plain                  Output in plain text format (non-interactive, default)
+  --interactive            Start in interactive mode
+  --prompt-only            Show only AI agent prompts
+  --agent                  Emit structured findings for agent workflows
+  -t, --type <type>        Review type: all, committed, uncommitted (default: "all")
+  -f, --files <files...>   Review only the specified files
+  -c, --config <files...>  Additional instructions for CodeRabbit AI (e.g., claude.md, coderabbit.yaml)
+  --base <branch>          Base branch for comparison
+  --base-commit <commit>   Base commit on current branch for comparison
+  --dir <path>             Review only git changes inside this directory
+  --no-color               Disable colored output
+  --api-key <key>          API key for authentication
+  -h, --help               display help for command
+
+Examples:
+  coderabbit review                           # Plain-text review of all local changes
+  coderabbit review --agent                   # Emit structured findings for agents
+  coderabbit review --interactive             # Full-screen terminal review UI
+  coderabbit review --base main               # Compare current branch against main
+  coderabbit review --type committed          # Review only committed changes
+  coderabbit review --files src/index.ts      # Review only selected files
+  coderabbit review --dir /path/to/repo       # Review only git changes inside that directory
+  coderabbit review --prompt-only             # Print agent prompts only
+
+Notes:
+  Plain text is the default review mode.
+  --interactive does not support API key authentication.
+  Use coderabbit auth login --agent for agent-driven OAuth login.
 
 ## Workflow
 
 1. **Collect and triage comments**
    - Collect ALL CodeRabbit comments and de-duplicate them
     - The output will contain **multiple prompts**, each already in this shape:
-
-       ============================================================================
-       File: <path>
-       Line: <line number or range>
-       Type: <critical|major|potential_issue|refactor_suggestion|nitpick|...>
-
-       Prompt for AI Agent:
-       <one paragraph, specific instruction>
-       ============================================================================
 
     - Prioritize by `Type`:
        - **Handle ALL non-nitpick items first.** Start with highest severity and work down.
@@ -71,7 +95,3 @@ the coderabbit cli is installed and available in PATH.
 - **Test strategy**: Specify preferred commands and fallbacks
 - **Parallelism**: Use up to 4 sub-agents; do not overlap files
 - Run formatting and linters to ensure code quality standards are met
-
-## Optional arguments
-
-ultrathink

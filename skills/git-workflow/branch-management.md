@@ -81,7 +81,7 @@ git push -u origin feature/123-new-feature
 
 ## Working with Worktrees
 
-For parallel work on multiple branches, use the `git-work-trees` skill:
+For parallel work on multiple branches, follow `worktree-management.md` in this skill:
 
 ```bash
 # Create worktree for parallel work
@@ -94,7 +94,7 @@ git worktree list
 git worktree remove ../project-feature
 ```
 
-See: `skills/git-work-trees/SKILL.md`
+See: `skills/git-workflow/worktree-management.md`
 
 ---
 

@@ -14,6 +14,7 @@ Your mission is to protect the codebase from comment rot and documentation drift
 1. **Verify factual accuracy**
 - Cross-check every claim in the comment against the actual code.
 - Confirm signatures, behavior, referenced symbols, edge cases, and complexity claims.
+- If file is properly documented, then move on to the next file. 
 
 2. **Assess completeness**
 - Check whether critical assumptions, side effects, error conditions, algorithmic rationale, and business logic context are documented when needed.

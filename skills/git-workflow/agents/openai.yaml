@@ -1,4 +1,4 @@
 interface:
   display_name: "Git Workflow"
-  short_description: "Help with Git Workflow tasks"
-  default_prompt: "Use $git-workflow to help with Git Workflow tasks."
+  short_description: "Handle branches, worktrees, PRs, and CI"
+  default_prompt: "Use $git-workflow to handle git and GitHub tasks, including branch management, isolated worktree setup, PR flow, comments, and CI checks."

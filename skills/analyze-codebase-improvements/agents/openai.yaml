@@ -1,4 +1,4 @@
 interface:
   display_name: "Analyze Codebase Improvements"
-  short_description: "Find high-leverage codebase improvement opportunities"
-  default_prompt: "Use $analyze-codebase-improvements to review this repo, rank the best cleanup and refactor opportunities, and include a technical-writer pass for comment and documentation quality."
+  short_description: "Find high-leverage cleanup, refactor, and complexity wins"
+  default_prompt: "Use $analyze-codebase-improvements to review this repo, rank the best cleanup and refactor opportunities, include a technical-writer pass for comment and documentation quality, and cover time-complexity bottlenecks when relevant."
