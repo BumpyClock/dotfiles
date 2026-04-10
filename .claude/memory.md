@@ -15,7 +15,7 @@ secrets/
 ├── config/            # Sensitive configuration files
 ├── tokens/            # Authentication tokens
 └── templates/         # Template files with placeholders
-    ├── api-keys.template.env
+    ├── env.template.json
     └── mcp-servers.template.json
 ```
 
@@ -28,7 +28,7 @@ secrets/
 
 #### Adding New Secrets
 1. Navigate to `secrets/` directory
-2. Copy template files: `cp templates/api-keys.template.env api-keys/api-keys.env`
+2. Copy template files: `cp templates/env.template.json api-keys/env.json`
 3. Edit with actual values
 4. Commit and push: `cd secrets && git add . && git commit -m "add: new API keys" && git push`
 5. Update parent repo: `cd .. && git add secrets && git commit -m "update: secrets submodule"`
@@ -54,7 +54,7 @@ secrets/
 
 ### Enhanced Templates
 - **mcp-servers.template.json**: Now stores only server names and env variables (simplified)
-- **mcp-env.template.json**: Clean environment-only template for actual secrets storage
+- **env.template.json**: Clean environment-only template for actual secrets storage
 
 ### Usage Examples
 ```bash

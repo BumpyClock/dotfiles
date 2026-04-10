@@ -32,6 +32,11 @@ export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/.lmstudio/bin:$PATH"
 export PATH="$HOME/.opencode/bin:$PATH"
 
+DOTFILES_ENV_SCRIPT="$HOME/.config/dotfiles/env.sh"
+if [ -f "$DOTFILES_ENV_SCRIPT" ]; then
+  source "$DOTFILES_ENV_SCRIPT"
+fi
+
 # =============================================================================
 # LAZY LOADING FOR HEAVY TOOLS
 # =============================================================================

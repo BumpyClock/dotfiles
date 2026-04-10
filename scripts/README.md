@@ -24,6 +24,7 @@ Internal scripts:
 
 During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`.
 TypeScript/Bun entrypoints are compiled into native binaries, and non-TypeScript shebang scripts are linked in place.
+Managed secrets in `secrets/api-keys/env.json` are rendered into `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` during setup.
 
 Windows behavior:
 - Directory links use junctions (no elevation required).

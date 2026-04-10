@@ -80,6 +80,7 @@ AI-agent destination mappings are defined in `scripts/ai-agent-links.json`.
 
 During setup, installable CLI sources in `tools/` are also published into `~/.local/bin`.
 TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
+If `secrets/api-keys/env.json` exists, the linker also generates `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` so shells can load managed API keys automatically.
 
 ## Submodules
 

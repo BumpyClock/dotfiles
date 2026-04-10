@@ -41,6 +41,11 @@ Set-PSReadLineOption @PSReadLineOptions
 # UTF-8 encoding for better compatibility
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 
+$dotfilesEnvScript = Join-Path $HOME ".config/dotfiles/env.ps1"
+if (Test-Path $dotfilesEnvScript) {
+    . $dotfilesEnvScript
+}
+
 
 # =============================================================================
 # UTILITY FUNCTIONS

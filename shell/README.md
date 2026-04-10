@@ -40,5 +40,6 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
 ## Notes
 
 - Zsh config is injected into `~/.zshrc` between markers.
+- Managed env from `secrets/api-keys/env.json` is loaded via `~/.config/dotfiles/env.sh` in zsh and `~/.config/dotfiles/env.ps1` in PowerShell.
 - `install-deps.sh` falls back to minimal links if Bun is unavailable.
 - Linking source of truth is `scripts/link-dotfiles/` and `scripts/ai-agent-links.json`.
