@@ -77,9 +77,27 @@ Gemini-powered image editing CLI.
 ```bash
 nanobanana photo.jpg "remove the people in the background"
 nanobanana selfie.png "add a sunset background" sunset-selfie.png
+nanobanana room.png --ref chair.png "place this chair next to the window"
 ```
 
-**Requires**: `GEMINI_API_KEY`
+**Requires**: `GEMINI_API_KEY` (can be managed via `secrets/api-keys/env.json` + `scripts/link-dotfiles/setup-dotfiles.ts`)
+
+---
+
+## gpt-image
+OpenAI GPT Image generation CLI with optional reference images.
+
+**Install path**: `~/.local/bin/gpt-image`
+
+**Usage**:
+```bash
+gpt-image "an isometric miniature ramen shop at dusk"
+gpt-image --ref mug.png "place this mug on a wooden desk in morning light" mug-scene.png
+gpt-image --ref portrait.png --ref logo.png "create a conference badge using these references" badge.png
+gpt-image --transparent "a flat pixel-art cat sticker"
+```
+
+**Requires**: `OPENAI_API_KEY`
 
 ---
 

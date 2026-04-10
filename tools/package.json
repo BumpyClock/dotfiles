@@ -5,6 +5,7 @@
   "dependencies": {
     "@google/genai": "^1.29.0",
     "commander": "^14.0.1",
+    "openai": "^6.34.0",
     "puppeteer-core": "^24.25.0",
     "trash": "^10.1.1"
   }
