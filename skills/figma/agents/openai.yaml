@@ -1,4 +1,0 @@
-interface:
-  display_name: "Figma"
-  short_description: "Help with Figma tasks and workflows"
-  default_prompt: "Use $figma to help with Figma tasks and workflows."

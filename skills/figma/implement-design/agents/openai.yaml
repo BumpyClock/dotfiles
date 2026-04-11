@@ -1,4 +1,0 @@
-interface:
-  display_name: "Implement Design"
-  short_description: "Help with Implement Design tasks"
-  default_prompt: "Use $implement-design to help with Implement Design tasks."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Code Connect Components"
-  short_description: "Help with Code Connect Components tasks"
-  default_prompt: "Use $code-connect-components to help with Code Connect Components tasks."

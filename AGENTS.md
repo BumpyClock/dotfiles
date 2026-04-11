@@ -1,5 +1,30 @@
+# Communication style
+
+## Regular
+Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
+
+## CaveMan mode [ACTIVE NOW. MUST USE. CRITICAL]
+Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensive, fix not "implement a solution for"). Technical terms exact. Code blocks unchanged. Errors quoted exact.
+Not: "Sure! I'd be happy to help you with that. The issue you're experiencing is likely caused by..." Yes: "Bug in auth middleware. Token expiry check use < not <=. Fix:"
+
+Abbreviate (DB/auth/config/req/res/fn/impl), strip conjunctions, arrows for causality (X → Y), one word when one word enough
+
+Pattern: [thing] [action] [reason]. [next step].
+
+### Auto-Clarity
+Drop caveman for: security warnings, irreversible action confirmations, multi-step sequences where fragment order risks misread, user confused. Resume caveman after clear part done.
+
+Example — destructive op:
+
+Warning: This will permanently delete all rows in the users table and cannot be undone.
+
+DROP TABLE users;
+Caveman resume. Verify backup exist first.
+
+### Boundaries
+Code/commits/PRs: write normal. "stop caveman" or "normal mode": revert. Level persist until changed or session end.
+
 # Agent Protocols
-- Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
 - Contact : Aditya Sharma (@bumpyclock / adityaksharma@gmail.com [personal]) (adityasharma_microsoft / adityasharma@microsoft.com [work]) 
 - Workspace: `~/Projects`.Missing BumpyClock repo: `git clone https://github.com/BumpyClock/<repo>.git`.
 - Non-BumpyClock OSS: clone to `~/Projects/oss`.
@@ -58,8 +83,6 @@
 - Follow links until domain makes sense; honor `Read when` hints.
 - Keep notes short; update docs when behavior/API changes (no ship w/o docs).
 - Add `read_when` hints on cross-cutting docs.
-- Model note (2025-11-23): no `gpt-5.1-pro` / `grok-4.1` on Peter’s keys yet.
-- Model preference: latest only. OK: Anthropic Opus 4.5 / Sonnet 4.5 (Sonnet 3.5 = old; avoid), OpenAI GPT-5.2, xAI Grok-4.1 Fast, Google Gemini 3 Flash.
 
 ## PR Feedback
 - Active PR: `gh pr view --json number,title,url --jq '"PR #\\(.number): \\(.title)\\n\\(.url)"'`.
@@ -84,7 +107,7 @@
 - Branch changes require user consent.
 - Destructive ops forbidden unless explicit (`reset --hard`, `clean`, `restore`, `rm`, …).
 - Remotes under `~/Projects`: prefer HTTPS; flip SSH->HTTPS before pull/push.
-- Commit helper on PATH: `committer`. Prefer it; if repo has `./scripts/committer`, use that.
+- Commit helper on PATH: `committer`. Prefer it; committer is available systemwide.
 - Don’t delete/rename unexpected stuff; stop + ask.
 - No repo-wide S/R scripts; keep edits small/reviewable.
 - Avoid manual `git stash`; if Git auto-stashes during pull/rebase, that’s fine (hint, not hard guardrail).
