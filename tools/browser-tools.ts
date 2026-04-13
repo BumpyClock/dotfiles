@@ -1129,5 +1129,9 @@ function fetchJson(url: string, timeoutMs = 2000): Promise<unknown> {
 }
 
 if (import.meta.main) {
-  program.parseAsync(process.argv);
+  program.parseAsync(process.argv).catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error: ${message}`);
+    process.exit(1);
+  });
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -87,7 +87,17 @@ function resolveDocsDir(dotfilesDir?: string): string {
     return sourceRelativeDocsDir;
   }
 
-  throw new Error('Could not locate docs directory; pass --dotfiles-dir or run inside the dotfiles repo');
+  throw new Error('No docs directory found');
+}
+
+function ensureDocsDirExists(docsDir: string): void {
+  if (!existsSync(docsDir)) {
+    throw new Error(`Docs directory not found: ${docsDir}`);
+  }
+
+  if (!statSync(docsDir).isDirectory()) {
+    throw new Error(`Docs path is not a directory: ${docsDir}`);
+  }
 }
 
 function compactStrings(values: unknown[]): string[] {
@@ -205,6 +215,7 @@ function extractMetadata(fullPath: string): {
 function main(): void {
   const options = parseArgs(process.argv.slice(2));
   const docsDir = resolveDocsDir(options.dotfilesDir);
+  ensureDocsDirExists(docsDir);
 
   console.log('Listing all markdown files in docs folder:');
 
@@ -229,4 +240,10 @@ function main(): void {
   );
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`Error: ${message}`);
+  process.exit(1);
+}

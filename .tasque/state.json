@@ -1,32 +1,108 @@
 {
   "tasks": {
-    "tsq-kkfrgznk": {
-      "id": "tsq-kkfrgznk",
+    "tsq-reyp754n.3": {
+      "id": "tsq-reyp754n.3",
       "kind": "task",
-      "title": "Convert analyze prompts into skills",
-      "description": "Turn prompts/analyze-codebase-improvements.md and prompts/analyze-time-complexity.md into repo-local skills under skills/.",
+      "title": "Rename agents/ to agents-src/ and update .gitignore",
       "notes": [],
-      "status": "closed",
-      "priority": 2,
-      "planning_state": "needs_planning",
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-27T13:16:12.550Z",
-      "updated_at": "2026-03-27T13:17:49.563Z",
-      "closed_at": "2026-03-27T13:17:49.563Z"
+      "created_at": "2026-04-12T16:49:32.263Z",
+      "updated_at": "2026-04-12T16:49:32.263Z"
     },
-    "tsq-0j1adzg3": {
-      "id": "tsq-0j1adzg3",
+    "tsq-dqp1qeyq": {
+      "id": "tsq-dqp1qeyq",
       "kind": "task",
-      "title": "Create openai.yaml for remaining skills",
-      "description": "Add agents/openai.yaml to every skill under skills/ that has SKILL.md but no openai.yaml yet.",
+      "title": "Refactor browser-tools.ts into smaller modules",
+      "description": "Split oversized tools/browser-tools.ts into smaller modules; keep CLI surface stable while reducing file size below repo guideline.",
+      "notes": [],
+      "status": "open",
+      "priority": 3,
+      "planning_state": "needs_planning",
+      "labels": [],
+      "created_at": "2026-04-12T02:18:41.030Z",
+      "updated_at": "2026-04-12T02:18:41.030Z"
+    },
+    "tsq-reyp754n.17": {
+      "id": "tsq-reyp754n.17",
+      "kind": "task",
+      "title": "Copilot",
+      "notes": [],
+      "status": "canceled",
+      "priority": 2,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.849Z",
+      "updated_at": "2026-04-12T16:49:44.984Z"
+    },
+    "tsq-6jvxhtfw": {
+      "id": "tsq-6jvxhtfw",
+      "kind": "task",
+      "title": "Fold codex planner config into architect config",
       "notes": [],
       "status": "closed",
       "priority": 2,
-      "planning_state": "needs_planning",
+      "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-27T13:20:49.344Z",
-      "updated_at": "2026-03-27T13:24:36.542Z",
-      "closed_at": "2026-03-27T13:24:36.542Z"
+      "created_at": "2026-03-16T19:07:12.281Z",
+      "updated_at": "2026-03-16T19:10:11.271Z",
+      "closed_at": "2026-03-16T19:10:11.271Z"
+    },
+    "tsq-reyp754n.16": {
+      "id": "tsq-reyp754n.16",
+      "kind": "task",
+      "title": "Verify linked agents load correctly in Claude, Copilot, and Codex",
+      "notes": [],
+      "status": "open",
+      "priority": 2,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.839Z",
+      "updated_at": "2026-04-12T16:49:44.844Z"
+    },
+    "tsq-jp8na3qh": {
+      "id": "tsq-jp8na3qh",
+      "kind": "task",
+      "title": "Refine subagent-driven-development skill instructions",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-03-14T18:07:26.321Z",
+      "updated_at": "2026-03-14T18:10:16.713Z",
+      "closed_at": "2026-03-14T18:10:16.713Z"
+    },
+    "tsq-reyp754n.13": {
+      "id": "tsq-reyp754n.13",
+      "kind": "task",
+      "title": "Wire compile step into setup-ai-agents.ts (compile then link)",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.678Z",
+      "updated_at": "2026-04-12T16:49:32.678Z"
+    },
+    "tsq-ds7ks1db": {
+      "id": "tsq-ds7ks1db",
+      "kind": "task",
+      "title": "Fold planner agent into architect agent",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-03-16T18:55:59.954Z",
+      "updated_at": "2026-03-16T18:57:02.048Z",
+      "closed_at": "2026-03-16T18:57:02.048Z"
     },
     "tsq-95n1v121": {
       "id": "tsq-95n1v121",
@@ -42,44 +118,85 @@
       "updated_at": "2026-03-27T13:26:34.938Z",
       "closed_at": "2026-03-27T13:26:34.938Z"
     },
-    "tsq-6jvxhtfw": {
-      "id": "tsq-6jvxhtfw",
+    "tsq-reyp754n.2": {
+      "id": "tsq-reyp754n.2",
       "kind": "task",
-      "title": "Fold codex planner config into architect config",
+      "title": "Write JSON Schema / TypeScript types for AgentSource",
       "notes": [],
-      "status": "closed",
-      "priority": 2,
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
       "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-16T19:07:12.281Z",
-      "updated_at": "2026-03-16T19:10:11.271Z",
-      "closed_at": "2026-03-16T19:10:11.271Z"
+      "created_at": "2026-04-12T16:49:32.116Z",
+      "updated_at": "2026-04-12T16:49:32.116Z"
     },
-    "tsq-jp8na3qh": {
-      "id": "tsq-jp8na3qh",
+    "tsq-reyp754n.5": {
+      "id": "tsq-reyp754n.5",
       "kind": "task",
-      "title": "Refine subagent-driven-development skill instructions",
+      "title": "Remove .codex/agents/ directory (replaced by codex compiler output)",
       "notes": [],
-      "status": "closed",
-      "priority": 2,
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
       "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-14T18:07:26.321Z",
-      "updated_at": "2026-03-14T18:10:16.713Z",
-      "closed_at": "2026-03-14T18:10:16.713Z"
+      "created_at": "2026-04-12T16:49:32.293Z",
+      "updated_at": "2026-04-12T16:49:32.293Z"
     },
-    "tsq-ds7ks1db": {
-      "id": "tsq-ds7ks1db",
+    "tsq-reyp754n.18": {
+      "id": "tsq-reyp754n.18",
       "kind": "task",
-      "title": "Fold planner agent into architect agent",
+      "title": "Codex",
+      "notes": [],
+      "status": "canceled",
+      "priority": 2,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.858Z",
+      "updated_at": "2026-04-12T16:49:45.126Z"
+    },
+    "tsq-0j1adzg3": {
+      "id": "tsq-0j1adzg3",
+      "kind": "task",
+      "title": "Create openai.yaml for remaining skills",
+      "description": "Add agents/openai.yaml to every skill under skills/ that has SKILL.md but no openai.yaml yet.",
       "notes": [],
       "status": "closed",
       "priority": 2,
+      "planning_state": "needs_planning",
+      "labels": [],
+      "created_at": "2026-03-27T13:20:49.344Z",
+      "updated_at": "2026-03-27T13:24:36.542Z",
+      "closed_at": "2026-03-27T13:24:36.542Z"
+    },
+    "tsq-reyp754n.8": {
+      "id": "tsq-reyp754n.8",
+      "kind": "task",
+      "title": "resolve model shorthand",
+      "notes": [],
+      "status": "canceled",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
       "planning_state": "planned",
       "labels": [],
-      "created_at": "2026-03-16T18:55:59.954Z",
-      "updated_at": "2026-03-16T18:57:02.048Z",
-      "closed_at": "2026-03-16T18:57:02.048Z"
+      "created_at": "2026-04-12T16:49:32.469Z",
+      "updated_at": "2026-04-12T16:49:44.438Z"
+    },
+    "tsq-kkfrgznk": {
+      "id": "tsq-kkfrgznk",
+      "kind": "task",
+      "title": "Convert analyze prompts into skills",
+      "description": "Turn prompts/analyze-codebase-improvements.md and prompts/analyze-time-complexity.md into repo-local skills under skills/.",
+      "notes": [],
+      "status": "closed",
+      "priority": 2,
+      "planning_state": "needs_planning",
+      "labels": [],
+      "created_at": "2026-03-27T13:16:12.550Z",
+      "updated_at": "2026-03-27T13:17:49.563Z",
+      "closed_at": "2026-03-27T13:17:49.563Z"
     },
     "tsq-gcw8fqh5": {
       "id": "tsq-gcw8fqh5",
@@ -93,11 +210,262 @@
       "created_at": "2026-03-09T18:05:09.850Z",
       "updated_at": "2026-03-09T18:10:37.855Z",
       "closed_at": "2026-03-09T18:10:37.855Z"
+    },
+    "tsq-reyp754n.14": {
+      "id": "tsq-reyp754n.14",
+      "kind": "task",
+      "title": "Add --skip-compile flag to link-dotfiles for fast re-link",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.690Z",
+      "updated_at": "2026-04-12T16:49:32.690Z"
+    },
+    "tsq-reyp754n.4": {
+      "id": "tsq-reyp754n.4",
+      "kind": "task",
+      "title": "Add models map + codex block + copilot block to each agent in agents-src/",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.276Z",
+      "updated_at": "2026-04-12T16:49:32.276Z"
+    },
+    "tsq-reyp754n.7": {
+      "id": "tsq-reyp754n.7",
+      "kind": "task",
+      "title": "Implement Claude emitter: strip non-Claude fields, resolve model shorthand",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.460Z",
+      "updated_at": "2026-04-12T16:49:44.261Z"
+    },
+    "tsq-reyp754n.15": {
+      "id": "tsq-reyp754n.15",
+      "kind": "task",
+      "title": "Write compile-agents.test.ts: roundtrip tests for all three emitters",
+      "notes": [],
+      "status": "open",
+      "priority": 2,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.828Z",
+      "updated_at": "2026-04-12T16:49:32.828Z"
+    },
+    "tsq-reyp754n.9": {
+      "id": "tsq-reyp754n.9",
+      "kind": "task",
+      "title": "Implement Copilot emitter: map model IDs, add Copilot-specific fields",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.480Z",
+      "updated_at": "2026-04-12T16:49:44.571Z"
+    },
+    "tsq-reyp754n.1": {
+      "id": "tsq-reyp754n.1",
+      "kind": "task",
+      "title": "Define extended frontmatter schema for agents-src/",
+      "notes": [],
+      "spec_path": ".tasque/specs/tsq-reyp754n.1/spec.md",
+      "spec_fingerprint": "52a577548a473417e872e08c1b4ea691e16758c2a03071b418a287ba05ae3b96",
+      "spec_attached_at": "2026-04-12T16:50:22.547Z",
+      "spec_attached_by": "adityasharma",
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.103Z",
+      "updated_at": "2026-04-12T16:50:22.547Z"
+    },
+    "tsq-reyp754n.6": {
+      "id": "tsq-reyp754n.6",
+      "kind": "task",
+      "title": "Implement compile-agents.ts: parse agents-src/*.md frontmatter",
+      "notes": [],
+      "spec_path": ".tasque/specs/tsq-reyp754n.6/spec.md",
+      "spec_fingerprint": "1903b06e209351f819dab4e0c8160338f777948fb58c948223c78372ba414f37",
+      "spec_attached_at": "2026-04-12T16:50:22.916Z",
+      "spec_attached_by": "adityasharma",
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.451Z",
+      "updated_at": "2026-04-12T16:50:22.916Z"
+    },
+    "tsq-reyp754n.10": {
+      "id": "tsq-reyp754n.10",
+      "kind": "task",
+      "title": "add Copilot-specific fields",
+      "notes": [],
+      "status": "canceled",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.489Z",
+      "updated_at": "2026-04-12T16:49:44.709Z"
+    },
+    "tsq-reyp754n": {
+      "id": "tsq-reyp754n",
+      "kind": "epic",
+      "title": "Agent config compilation pipeline",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:14.816Z",
+      "updated_at": "2026-04-12T16:49:14.816Z"
+    },
+    "tsq-reyp754n.12": {
+      "id": "tsq-reyp754n.12",
+      "kind": "task",
+      "title": "Update ai-agent-links.json: point claude/copilot/codex sources to dist/ dirs",
+      "notes": [],
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.668Z",
+      "updated_at": "2026-04-12T16:49:32.668Z"
+    },
+    "tsq-reyp754n.11": {
+      "id": "tsq-reyp754n.11",
+      "kind": "task",
+      "title": "Implement Codex emitter: produce *.toml from frontmatter + body",
+      "notes": [],
+      "spec_path": ".tasque/specs/tsq-reyp754n.11/spec.md",
+      "spec_fingerprint": "67f2a8ad2c57b130301963b9b7b0d474dac22d61acedaba1a52a15ca5672082e",
+      "spec_attached_at": "2026-04-12T16:50:23.686Z",
+      "spec_attached_by": "adityasharma",
+      "status": "open",
+      "priority": 1,
+      "parent_id": "tsq-reyp754n",
+      "planning_state": "planned",
+      "labels": [],
+      "created_at": "2026-04-12T16:49:32.508Z",
+      "updated_at": "2026-04-12T16:50:23.686Z"
     }
   },
-  "deps": {},
+  "deps": {
+    "tsq-reyp754n.11": [
+      {
+        "blocker": "tsq-reyp754n.6",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.3": [
+      {
+        "blocker": "tsq-reyp754n.1",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.14": [
+      {
+        "blocker": "tsq-reyp754n.13",
+        "dep_type": "starts_after"
+      }
+    ],
+    "tsq-reyp754n.4": [
+      {
+        "blocker": "tsq-reyp754n.1",
+        "dep_type": "blocks"
+      },
+      {
+        "blocker": "tsq-reyp754n.3",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.15": [
+      {
+        "blocker": "tsq-reyp754n.11",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.16": [
+      {
+        "blocker": "tsq-reyp754n.13",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.6": [
+      {
+        "blocker": "tsq-reyp754n.2",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.2": [
+      {
+        "blocker": "tsq-reyp754n.1",
+        "dep_type": "starts_after"
+      }
+    ],
+    "tsq-reyp754n.7": [
+      {
+        "blocker": "tsq-reyp754n.6",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.9": [
+      {
+        "blocker": "tsq-reyp754n.6",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.12": [
+      {
+        "blocker": "tsq-reyp754n.4",
+        "dep_type": "blocks"
+      },
+      {
+        "blocker": "tsq-reyp754n.7",
+        "dep_type": "blocks"
+      },
+      {
+        "blocker": "tsq-reyp754n.9",
+        "dep_type": "blocks"
+      },
+      {
+        "blocker": "tsq-reyp754n.11",
+        "dep_type": "blocks"
+      }
+    ],
+    "tsq-reyp754n.5": [
+      {
+        "blocker": "tsq-reyp754n.3",
+        "dep_type": "starts_after"
+      }
+    ],
+    "tsq-reyp754n.13": [
+      {
+        "blocker": "tsq-reyp754n.12",
+        "dep_type": "blocks"
+      }
+    ]
+  },
   "links": {},
-  "child_counters": {},
+  "child_counters": {
+    "tsq-reyp754n": 18
+  },
   "created_order": [
     "tsq-gcw8fqh5",
     "tsq-jp8na3qh",
@@ -105,7 +473,27 @@
     "tsq-6jvxhtfw",
     "tsq-kkfrgznk",
     "tsq-0j1adzg3",
-    "tsq-95n1v121"
+    "tsq-95n1v121",
+    "tsq-dqp1qeyq",
+    "tsq-reyp754n",
+    "tsq-reyp754n.1",
+    "tsq-reyp754n.2",
+    "tsq-reyp754n.3",
+    "tsq-reyp754n.4",
+    "tsq-reyp754n.5",
+    "tsq-reyp754n.6",
+    "tsq-reyp754n.7",
+    "tsq-reyp754n.8",
+    "tsq-reyp754n.9",
+    "tsq-reyp754n.10",
+    "tsq-reyp754n.11",
+    "tsq-reyp754n.12",
+    "tsq-reyp754n.13",
+    "tsq-reyp754n.14",
+    "tsq-reyp754n.15",
+    "tsq-reyp754n.16",
+    "tsq-reyp754n.17",
+    "tsq-reyp754n.18"
   ],
-  "applied_events": 16
+  "applied_events": 63
 }

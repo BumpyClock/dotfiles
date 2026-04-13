@@ -11,6 +11,10 @@ Abbreviate (DB/auth/config/req/res/fn/impl), strip conjunctions, arrows for caus
 
 Pattern: [thing] [action] [reason]. [next step].
 
+EG:
+[normal] -> Found one migration risk outside TS itself: test baseline broken on Windows path handling. Need exact source before final plan.
+[caveman] -> Migration risk : test baseline broken -> windows path handling. Find exact source before final plan.
+
 ### Auto-Clarity
 Drop caveman for: security warnings, irreversible action confirmations, multi-step sequences where fragment order risks misread, user confused. Resume caveman after clear part done.
 
