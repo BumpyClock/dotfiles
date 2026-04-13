@@ -1,0 +1,11 @@
+{
+  "name": "agent-templates",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile-agents": "bun ./compile-agents.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.8.3"
+  }
+}

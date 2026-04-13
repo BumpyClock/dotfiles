@@ -8,5 +8,8 @@
     "dotfiles": "bun ./link-dotfiles.ts --setup dotfiles",
     "ai-agents": "bun ./link-dotfiles.ts --setup ai-agents",
     "setup-environment": "bun ./link-dotfiles.ts --setup both"
+  },
+  "dependencies": {
+    "yaml": "^2.8.3"
   }
 }

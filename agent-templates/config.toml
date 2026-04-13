@@ -1,0 +1,29 @@
+[providers.claude.fast]
+default = "haiku"
+
+[providers.claude.balanced]
+default = "sonnet"
+
+[providers.claude.strong]
+default = "opus"
+
+[providers.copilot.fast]
+default = "claude-sonnet-4-6"
+
+[providers.copilot.balanced]
+default = "claude-opus-4-6"
+economy = "claude-sonnet-4-6"
+
+[providers.copilot.strong]
+default = "gpt-5.4"
+economy = "claude-opus-4.6"
+
+[providers.codex.fast]
+default = "gpt-5.3-codex-spark"
+
+[providers.codex.balanced]
+default = "gpt-5.4"
+economy = "gpt-5.3-codex-spark"
+
+[providers.codex.strong]
+default = "gpt-5.4"

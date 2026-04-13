@@ -5,15 +5,18 @@
     "prompts": "prompts",
     "skills": "skills",
     "docs": "docs",
-    "agents": "agents",
+    "claude_agents": "agent-templates/dist/claude",
+    "copilot_agents": "agent-templates/dist/copilot",
+    "opencode_agents": "agent-templates/dist/opencode",
     "claude_settings": ".claude/settings.json",
     "codex_config": ".codex/config.toml",
-    "codex_agents": ".codex/agents"
+    "codex_agents": "agent-templates/dist/codex"
   },
   "targets": [
     {
-      "source": "agents",
-      "path": "~/.claude/agents"
+      "source": "claude_agents",
+      "path": "~/.claude/agents",
+      "mode": "mirror"
     },
     {
       "source": "claude_settings",
@@ -65,7 +68,13 @@
     },
     {
       "source": "codex_agents",
-      "path": "~/.codex/agents"
+      "path": "~/.codex/agents",
+      "mode": "mirror"
+    },
+    {
+      "source": "opencode_agents",
+      "path": "~/.config/opencode/agents",
+      "mode": "mirror"
     },
     {
       "source": "skills",
@@ -96,8 +105,9 @@
       "path": "~/.copilot/skills"
     },
     {
-      "source": "agents",
-      "path": "~/.copilot/agents"
+      "source": "copilot_agents",
+      "path": "~/.copilot/agents",
+      "mode": "mirror"
     },
     {
       "source": "prompts",

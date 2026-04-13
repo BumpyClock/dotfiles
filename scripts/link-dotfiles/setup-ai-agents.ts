@@ -1,10 +1,12 @@
-import { lstat, mkdir, readFile, readlink, rename, rm, symlink } from "node:fs/promises";
+import { cp, lstat, mkdir, readdir, readFile, readlink, rename, rm, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { compileAgents } from "../../agent-templates/scripts/agent-compiler";
 
 type LinkConfig = {
   sources: Record<string, string>;
   targets: Array<{
+    mode?: "link" | "mirror";
     optional?: boolean;
     source: string;
     path: string;
@@ -138,6 +140,10 @@ export async function pathExists(targetPath: string): Promise<boolean> {
   }
 }
 
+function targetMode(target: LinkConfig["targets"][number]): "link" | "mirror" {
+  return target.mode ?? "link";
+}
+
 export function isElevated(): boolean {
   if (process.platform !== "win32") return true;
   const result = Bun.spawnSync(["net", "session"], { stdout: "ignore", stderr: "ignore" });
@@ -180,8 +186,7 @@ export async function requestElevation(): Promise<never> {
 }
 
 function backupSuffix(): string {
-  const now = new Date();
-  const date = now.toISOString().replace(/[-:]/g, "").replace(/\..+$/, "");
+  const date = new Date().toISOString().replace(/[-:.TZ]/g, "");
   return `.backup.${date}`;
 }
 
@@ -259,8 +264,100 @@ export async function ensureLinked(sourcePath: string, targetPath: string): Prom
   }
 }
 
+async function pathsMatch(sourcePath: string, targetPath: string): Promise<boolean> {
+  try {
+    const [sourceStat, targetStat] = await Promise.all([lstat(sourcePath), lstat(targetPath)]);
+    if (sourceStat.isSymbolicLink() || targetStat.isSymbolicLink()) {
+      return false;
+    }
+
+    if (sourceStat.isDirectory() !== targetStat.isDirectory()) {
+      return false;
+    }
+
+    if (sourceStat.isFile() !== targetStat.isFile()) {
+      return false;
+    }
+
+    if (sourceStat.isDirectory()) {
+      const [sourceEntries, targetEntries] = await Promise.all([readdir(sourcePath), readdir(targetPath)]);
+      const normalizedSourceEntries = [...sourceEntries].sort();
+      const normalizedTargetEntries = [...targetEntries].sort();
+      if (normalizedSourceEntries.length !== normalizedTargetEntries.length) {
+        return false;
+      }
+
+      for (let index = 0; index < normalizedSourceEntries.length; index += 1) {
+        if (normalizedSourceEntries[index] !== normalizedTargetEntries[index]) {
+          return false;
+        }
+      }
+
+      for (const entry of normalizedSourceEntries) {
+        if (!(await pathsMatch(path.join(sourcePath, entry), path.join(targetPath, entry)))) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    if (sourceStat.isFile()) {
+      const [sourceContents, targetContents] = await Promise.all([readFile(sourcePath), readFile(targetPath)]);
+      return sourceContents.equals(targetContents);
+    }
+
+    return false;
+  } catch (error) {
+    const nodeError = error as NodeJS.ErrnoException;
+    if (nodeError.code === "ENOENT") {
+      return false;
+    }
+    throw error;
+  }
+}
+
+export async function ensureMirrored(sourcePath: string, targetPath: string): Promise<void> {
+  const sourceStat = await lstat(sourcePath);
+  const existingLinkTarget = await getSymlinkTarget(targetPath);
+  if (!existingLinkTarget && (await pathsMatch(sourcePath, targetPath))) {
+    console.log(`[SKIP] Already mirrored: ${targetPath}`);
+    return;
+  }
+
+  await mkdir(path.dirname(targetPath), { recursive: true });
+
+  const stagingPath = `${targetPath}.staging.${process.pid}.${Date.now()}`;
+  await rm(stagingPath, { force: true, recursive: true });
+
+  try {
+    if (sourceStat.isDirectory()) {
+      await cp(sourcePath, stagingPath, { recursive: true });
+    } else {
+      await cp(sourcePath, stagingPath);
+    }
+
+    if (await pathExists(targetPath)) {
+      if (existingLinkTarget) {
+        await rm(targetPath, { force: true, recursive: true });
+        console.log(`[INFO] Removed stale symlink: ${targetPath}`);
+      } else {
+        const backupPath = `${targetPath}${backupSuffix()}`;
+        await rename(targetPath, backupPath);
+        console.log(`[INFO] Backed up existing path: ${targetPath} -> ${backupPath}`);
+      }
+    }
+
+    await rename(stagingPath, targetPath);
+    console.log(`[COPY] ${sourcePath} -> ${targetPath}`);
+  } catch (error) {
+    await rm(stagingPath, { force: true, recursive: true });
+    throw error;
+  }
+}
+
 export async function showLinks(config: LinkConfig, dotfilesDir: string): Promise<void> {
-  console.log("AI agent link status:");
+  console.log("AI agent deploy status:");
 
   for (const target of config.targets) {
     const sourceRelative = config.sources[target.source];
@@ -271,9 +368,33 @@ export async function showLinks(config: LinkConfig, dotfilesDir: string): Promis
 
     const sourcePath = path.resolve(dotfilesDir, sourceRelative);
     const targetPath = path.resolve(expandHome(target.path));
+    const mode = targetMode(target);
 
     if (!(await pathExists(sourcePath))) {
       console.log(`[MISSING_SOURCE] ${sourcePath}`);
+      continue;
+    }
+
+    if (mode === "mirror") {
+      const existingLinkTarget = await getSymlinkTarget(targetPath);
+      if (existingLinkTarget) {
+        console.log(`[MISMATCH] ${targetPath} -> ${existingLinkTarget} (expected mirrored copy from ${sourcePath})`);
+        continue;
+      }
+
+      if (!(await pathExists(targetPath))) {
+        console.log(`[MISSING] ${targetPath}`);
+        continue;
+      }
+
+      const isMatch = await pathsMatch(sourcePath, targetPath);
+      if (isMatch) {
+        console.log(`[OK] ${targetPath} (mirrored from ${sourcePath})`);
+      } else if (target.optional) {
+        console.log(`[OPTIONAL_MISMATCH] ${targetPath} (expected mirrored copy from ${sourcePath})`);
+      } else {
+        console.log(`[MISMATCH] ${targetPath} (expected mirrored copy from ${sourcePath})`);
+      }
       continue;
     }
 
@@ -305,6 +426,12 @@ export async function showLinks(config: LinkConfig, dotfilesDir: string): Promis
 }
 
 export async function linkAiAgents(opts: { configPath: string; dotfilesDir: string }): Promise<void> {
+  await compileAgents({
+    agentsDir: path.join(opts.dotfilesDir, "agent-templates"),
+    configPath: path.join(opts.dotfilesDir, "agent-templates", "config.toml"),
+    outputDir: path.join(opts.dotfilesDir, "agent-templates", "dist"),
+  });
+
   const config = await loadConfig(opts.configPath);
 
   for (const target of config.targets) {
@@ -321,7 +448,8 @@ export async function linkAiAgents(opts: { configPath: string; dotfilesDir: stri
     }
 
     const targetPath = path.resolve(expandHome(target.path));
-    if (target.optional && (await pathExists(targetPath))) {
+    const mode = targetMode(target);
+    if (target.optional && mode === "link" && (await pathExists(targetPath))) {
       const existingLinkTarget = await getSymlinkTarget(targetPath);
       if (!existingLinkTarget && !(await isHardLinkedFile(sourcePath, targetPath))) {
         console.log(`[INFO] Optional target exists and is not a link; skipping: ${targetPath}`);
@@ -330,7 +458,11 @@ export async function linkAiAgents(opts: { configPath: string; dotfilesDir: stri
     }
 
     try {
-      await ensureLinked(sourcePath, targetPath);
+      if (mode === "mirror") {
+        await ensureMirrored(sourcePath, targetPath);
+      } else {
+        await ensureLinked(sourcePath, targetPath);
+      }
     } catch (error) {
       if (target.optional) {
         const message = error instanceof Error ? error.message : String(error);
