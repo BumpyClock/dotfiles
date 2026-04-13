@@ -31,6 +31,15 @@ Use TypeScript-first frontend development with modern React and Next.js patterns
 - Use Playwright or Cypress for E2E tests.
 - Add accessibility checks with axe-core.
 
+## Additional TypeScript rules
+- Prefer interfaces or type aliases at boundaries before concrete classes when class-based design is warranted.
+- Prefer composition over implementation inheritance; classes are optional, modules and functions come first.
+- Favor immutable data and explicit state transitions; avoid getter/setter-heavy anemic models.
+- Prefer explicit unions, `undefined`, or result-like types over ambient `null`; do not pass `null` unless the contract requires it.
+- Document public interfaces, exported types, hooks, and components with TSDoc when behavior is not obvious.
+- Avoid runtime introspection into object internals when explicit discriminants, schemas, or type guards are clearer.
+- Avoid utility classes and hidden static state; prefer pure module functions or factories.
+
 ## Frontend security
 - Avoid unsafe DOM APIs (prefer textContent over innerHTML).
 - Sanitize untrusted HTML with vetted libraries.

@@ -67,6 +67,16 @@ Build native Apple platform apps with Swift 6, SwiftUI, and UIKit while meeting 
 - Support VoiceOver, Dynamic Type, and reduced motion.
 - Test with Accessibility Inspector.
 
+## Additional Swift rules
+- Prefer value types first. When classes are required, prefer `final` by default and avoid implementation inheritance unless framework or design constraints require it.
+- Prefer protocols and composition over class hierarchies.
+- Favor immutability and narrow mutation APIs; avoid getter/setter-heavy anemic models.
+- Keep one designated initialization path; convenience initializers should delegate to it.
+- Model absence explicitly with `Optional`, `throws`, or result types; avoid force unwraps and nullable-style APIs.
+- Document public protocols, types, and non-obvious APIs with doc comments in English.
+- Avoid reflection on object internals unless Apple frameworks require it.
+- Avoid utility types with shared mutable static state; pure helpers and factory conveniences are fine.
+
 ## Mobile security addendum (cross-platform)
 - Validate all inputs, including deep links and WebView content.
 - Secure local storage and caches with encryption.

@@ -12,7 +12,6 @@ sandbox_mode = "danger-full-access"
 # model_auto_compact_token_limit = 700000
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
-service_tier = "fast"
 
 [features]
 collaboration_modes = true
@@ -98,6 +97,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects.'C:\Users\adityasharma\Projects\agent-replay']
+trust_level = "trusted"
+
+[projects.'C:\Users\adityasharma\Projects\session-replay']
 trust_level = "trusted"
 
 

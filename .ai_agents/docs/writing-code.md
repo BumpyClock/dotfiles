@@ -1,5 +1,3 @@
 # Writing code
 
-See `../skills/programming/CODING-RULES.md` for the canonical coding rules.
-
-or the programming skill
+See `../../skills/programming/SKILL.md` for the canonical programming skill and coding rules.

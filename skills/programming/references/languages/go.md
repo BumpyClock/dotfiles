@@ -64,6 +64,13 @@ Use modern Go patterns, idioms, and tooling for production-grade services and li
 - Avoid panic in application logic; handle errors explicitly.
 - Use interfaces for composition, not inheritance.
 
+## Additional Go rules
+- Document exported interfaces, types, and functions when their behavior is not obvious.
+- Prefer small interfaces and composition over inheritance-shaped abstractions.
+- Avoid reflection on internals unless a framework, encoding boundary, or interoperability layer requires it.
+- Prefer explicit zero-value, ok-value, or error contracts over ambiguous `nil`-based APIs; avoid passing `nil` dependencies unless the API is designed for it.
+- Prefer pure package-level helpers over stateful utility types.
+
 ## Response approach
 1. Analyze requirements and constraints.
 2. Propose Go-idiomatic design and concurrency model.
