@@ -164,7 +164,9 @@
       "Bash(gh:auth *)"
     ],
     "deny": [],
-    "ask": ["Bash(git push:*)"]
+    "ask": [
+      "Bash(git push:*)"
+    ]
   },
   "model": "opus[1m]",
   "enableAllProjectMcpServers": true,

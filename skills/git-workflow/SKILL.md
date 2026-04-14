@@ -5,12 +5,8 @@ context: fork
 model : claude-sonnet-4-6
 ---
 
-spin up a dedicated sub-agent to perform git-workflow tasks requested by the user. 
-
-# Git Workflow Skill
-
-Modular git workflow management using Conventional Commits and GitHub Flow.
-
+- Commit helper on PATH: `committer`. Prefer it; committer is available systemwide.
+- Use `gh` for GitHub interactions; prefer API calls for data fetching (e.g. PR comments, CI checks) to avoid overhead of full git operations.
 ## Available Workflows
 
 | Task | File | When to Use |
@@ -19,7 +15,6 @@ Modular git workflow management using Conventional Commits and GitHub Flow.
 | Review Comments | `review-comments.md` | Fetching, triaging, and addressing PR feedback |
 | Commits | `commit-workflow.md` | Writing conventional commits, staging, amending |
 | Branches | `branch-management.md` | Creating, naming, and cleaning up branches |
-| Worktrees | `worktree-management.md` | Creating isolated worktrees safely for parallel work |
 | Merging | `merge-workflow.md` | Merge strategies, conflict resolution, cleanup |
 | Changelog | `add-changelog.md` | Setting up or updating a project changelog |
 | Address PR Comments | `gh-address-comments.md` | Handle PR review/issue comments with gh CLI |
@@ -35,7 +30,6 @@ skills/git-workflow/
 ├── review-comments.md    # Handling PR feedback
 ├── commit-workflow.md    # Conventional commits
 ├── branch-management.md  # GitHub Flow branching
-├── worktree-management.md # Isolated worktree setup
 ├── merge-workflow.md     # Merge strategies
 ├── add-changelog.md      # Changelog setup and updates
 ├── gh-address-comments.md # Address PR review/issue comments

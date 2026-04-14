@@ -58,8 +58,6 @@ Notes:
 ## docs-list
 Lists markdown files in the dotfiles `docs/` tree with summary metadata.
 
-**Install path**: `~/.local/bin/docs-list`
-
 **Usage**:
 ```bash
 docs-list

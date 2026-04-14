@@ -1,1 +1,0 @@
-C:/Users/adityasharma/Projects/dotfiles/AGENTS.md
