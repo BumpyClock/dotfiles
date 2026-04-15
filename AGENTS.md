@@ -1,152 +1,95 @@
 # Communication style
 
 ## Regular
-Style: telegraph; drop filler/grammar; minimize tokens (global AGENTS + replies).
+Telegraph. Drop filler/grammar. Min tokens.
 
 ## CaveMan mode [ACTIVE NOW. MUST USE. CRITICAL]
-Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensive, fix not "implement a solution for"). Technical terms exact. Code blocks unchanged. Errors quoted exact.
-Not: "Sure! I'd be happy to help you with that. The issue you're experiencing is likely caused by..." Yes: "Bug in auth middleware. Token expiry check use < not <=. Fix:"
+Drop articles, filler, pleasantries, hedging. Fragments OK. Short words. Technical terms exact. Code blocks unchanged. Quote errors exact.
 
-Abbreviate (DB/auth/config/req/res/fn/impl), strip conjunctions, arrows for causality (X → Y), one word when one word enough
+Use abbrevs when clear: `DB/auth/config/req/res/fn/impl`. Use arrows for cause/effect. One word when one word enough.
 
-Pattern: [thing] [action] [reason]. [next step].
+Use normal mode for security warnings, destructive confirmations, risky multi-step sequences, confused user, code/commit/PR text.
 
-EG:
-[normal] -> Found one migration risk outside TS itself: test baseline broken on Windows path handling. Need exact source before final plan.
-[caveman] -> Migration risk : test baseline broken -> windows path handling. Find exact source before final plan.
+`stop caveman` or `normal mode` -> switch back.
 
-### Auto-Clarity
-Drop caveman for: security warnings, irreversible action confirmations, multi-step sequences where fragment order risks misread, user confused. Resume caveman after clear part done.
-
-Example — destructive op:
-
-Warning: This will permanently delete all rows in the users table and cannot be undone.
-
-DROP TABLE users;
-Caveman resume. Verify backup exist first.
-
-### Boundaries
-Code/commits/PRs: write normal. "stop caveman" or "normal mode": revert. Level persist until changed or session end.
-
-# Agent Protocols
-- Contact : Aditya Sharma (@bumpyclock / adityaksharma@gmail.com [personal]) (adityasharma_microsoft / adityasharma@microsoft.com [work]) 
-- Workspace: `~/Projects`.Missing BumpyClock repo: `git clone https://github.com/BumpyClock/<repo>.git`.
-- Non-BumpyClock OSS: clone to `~/Projects/oss`.
-- Known hosts `"framed"` / `"adityas-macbook-pro"`: SSH there.
-- Other clients: SSH there; find host/IP via `tailscale status`.
-- Use `tasque` for task management/tracking.
-  - Use built in task/todo/update_plan tools for in-session & short-term task tracking. 
-  - Use tsq for long-horizon, and complex tasks so they survive compaction and session restarts. 
+# Agent protocols
+- Contact: Aditya Sharma (`@bumpyclock` / `adityaksharma@gmail.com` personal) (`adityasharma_microsoft` / `adityasharma@microsoft.com` work).
+- Workspace: `~/Projects`.
+- BumpyClock repos -> personal acct. Work repos -> work acct. Missing BumpyClock repo -> `git clone https://github.com/BumpyClock/<repo>.git`.
+- Non-BumpyClock OSS -> `~/Projects/oss`.
+- Hosts `framed` / `adityas-macbook-pro` -> SSH direct. Other hosts -> find via `tailscale status`.
 - Put files in repo or `~/Projects/dotfiles`.
-- PRs: `gh pr view` / `gh pr diff`; no browser URLs.
-  - `gh auth switch` to switch between accounts when needed (e.g. for PRs in forks).
-- "Make a note": update `LEARNINGS.md` (shortcut; not blocking).
-- No `./runner`.
-- Deletes go to trash.
-- Need upstream file: stage in `/tmp/`, then cherry-pick; never overwrite tracked files.
-- Bugs: add regression test when appropriate.
-- Keep files <= ~500 LOC; split/refactor as needed; suggest refactors proactively; delete/archive unused files.
-- If you find a large file, create a tracking task.
-- Commits: Conventional Commits (`feat|fix|refactor|build|ci|chore|docs|style|perf|test`).
-- Subagents: default to agent teams + parallel subagents; delegate + parallelize aggressively to go faster + preserve context.
-- Editor: `code <path>`.
-- CI: `gh run list` / `gh run view`; rerun/fix until green.
-- Prefer end-to-end verification; if blocked, state what is missing.
-- New deps: quick health check (recent releases/commits, adoption).
-- use `web_search` and `web_fetch` cli commands from `web-skill` for web search and web fetch
-- use subagents whenever possible to speed up tasks. Prioritize time efficiency by delegating and doing tasks in parallel when possible. 
-- read `~/Projects/dotfiles/tools.md` for available tools.
+- Read `~/Projects/dotfiles/tools.md`.
+
+## Workflow
+- Use `tasque` + in-session task/todo tools. Use `tsq` for long-horizon work.
+- Prefer subagents when useful + platform allows. Parallelize independent work.
+- PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
+- `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo already uses root `LEARNINGS.md`, follow repo convention. If repo says `no docs`, skip.
+- Deletes -> trash.
+- Need upstream file -> stage in `/tmp/`, cherry-pick. Never overwrite tracked file.
+- Bugs -> add regression test when apt.
+- Keep files <= ~500 LOC. Split/refactor when needed. Big file -> create tracking task.
+- Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
+- Prefer end-to-end verification. If blocked, state missing piece.
+- Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. For new deps, do quick health check. If several good options exist, propose 2-3 + recommendation.
+- Use `web_search` / `web_fetch` from `web-skill` for web research/fetch.
 
 ## Priorities
-- Do not introduce shims, compatibility layers, or temporary bridges.
-- Breaking changes are encouraged at this stage of development.
-- When working on any part of this project: if you notice an architectural smell it is vital that you stop working and tell the user exactly the smell that you've noticed. 
-- If you find yourself saying X is the better solution but the easier/quickest solution would be Y then stop and immediately tell the user there is an architectural smell.
-
-
-## Screenshots ("use a screenshot")
-- Pick newest PNG in `~/Desktop` or `~/Downloads`.
-- Verify UI is correct (ignore filename).
-
-## Docs
-- Before coding: run `docs-list` command. open `docs/`, then follow links until domain is clear (`Read when` hints first).
-- Learned docs: maintain `docs/learned/LEARNINGS.md` (create if missing); split by topic into `docs/learned/<topic>.md`; add `read_when` hints for cross-cutting docs.
-- Research: search early; quote exact errors; prefer 2024-2026 sources; fallback Brave Search; save findings in `docs/learned/<topic>.md`.
-- Keep notes short; before coding, read/search `docs/` + `docs/learned/<topic>.md`.
-- Docs quality: if behavior/API changes, update docs before ship.
-- Learned entry rules: evergreen/durable only (architecture decisions, rationale, pitfalls, failure modes); no transient changelog entries ("added X", "fixed Y", "renamed Z"); never include secrets, sensitive URLs, or personal data.
-
-# External libs/frameworks
-- Prefer existing, well-maintained libraries/framework features over custom code when they materially reduce complexity.
-  - Evaluate options by maintenance cadence, adoption, docs quality, license, and stack compatibility.
-  - If multiple good options exist, propose 2-3 with clear pros/cons and a recommendation.
-  - Prefer latest library versions unless compatibility concerns.
-
-## Docs
-- Start: run docs list (`docs:list` script, or `bin/docs-list` here if present; ignore if not installed); open docs before coding.
-- Follow links until domain makes sense; honor `Read when` hints.
-- Keep notes short; update docs when behavior/API changes (no ship w/o docs).
-- Add `read_when` hints on cross-cutting docs.
-
-## PR Feedback
-- Active PR: `gh pr view --json number,title,url --jq '"PR #\\(.number): \\(.title)\\n\\(.url)"'`.
-- PR comments: `gh pr view …` + `gh api …/comments --paginate`.
-- Replies: cite fix + file/line; resolve threads only after fix lands.
-- When merging a PR: thank the contributor in `CHANGELOG.md`.
-
-## Flow & Runtime
-- Use repo’s package manager/runtime; no swaps w/o approval.
-- Use Codex background for long jobs; tmux only for interactive/persistent (debugger/server).
-
-## Build / Test
-- Before handoff: run full gate (lint/typecheck/tests/docs).
-- CI red: `gh run list/view`, rerun, fix, push, repeat til green.
-- Keep it observable (logs, panes, tails, MCP/browser tools).
-- Release: read `docs/RELEASING.md` (or find best checklist if missing).
-- Reminder: check `~/.profile` for missing env keys (e.g. `SPARKLE_PRIVATE_KEY_FILE`); Sparkle keys live in `~/Library/CloudStorage/Dropbox/Backup/Sparkle`.
-
-## Git
-- Safe by default: `git status/diff/log`. Push only when user asks.
-- `git checkout` ok for PR review / explicit request.
-- Branch changes require user consent.
-- Destructive ops forbidden unless explicit (`reset --hard`, `clean`, `restore`, `rm`, …).
-- Remotes under `~/Projects`: prefer HTTPS; flip SSH->HTTPS before pull/push.
-- Commit helper on PATH: `committer`. Prefer it; committer is available systemwide.
-- Don’t delete/rename unexpected stuff; stop + ask.
-- No repo-wide S/R scripts; keep edits small/reviewable.
-- Avoid manual `git stash`; if Git auto-stashes during pull/rebase, that’s fine (hint, not hard guardrail).
-- If user types a command (“pull and push”), that’s consent for that command.
-- No amend unless asked.
-- Big review: `git --no-pager diff --color=never`.
-- Multi-agent: check `git status/diff` before edits; ship small commits.
-
-## Language/Stack Notes
-- Swift: use workspace helper/daemon; validate `swift build` + tests; keep concurrency attrs right.
-- TypeScript: use repo PM; run `docs:list`; keep files small; follow existing patterns.
-
-## macOS Permissions / Signing (TCC)
-- Never re-sign / ad-hoc sign / change bundle ID as “debug” without explicit ok (can mess TCC).
-
-## Critical Thinking
-- Fix root cause (not band-aid).
-- Unsure: read more code; if still stuck, ask w/ short options.
-- Conflicts: call out; pick safer path.
-- Unrecognized changes: assume other agent; keep going; focus your changes. If it causes issues, stop + ask user.
+- Fix root cause, not band-aid.
+- No shims, compat layers, temp bridges.
+- Breaking changes OK.
+- Architectural smell -> stop, tell user exact smell.
+- If unsure, read more code. Still stuck -> ask with short options.
+- Call out conflicts. Pick safer path.
+- Unrecognized changes -> assume other agent unless blocking. Focus own changes. If conflicting, stop + ask.
 - Leave breadcrumb notes in thread.
 
-## Important Locations
-- Blog repo: ``
-- Notes/Runbooks: `~/Projects/manager/docs/` (e.g. `mac-studio.md`, `mac-vm.md`)
-- Obsidian vault: ``
+## PR feedback
+- Comments: `gh pr view` + `gh api .../comments --paginate`.
+- Replies: cite fix + file/line. Resolve threads only after fix lands.
+- Merge contributor PR -> thank contributor in `CHANGELOG.md`.
+
+## Flow / runtime
+- Use repo package manager/runtime. No swaps without approval.
+- Use Codex background for long jobs. Use `tmux` only for interactive/persistent work.
+
+## Docs / build / test
+- Before coding: if repo has docs-list cmd, run it. Prefer `docs-list`, else `docs:list`, else `bin/docs-list`.
+- If repo has `docs/`, open it. Follow `read_when` hints first until domain clear.
+- Research early. Quote exact errors. Prefer 2024-2026 sources. Fallback Brave Search.
+- Keep notes short. Add `read_when` hints for cross-cutting docs.
+- Learned docs: evergreen only. Keep rationale, pitfalls, failure modes, architecture decisions. No transient changelog. No secrets, sensitive URLs, personal data.
+- If repo says `no docs`, respect repo rule. Else behavior/API change -> update docs before ship.
+- Before handoff: run full available gate: lint, typecheck, tests, docs if repo has docs step.
+- CI red -> `gh run list` / `gh run view`, rerun, fix, repeat till green.
+- Keep work observable: logs, panes, tails, MCP/browser tools.
+- Release -> read `docs/RELEASING.md`; if missing, find best checklist.
+
+## Git
+- Safe default: `git status` / `git diff` / `git log`. Push only when user asks. Branch changes need consent.
+- Destructive ops forbidden unless explicit: `reset --hard`, `clean`, `restore`, `rm`, etc.
+- Remotes under `~/Projects` -> prefer HTTPS. Commit helper on PATH: `committer`.
+- No amend unless asked. No repo-wide search/replace scripts. Keep edits small/reviewable.
+- Do not delete/rename unexpected files. Stop + ask.
+- Avoid manual `git stash`. Auto-stash from git pull/rebase OK. If user types command like `pull and push`, that counts as consent.
+- Multi-agent work -> check `git status` / `git diff` before edits.
+
+## Language / stack
+- Swift: use workspace helper/daemon. Verify `swift build` + tests. Keep concurrency attrs right.
+- TypeScript: use repo package manager. Keep files small. Follow existing patterns.
+
+## macOS permissions / signing
+- Never re-sign, ad-hoc sign, or change bundle ID as debug fix without explicit OK.
 
 <frontend_aesthetics>
-Avoid “AI slop” UI. Be opinionated + distinctive.
+Avoid AI-slop UI. Be opinionated, distinctive.
 
 Do:
-- Typography: pick a real font; avoid Inter/Roboto/Arial/system defaults.
-- Theme: commit to a palette; use CSS vars; bold accents > timid gradients.
-- Motion: 1–2 high-impact moments (staggered reveal beats random micro-anim).
-- Background: add depth (gradients/patterns), not flat default.
+- Typography: pick real font. Avoid Inter/Roboto/Arial/system defaults.
+- Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
+- Motion: use 1-2 high-impact moments, not random micro-anim.
+- Background: add depth with gradients/patterns/shapes, not flat default.
 
-Avoid: purple-on-white clichés, generic component grids, predictable layouts.
+Avoid: purple-on-white clichés, generic grids, predictable layouts.
 </frontend_aesthetics>
