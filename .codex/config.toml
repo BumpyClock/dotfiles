@@ -144,3 +144,7 @@ enabled = true
 
 [plugins."google-drive@openai-curated"]
 enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
+enabled = false
