@@ -147,4 +147,4 @@ enabled = false
 
 [[skills.config]]
 path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
-enabled = false
+enabled = true
