@@ -159,4 +159,4 @@ bun test .\scripts\link-dotfiles
 
 Codex output is generated only for templates that define a `codex:` block. If that block is missing, Claude, Copilot, and OpenCode files are still generated, but no Codex TOML file is emitted.
 
-OpenCode markdown agents are emitted to `~/.config/opencode/agents/`. Their model mappings mirror Copilot mappings, but use OpenCode's required `provider/model-id` format.
+OpenCode markdown agents are generated in `agent-templates/dist/opencode/` and deployed to `~/.config/opencode/agents/`. Their model mappings mirror Copilot mappings, but use OpenCode's required `provider/model-id` format.
