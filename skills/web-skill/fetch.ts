@@ -88,8 +88,10 @@ try {
 } catch (e: any) {
 	if (e.code === "ConnectionRefused" || e.message?.includes("fetch failed") || e.name === "TimeoutError") {
 		console.error(`Error: Cannot connect to Firecrawl at ${FIRECRAWL_URL}`);
-		console.error("Is the service running? Start it with:");
-		console.error("  cd ~/Projects/dotfiles/skills/web-skill && docker compose up -d");
+		console.error("First check whether the service is already running:");
+		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose ps");
+		console.error("If not, start it with:");
+		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose up -d");
 	} else {
 		console.error(`Error: ${e.message}`);
 	}

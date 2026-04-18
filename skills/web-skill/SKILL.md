@@ -51,12 +51,19 @@ Only needed if SearXNG/Firecrawl aren't already running on ports 8899/8898:
 
 ```bash
 cd ~/Projects/dotfiles/skills/web-skill
-docker compose up -d
+podman compose ps
 ```
 
-Verify: `docker compose ps` — 7 containers should be running.
+If services are missing or stopped, start them:
 
-Teardown: `docker compose down` (add `-v` to remove data volumes).
+```bash
+cd ~/Projects/dotfiles/skills/web-skill
+podman compose up -d
+```
+
+Verify: `podman compose ps` — 7 containers should be running.
+
+Teardown: `podman compose down` (add `-v` to remove data volumes).
 
 ## When to Use
 
