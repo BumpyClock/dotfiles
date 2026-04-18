@@ -28,6 +28,20 @@ docker compose down
 - **JSON API:** `http://localhost:8888/search?q=QUERY&format=json`
 - Settings: `searxng/settings.yml` (JSON format enabled, limiter off)
 
+## WebSkill SearXNG
+- **Compose:** `/home/bumpyclock/Projects/dotfiles/skills/web-skill/docker-compose.yml`
+- **LAN URL:** `http://192.168.1.110:8899`
+- **JSON API:** `http://192.168.1.110:8899/search?q=QUERY&format=json`
+- **Container name:** `webskill-searxng`
+- **Port binding:** `127.0.0.1:8899:8080` and `192.168.1.110:8899:8080`
+- **Base URL env:** `SEARXNG_BASE_URL=http://192.168.1.110:8899/`
+
+### Notes
+- Open WebUI uses the internal Podman DNS name `searxng:8080` on network `webskill_webskill`.
+- vLLM already listens on `0.0.0.0:8000`, so LAN access already works at `http://192.168.1.110:8000/v1/models`.
+- If LAN IP changes, update `SEARXNG_BASE_URL` accordingly.
+- Explicit host-IP binds avoid wildcard IPv6 exposure from rootless Podman.
+
 ### Integration with Firecrawl
 - `SEARXNG_ENDPOINT=http://host.docker.internal:8888` in Firecrawl `.env`
 

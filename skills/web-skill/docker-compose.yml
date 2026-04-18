@@ -8,10 +8,11 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8899:8080"
+      - "192.168.1.110:8899:8080"
     volumes:
       - ./searxng:/etc/searxng:rw
     environment:
-      - SEARXNG_BASE_URL=http://localhost:8899/
+      - SEARXNG_BASE_URL=http://192.168.1.110:8899/
     depends_on:
       - valkey
     networks:
