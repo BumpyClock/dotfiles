@@ -88,4 +88,23 @@ describe("ai-agent-links config", () => {
     expect(await readFile(path.join(targetPath, "reviewer.md"), "utf8")).toBe("reviewer-v1");
     expect(await pathExists(path.join(targetPath, "nested"))).toBe(false);
   });
+
+  test("force replace refreshes mirrored directories even when contents already match", async () => {
+    const root = await createTemporaryDirectory();
+    const sourcePath = path.join(root, "source");
+    const targetPath = path.join(root, "target");
+
+    await mkdir(sourcePath, { recursive: true });
+    await writeFile(path.join(sourcePath, "architect.md"), "architect-v1");
+
+    await ensureMirrored(sourcePath, targetPath);
+    const beforeStat = await lstat(targetPath);
+
+    await ensureMirrored(sourcePath, targetPath, { replaceExisting: true });
+    const afterStat = await lstat(targetPath);
+
+    expect(await readFile(path.join(targetPath, "architect.md"), "utf8")).toBe("architect-v1");
+    expect(afterStat.ino).not.toBe(beforeStat.ino);
+    expect((await readdir(root)).filter((entry) => entry.startsWith("target.backup."))).toEqual([]);
+  });
 });

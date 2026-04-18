@@ -3,6 +3,10 @@ import os from "node:os";
 import path from "node:path";
 import { compileAgents } from "../../agent-templates/scripts/agent-compiler";
 
+type EnsureMirrorOptions = {
+  replaceExisting?: boolean;
+};
+
 type LinkConfig = {
   sources: Record<string, string>;
   targets: Array<{
@@ -18,6 +22,10 @@ export type CliArgs = {
   dotfilesDir: string;
   show: boolean;
 };
+
+function info(message: string): void {
+  console.log(`[INFO] ${message}`);
+}
 
 export function parseArgs(argv: string[]): CliArgs {
   let configPath = "scripts/ai-agent-links.json";
@@ -317,10 +325,16 @@ async function pathsMatch(sourcePath: string, targetPath: string): Promise<boole
   }
 }
 
-export async function ensureMirrored(sourcePath: string, targetPath: string): Promise<void> {
+export async function ensureMirrored(
+  sourcePath: string,
+  targetPath: string,
+  options: EnsureMirrorOptions = {},
+): Promise<void> {
   const sourceStat = await lstat(sourcePath);
   const existingLinkTarget = await getSymlinkTarget(targetPath);
-  if (!existingLinkTarget && (await pathsMatch(sourcePath, targetPath))) {
+  const replaceExisting = options.replaceExisting ?? false;
+
+  if (!replaceExisting && !existingLinkTarget && (await pathsMatch(sourcePath, targetPath))) {
     console.log(`[SKIP] Already mirrored: ${targetPath}`);
     return;
   }
@@ -341,6 +355,9 @@ export async function ensureMirrored(sourcePath: string, targetPath: string): Pr
       if (existingLinkTarget) {
         await rm(targetPath, { force: true, recursive: true });
         console.log(`[INFO] Removed stale symlink: ${targetPath}`);
+      } else if (replaceExisting) {
+        await rm(targetPath, { force: true, recursive: true });
+        console.log(`[INFO] Removed existing path: ${targetPath}`);
       } else {
         const backupPath = `${targetPath}${backupSuffix()}`;
         await rename(targetPath, backupPath);
@@ -426,11 +443,13 @@ export async function showLinks(config: LinkConfig, dotfilesDir: string): Promis
 }
 
 export async function linkAiAgents(opts: { configPath: string; dotfilesDir: string }): Promise<void> {
-  await compileAgents({
+  info("Compiling agent templates...");
+  const templates = await compileAgents({
     agentsDir: path.join(opts.dotfilesDir, "agent-templates"),
     configPath: path.join(opts.dotfilesDir, "agent-templates", "config.toml"),
     outputDir: path.join(opts.dotfilesDir, "agent-templates", "dist"),
   });
+  info(`Compiled ${templates.length} agent templates`);
 
   const config = await loadConfig(opts.configPath);
 
@@ -449,6 +468,9 @@ export async function linkAiAgents(opts: { configPath: string; dotfilesDir: stri
 
     const targetPath = path.resolve(expandHome(target.path));
     const mode = targetMode(target);
+    // Generated provider agent directories are always redeployed as fresh copies so
+    // home-directory agent configs do not stay behind as an earlier mirrored tree.
+    const replaceExisting = mode === "mirror" && sourceRelative.startsWith("agent-templates/dist/");
     if (target.optional && mode === "link" && (await pathExists(targetPath))) {
       const existingLinkTarget = await getSymlinkTarget(targetPath);
       if (!existingLinkTarget && !(await isHardLinkedFile(sourcePath, targetPath))) {
@@ -459,7 +481,7 @@ export async function linkAiAgents(opts: { configPath: string; dotfilesDir: stri
 
     try {
       if (mode === "mirror") {
-        await ensureMirrored(sourcePath, targetPath);
+        await ensureMirrored(sourcePath, targetPath, { replaceExisting });
       } else {
         await ensureLinked(sourcePath, targetPath);
       }

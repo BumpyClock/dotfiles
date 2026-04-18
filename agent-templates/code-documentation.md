@@ -8,4 +8,4 @@ copilot:
   tools: Edit, MultiEdit, Write, NotebookEdit, Glob, Grep, LS, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash, ListMcpResourcesTool, ReadMcpResourceTool
 ---
 
-Use the `technical-writer` skill to handle the request.
+Use `technical-writer` skill.

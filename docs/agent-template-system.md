@@ -97,6 +97,7 @@ bun .\agent-templates\scripts\compile-agents.ts --dotfiles-dir C:\Users\adityash
 ## Deploy flow
 
 `setup-ai-agents.ts` compiles templates before deploying generated agents.
+On each run, it force-refreshes generated home-directory `agents/` directories from `agent-templates/dist/*`, even when the mirrored contents already match, so old deployed copies are not preserved as "already up to date."
 
 `scripts/ai-agent-links.json` now uses mirror-copy deploy for generated provider agent directories:
 
@@ -150,7 +151,7 @@ bun test .\scripts\link-dotfiles
 2. If provider model mappings change, update `agent-templates/config.toml`
 3. If agent-specific provider behavior changes, update the relevant `claude:`, `copilot:`, `opencode:`, or `codex:` block inside the template
 4. Run compiler/tests
-5. Re-run `setup-ai-agents.ts` if you want home-directory agent deploys refreshed
+5. Re-run `setup-ai-agents.ts` if you want home-directory agent deploys refreshed; generated `agents/` directories are replaced from the newly compiled output on each run
 
 ## Special cases
 
