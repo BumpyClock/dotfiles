@@ -12,17 +12,20 @@ Local web search (SearXNG) and page scraping (Firecrawl) — no external API key
 ## Search
 
 ```bash
-./search.ts "query"                          # 5 results
-./search.ts "query" -n 10                    # more results
-./search.ts "query" --engines google,bing    # specific engines
+web_search "query"                          # 5 results
+web_search "query" -n 10                    # more results
+web_search "query" --engines google,bing    # specific engines
 ```
 
 ## Fetch Page Content
 
 ```bash
-./fetch.ts https://example.com                           # markdown output
-./fetch.ts https://example.com --formats markdown,links  # include links
+web_fetch https://example.com                           # markdown output
+web_fetch https://example.com --formats markdown,links  # include links
 ```
+
+Install path via `link-dotfiles`: `~/.local/bin/web_search`, `~/.local/bin/web_fetch`
+Source files: `tools/search.ts`, `tools/fetch.ts`
 
 ## Output Format
 

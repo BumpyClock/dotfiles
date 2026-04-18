@@ -105,3 +105,81 @@ MCP server launcher for browser automation, web scraping.
 **Usage**: `npx mcporter --help`
 
 Common servers: `iterm`, `firecrawl`, `XcodeBuildMCP`
+
+---
+
+## web_search
+
+Local SearXNG search CLI.
+
+**Install path**: `~/.local/bin/web_search`
+**Source**: `tools/search.ts`
+
+**Usage**:
+```bash
+web_search "javascript async await"
+web_search "rust ownership" -n 10
+web_search "climate data" --engines google,wikipedia
+```
+
+**Options**:
+- `-n <num>` number of results to print, default `5`
+- `--engines <csv>` restrict engines, e.g. `google,bing,wikipedia`
+
+**Output**:
+```text
+--- Result 1 ---
+Title: ...
+URL: ...
+Snippet: ...
+Engines: ...
+```
+
+**Requires**: local SearXNG on `http://localhost:8899`
+
+If service not up:
+```bash
+cd ~/Projects/dotfiles/skills/web-skill
+podman compose ps
+podman compose up -d
+```
+
+---
+
+## web_fetch
+
+Local Firecrawl page fetch CLI.
+
+**Install path**: `~/.local/bin/web_fetch`
+**Source**: `tools/fetch.ts`
+
+**Usage**:
+```bash
+web_fetch https://example.com
+web_fetch https://docs.python.org/3/tutorial/ --formats markdown,links
+```
+
+**Options**:
+- `--formats <csv>` output parts to include: `markdown`, `html`, `links`
+
+**Output**:
+```text
+# Page Title
+
+Source: https://example.com
+Status: 200
+
+Markdown content...
+```
+
+If `html` requested, tool appends `--- HTML ---`.
+If `links` requested, tool appends `--- Links ---`.
+
+**Requires**: local Firecrawl on `http://localhost:8898`
+
+If service not up:
+```bash
+cd ~/Projects/dotfiles/skills/web-skill
+podman compose ps
+podman compose up -d
+```

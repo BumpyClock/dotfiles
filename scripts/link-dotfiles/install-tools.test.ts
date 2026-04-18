@@ -45,6 +45,28 @@ describe("listInstallableTools", () => {
       { mode: "link", name: "shazam-song", targetName: "shazam-song" },
     ]);
   });
+
+  test("maps tools/search.ts and tools/fetch.ts to web command names", async () => {
+    const dotfilesDir = await createDotfilesFixture();
+    const toolsDir = path.join(dotfilesDir, "tools");
+    await mkdir(toolsDir, { recursive: true });
+
+    await writeFile(path.join(toolsDir, "fetch.ts"), "#!/usr/bin/env bun\nconsole.log('fetch')\n");
+    await writeFile(path.join(toolsDir, "search.ts"), "#!/usr/bin/env bun\nconsole.log('search')\n");
+
+    const tools = await listInstallableTools(dotfilesDir);
+
+    expect(
+      tools.map((tool) => ({
+        mode: tool.mode,
+        name: tool.name,
+        targetName: path.basename(tool.targetPath),
+      })),
+    ).toEqual([
+      { mode: "compile", name: "web_fetch", targetName: installedToolFileName("web_fetch") },
+      { mode: "compile", name: "web_search", targetName: installedToolFileName("web_search") },
+    ]);
+  });
 });
 
 describe("installedToolFileName", () => {

@@ -1,25 +1,28 @@
 #!/usr/bin/env bun
 
+import path from "node:path";
+
 const FIRECRAWL_URL = "http://localhost:8898";
+const commandName = path.basename(process.argv[1] || "web_fetch");
 
 const args = process.argv.slice(2);
 
 let formats = ["markdown"];
 const fmtIdx = args.indexOf("--formats");
 if (fmtIdx !== -1 && args[fmtIdx + 1]) {
-	formats = args[fmtIdx + 1].split(",").map((f) => f.trim());
+	formats = args[fmtIdx + 1].split(",").map((value) => value.trim());
 	args.splice(fmtIdx, 2);
 }
 
 const url = args[0];
 
 if (!url) {
-	console.log("Usage: fetch.ts <url> [--formats <csv>]");
+	console.log(`Usage: ${commandName} <url> [--formats <csv>]`);
 	console.log("\nOptions:");
 	console.log("  --formats <csv>   Output formats: markdown, html, links (default: markdown)");
 	console.log("\nExamples:");
-	console.log("  ./fetch.ts https://example.com");
-	console.log("  ./fetch.ts https://docs.python.org/3/tutorial/ --formats markdown,links");
+	console.log(`  ${commandName} https://example.com`);
+	console.log(`  ${commandName} https://docs.python.org/3/tutorial/ --formats markdown,links`);
 	process.exit(1);
 }
 
@@ -85,15 +88,19 @@ try {
 			console.log(`  ${link}`);
 		}
 	}
-} catch (e: any) {
-	if (e.code === "ConnectionRefused" || e.message?.includes("fetch failed") || e.name === "TimeoutError") {
+} catch (error: any) {
+	if (
+		error.code === "ConnectionRefused" ||
+		error.message?.includes("fetch failed") ||
+		error.name === "TimeoutError"
+	) {
 		console.error(`Error: Cannot connect to Firecrawl at ${FIRECRAWL_URL}`);
 		console.error("First check whether the service is already running:");
 		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose ps");
 		console.error("If not, start it with:");
 		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose up -d");
 	} else {
-		console.error(`Error: ${e.message}`);
+		console.error(`Error: ${error.message}`);
 	}
 	process.exit(1);
 }

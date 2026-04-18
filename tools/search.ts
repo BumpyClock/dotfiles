@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 
+import path from "node:path";
+
 const SEARXNG_URL = "http://localhost:8899";
+const commandName = path.basename(process.argv[1] || "web_search");
 
 const args = process.argv.slice(2);
 
@@ -21,14 +24,14 @@ if (engIdx !== -1 && args[engIdx + 1]) {
 const query = args.join(" ");
 
 if (!query) {
-	console.log("Usage: search.ts <query> [-n <num>] [--engines <csv>]");
+	console.log(`Usage: ${commandName} <query> [-n <num>] [--engines <csv>]`);
 	console.log("\nOptions:");
 	console.log("  -n <num>          Number of results (default: 5)");
 	console.log("  --engines <csv>   Comma-separated engines (e.g. google,bing,duckduckgo)");
 	console.log("\nExamples:");
-	console.log('  ./search.ts "javascript async await"');
-	console.log('  ./search.ts "rust ownership" -n 10');
-	console.log('  ./search.ts "climate data" --engines google,wikipedia');
+	console.log(`  ${commandName} "javascript async await"`);
+	console.log(`  ${commandName} "rust ownership" -n 10`);
+	console.log(`  ${commandName} "climate data" --engines google,wikipedia`);
 	process.exit(1);
 }
 
@@ -75,24 +78,28 @@ try {
 		process.exit(0);
 	}
 
-	for (let i = 0; i < results.length; i++) {
-		const r = results[i];
-		console.log(`--- Result ${i + 1} ---`);
-		console.log(`Title: ${r.title}`);
-		console.log(`URL: ${r.url}`);
-		console.log(`Snippet: ${r.content}`);
-		console.log(`Engines: ${(r.engines || [r.engine]).join(", ")}`);
+	for (let index = 0; index < results.length; index += 1) {
+		const result = results[index];
+		console.log(`--- Result ${index + 1} ---`);
+		console.log(`Title: ${result.title}`);
+		console.log(`URL: ${result.url}`);
+		console.log(`Snippet: ${result.content}`);
+		console.log(`Engines: ${(result.engines || [result.engine]).join(", ")}`);
 		console.log("");
 	}
-} catch (e: any) {
-	if (e.code === "ConnectionRefused" || e.message?.includes("fetch failed") || e.name === "TimeoutError") {
+} catch (error: any) {
+	if (
+		error.code === "ConnectionRefused" ||
+		error.message?.includes("fetch failed") ||
+		error.name === "TimeoutError"
+	) {
 		console.error(`Error: Cannot connect to SearXNG at ${SEARXNG_URL}`);
 		console.error("First check whether the service is already running:");
 		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose ps");
 		console.error("If not, start it with:");
 		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose up -d");
 	} else {
-		console.error(`Error: ${e.message}`);
+		console.error(`Error: ${error.message}`);
 	}
 	process.exit(1);
 }

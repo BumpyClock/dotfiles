@@ -453,37 +453,6 @@ async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
   }
 }
 
-async function linkWebSkillScripts(dotfilesDir: string): Promise<void> {
-  info("Linking web-skill scripts...");
-  const binDir = homePath(".local/bin");
-  await mkdir(binDir, { recursive: true });
-
-  const webSkillDir = path.join(dotfilesDir, "skills/web-skill");
-  const scripts = [
-    { source: "search.ts", name: "web_search" },
-    { source: "fetch.ts", name: "web_fetch" },
-  ];
-
-  for (const script of scripts) {
-    const sourcePath = path.join(webSkillDir, script.source);
-    if (!(await pathExists(sourcePath))) {
-      warn(`Web skill script not found: ${sourcePath}`);
-      continue;
-    }
-
-    if (process.platform === "win32") {
-      const cmdContent = `@echo off\r\nbun "${sourcePath}" %*\r\n`;
-      const cmdTarget = path.join(binDir, `${script.name}.cmd`);
-      await ensureWritableTarget(cmdTarget);
-      await writeFile(cmdTarget, cmdContent, "utf8");
-      action(`Generated: ${cmdTarget}`);
-    } else {
-      const target = path.join(binDir, script.name);
-      await ensureLinked(sourcePath, target);
-    }
-  }
-}
-
 async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
   info("Installing PowerShell bin scripts...");
   const binDir = homePath(".local/bin");
@@ -628,7 +597,6 @@ async function main(): Promise<void> {
     await installUnixBinScripts(dotfilesDir);
   }
 
-  await linkWebSkillScripts(dotfilesDir);
   await installTools(dotfilesDir);
 
   info("All linking tasks completed");

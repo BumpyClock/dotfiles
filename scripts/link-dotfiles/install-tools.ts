@@ -17,6 +17,10 @@ const IGNORED_TOOL_FILES = new Set(["tools.md", "trash.ts"]);
 const SUPPORTED_TOOL_PLATFORMS: Partial<Record<string, NodeJS.Platform[]>> = {
   "browser-tools": ["darwin"],
 };
+const TOOL_NAME_OVERRIDES = new Map<string, string>([
+  ["fetch.ts", "web_fetch"],
+  ["search.ts", "web_search"],
+]);
 
 function backupSuffix(): string {
   const now = new Date();
@@ -56,7 +60,12 @@ export function isToolSupportedOnPlatform(
   return supportedPlatforms.includes(platformName);
 }
 
-async function toolNameFor(filePath: string): Promise<string> {
+function toolNameFor(filePath: string): string {
+  const override = TOOL_NAME_OVERRIDES.get(path.basename(filePath));
+  if (override) {
+    return override;
+  }
+
   const mode = installModeFor(filePath);
   return mode === "compile" ? path.basename(filePath, path.extname(filePath)) : path.basename(filePath);
 }
@@ -84,7 +93,7 @@ export async function listInstallableTools(dotfilesDir: string): Promise<Install
       continue;
     }
 
-    const name = await toolNameFor(sourcePath);
+    const name = toolNameFor(sourcePath);
     const mode = installModeFor(sourcePath);
     if (!isToolSupportedOnPlatform(name)) {
       continue;
