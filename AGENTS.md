@@ -23,7 +23,7 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 
 ## Workflow
 - Use `tasque` + in-session task/todo tools. Use `tsq` for long-horizon work.
-- Prefer subagents when useful + platform allows. Parallelize independent work.
+- Prefer subagents. Delegate and Parallelize independent work as much as possible. Token efficiency is secondary speed is paramount.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo already uses root `LEARNINGS.md`, follow repo convention. If repo says `no docs`, skip.
 - Deletes -> trash.
