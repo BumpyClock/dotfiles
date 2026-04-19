@@ -26,6 +26,15 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 5. Choose testing strategy before coding: default to TDD for behavior changes. If skipping TDD for non-behavioral work, say why and verify appropriately.
 6. Load relevant role and language references as needed.
 7. Run the technical-writer agent on edited files to make sure code is properly documented.
+8. Run reviewer agent to review the code to catch any mistakes. Reviewer will give feedback, address and review again up to 5 times to ensure code is good.
+9. Run lint, formatting, and tests to ensure everything is green before assuming success.
+
+## Testing
+- Run automated tests.
+- Run interactive tests where needed and possible in tmux.
+- When running test with tmux, always show user the tmux attach command so they can attach to the same tmux session to interact/watch/co-develop or debug.
+  - when done close unneeded panes in tmux.
+
 
 ## Rules
 

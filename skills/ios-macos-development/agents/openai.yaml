@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS/macOS Development"
+  short_description: "Help with native iOS and macOS app work"
+  default_prompt: "Use $ios-macos-development to help with native iOS and macOS app development, profiling, simulator automation, and App Store Connect workflows."
