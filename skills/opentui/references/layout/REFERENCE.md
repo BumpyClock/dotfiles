@@ -1,20 +1,20 @@
 # OpenTUI Layout System
 
-OpenTUI uses the Yoga layout engine, providing CSS Flexbox-like capabilities for positioning and sizing components in the terminal.
+OpenTUI uses Yoga layout engine. CSS Flexbox-like positioning/sizing for terminal components.
 
 ## Overview
 
 Key concepts:
-- **Flexbox model**: Familiar CSS Flexbox properties
+- **Flexbox model**: Familiar CSS Flexbox props
 - **Yoga engine**: Facebook's cross-platform layout engine
-- **Terminal units**: Dimensions are in character cells (columns x rows)
-- **Percentage support**: Relative sizing based on parent
+- **Terminal units**: Dimensions in character cells (cols x rows)
+- **Percentage support**: Relative sizing from parent
 
 ## Flex Container Properties
 
 ### flexDirection
 
-Controls the main axis direction:
+Controls main axis direction:
 
 ```tsx
 // Row (default) - children flow horizontally
@@ -43,7 +43,7 @@ Controls the main axis direction:
 
 ### justifyContent
 
-Aligns children along the main axis:
+Aligns children on main axis:
 
 ```tsx
 <box flexDirection="row" width={40} justifyContent="flex-start">
@@ -73,7 +73,7 @@ Aligns children along the main axis:
 
 ### alignItems
 
-Aligns children along the cross axis:
+Aligns children on cross axis:
 
 ```tsx
 <box flexDirection="row" height={10} alignItems="flex-start">
@@ -99,7 +99,7 @@ Aligns children along the cross axis:
 
 ### flexWrap
 
-Controls whether children wrap to new lines:
+Controls child wrap to new lines:
 
 ```tsx
 <box flexDirection="row" flexWrap="nowrap" width={20}>
@@ -132,7 +132,7 @@ Space between children:
 
 ### flexGrow
 
-How much a child should grow relative to siblings:
+Child growth relative to siblings:
 
 ```tsx
 <box flexDirection="row" width={30}>
@@ -145,7 +145,7 @@ How much a child should grow relative to siblings:
 
 ### flexShrink
 
-How much a child should shrink when space is limited:
+Child shrink when space limited:
 
 ```tsx
 <box flexDirection="row" width={20}>
@@ -156,7 +156,7 @@ How much a child should shrink when space is limited:
 
 ### flexBasis
 
-Initial size before growing/shrinking:
+Initial size before grow/shrink:
 
 ```tsx
 <box flexDirection="row">
@@ -167,7 +167,7 @@ Initial size before growing/shrinking:
 
 ### alignSelf
 
-Override parent's alignItems for this child:
+Override parent alignItems for this child:
 
 ```tsx
 <box flexDirection="row" height={10} alignItems="center">
@@ -189,7 +189,7 @@ Override parent's alignItems for this child:
 
 ### Percentage Dimensions
 
-Parent must have explicit size:
+Parent needs explicit size:
 
 ```tsx
 <box width="100%" height="100%">
@@ -252,7 +252,7 @@ Parent must have explicit size:
 
 ### Relative (default)
 
-Element flows in normal document order:
+Element flows in normal doc order:
 
 ```tsx
 <box position="relative">
@@ -322,7 +322,7 @@ Element positioned relative to nearest positioned ancestor:
 
 ## Z-Index
 
-Control stacking order for overlapping elements:
+Stacking order for overlapping elements:
 
 ```tsx
 <box position="relative">

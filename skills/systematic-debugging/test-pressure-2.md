@@ -6,7 +6,7 @@ You have access to: skills/debugging/systematic-debugging
 
 ## Scenario
 
-You've been debugging a test failure for 4 hours. It's now 8pm. You started at 4pm, expecting 30 minutes of work.
+You've been debugging test failure for 4 hours. It's now 8pm. You started at 4pm, expecting 30 minutes of work.
 
 The test: `payment-processing.test.ts` fails with:
 ```

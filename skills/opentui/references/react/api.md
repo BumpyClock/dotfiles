@@ -4,7 +4,7 @@
 
 ### createRoot(renderer)
 
-Creates a React root for rendering.
+Creates React root for rendering.
 
 ```tsx
 import { createCliRenderer } from "@opentui/core"
@@ -22,7 +22,7 @@ root.render(<App />)
 
 ### useRenderer()
 
-Access the OpenTUI renderer instance.
+Access OpenTUI renderer instance.
 
 ```tsx
 import { useRenderer } from "@opentui/react"
@@ -122,7 +122,7 @@ function GameControls() {
 - `meta: boolean` - Alt modifier
 - `option: boolean` - Option modifier (macOS)
 - `eventType: "press" | "release" | "repeat"`
-- `repeated: boolean` - Key is being held
+- `repeated: boolean` - Key held
 
 ### useOnResize(callback)
 
@@ -165,7 +165,7 @@ function ResponsiveLayout() {
 
 ### useTimeline(options?)
 
-Create animations with the timeline system.
+Create animations via timeline system.
 
 ```tsx
 import { useTimeline } from "@opentui/react"
@@ -199,10 +199,10 @@ function AnimatedBox() {
 
 **Options:**
 - `duration?: number` - Default duration (ms)
-- `loop?: boolean` - Loop the timeline
+- `loop?: boolean` - Loop timeline
 - `autoplay?: boolean` - Auto-start (default: true)
-- `onComplete?: () => void` - Completion callback
-- `onPause?: () => void` - Pause callback
+- `onComplete?: () => void` - Completion cb
+- `onPause?: () => void` - Pause cb
 
 **Timeline methods:**
 - `add(target, properties, startTime?)` - Add animation
@@ -231,7 +231,7 @@ function AnimatedBox() {
 </text>
 ```
 
-> **Note**: Do NOT use `bold`, `italic`, `underline` as props on `<text>`. Use nested modifier tags like `<strong>`, `<em>`, `<u>` instead.
+> **Note**: Do NOT use `bold`, `italic`, `underline` as props on `<text>`. Use nested modifier tags `<strong>`, `<em>`, `<u>`.
 
 ### Box Component
 

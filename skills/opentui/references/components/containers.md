@@ -1,10 +1,10 @@
 # Container Components
 
-Components for grouping and organizing content in OpenTUI.
+Components for grouping/organizing content in OpenTUI.
 
 ## Box Component
 
-The primary container component with borders, backgrounds, and layout capabilities.
+Primary container. Borders, backgrounds, layout.
 
 ### Basic Usage
 
@@ -82,7 +82,7 @@ box.add(child)
 
 ### Layout
 
-Boxes are flex containers by default:
+Boxes = flex containers by default:
 
 ```tsx
 <box
@@ -147,7 +147,7 @@ Boxes are flex containers by default:
 
 ### Focusable Boxes
 
-By default, Box elements are not focusable. Set the `focusable` prop to enable focus behavior:
+Box not focusable by default. Set `focusable` prop → enable focus:
 
 ```tsx
 // Make a box focusable - it can receive focus via mouse click
@@ -168,11 +168,11 @@ const [focused, setFocused] = useState(false)
 </box>
 ```
 
-When a focusable Box is clicked, focus bubbles up from the click target to the nearest focusable parent. Use `event.preventDefault()` in `onMouseDown` to prevent auto-focus.
+Click focusable Box → focus bubbles from click target to nearest focusable parent. `event.preventDefault()` in `onMouseDown` → prevent auto-focus.
 
 ## ScrollBox Component
 
-A scrollable container for content that exceeds the viewport.
+Scrollable container. Content exceeds viewport.
 
 ### Basic Usage
 
@@ -403,7 +403,7 @@ function List({ items, renderItem }) {
 
 ### Borders Add to Size
 
-Borders take up space inside the box:
+Borders take space inside box:
 
 ```tsx
 <box width={10} border>

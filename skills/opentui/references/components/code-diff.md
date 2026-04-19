@@ -1,6 +1,6 @@
 # Code & Diff Components
 
-Components for displaying code with syntax highlighting and diffs in OpenTUI.
+Components for displaying code w/ syntax highlighting + diffs in OpenTUI.
 
 ## Code Component
 
@@ -33,7 +33,7 @@ const codeBlock = new CodeRenderable(renderer, {
 
 ### Supported Languages
 
-OpenTUI uses Tree-sitter for syntax highlighting. Common languages:
+OpenTUI uses Tree-sitter for highlighting. Common langs:
 - `typescript`, `javascript`
 - `python`
 - `rust`
@@ -56,7 +56,7 @@ OpenTUI uses Tree-sitter for syntax highlighting. Common languages:
 
 ### onHighlight Callback
 
-Intercept and modify syntax highlights before rendering:
+Intercept + modify highlights pre-render:
 
 ```tsx
 // Core
@@ -84,15 +84,15 @@ const codeBlock = new CodeRenderable(renderer, {
 ```
 
 **Callback signature:**
-- `highlights: SimpleHighlight[]` - Array of `[start, end, scope, metadata]`
-- `context: { content, filetype, syntaxStyle }` - Highlighting context
-- Return modified highlights array or `undefined` to use original
+- `highlights: SimpleHighlight[]` - array of `[start, end, scope, metadata]`
+- `context: { content, filetype, syntaxStyle }` - highlight context
+- Return modified highlights or `undefined` → use original
 
-Supports async callbacks for fetching additional highlight data.
+Supports async callbacks for fetching extra highlight data.
 
 ## Line Number Component
 
-Code display with line numbers, highlighting, and diagnostics.
+Code display w/ line numbers, highlighting, diagnostics.
 
 ### Basic Usage
 
@@ -159,7 +159,7 @@ Highlight specific lines:
 
 ### Diagnostics
 
-Show errors, warnings, and info on specific lines:
+Show errors/warnings/info per line:
 
 ```tsx
 // React
@@ -183,11 +183,11 @@ Show errors, warnings, and info on specific lines:
 />
 ```
 
-**Diagnostic severity levels:**
-- `error` - Red indicator
-- `warning` - Yellow indicator
-- `info` - Blue indicator
-- `hint` - Gray indicator
+**Severity levels:**
+- `error` - red
+- `warning` - yellow
+- `info` - blue
+- `hint` - gray
 
 ### Diff Highlighting
 
@@ -204,7 +204,7 @@ Show added/removed lines:
 
 ## Diff Component
 
-Unified or split diff viewer with syntax highlighting.
+Unified/split diff viewer w/ syntax highlighting.
 
 ### Basic Usage
 
@@ -277,7 +277,7 @@ const diffView = new DiffRenderable(renderer, {
 
 ## Markdown Component
 
-Render markdown content with syntax highlighting for code blocks.
+Render markdown w/ syntax-highlighted code blocks.
 
 ### Basic Usage
 
@@ -338,7 +338,7 @@ const md = new MarkdownRenderable(renderer, {
 
 ### Streaming Mode
 
-For real-time content like LLM output:
+For realtime content (e.g. LLM output):
 
 ```tsx
 const [content, setContent] = useState("")
@@ -473,10 +473,10 @@ function ErrorView({ errors, code }) {
 
 ### Large Files
 
-For very large files, consider:
+For very large files:
 - Pagination or virtual scrolling
-- Loading only visible portion
-- Using `scrollbox` wrapper
+- Load only visible portion
+- Wrap w/ `scrollbox`
 
 ```tsx
 <scrollbox height={30}>
@@ -489,8 +489,8 @@ For very large files, consider:
 
 ### Tree-sitter Loading
 
-Syntax highlighting requires Tree-sitter grammars. If highlighting isn't working:
+Highlighting requires Tree-sitter grammars. If broken:
 
-1. Check the language is supported
-2. Verify grammars are installed
-3. Check `OTUI_TREE_SITTER_WORKER_PATH` if using custom path
+1. Check lang supported
+2. Verify grammars installed
+3. Check `OTUI_TREE_SITTER_WORKER_PATH` if custom path

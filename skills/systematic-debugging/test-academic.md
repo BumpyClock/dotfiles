@@ -1,8 +1,8 @@
 # Academic Test: Systematic Debugging Skill
 
-You have access to the systematic debugging skill at skills/debugging/systematic-debugging
+You have access to systematic debugging skill at skills/debugging/systematic-debugging
 
-Read the skill and answer these questions based SOLELY on what the skill says:
+Read skill. Answer these questions based SOLELY on what skill says:
 
 1. What are the four phases of systematic debugging?
 2. What must you do BEFORE attempting any fix?
@@ -11,4 +11,4 @@ Read the skill and answer these questions based SOLELY on what the skill says:
 5. What should you do if you don't fully understand the issue?
 6. Is it ever acceptable to skip the process for simple bugs?
 
-Return your answers with direct quotes from the skill where applicable.
+Return answers with direct quotes from skill where applicable.

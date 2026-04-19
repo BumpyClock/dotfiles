@@ -1,10 +1,10 @@
 # Layout Patterns
 
-Common layout recipes for terminal user interfaces.
+Common layout recipes for TUIs.
 
 ## Full-Screen App
 
-Fill the entire terminal:
+Fill terminal:
 
 ```tsx
 function App() {
@@ -18,7 +18,7 @@ function App() {
 
 ## Header/Content/Footer
 
-Classic app layout:
+Classic app:
 
 ```tsx
 function AppLayout() {
@@ -65,7 +65,7 @@ function SidebarLayout() {
 
 ## Resizable Sidebar
 
-Responsive based on terminal width:
+Responsive → terminal width:
 
 ```tsx
 function ResponsiveSidebar() {
@@ -159,7 +159,7 @@ function Modal({ children, visible }) {
 
 ## Grid Layout
 
-Using flexWrap:
+Via flexWrap:
 
 ```tsx
 function Grid({ items, columns = 3 }) {
@@ -215,7 +215,7 @@ function VerticalSplit({ ratio = 0.5 }) {
 
 ## Form Layout
 
-Label + Input pairs:
+Label + input pairs:
 
 ```tsx
 function FormField({ label, children }) {
@@ -275,7 +275,7 @@ function TabBar({ tabs, activeIndex, onSelect }) {
 
 ## Sticky Footer
 
-Footer always at bottom:
+Footer pinned bottom:
 
 ```tsx
 function StickyFooterLayout() {
@@ -298,7 +298,7 @@ function StickyFooterLayout() {
 
 ## Absolute Positioning Overlay
 
-Tooltip or popup:
+Tooltip/popup:
 
 ```tsx
 function Tooltip({ x, y, children }) {
@@ -320,7 +320,7 @@ function Tooltip({ x, y, children }) {
 
 ## Responsive Breakpoints
 
-Different layouts based on terminal size:
+Layouts vary → terminal size:
 
 ```tsx
 function ResponsiveApp() {
@@ -388,7 +388,7 @@ function EqualColumns() {
 
 ## Spacing Utilities
 
-Consistent spacing patterns:
+Consistent spacing:
 
 ```tsx
 // Spacer component
@@ -413,7 +413,7 @@ function Divider() {
 
 ### Axis Shorthand Props
 
-Use `paddingX`/`paddingY` and `marginX`/`marginY` for horizontal/vertical spacing:
+`paddingX`/`paddingY` + `marginX`/`marginY` → horizontal/vertical spacing:
 
 ```tsx
 // Horizontal padding (left + right)
@@ -437,7 +437,7 @@ Use `paddingX`/`paddingY` and `marginX`/`marginY` for horizontal/vertical spacin
 </box>
 ```
 
-These are shorthand for:
+Shorthand:
 - `paddingX={n}` = `paddingLeft={n}` + `paddingRight={n}`
 - `paddingY={n}` = `paddingTop={n}` + `paddingBottom={n}`
 - `marginX={n}` = `marginLeft={n}` + `marginRight={n}`

@@ -4,7 +4,7 @@
 
 ### render(node, rendererOrConfig?)
 
-Renders a Solid component tree into a CLI renderer.
+Render Solid component tree into CLI renderer.
 
 ```tsx
 import { render } from "@opentui/solid"
@@ -27,7 +27,7 @@ render(() => <App />, renderer)
 
 ### testRender(node, options?)
 
-Create a test renderer for snapshots and tests.
+Create test renderer for snapshots and tests.
 
 ```tsx
 import { testRender } from "@opentui/solid"
@@ -60,7 +60,7 @@ extend({
 
 ### getComponentCatalogue()
 
-Returns the current component catalogue.
+Return current component catalogue.
 
 ```tsx
 import { getComponentCatalogue } from "@opentui/solid"
@@ -73,7 +73,7 @@ console.log(Object.keys(catalogue))
 
 ### useRenderer()
 
-Access the OpenTUI renderer instance.
+Access OpenTUI renderer instance.
 
 ```tsx
 import { useRenderer } from "@opentui/solid"
@@ -245,7 +245,7 @@ function SelectableText() {
 
 ### useTimeline(options?)
 
-Create animations with the timeline system.
+Create animations with timeline system.
 
 ```tsx
 import { useTimeline } from "@opentui/solid"
@@ -462,7 +462,7 @@ function AnimatedBox() {
 
 ## Control Flow
 
-Solid's control flow components work with OpenTUI:
+Solid control flow components work with OpenTUI:
 
 ### For
 

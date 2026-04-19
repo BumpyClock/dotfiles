@@ -1,31 +1,31 @@
 # OpenTUI Core (@opentui/core)
 
-The foundational library for building terminal user interfaces. Provides an imperative API with all primitives, giving you maximum control over rendering, state, and behavior.
+Foundational lib for terminal UIs. Imperative API w/ all primitives. Max control over rendering/state/behavior.
 
 ## Overview
 
-OpenTUI Core runs on Bun with native Zig bindings for performance-critical operations:
-- **Renderer**: Manages terminal output, input events, and the rendering loop
-- **Renderables**: Hierarchical UI building blocks with Yoga layout
-- **Constructs**: Declarative wrappers for composing Renderables
-- **FrameBuffer**: Low-level 2D rendering surface for custom graphics
+OpenTUI Core runs on Bun w/ native Zig bindings for perf-critical ops:
+- **Renderer**: Manages terminal output, input events, render loop
+- **Renderables**: Hierarchical UI blocks w/ Yoga layout
+- **Constructs**: Declarative wrappers composing Renderables
+- **FrameBuffer**: Low-level 2D surface for custom graphics
 
 ## When to Use Core
 
-Use the core imperative API when:
-- Building a library or framework on top of OpenTUI
-- Need maximum control over rendering and state
-- Want smallest possible bundle size (no React/Solid runtime)
-- Building performance-critical applications
-- Integrating with existing imperative codebases
+Use imperative API when:
+- Building lib/framework on OpenTUI
+- Need max render/state control
+- Want smallest bundle (no React/Solid runtime)
+- Perf-critical apps
+- Integrating w/ imperative codebases
 
 ## When NOT to Use Core
 
 | Scenario | Use Instead |
 |----------|-------------|
-| Familiar with React patterns | `@opentui/react` |
+| Familiar w/ React patterns | `@opentui/react` |
 | Want fine-grained reactivity | `@opentui/solid` |
-| Building typical applications | React or Solid reconciler |
+| Typical apps | React or Solid reconciler |
 | Rapid prototyping | React or Solid reconciler |
 
 ## Quick Start
@@ -38,9 +38,9 @@ cd my-app
 bun run src/index.ts
 ```
 
-The CLI creates the `my-app` directory for you - it must **not already exist**.
+CLI creates `my-app` dir - must **not already exist**.
 
-**Agent guidance**: Always use autonomous mode with `-t <template>` flag. Never use interactive mode (`bunx create-tui@latest my-app` without `-t`) as it requires user prompts that agents cannot respond to.
+**Agent guidance**: Always autonomous mode w/ `-t <template>`. Never interactive (`bunx create-tui@latest my-app` w/o `-t`) → requires user prompts agents can't answer.
 
 ### Manual Setup
 
@@ -81,26 +81,26 @@ renderer.root.add(container)
 
 ### Renderer
 
-The `CliRenderer` orchestrates everything:
-- Manages the terminal viewport and alternate screen
-- Handles input events (keyboard, mouse, paste)
-- Runs the rendering loop (configurable FPS)
-- Provides the root node for the renderable tree
+`CliRenderer` orchestrates everything:
+- Manages terminal viewport + alt screen
+- Handles input events (keyboard/mouse/paste)
+- Runs render loop (configurable FPS)
+- Provides root node for renderable tree
 
 ### Renderables vs Constructs
 
 | Renderables (Imperative) | Constructs (Declarative) |
 |--------------------------|--------------------------|
 | `new TextRenderable(renderer, {...})` | `Text({...})` |
-| Requires renderer at creation | Creates VNode, instantiated later |
+| Needs renderer at creation | Creates VNode, instantiated later |
 | Direct mutation via methods | Chained calls recorded, replayed on instantiation |
 | Full control | Cleaner composition |
 
 ### Storage Options
 
-Renderables can be composed in two ways:
+Renderables compose 2 ways:
 1. **Imperative**: Create instances, call `.add()` to compose
-2. **Declarative (Constructs)**: Create VNodes, pass children as arguments
+2. **Declarative (Constructs)**: Create VNodes, pass children as args
 
 ## Essential Commands
 
@@ -112,7 +112,7 @@ bun test                      # Run tests
 
 ## Runtime Requirements
 
-OpenTUI runs on Bun and uses Zig for native builds.
+Runs on Bun. Uses Zig for native builds.
 
 ```bash
 # Package management
@@ -126,20 +126,20 @@ bun test
 bun run build
 ```
 
-**Zig** is required for building native components.
+**Zig** required for building native components.
 
 ## In This Reference
 
-- [Configuration](./configuration.md) - Renderer options, environment variables
-- [API](./api.md) - Renderer, Renderables, types, utilities
-- [Patterns](./patterns.md) - Composition, events, state management
-- [Gotchas](./gotchas.md) - Common issues, debugging, limitations
+- [Configuration](./configuration.md) - Renderer opts, env vars
+- [API](./api.md) - Renderer, Renderables, types, utils
+- [Patterns](./patterns.md) - Composition, events, state mgmt
+- [Gotchas](./gotchas.md) - Common issues, debugging, limits
 
 ## See Also
 
 - [React](../react/REFERENCE.md) - React reconciler for declarative TUI
 - [Solid](../solid/REFERENCE.md) - Solid reconciler for declarative TUI
-- [Layout](../layout/REFERENCE.md) - Yoga/Flexbox layout system
+- [Layout](../layout/REFERENCE.md) - Yoga/Flexbox layout
 - [Components](../components/REFERENCE.md) - Component reference by category
-- [Keyboard](../keyboard/REFERENCE.md) - Input handling and shortcuts
-- [Testing](../testing/REFERENCE.md) - Test renderer and snapshots
+- [Keyboard](../keyboard/REFERENCE.md) - Input handling + shortcuts
+- [Testing](../testing/REFERENCE.md) - Test renderer + snapshots

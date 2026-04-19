@@ -7,43 +7,43 @@ metadata:
 
 # OpenTUI Platform Skill
 
-Consolidated skill for building terminal user interfaces with OpenTUI. Use decision trees below to find the right framework and components, then load detailed references.
+Consolidated skill. Build TUIs w/ OpenTUI. Use decision trees -> find framework + components -> load refs.
 
 ## Critical Rules
 
-**Follow these rules in all OpenTUI code:**
+**Follow in all OpenTUI code:**
 
 1. **Use `create-tui` for new projects.** See framework `REFERENCE.md` quick starts.
-2. **`create-tui` options must come before arguments.** `bunx create-tui -t react my-app` works, `bunx create-tui my-app -t react` does NOT.
-3. **Never call `process.exit()` directly.** Use `renderer.destroy()` (see `core/gotchas.md`).
-4. **Text styling requires nested tags in React/Solid.** Use modifier elements, not props (see `components/text-display.md`).
+2. **`create-tui` opts before args.** `bunx create-tui -t react my-app` works, `bunx create-tui my-app -t react` does NOT.
+3. **Never `process.exit()` directly.** Use `renderer.destroy()` (see `core/gotchas.md`).
+4. **Text styling needs nested tags in React/Solid.** Use modifier elements, not props (see `components/text-display.md`).
 
 ## How to Use This Skill
 
 ### Reference File Structure
 
-Framework references follow a 5-file pattern. Cross-cutting concepts are single-file guides.
+Framework refs -> 5-file pattern. Cross-cutting concepts -> single-file guides.
 
-Each framework in `./references/<framework>/` contains:
+Each framework in `./references/<framework>/`:
 
 | File | Purpose | When to Read |
 |------|---------|--------------|
-| `REFERENCE.md` | Overview, when to use, quick start | **Always read first** |
+| `REFERENCE.md` | Overview, when to use, quick start | **Read first** |
 | `api.md` | Runtime API, components, hooks | Writing code |
-| `configuration.md` | Setup, tsconfig, bundling | Configuring a project |
-| `patterns.md` | Common patterns, best practices | Implementation guidance |
-| `gotchas.md` | Pitfalls, limitations, debugging | Troubleshooting |
+| `configuration.md` | Setup, tsconfig, bundling | Configuring project |
+| `patterns.md` | Common patterns, best practices | Impl guidance |
+| `gotchas.md` | Pitfalls, limits, debugging | Troubleshooting |
 
-Cross-cutting concepts in `./references/<concept>/` have `REFERENCE.md` as the entry point.
+Cross-cutting concepts in `./references/<concept>/` -> `REFERENCE.md` entry point.
 
 ### Reading Order
 
-1. Start with `REFERENCE.md` for your chosen framework
-2. Then read additional files relevant to your task:
-   - Building components -> `api.md` + `components/<category>.md`
-   - Setting up project -> `configuration.md`
+1. Start `REFERENCE.md` for chosen framework
+2. Then read files for task:
+   - Components -> `api.md` + `components/<category>.md`
+   - Project setup -> `configuration.md`
    - Layout/positioning -> `layout/REFERENCE.md`
-   - Keyboard/input handling -> `keyboard/REFERENCE.md`
+   - Keyboard/input -> `keyboard/REFERENCE.md`
    - Animations -> `animation/REFERENCE.md`
    - Troubleshooting -> `gotchas.md` + `testing/REFERENCE.md`
 
@@ -59,7 +59,7 @@ Cross-cutting concepts in `./references/<concept>/` have `REFERENCE.md` as the e
 
 ### Runtime Notes
 
-OpenTUI runs on Bun and uses Zig for native builds. Read `./references/core/gotchas.md` for runtime requirements and build guidance.
+OpenTUI runs on Bun, uses Zig for native builds. Read `./references/core/gotchas.md` for runtime reqs + build guidance.
 
 ## Quick Decision Trees
 
@@ -162,7 +162,7 @@ Troubleshooting?
 - Layout misalignment -> `layout/REFERENCE.md`
 - Flaky snapshots -> `testing/REFERENCE.md`
 
-For component naming differences and text modifiers, see `components/REFERENCE.md`.
+Component naming diffs + text modifiers -> `components/REFERENCE.md`.
 
 ## Product Index
 
@@ -170,17 +170,17 @@ For component naming differences and text modifiers, see `components/REFERENCE.m
 | Framework | Entry File | Description |
 |-----------|------------|-------------|
 | Core | `./references/core/REFERENCE.md` | Imperative API, all primitives |
-| React | `./references/react/REFERENCE.md` | React reconciler for declarative TUI |
-| Solid | `./references/solid/REFERENCE.md` | SolidJS reconciler for declarative TUI |
+| React | `./references/react/REFERENCE.md` | React reconciler, declarative TUI |
+| Solid | `./references/solid/REFERENCE.md` | SolidJS reconciler, declarative TUI |
 
 ### Cross-Cutting Concepts
 | Concept | Entry File | Description |
 |---------|------------|-------------|
-| Layout | `./references/layout/REFERENCE.md` | Yoga/Flexbox layout system |
-| Components | `./references/components/REFERENCE.md` | Component reference by category |
-| Keyboard | `./references/keyboard/REFERENCE.md` | Keyboard input handling |
-| Animation | `./references/animation/REFERENCE.md` | Timeline-based animations |
-| Testing | `./references/testing/REFERENCE.md` | Test renderer and snapshots |
+| Layout | `./references/layout/REFERENCE.md` | Yoga/Flexbox layout |
+| Components | `./references/components/REFERENCE.md` | Component ref by category |
+| Keyboard | `./references/keyboard/REFERENCE.md` | Keyboard input |
+| Animation | `./references/animation/REFERENCE.md` | Timeline animations |
+| Testing | `./references/testing/REFERENCE.md` | Test renderer + snapshots |
 
 ### Component Categories
 | Category | Entry File | Components |

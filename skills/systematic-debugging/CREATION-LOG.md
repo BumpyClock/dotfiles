@@ -1,6 +1,6 @@
 # Creation Log: Systematic Debugging Skill
 
-Reference example of extracting, structuring, and bulletproofing a critical skill.
+Reference example for extracting, structuring, and bulletproofing critical skill.
 
 ## Source Material
 
@@ -33,7 +33,7 @@ Extracted debugging framework from `/Users/jesse/.claude/CLAUDE.md`:
 
 ## Bulletproofing Elements
 
-Framework designed to resist rationalization under pressure:
+Framework built to resist rationalization under pressure:
 
 ### Language Choices
 - "ALWAYS" / "NEVER" (not "should" / "try to")
@@ -99,16 +99,16 @@ Bulletproof skill that:
 
 ## Key Insight
 
-**Most important bulletproofing:** Anti-patterns section showing exact shortcuts that feel justified in the moment. When Claude thinks "I'll just add this one quick fix", seeing that exact pattern listed as wrong creates cognitive friction.
+**Most important bulletproofing:** Anti-patterns section shows exact shortcuts that feel justified in moment. When Claude thinks "I'll just add this one quick fix", seeing that exact pattern listed as wrong creates cognitive friction.
 
 ## Usage Example
 
-When encountering a bug:
+When bug appears:
 1. Load skill: skills/debugging/systematic-debugging
-2. Read overview (10 sec) - reminded of mandate
-3. Follow Phase 1 checklist - forced investigation
+2. Read overview (10 sec) - recall mandate
+3. Follow Phase 1 checklist - force investigation
 4. If tempted to skip - see anti-pattern, stop
-5. Complete all phases - root cause found
+5. Complete all phases - find root cause
 
 **Time investment:** 5-10 minutes
 **Time saved:** Hours of symptom-whack-a-mole

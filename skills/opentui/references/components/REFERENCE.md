@@ -1,10 +1,10 @@
 # OpenTUI Components
 
-Reference for all OpenTUI components, organized by category. Components are available in all three frameworks (Core, React, Solid) with slight API differences.
+Reference for all OpenTUI components, grouped by category. Available in all 3 frameworks (Core, React, Solid) w/ slight API diffs.
 
 ## When to Use
 
-Use this reference when you need to find the right component category or compare naming across Core, React, and Solid.
+Use ref to find right component category or compare naming across Core, React, Solid.
 
 ## Component Categories
 
@@ -27,7 +27,7 @@ Need a component?
 
 ## Component Naming
 
-Components have different names across frameworks:
+Names differ across frameworks:
 
 | Concept | Core (Class) | React (JSX) | Solid (JSX) |
 |---------|--------------|-------------|-------------|
@@ -44,11 +44,11 @@ Components have different names across frameworks:
 | Diff | `DiffRenderable` | `<diff>` | `<diff>` |
 | Markdown | `MarkdownRenderable` | `<markdown>` | `<markdown>` |
 
-**Note**: Solid uses underscores (`tab_select`) while React uses hyphens (`tab-select`).
+**Note**: Solid uses underscores (`tab_select`), React uses hyphens (`tab-select`).
 
 ## Common Properties
 
-All components share these layout properties (see [Layout](../layout/REFERENCE.md)):
+All components share these layout props (see [Layout](../layout/REFERENCE.md)):
 
 ```tsx
 // Positioning

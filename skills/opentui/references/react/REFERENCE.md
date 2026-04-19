@@ -1,23 +1,23 @@
 # OpenTUI React (@opentui/react)
 
-A React reconciler for building terminal user interfaces with familiar React patterns. Write TUIs using JSX, hooks, and component composition.
+React reconciler for terminal UIs. Write TUIs with JSX, hooks, component composition.
 
 ## Overview
 
 OpenTUI React provides:
-- **Custom reconciler**: React components render to OpenTUI renderables
+- **Custom reconciler**: React components → OpenTUI renderables
 - **JSX intrinsics**: `<text>`, `<box>`, `<input>`, etc.
 - **Hooks**: `useKeyboard`, `useRenderer`, `useTimeline`, etc.
-- **Full React compatibility**: useState, useEffect, context, and more
+- **Full React compatibility**: useState, useEffect, context, more
 
 ## When to Use React
 
-Use the React reconciler when:
-- You're familiar with React patterns
-- You want declarative UI composition
-- You need React's ecosystem (context, state management libraries)
-- Building applications with complex state
-- Team knows React already
+Use React reconciler when:
+- Familiar w/ React patterns
+- Want declarative UI composition
+- Need React ecosystem (context, state libs)
+- Building apps w/ complex state
+- Team knows React
 
 ## When NOT to Use React
 
@@ -36,9 +36,9 @@ cd my-app
 bun run src/index.tsx
 ```
 
-The CLI creates the `my-app` directory for you - it must **not already exist**.
+CLI creates `my-app` dir — must **not already exist**.
 
-**Agent guidance**: Always use autonomous mode with `-t <template>` flag. Never use interactive mode (`bunx create-tui@latest my-app` without `-t`) as it requires user prompts that agents cannot respond to.
+**Agent guidance**: Always use autonomous mode w/ `-t <template>` flag. Never use interactive mode (`bunx create-tui@latest my-app` without `-t`) — requires prompts agents can't answer.
 
 Or manual setup:
 
@@ -77,7 +77,7 @@ createRoot(renderer).render(<App />)
 
 ### JSX Elements
 
-React maps JSX intrinsic elements to OpenTUI renderables:
+React maps JSX intrinsics → OpenTUI renderables:
 
 ```tsx
 // These are not HTML elements!
@@ -102,7 +102,7 @@ Inside `<text>`, use modifier elements:
 
 ### Styling
 
-Two approaches to styling:
+Two styling approaches:
 
 ```tsx
 // Direct props
@@ -120,7 +120,7 @@ Two approaches to styling:
 
 ### Layout & Display
 - `<text>` - Styled text content
-- `<box>` - Container with borders and layout
+- `<box>` - Container w/ borders + layout
 - `<scrollbox>` - Scrollable container
 - `<ascii-font>` - ASCII art text
 
@@ -132,7 +132,7 @@ Two approaches to styling:
 
 ### Code & Diff
 - `<code>` - Syntax-highlighted code
-- `<line-number>` - Code with line numbers
+- `<line-number>` - Code w/ line numbers
 - `<diff>` - Unified or split diff viewer
 
 ### Text Modifiers (inside `<text>`)
@@ -155,13 +155,13 @@ import {
 } from "@opentui/react"
 ```
 
-See [API Reference](./api.md) for detailed hook documentation.
+See [API Reference](./api.md) for hook docs.
 
 ## In This Reference
 
 - [Configuration](./configuration.md) - Project setup, tsconfig, bundling
 - [API](./api.md) - Components, hooks, createRoot
-- [Patterns](./patterns.md) - State management, keyboard handling, forms
+- [Patterns](./patterns.md) - State mgmt, keyboard handling, forms
 - [Gotchas](./gotchas.md) - Common issues, debugging, limitations
 
 ## See Also
@@ -170,5 +170,5 @@ See [API Reference](./api.md) for detailed hook documentation.
 - [Solid](../solid/REFERENCE.md) - Alternative declarative approach
 - [Components](../components/REFERENCE.md) - Component reference by category
 - [Layout](../layout/REFERENCE.md) - Flexbox layout system
-- [Keyboard](../keyboard/REFERENCE.md) - Input handling and shortcuts
-- [Testing](../testing/REFERENCE.md) - Test renderer and snapshots
+- [Keyboard](../keyboard/REFERENCE.md) - Input handling + shortcuts
+- [Testing](../testing/REFERENCE.md) - Test renderer + snapshots

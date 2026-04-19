@@ -4,7 +4,7 @@
 
 ### Never use `process.exit()` directly
 
-**This is the most common mistake.** Using `process.exit()` leaves the terminal in a broken state (cursor hidden, raw mode, alternate screen).
+**Most common mistake.** `process.exit()` → terminal broken (cursor hidden, raw mode, alt screen).
 
 ```tsx
 // WRONG - Terminal left in broken state
@@ -22,30 +22,30 @@ function App() {
 }
 ```
 
-`renderer.destroy()` restores the terminal (exits alternate screen, restores cursor, etc.) before exiting.
+`renderer.destroy()` → restores terminal (exits alt screen, restores cursor) before exit.
 
 ### Signal Handling
 
-OpenTUI automatically handles cleanup for these signals:
-- `SIGINT` (Ctrl+C), `SIGTERM`, `SIGQUIT` - Standard termination
-- `SIGHUP` - Terminal closed/hangup
-- `SIGBREAK` - Ctrl+Break (Windows)
-- `SIGPIPE` - Broken pipe (output closed)
-- `SIGBUS`, `SIGFPE` - Hardware errors
+OpenTUI auto-handles cleanup for:
+- `SIGINT` (Ctrl+C), `SIGTERM`, `SIGQUIT` — standard termination
+- `SIGHUP` — terminal closed/hangup
+- `SIGBREAK` — Ctrl+Break (Windows)
+- `SIGPIPE` — broken pipe (output closed)
+- `SIGBUS`, `SIGFPE` — hardware errors
 
-This ensures terminal state is restored even on unexpected termination. If you need custom signal handling, use `exitOnCtrlC: false` and handle signals yourself while still calling `renderer.destroy()`.
+Terminal state restored even on unexpected termination. Custom signal handling → use `exitOnCtrlC: false`, handle signals yourself, still call `renderer.destroy()`.
 
 ## JSX Configuration
 
 ### Missing jsxImportSource
 
-**Symptom**: JSX elements have wrong types, components don't render
+**Symptom**: wrong JSX types, components don't render.
 
 ```
 // Error: Property 'text' does not exist on type 'JSX.IntrinsicElements'
 ```
 
-**Fix**: Configure tsconfig.json:
+**Fix**: configure tsconfig.json:
 
 ```json
 {
@@ -58,7 +58,7 @@ This ensures terminal state is restored even on unexpected termination. If you n
 
 ### HTML Elements vs TUI Elements
 
-OpenTUI's JSX elements are **not** HTML elements:
+OpenTUI JSX elements ≠ HTML elements:
 
 ```tsx
 // WRONG - These are HTML concepts
@@ -76,7 +76,7 @@ OpenTUI's JSX elements are **not** HTML elements:
 
 ### Text Modifiers Outside Text
 
-Text modifiers only work inside `<text>`:
+Text modifiers only inside `<text>`:
 
 ```tsx
 // WRONG
@@ -94,7 +94,7 @@ Text modifiers only work inside `<text>`:
 
 ### Focus Not Working
 
-Components must be explicitly focused:
+Components need explicit focus:
 
 ```tsx
 // WRONG - Won't receive keyboard input
@@ -110,7 +110,7 @@ const [isFocused, setIsFocused] = useState(true)
 
 ### Select Not Responding
 
-Select requires focus and proper options format:
+Select needs focus + proper options format:
 
 ```tsx
 // WRONG - Missing required properties
@@ -132,7 +132,7 @@ Select requires focus and proper options format:
 
 ### Select Events Confusion
 
-Remember: `onSelect` fires on Enter (selection confirmed), `onChange` fires on navigation:
+`onSelect` → Enter (confirmed). `onChange` → navigation.
 
 ```tsx
 // WRONG - expecting onChange to fire on Enter
@@ -153,7 +153,7 @@ Remember: `onSelect` fires on Enter (selection confirmed), `onChange` fires on n
 
 ### useKeyboard Not Firing
 
-Multiple `useKeyboard` hooks can conflict:
+Multiple `useKeyboard` hooks conflict:
 
 ```tsx
 // Both handlers fire - may cause issues
@@ -168,7 +168,7 @@ function ChildWithKeyboard() {
 }
 ```
 
-**Solution**: Use a single keyboard handler or implement event stopping:
+**Solution**: single handler or event stopping:
 
 ```tsx
 function App() {
@@ -188,7 +188,7 @@ function App() {
 
 ### useEffect Cleanup
 
-Always clean up intervals and listeners:
+Always clean intervals/listeners:
 
 ```tsx
 // WRONG - Memory leak
@@ -207,7 +207,7 @@ useEffect(() => {
 
 ### Colors Not Applying
 
-Check color format:
+Check format:
 
 ```tsx
 // CORRECT formats
@@ -222,7 +222,7 @@ Check color format:
 
 ### Layout Not Working
 
-Ensure parent has dimensions:
+Parent needs dimensions:
 
 ```tsx
 // WRONG - Parent has no height
@@ -238,7 +238,7 @@ Ensure parent has dimensions:
 
 ### Percentage Widths Not Working
 
-Parent must have explicit dimensions:
+Parent needs explicit dimensions:
 
 ```tsx
 // WRONG
@@ -256,7 +256,7 @@ Parent must have explicit dimensions:
 
 ### Too Many Re-renders
 
-Avoid inline objects/functions in props:
+Avoid inline objects/fns in props:
 
 ```tsx
 // WRONG - New object every render
@@ -292,7 +292,7 @@ const ExpensiveList = React.memo(function ExpensiveList({
 
 ### State Updates During Render
 
-Don't update state during render:
+Never update state during render:
 
 ```tsx
 // WRONG
@@ -325,7 +325,7 @@ function Component({ value }: { value: number }) {
 
 ### Console Not Visible
 
-OpenTUI captures console output. Show the overlay:
+OpenTUI captures console. Show overlay:
 
 ```tsx
 import { useRenderer } from "@opentui/react"
@@ -345,7 +345,7 @@ function App() {
 
 ### Component Not Rendering
 
-Check if component is in the tree:
+Check if in tree:
 
 ```tsx
 // WRONG - Conditional returns nothing
@@ -363,7 +363,7 @@ function MaybeComponent({ show }: { show: boolean }) {
 
 ### Events Not Firing
 
-Check event handler names:
+Check handler names:
 
 ```tsx
 // WRONG
@@ -390,7 +390,7 @@ bun run start
 
 ### Async Top-level
 
-Bun supports top-level await, but be careful:
+Bun supports top-level await — careful:
 
 ```tsx
 // index.tsx - This works in Bun

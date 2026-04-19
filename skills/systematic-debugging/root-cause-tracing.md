@@ -2,9 +2,9 @@
 
 ## Overview
 
-Bugs often manifest deep in the call stack (git init in wrong directory, file created in wrong location, database opened with wrong path). Your instinct is to fix where the error appears, but that's treating a symptom.
+Bugs often appear deep in call stack (`git init` in wrong directory, file created in wrong location, database opened with wrong path). Instinct says fix where error appears, but that treats symptom.
 
-**Core principle:** Trace backward through the call chain until you find the original trigger, then fix at the source.
+**Core principle:** Trace backward through call chain until you find original trigger, then fix at source.
 
 ## When to Use
 
@@ -96,7 +96,7 @@ npm test 2>&1 | grep 'DEBUG git init'
 
 ## Finding Which Test Causes Pollution
 
-If something appears during tests but you don't know which test:
+If something appears during tests and you don't know which test:
 
 Use the bisection script `find-polluter.sh` in this directory:
 
@@ -151,12 +151,12 @@ digraph principle {
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+**NEVER fix just where error appears.** Trace back to find original trigger.
 
 ## Stack Trace Tips
 
 **In tests:** Use `console.error()` not logger - logger may be suppressed
-**Before operation:** Log before the dangerous operation, not after it fails
+**Before operation:** Log before dangerous operation, not after it fails
 **Include context:** Directory, cwd, environment variables, timestamps
 **Capture stack:** `new Error().stack` shows complete call chain
 

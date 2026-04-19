@@ -1,17 +1,17 @@
 # Animation System
 
-OpenTUI provides a timeline-based animation system for smooth property transitions.
+OpenTUI = timeline-based animation system. Smooth property transitions.
 
 ## Overview
 
-Animations in OpenTUI use:
-- **Timeline**: Orchestrates multiple animations
-- **Animation Engine**: Manages timelines and rendering
-- **Easing Functions**: Control animation curves
+Animations use:
+- **Timeline**: orchestrates multiple animations
+- **Animation Engine**: manages timelines + rendering
+- **Easing Functions**: control animation curves
 
 ## When to Use
 
-Use this reference when you need timeline-driven animations, easing curves, or progressive transitions.
+Use when need timeline-driven animations, easing curves, or progressive transitions.
 
 ## Basic Usage
 
@@ -169,7 +169,7 @@ timeline.add(
 
 ## Easing Functions
 
-Available easing functions:
+Available:
 
 ### Linear
 
@@ -381,7 +381,7 @@ function SlideIn({ children, from = "left" }) {
 
 ### Batch Updates
 
-Timeline automatically batches updates within the render loop.
+Timeline auto-batches updates within render loop.
 
 ### Use Integer Values
 
@@ -395,7 +395,7 @@ onUpdate: (anim) => {
 
 ### Clean Up Timelines
 
-Hooks automatically clean up, but for core:
+Hooks auto-cleanup. For core:
 
 ```typescript
 // When done with timeline
@@ -406,15 +406,15 @@ engine.removeTimeline(timeline)
 
 ### Terminal Refresh Rate
 
-Terminal UIs typically refresh at 60 FPS max. Very fast animations may appear choppy.
+Terminal UIs refresh @ 60 FPS max. Very fast animations -> choppy.
 
 ### Character Grid
 
-Animations are constrained to character cells. Sub-pixel positioning isn't possible.
+Animations constrained to character cells. No sub-pixel positioning.
 
 ### Cleanup in Effects
 
-Always clean up intervals and timelines:
+Always clean up intervals + timelines:
 
 ```tsx
 useEffect(() => {

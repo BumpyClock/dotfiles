@@ -1,6 +1,6 @@
 # Parallelization Examples (Optional)
 
-Use when a task feels splittable but the boundaries are fuzzy.
+Use when task feels splittable but boundaries fuzzy.
 
 ## Split by Layer
 

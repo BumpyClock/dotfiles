@@ -7,7 +7,7 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 
 ## Overview
 
-Random fixes waste time and create new bugs. Quick patches mask underlying issues.
+Random fixes waste time and create bugs. Quick patches hide underlying issues.
 
 **Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
 
@@ -19,7 +19,7 @@ Random fixes waste time and create new bugs. Quick patches mask underlying issue
 NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 ```
 
-If you haven't completed Phase 1, you cannot propose fixes.
+If you have not completed Phase 1, you cannot propose fixes.
 
 ## When to Use
 
@@ -45,7 +45,7 @@ Use for ANY technical issue:
 
 ## The Four Phases
 
-You MUST complete each phase before proceeding to the next.
+Complete each phase before next.
 
 ### Phase 1: Root Cause Investigation
 
@@ -53,7 +53,7 @@ You MUST complete each phase before proceeding to the next.
 
 1. **Read Error Messages Carefully**
    - Don't skip past errors or warnings
-   - They often contain the exact solution
+   - They often contain exact solution
    - Read stack traces completely
    - Note line numbers, file paths, error codes
 
@@ -61,7 +61,7 @@ You MUST complete each phase before proceeding to the next.
    - Can you trigger it reliably?
    - What are the exact steps?
    - Does it happen every time?
-   - If not reproducible → gather more data, don't guess
+   - If not reproducible → gather more data, do not guess
 
 3. **Check Recent Changes**
    - What changed that could cause this?
@@ -130,7 +130,7 @@ You MUST complete each phase before proceeding to the next.
 2. **Compare Against References**
    - If implementing pattern, read reference implementation COMPLETELY
    - Don't skim - read every line
-   - Understand the pattern fully before applying
+   - Understand pattern fully before applying
 
 3. **Identify Differences**
    - What's different between working and broken?
@@ -179,7 +179,7 @@ You MUST complete each phase before proceeding to the next.
    - Use the `superpowers:test-driven-development` skill for writing proper failing tests
 
 2. **Implement Single Fix**
-   - Address the root cause identified
+   - Address root cause identified
    - ONE change at a time
    - No "while I'm here" improvements
    - No bundled refactoring

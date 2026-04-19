@@ -34,7 +34,7 @@ const renderer = await createCliRenderer({
 
 ## Environment Variables
 
-OpenTUI respects several environment variables for configuration and debugging.
+OpenTUI respects several env vars for configuration and debugging.
 
 ### Debug & Development
 
@@ -153,7 +153,7 @@ OPENTUI_NO_GRAPHICS=true bun run src/index.ts
 
 ## Building Native Code
 
-Native code changes require rebuilding:
+Native code changes need rebuild:
 
 ```bash
 # From repo root (if developing OpenTUI itself)
@@ -163,4 +163,4 @@ bun run build
 # Install: https://ziglang.org/learn/getting-started/
 ```
 
-**Note**: TypeScript changes do NOT require building. Bun runs TypeScript directly.
+**Note**: TypeScript changes do NOT require build. Bun runs TypeScript directly.

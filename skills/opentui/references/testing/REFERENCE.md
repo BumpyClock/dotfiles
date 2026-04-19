@@ -1,6 +1,6 @@
 # Testing OpenTUI Applications
 
-How to test terminal user interfaces built with OpenTUI.
+Test terminal user interfaces built with OpenTUI.
 
 ## Overview
 
@@ -25,7 +25,7 @@ import { test, expect, beforeEach, afterEach } from "bun:test"
 
 ### Test Renderer
 
-Create a test renderer for headless testing:
+Create test renderer for headless testing:
 
 ```typescript
 import { createTestRenderer } from "@opentui/core/testing"
@@ -105,7 +105,7 @@ test("component matches snapshot", async () => {
 
 ### Test Utilities
 
-React provides a built-in `testRender` utility via the `@opentui/react/test-utils` subpath export:
+React provides built-in `testRender` utility via `@opentui/react/test-utils` subpath export:
 
 ```tsx
 import { testRender } from "@opentui/react/test-utils"
@@ -208,7 +208,7 @@ test("Counter shows initial value", async () => {
 
 ### Test Setup/Teardown Pattern
 
-For multiple tests, use beforeEach/afterEach to manage the renderer lifecycle:
+For multiple tests, use beforeEach/afterEach to manage renderer lifecycle:
 
 ```tsx
 import { describe, test, expect, beforeEach, afterEach } from "bun:test"
@@ -244,7 +244,7 @@ describe("MyComponent", () => {
 
 ### Test Setup Return Object
 
-The `testRender` function returns a test setup object with these properties:
+`testRender` returns test setup object with these properties:
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -257,7 +257,7 @@ The `testRender` function returns a test setup object with these properties:
 
 ### Test Utilities
 
-Solid exports `testRender` directly from the main package:
+Solid exports `testRender` directly from main package:
 
 ```tsx
 import { testRender } from "@opentui/solid"
@@ -321,7 +321,7 @@ test("component matches snapshot", async () => {
 
 ## Snapshot Format
 
-Snapshots capture the rendered terminal output as text:
+Snapshots capture rendered terminal output as text:
 
 ```
 ┌──────────────────┐
@@ -550,7 +550,7 @@ bun test --verbose
 
 ### Async Rendering
 
-Always call `renderOnce()` after setting up your component to ensure rendering is complete:
+Always call `renderOnce()` after setting up component so rendering is complete:
 
 ```typescript
 const testSetup = await testRender(<MyComponent />, { width: 40, height: 10 })
@@ -560,7 +560,7 @@ const frame = testSetup.captureCharFrame()
 
 ### Test Isolation and Cleanup
 
-Always destroy the renderer after each test to avoid resource leaks:
+Always destroy renderer after each test to avoid resource leaks:
 
 ```typescript
 import { afterEach } from "bun:test"
@@ -597,7 +597,7 @@ const testSetup = await createTestRenderer({
 
 ### Running from Package Directory
 
-Run tests from the package directory:
+Run tests from package directory:
 
 ```bash
 cd packages/core

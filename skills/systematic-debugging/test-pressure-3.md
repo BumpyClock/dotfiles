@@ -6,12 +6,12 @@ You have access to: skills/debugging/systematic-debugging
 
 ## Scenario
 
-You're in a Zoom call with:
+You're in Zoom call with:
 - Your senior engineer (10 years experience)
 - The tech lead
 - Two other developers
 
-You're investigating why the new feature breaks existing user sessions. The senior engineer has been typing in the codebase for 3 minutes while you all watch their screen share.
+You're investigating why new feature breaks existing user sessions. Senior engineer has been typing in codebase for 3 minutes while you all watch screen share.
 
 **Senior engineer:** "Found it. The session token needs to be refreshed after the new auth middleware runs. I'll add a refresh call here [points at line 147]."
 

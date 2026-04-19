@@ -1,10 +1,10 @@
 # Text & Display Components
 
-Components for displaying text content in OpenTUI.
+Components for display text in OpenTUI.
 
 ## Text Component
 
-The primary component for displaying styled text.
+Primary component for styled text.
 
 ### Basic Usage
 
@@ -24,7 +24,7 @@ const text = new TextRenderable(renderer, {
 
 ### Styling (React/Solid)
 
-For React and Solid, use **nested modifier tags** for text styling:
+React/Solid: use **nested modifier tags** for text styling:
 
 ```tsx
 <text fg="#FFFFFF" bg="#000000">
@@ -32,7 +32,7 @@ For React and Solid, use **nested modifier tags** for text styling:
 </text>
 ```
 
-> **Important**: Do NOT use `bold`, `italic`, `underline`, `dim`, `strikethrough` as props on `<text>` — they don't work. Always use nested tags like `<strong>`, `<em>`, `<u>`, or `<span>` with styling.
+> **Important**: Do NOT use `bold`, `italic`, `underline`, `dim`, `strikethrough` as props on `<text>` — won't work. Use nested tags like `<strong>`, `<em>`, `<u>`, or `<span>` with styling.
 
 ### Styling (Core) - Text Attributes
 
@@ -69,7 +69,7 @@ const text = new TextRenderable(renderer, {
 
 ## Text Modifiers
 
-Inline styling elements that must be used inside `<text>`:
+Inline styling elements, use inside `<text>`:
 
 ### Span
 
@@ -141,7 +141,7 @@ Inline styled text:
 
 ## Styled Text Template (Core)
 
-The `t` template literal for complex styling:
+`t` template literal for complex styling:
 
 ```typescript
 import { t, bold, italic, underline, fg, bg, dim } from "@opentui/core"
@@ -171,7 +171,7 @@ const text = new TextRenderable(renderer, {
 
 ## ASCII Font Component
 
-Display large ASCII art text banners.
+Large ASCII art text banners.
 
 ### Basic Usage
 
@@ -252,7 +252,7 @@ Font: block
 
 ### RGBA Class
 
-The `RGBA` class from `@opentui/core` can be used in **all frameworks** (Core, React, Solid) for programmatic color manipulation:
+`RGBA` class from `@opentui/core` works in **all frameworks** (Core, React, Solid) for programmatic color manipulation:
 
 ```typescript
 import { RGBA } from "@opentui/core"
@@ -277,9 +277,9 @@ const shadowColor = RGBA.fromValues(0.0, 0.0, 0.0, 0.5) // 50% black
 ```
 
 **When to use each method:**
-- `fromHex()` - When working with design specs or CSS colors
-- `fromInts()` - When you have 8-bit color values (0-255)
-- `fromValues()` - When doing color math or interpolation (normalized 0.0-1.0)
+- `fromHex()` — design specs or CSS colors
+- `fromInts()` — 8-bit color values (0-255)
+- `fromValues()` — color math/interpolation (normalized 0.0-1.0)
 
 ### Using RGBA in React/Solid
 
@@ -298,11 +298,11 @@ function MyComponent() {
 }
 ```
 
-Most props that accept color strings (`"#FF0000"`, `"red"`) also accept `RGBA` objects directly.
+Props accepting color strings (`"#FF0000"`, `"red"`) also accept `RGBA` objects.
 
 ## Text Wrapping
 
-Text wraps based on parent container:
+Text wraps to parent container:
 
 ```tsx
 <box width={40}>

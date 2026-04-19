@@ -4,7 +4,7 @@
 
 ### Imperative Composition
 
-Create renderables and compose with `.add()`:
+Create renderables, compose via `.add()`:
 
 ```typescript
 import { createCliRenderer, BoxRenderable, TextRenderable } from "@opentui/core"
@@ -38,7 +38,7 @@ renderer.root.add(container)
 
 ### Declarative Composition (Constructs)
 
-Use VNode functions for cleaner composition:
+VNode fns → cleaner composition:
 
 ```typescript
 import { createCliRenderer, Box, Text, Input, delegate } from "@opentui/core"
@@ -61,7 +61,7 @@ renderer.root.add(ui)
 
 ### Reusable Components
 
-Create factory functions for reusable UI pieces:
+Factory fns → reusable UI:
 
 ```typescript
 // Imperative factory
@@ -108,7 +108,7 @@ function LabeledInput(props: { id: string; label: string; placeholder: string })
 
 ### Focus Delegation
 
-Route focus calls to nested elements:
+Route focus → nested elements:
 
 ```typescript
 import { delegate, Box, Input, Text } from "@opentui/core"
@@ -211,7 +211,7 @@ const button = new BoxRenderable(renderer, {
 
 ### Local State
 
-Manage state in closures or objects:
+State in closures/objects:
 
 ```typescript
 // Closure-based state
@@ -260,7 +260,7 @@ class CounterWidget {
 
 ### Focus Management
 
-Track and manage focus across components:
+Track focus across components:
 
 ```typescript
 class FocusManager {
@@ -301,7 +301,7 @@ renderer.keyInput.on("keypress", (key) => {
 
 ### Cleanup
 
-Always clean up resources:
+Always clean resources:
 
 ```typescript
 const renderer = await createCliRenderer()
@@ -330,7 +330,7 @@ const renderer = await createCliRenderer({
 
 ### Dynamic Updates
 
-Update UI based on external data:
+UI updates from external data:
 
 ```typescript
 async function createDashboard(renderer: RenderContext) {
@@ -359,7 +359,7 @@ async function createDashboard(renderer: RenderContext) {
 
 ### Responsive Layout
 
-Adapt to terminal size:
+Adapt → terminal size:
 
 ```typescript
 const renderer = await createCliRenderer()
@@ -411,7 +411,7 @@ function createSplitView(renderer: RenderContext, ratio = 0.3) {
 
 ### Console Overlay
 
-Use the built-in console for debugging:
+Built-in console → debugging:
 
 ```typescript
 const renderer = await createCliRenderer({

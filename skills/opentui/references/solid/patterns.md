@@ -4,7 +4,7 @@
 
 ### Signals
 
-Basic reactive state with signals:
+Basic reactive state with signals.
 
 ```tsx
 import { createSignal } from "solid-js"
@@ -28,7 +28,7 @@ function Counter() {
 
 ### Derived State
 
-Compute values from signals:
+Compute values from signals.
 
 ```tsx
 import { createSignal, createMemo } from "solid-js"
@@ -53,7 +53,7 @@ function PriceCalculator() {
 
 ### Effects
 
-React to state changes:
+React to state changes.
 
 ```tsx
 import { createSignal, createEffect, onCleanup } from "solid-js"
@@ -137,7 +137,7 @@ function App() {
 
 ### Store with Context
 
-Share state across components:
+Share state across components.
 
 ```tsx
 import { createStore } from "solid-js/store"
@@ -257,7 +257,7 @@ function TodoList() {
 
 ### Index for Primitive Arrays
 
-Use `Index` when array items are primitives:
+Use `Index` when array items are primitives.
 
 ```tsx
 import { Index, createSignal } from "solid-js"

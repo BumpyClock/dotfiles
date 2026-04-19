@@ -1,10 +1,10 @@
 # Input Components
 
-Components for user input in OpenTUI.
+User input components in OpenTUI.
 
 ## Input Component
 
-Single-line text input field.
+Single-line text input.
 
 ### Basic Usage
 
@@ -97,7 +97,7 @@ function ControlledInput() {
 
 ## Textarea Component
 
-Multi-line text input field.
+Multi-line text input.
 
 ### Basic Usage
 
@@ -154,7 +154,7 @@ const textarea = new TextareaRenderable(renderer, {
 
 ## Select Component
 
-List selection for choosing from options.
+List selection from options.
 
 ### Basic Usage
 
@@ -230,12 +230,12 @@ Default keybindings:
 
 ### Events
 
-**Important**: `onSelect` and `onChange` serve different purposes:
+**Important**: `onSelect` vs `onChange` differ:
 
 | Event | Trigger | Use Case |
 |-------|---------|----------|
-| `onSelect` | **Enter key pressed** - user confirms selection | Perform action with selected item |
-| `onChange` | **Arrow keys** - user navigates list | Preview, update UI as user browses |
+| `onSelect` | **Enter key** → confirms | Action on selected item |
+| `onChange` | **Arrow keys** → navigates | Preview/UI update while browsing |
 
 ```tsx
 // React/Solid
@@ -263,7 +263,7 @@ select.on(SelectRenderableEvents.SELECTION_CHANGED, (index, option) => {
 
 ## Tab Select Component
 
-Horizontal tab-based selection.
+Horizontal tab selection.
 
 ### Basic Usage
 
@@ -307,7 +307,7 @@ tabs.focus()
 
 ### Events
 
-Same pattern as Select - `onSelect` for Enter key, `onChange` for navigation:
+Same as Select — `onSelect` → Enter, `onChange` → nav:
 
 ```tsx
 <tab-select
@@ -355,7 +355,7 @@ function SingleInput() {
 }
 ```
 
-### Multiple Inputs with Focus State
+### Multiple Inputs w/ Focus State
 
 ```tsx
 // React
@@ -435,7 +435,7 @@ function LoginForm() {
 }
 ```
 
-### Search with Results
+### Search w/ Results
 
 ```tsx
 function SearchableList({ items, onItemSelected }) {
@@ -483,7 +483,7 @@ function SearchableList({ items, onItemSelected }) {
 
 ### Focus Required
 
-Inputs must be focused to receive keyboard input:
+Inputs need `focused` for keyboard input:
 
 ```tsx
 // WRONG - won't receive input
@@ -495,7 +495,7 @@ Inputs must be focused to receive keyboard input:
 
 ### Select Options Format
 
-Options must be objects with `name` property:
+Options must be objects w/ `name`:
 
 ```tsx
 // WRONG
@@ -520,7 +520,7 @@ Options must be objects with `name` property:
 
 ### Value vs onInput (Solid)
 
-Solid uses `onInput` instead of `onChange`:
+Solid uses `onInput` not `onChange`:
 
 ```tsx
 // React

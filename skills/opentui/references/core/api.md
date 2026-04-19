@@ -4,7 +4,7 @@
 
 ### createCliRenderer(config?)
 
-Creates and initializes the CLI renderer.
+Creates + inits CLI renderer.
 
 ```typescript
 import { createCliRenderer, type CliRendererConfig } from "@opentui/core"
@@ -47,7 +47,7 @@ renderer.console.clear()   // Clear console contents
 
 ## Renderables
 
-All renderables extend the base `Renderable` class and share common properties.
+All renderables extend base `Renderable`. Share common props.
 
 ### Common Properties
 
@@ -118,7 +118,7 @@ renderable.emit(event, ...args)    // Emit event
 
 ### TextRenderable
 
-Display styled text content.
+Styled text.
 
 ```typescript
 import { TextRenderable, TextAttributes, t, bold, fg, underline } from "@opentui/core"
@@ -150,7 +150,7 @@ const styled = new TextRenderable(renderer, {
 
 ### BoxRenderable
 
-Container with borders and layout.
+Container w/ borders + layout.
 
 ```typescript
 import { BoxRenderable } from "@opentui/core"
@@ -198,7 +198,7 @@ input.focus()  // Must be focused to receive input
 
 ### SelectRenderable
 
-List selection component.
+List select.
 
 ```typescript
 import { SelectRenderable, SelectRenderableEvents } from "@opentui/core"
@@ -230,12 +230,12 @@ select.focus()  // Navigate with up/down/j/k, select with enter
 ```
 
 **Event distinction:**
-- `ITEM_SELECTED` - Enter key pressed, user confirms selection
-- `SELECTION_CHANGED` - Arrow keys, user navigating/browsing options
+- `ITEM_SELECTED` → Enter pressed, confirms selection
+- `SELECTION_CHANGED` → arrow keys, browsing
 
 ### TabSelectRenderable
 
-Horizontal tab selection.
+Horizontal tabs.
 
 ```typescript
 import { TabSelectRenderable, TabSelectRenderableEvents } from "@opentui/core"
@@ -265,8 +265,8 @@ tabs.focus()  // Navigate with left/right/[/], select with enter
 ```
 
 **Event distinction** (same as SelectRenderable):
-- `ITEM_SELECTED` - Enter key pressed, user confirms tab
-- `SELECTION_CHANGED` - Arrow keys, user navigating tabs
+- `ITEM_SELECTED` → Enter pressed, confirms tab
+- `SELECTION_CHANGED` → arrow keys, browsing tabs
 
 ### ScrollBoxRenderable
 
@@ -317,7 +317,7 @@ const title = new ASCIIFontRenderable(renderer, {
 
 ### FrameBufferRenderable
 
-Low-level 2D rendering surface.
+Low-level 2D render surface.
 
 ```typescript
 import { FrameBufferRenderable, RGBA } from "@opentui/core"
@@ -336,7 +336,7 @@ canvas.frameBuffer.setCell(x, y, char, fg, bg)
 
 ## Constructs (VNode API)
 
-Declarative wrappers that create VNodes instead of direct instances.
+Declarative wrappers → VNodes, not direct instances.
 
 ```typescript
 import { Text, Box, Input, Select, instantiate, delegate } from "@opentui/core"
@@ -365,7 +365,7 @@ form.focus()  // Focuses the input, not the box
 
 ## Colors (RGBA)
 
-The `RGBA` class is exported from `@opentui/core` but works across **all frameworks** (Core, React, Solid). Use it for programmatic color manipulation.
+`RGBA` exported from `@opentui/core`, works across **all frameworks** (Core, React, Solid). Use for programmatic color manip.
 
 ### Creating Colors
 
@@ -419,10 +419,10 @@ parseColor(RGBA.fromHex("#F00"))  // Pass-through RGBA objects
 
 | Method | Use When |
 |--------|----------|
-| `fromHex()` | Working with design specs, CSS colors, config files |
-| `fromInts()` | You have 8-bit values (0-255), common in graphics |
-| `fromValues()` | Doing color interpolation, animations, math |
-| `parseColor()` | Accepting user input or config that could be any format |
+| `fromHex()` | design specs, CSS colors, config files |
+| `fromInts()` | 8-bit values (0-255), graphics |
+| `fromValues()` | color interp, animations, math |
+| `parseColor()` | user input/config, any format |
 
 ### Using RGBA in React/Solid
 
@@ -443,7 +443,7 @@ function ThemedBox() {
 }
 ```
 
-Color props in React/Solid accept both string formats (`"#FF0000"`, `"red"`) and `RGBA` objects.
+React/Solid color props accept strings (`"#FF0000"`, `"red"`) + `RGBA` objects.
 
 ## Keyboard Input
 

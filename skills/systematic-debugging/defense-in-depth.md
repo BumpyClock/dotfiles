@@ -2,14 +2,14 @@
 
 ## Overview
 
-When you fix a bug caused by invalid data, adding validation at one place feels sufficient. But that single check can be bypassed by different code paths, refactoring, or mocks.
+When bug comes from invalid data, one validation check feels enough. But one check can be bypassed by different code paths, refactoring, or mocks.
 
-**Core principle:** Validate at EVERY layer data passes through. Make the bug structurally impossible.
+**Core principle:** Validate at EVERY layer data passes through. Make bug structurally impossible.
 
 ## Why Multiple Layers
 
-Single validation: "We fixed the bug"
-Multiple layers: "We made the bug impossible"
+Single validation: "We fixed bug"
+Multiple layers: "We made bug impossible"
 
 Different layers catch different cases:
 - Entry validation catches most bugs
@@ -86,7 +86,7 @@ async function gitInit(directory: string) {
 
 ## Applying the Pattern
 
-When you find a bug:
+When you find bug:
 
 1. **Trace the data flow** - Where does bad value originate? Where used?
 2. **Map all checkpoints** - List every point data passes through
@@ -113,7 +113,7 @@ Bug: Empty `projectDir` caused `git init` in source code
 
 ## Key Insight
 
-All four layers were necessary. During testing, each layer caught bugs the others missed:
+All four layers were necessary. During testing, each layer caught bugs others missed:
 - Different code paths bypassed entry validation
 - Mocks bypassed business logic checks
 - Edge cases on different platforms needed environment guards

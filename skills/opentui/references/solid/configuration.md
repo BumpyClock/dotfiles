@@ -9,7 +9,7 @@ bunx create-tui@latest -t solid my-app
 cd my-app && bun install
 ```
 
-The CLI creates the `my-app` directory for you - it must **not already exist**.
+CLI creates `my-app` directory for you - it must **not already exist**.
 
 Options: `--no-git` (skip git init), `--no-install` (skip bun install)
 
@@ -59,7 +59,7 @@ bun install @opentui/solid @opentui/core solid-js
 preload = ["@opentui/solid/preload"]
 ```
 
-This loads the Solid JSX transform before your code runs.
+Loads Solid JSX transform before your code runs.
 
 ## Package Configuration
 

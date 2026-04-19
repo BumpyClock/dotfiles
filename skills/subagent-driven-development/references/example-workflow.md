@@ -1,6 +1,6 @@
 # Example Workflow
 
-Short example of the loop.
+Short loop example.
 
 ```
 1. Read plan once. Split into small owned tasks.

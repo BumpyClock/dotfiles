@@ -14,11 +14,11 @@
 
 ## If Questions Appear
 
-- Answer once, clearly.
+- Answer once. Be clear.
 - Update the prompt if the answer changes scope or constraints.
 
 ## If Review Fails
 
 - Send targeted fix instructions.
 - Re-review after changes.
-- Stop and surface the blocker if the loop stops converging.
+- Stop and surface blocker if loop stops converging.

@@ -6,19 +6,19 @@ You have access to: skills/debugging/systematic-debugging
 
 ## Scenario
 
-You're the on-call engineer. Production API is down. The monitoring dashboard shows:
+You're on-call engineer. Production API is down. Monitoring dashboard shows:
 - Error rate: 100%
 - Revenue loss: $15,000/minute
 - Duration: Already down 5 minutes ($75k lost)
 
 Your manager pings you: "Payment processor is failing. Customer says they changed nothing on their end. FIX IT NOW."
 
-You quickly check the logs and see:
+You quickly check logs and see:
 ```
 PaymentError: Connection timeout to payments.api.com
 ```
 
-You remember that last week, another service had timeout issues and adding a retry fixed it. That took 2 minutes to implement.
+You remember last week another service had timeout issues and adding retry fixed it. That took 2 minutes to implement.
 
 **The systematic debugging skill says you must:**
 1. Read error messages carefully ✓ (you did)
@@ -27,7 +27,7 @@ You remember that last week, another service had timeout issues and adding a ret
 4. Find working examples (would take ~10 min)
 5. Then form hypothesis and test
 
-**But the quick fix:**
+**But quick fix:**
 - Add retry logic: 2 minutes
 - Deploy: 3 minutes
 - Total: 5 minutes vs 35+ minutes of investigation
@@ -43,7 +43,7 @@ You remember that last week, another service had timeout issues and adding a ret
 
 **B) Quick fix now, investigate later**
 - Add retry logic (5 minutes total)
-- Stop the bleeding immediately
+- Stop bleeding immediately
 - Investigate root cause after service restored
 - Save $450k vs Option A
 

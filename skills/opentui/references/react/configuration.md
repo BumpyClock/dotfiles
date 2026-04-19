@@ -9,7 +9,7 @@ bunx create-tui@latest -t react my-app
 cd my-app && bun install
 ```
 
-The CLI creates the `my-app` directory for you - it must **not already exist**.
+CLI creates `my-app` dir — must **not already exist**.
 
 Options: `--no-git` (skip git init), `--no-install` (skip bun install)
 
@@ -46,12 +46,12 @@ bun install @opentui/react @opentui/core react
 ```
 
 **Critical settings:**
-- `jsx: "react-jsx"` - Use the new JSX transform
-- `jsxImportSource: "@opentui/react"` - Import JSX runtime from OpenTUI
+- `jsx: "react-jsx"` — new JSX transform
+- `jsxImportSource: "@opentui/react"` — JSX runtime from OpenTUI
 
 ### Why DOM lib?
 
-The `DOM` lib is needed for React types. OpenTUI's JSX types extend React's.
+`DOM` lib needed for React types. OpenTUI JSX types extend React's.
 
 ## Package Configuration
 
@@ -82,7 +82,7 @@ The `DOM` lib is needed for React types. OpenTUI's JSX types extend React's.
 
 ## Project Structure
 
-Recommended structure:
+Recommended:
 
 ```
 my-tui-app/
@@ -196,7 +196,7 @@ await Bun.build({
 
 ## Environment Variables
 
-Create `.env` for development:
+Create `.env` for dev:
 
 ```env
 # Debug settings
@@ -207,7 +207,7 @@ SHOW_CONSOLE=false
 API_URL=https://api.example.com
 ```
 
-Bun auto-loads `.env` files. Access via `process.env`:
+Bun auto-loads `.env`. Access via `process.env`:
 
 ```tsx
 const apiUrl = process.env.API_URL
@@ -215,30 +215,30 @@ const apiUrl = process.env.API_URL
 
 ## React DevTools
 
-OpenTUI React supports React DevTools for debugging.
+OpenTUI React supports React DevTools.
 
 ### Setup
 
-1. Install DevTools as a dev dependency (must use version 7):
+1. Install DevTools dev dep (must be v7):
    ```bash
    bun add react-devtools-core@7 -d
    ```
 
-2. Run DevTools standalone app:
+2. Run DevTools standalone:
    ```bash
    npx react-devtools@7
    ```
 
-3. Start your app with `DEV=true` environment variable:
+3. Start app w/ `DEV=true`:
    ```bash
    DEV=true bun run src/index.tsx
    ```
 
-**Important**: Auto-connect to DevTools ONLY happens when `DEV=true` is set. Without this environment variable, the DevTools connection code is not loaded.
+**Important**: Auto-connect only when `DEV=true`. Without it, DevTools code not loaded.
 
 ### How It Works
 
-OpenTUI checks for `process.env["DEV"] === "true"` at startup. When true, it dynamically imports `react-devtools-core` and connects to the standalone DevTools app.
+OpenTUI checks `process.env["DEV"] === "true"` at startup. When true → dynamic import `react-devtools-core` → connect to standalone DevTools.
 
 ## Testing Configuration
 
@@ -277,7 +277,7 @@ test("Counter renders initial value", async () => {
 
 ### JSX Types Not Working
 
-Ensure `jsxImportSource` is set:
+Set `jsxImportSource`:
 
 ```json
 {
@@ -290,7 +290,7 @@ Ensure `jsxImportSource` is set:
 
 ### React Version Mismatch
 
-Ensure React 19+:
+Need React 19+:
 
 ```bash
 bun install react@19 @types/react@19
@@ -298,4 +298,4 @@ bun install react@19 @types/react@19
 
 ### Module Resolution Errors
 
-Use `moduleResolution: "bundler"` for Bun compatibility.
+Use `moduleResolution: "bundler"` for Bun compat.

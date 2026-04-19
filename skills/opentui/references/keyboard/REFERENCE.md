@@ -1,21 +1,21 @@
 # Keyboard Input Handling
 
-How to handle keyboard input in OpenTUI applications.
+Handle keyboard input in OpenTUI apps.
 
 ## Overview
 
-OpenTUI provides keyboard input handling through:
+OpenTUI keyboard input via:
 - **Core**: `renderer.keyInput` EventEmitter
 - **React**: `useKeyboard()` hook
 - **Solid**: `useKeyboard()` hook
 
 ## When to Use
 
-Use this reference when you need keyboard shortcuts, focus-aware input handling, or custom keybindings.
+Use for shortcuts, focus-aware input, custom keybindings.
 
 ## KeyEvent Object
 
-All keyboard handlers receive a `KeyEvent` object:
+Handlers receive `KeyEvent`:
 
 ```typescript
 interface KeyEvent {
@@ -92,7 +92,7 @@ function App() {
 
 Lowercase: `a`, `b`, `c`, ... `z`
 
-With Shift: Check `key.shift && key.name === "a"` for uppercase
+Shift+letter: check `key.shift && key.name === "a"` for uppercase.
 
 ### Numeric Keys
 
@@ -135,7 +135,7 @@ With Shift: Check `key.shift && key.name === "a"` for uppercase
 
 ## Modifier Keys
 
-Check modifier properties on `KeyEvent`:
+Check modifier props on `KeyEvent`:
 
 ```typescript
 renderer.keyInput.on("keypress", (key) => {
@@ -175,7 +175,7 @@ if (key.ctrl && key.meta && key.name === "delete") {
 
 ### Press Events (Default)
 
-Normal key press:
+Normal press:
 
 ```typescript
 renderer.keyInput.on("keypress", (key) => {
@@ -187,7 +187,7 @@ renderer.keyInput.on("keypress", (key) => {
 
 ### Repeat Events
 
-Key held down:
+Key held:
 
 ```typescript
 renderer.keyInput.on("keypress", (key) => {
@@ -199,7 +199,7 @@ renderer.keyInput.on("keypress", (key) => {
 
 ### Release Events
 
-Key released (opt-in):
+Release (opt-in):
 
 ```tsx
 // React
@@ -399,7 +399,7 @@ renderer.keyInput.on("paste", (text: string) => {
 
 ### Solid
 
-Solid provides a dedicated `usePaste` hook:
+Solid has dedicated `usePaste` hook:
 
 ```tsx
 import { usePaste } from "@opentui/solid"
@@ -413,11 +413,11 @@ function App() {
 }
 ```
 
-> **Note**: `usePaste` is **Solid-only**. React does not have this hook - handle paste via the Core event emitter or input component's `onChange`.
+> **Note**: `usePaste` = **Solid-only**. React lacks this hook → use Core event emitter or input component's `onChange`.
 
 ## Clipboard API (OSC 52)
 
-Copy text to the system clipboard using OSC 52 escape sequences. Works over SSH and in most modern terminal emulators.
+Copy to system clipboard via OSC 52 escape sequences. Works over SSH + most modern terminal emulators.
 
 ### Core
 
@@ -441,7 +441,7 @@ renderer.copyToClipboardOSC52("text", ClipboardTarget.Clipboard) // System clipb
 
 ### From Selection
 
-The Selection object provides a convenience method:
+Selection object has convenience method:
 
 ```tsx
 // Solid
@@ -460,7 +460,7 @@ Input components (`<input>`, `<textarea>`, `<select>`) capture keyboard events w
 // Global useKeyboard still fires, but input consumes characters
 ```
 
-To prevent conflicts, check if an input is focused before handling global shortcuts:
+Prevent conflicts → check input focus before global shortcuts:
 
 ```tsx
 function App() {
@@ -490,18 +490,18 @@ function App() {
 
 ### Terminal Limitations
 
-Some key combinations are captured by the terminal or OS:
-- `Ctrl+C` often sends SIGINT (use `exitOnCtrlC: false` to handle)
-- `Ctrl+Z` suspends the process
-- Some function keys may be intercepted
+Terminal/OS captures some combos:
+- `Ctrl+C` → SIGINT (use `exitOnCtrlC: false` to handle)
+- `Ctrl+Z` suspends process
+- Some function keys intercepted
 
 ### SSH and Remote Sessions
 
-Key detection may vary over SSH. Test on target environments.
+Key detection varies over SSH. Test on target envs.
 
 ### Multiple Handlers
 
-Multiple `useKeyboard` calls all receive events. Coordinate handlers to prevent conflicts.
+All `useKeyboard` calls receive events. Coordinate to avoid conflicts.
 
 ## See Also
 

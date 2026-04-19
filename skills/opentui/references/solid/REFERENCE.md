@@ -1,6 +1,6 @@
 # OpenTUI Solid (@opentui/solid)
 
-A SolidJS reconciler for building terminal user interfaces with fine-grained reactivity. Get optimal performance with Solid's signal-based approach.
+SolidJS reconciler for terminal UIs with fine-grained reactivity. Uses Solid's signal-based updates for high performance.
 
 ## Overview
 
@@ -13,7 +13,7 @@ OpenTUI Solid provides:
 
 ## When to Use Solid
 
-Use the Solid reconciler when:
+Use Solid reconciler when:
 - You want optimal re-rendering performance
 - You prefer signal-based reactivity
 - You need fine-grained control over updates
@@ -36,7 +36,7 @@ bunx create-tui@latest -t solid my-app
 cd my-app && bun install
 ```
 
-The CLI creates the `my-app` directory for you - it must **not already exist**.
+CLI creates `my-app` directory for you - it must **not already exist**.
 
 Options: `--no-git` (skip git init), `--no-install` (skip bun install)
 
@@ -151,7 +151,7 @@ Inside `<text>`, use modifier elements:
 
 ### Portal
 
-Render children to a different mount node:
+Render children to different mount node:
 
 ```tsx
 import { Portal } from "@opentui/solid"

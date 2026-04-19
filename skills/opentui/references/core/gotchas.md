@@ -4,7 +4,7 @@
 
 ### Use Bun, Not Node.js
 
-OpenTUI is built for Bun. Always use Bun commands:
+OpenTUI built for Bun. Use Bun cmds:
 
 ```bash
 # CORRECT
@@ -20,7 +20,7 @@ npx jest
 
 ### Bun APIs to Use
 
-Prefer Bun's built-in APIs:
+Prefer Bun built-in APIs:
 
 ```typescript
 // CORRECT - Bun APIs
@@ -36,7 +36,7 @@ import express from "express"
 
 ### Avoid process.exit()
 
-**Never use `process.exit()` directly** - it prevents proper terminal cleanup and can leave the terminal in a broken state (alternate screen mode, raw input mode, etc.).
+**Never use `process.exit()` directly** — blocks terminal cleanup, leaves terminal broken (alternate screen mode, raw input mode, etc).
 
 ```typescript
 // WRONG - Terminal may be left in broken state
@@ -61,11 +61,11 @@ const renderer = await createCliRenderer({
 renderer.destroy()  // Cleans up and exits
 ```
 
-`renderer.destroy()` restores the terminal to its original state before exiting.
+`renderer.destroy()` restores terminal to original state before exit.
 
 ### Environment Variables
 
-Bun auto-loads `.env` files. Don't use dotenv:
+Bun auto-loads `.env`. No dotenv:
 
 ```typescript
 // CORRECT
@@ -80,18 +80,18 @@ dotenv.config()
 
 ### Cannot See console.log Output
 
-OpenTUI captures console output for the debug overlay. You can't see logs in the terminal while the TUI is running.
+OpenTUI captures console for debug overlay. Logs invisible in terminal while TUI running.
 
 **Solutions:**
 
-1. **Use the console overlay:**
+1. **Console overlay:**
    ```typescript
    const renderer = await createCliRenderer()
    renderer.console.show()
    console.log("This appears in the overlay")
    ```
 
-2. **Toggle with keyboard:**
+2. **Keyboard toggle:**
    ```typescript
    renderer.keyInput.on("keypress", (key) => {
      if (key.name === "f12") {
@@ -100,7 +100,7 @@ OpenTUI captures console output for the debug overlay. You can't see logs in the
    })
    ```
 
-3. **Write to a file:**
+3. **Write to file:**
    ```typescript
    import { appendFileSync } from "node:fs"
    function debugLog(msg: string) {
@@ -108,14 +108,14 @@ OpenTUI captures console output for the debug overlay. You can't see logs in the
    }
    ```
 
-4. **Disable console capture:**
+4. **Disable capture:**
    ```bash
    OTUI_USE_CONSOLE=false bun run src/index.ts
    ```
 
 ### Reproduce Issues in Tests
 
-Don't guess at bugs. Create a reproducible test:
+No guessing. Make repro test:
 
 ```typescript
 import { test, expect } from "bun:test"
@@ -140,7 +140,7 @@ test("reproduces the issue", async () => {
 
 ### Components Must Be Focused
 
-Input components only receive keyboard input when focused:
+Input components get keys only when focused:
 
 ```typescript
 const input = new InputRenderable(renderer, {
@@ -159,7 +159,7 @@ input.focus()
 
 ### Focus in Nested Components
 
-When a component is inside a container, focus the component directly:
+Component inside container → focus component direct:
 
 ```typescript
 const container = new BoxRenderable(renderer, { id: "container" })
@@ -188,7 +188,7 @@ form.focus()  // Routes to the input
 
 ### Zig is Required
 
-Native code compilation requires Zig:
+Native compile needs Zig:
 
 ```bash
 # Install Zig first
@@ -204,7 +204,7 @@ bun run build
 
 ### When to Build
 
-- **TypeScript changes**: NO build needed (Bun runs TS directly)
+- **TypeScript changes**: NO build (Bun runs TS direct)
 - **Native code changes**: Build required
 
 ```bash
@@ -217,7 +217,7 @@ bun run build
 
 ### "Cannot read properties of undefined"
 
-Usually means a renderable wasn't added to the tree:
+Renderable not added to tree:
 
 ```typescript
 // WRONG - not added to tree
@@ -232,7 +232,7 @@ text.someMethod()
 
 ### Layout Not Updating
 
-Yoga layout is calculated lazily. Force a recalculation:
+Yoga layout lazy. Force recalc:
 
 ```typescript
 // After changing layout properties
@@ -242,7 +242,7 @@ renderer.requestRender()
 
 ### Text Overflow/Clipping
 
-Text doesn't wrap by default. Set explicit width:
+Text no wrap by default. Set width:
 
 ```typescript
 // May overflow
@@ -259,7 +259,7 @@ const text = new TextRenderable(renderer, {
 
 ### Colors Not Showing
 
-Check terminal capability and color format:
+Check terminal capability + color format:
 
 ```typescript
 // CORRECT formats
@@ -276,7 +276,7 @@ fg: 0xFF0000            // Number (not supported)
 
 ### Avoid Frequent Re-renders
 
-Batch updates when possible:
+Batch updates:
 
 ```typescript
 // WRONG - multiple render calls
@@ -293,7 +293,7 @@ items.forEach((item, i) => {
 
 ### Minimize Tree Depth
 
-Deep nesting impacts layout calculation:
+Deep nesting → slow layout:
 
 ```typescript
 // Avoid unnecessary wrappers
@@ -306,7 +306,7 @@ Box({}, Text({ content: "Hello" }))
 
 ### Use display: none
 
-Hide elements instead of removing/re-adding:
+Hide, don't remove/re-add:
 
 ```typescript
 // For toggling visibility
@@ -322,7 +322,7 @@ parent.add(element)
 
 ### Test Runner
 
-Use Bun's test runner:
+Use Bun test runner:
 
 ```typescript
 import { test, expect, beforeEach, afterEach } from "bun:test"
@@ -334,7 +334,7 @@ test("my test", () => {
 
 ### Test from Package Directories
 
-Run tests from the specific package directory:
+Run tests from package dir:
 
 ```bash
 # CORRECT

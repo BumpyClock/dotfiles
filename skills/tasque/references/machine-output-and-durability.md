@@ -33,14 +33,14 @@ Error envelope:
 
 ## Storage model
 
-- Canonical source of truth: `.tasque/events.jsonl` (append-only)
-- Derived cache: `.tasque/state.json` (rebuildable, gitignored)
-- Optional replay checkpoints: `.tasque/snapshots/`
+- Truth: `.tasque/events.jsonl` (append-only)
+- Cache: `.tasque/state.json` (rebuildable, gitignored)
+- Replay checkpoints: `.tasque/snapshots/`
 - Config: `.tasque/config.json`
 - Ephemeral lock: `.tasque/.lock`
 
 ## Recovery model
 
-- Read path: load latest snapshot, replay event tail, refresh state cache.
-- Write path: append event(s), update projection, periodically write snapshot.
-- Startup recovery tolerates one malformed trailing JSONL line.
+- Read: load latest snapshot → replay event tail → refresh state cache.
+- Write: append event(s) → update projection → periodically snapshot.
+- Startup tolerates one malformed trailing JSONL line.

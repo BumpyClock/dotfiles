@@ -1,6 +1,6 @@
 # Command Reference
 
-Read when: you need exact command syntax or available options.
+Read when: need exact command syntax or options.
 
 ## Core workflow
 
@@ -44,6 +44,6 @@ Read when: you need exact command syntax or available options.
 
 ## Global options and status alias
 
-- Add `--json` to any command for stable machine output.
-- Add `--exact-id` to disable fuzzy id matching.
-- Status alias: `done` maps to `closed`.
+- `--json` on any command → stable machine output.
+- `--exact-id` → disable fuzzy id matching.
+- Status alias: `done` → `closed`.

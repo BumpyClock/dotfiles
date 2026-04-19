@@ -5,13 +5,12 @@ description: Operational guide for Tasque (tsq) local task tracking and manageme
 
 <!-- tsq-managed-skill:v1 -->
 
-Tasque = durable, local-first task memory for agent work.
-Default day-to-day playbook.
+Tasque = durable local-first task memory for agent work. Default daily playbook.
 
 ## When to use tsq
 
-- Use `tsq` for multi-step, multi-session, dependency-blocked, shared-agent work.
-- Use transient checklist, or inbuild todoWrite / task tool for short linear single-session work.
+- `tsq` -> multi-step/multi-session/dep-blocked/shared-agent work.
+- Transient checklist or inbuilt `todoWrite`/task tool -> short linear single-session work.
 
 ## Session routine (default)
 
@@ -21,7 +20,7 @@ tsq ready --lane coding
 tsq list --status blocked
 ```
 
-Pick one task; inspect context:
+Pick task; inspect ctx:
 
 ```bash
 tsq show <id>
@@ -35,7 +34,7 @@ tsq create "Implement <feature>" --kind feature -p 1 --needs-planning
 tsq create "Fix <bug>" --kind task -p 1 --needs-planning
 ```
 
-Planning already done:
+Planning done:
 
 ```bash
 tsq create "Implement <feature>" --planning planned
@@ -59,7 +58,7 @@ tsq create --parent <parent-id> --kind task -p 2 --planning planned \
   --child "Add integration tests"
 ```
 
-Safe reruns without duplicate children:
+Safe reruns, no dup children:
 
 ```bash
 tsq create --parent <parent-id> --ensure \
@@ -91,7 +90,7 @@ Soft ordering only:
 tsq dep add <later-id> <earlier-id> --type starts_after
 ```
 
-Check actionable tasks:
+Check actionable:
 
 ```bash
 tsq ready --lane coding
@@ -112,7 +111,7 @@ tsq create "Implement auth module" --ensure
 tsq create --parent <parent-id> --child "Add tests" --ensure
 ```
 
-`--ensure` returns existing task when same normalized title already exists under the same parent.
+`--ensure` -> returns existing task when same normalized title exists under same parent.
 
 ### 6) Park / unpark work
 
@@ -140,26 +139,26 @@ tsq history <id> --limit 20
 tsq list --tree
 ```
 
-Optional Agent/tool handoff: add `--json` if you need structured output. 
+Agent/tool handoff: add `--json` for structured output.
 
 ## Built-in task authoring checklist
 
 ### Minimum quality bar
 
-- Titles: clear, action-oriented (verb + object + scope).
+- Titles: clear, action-oriented (verb+object+scope).
 - Set `kind`: `task|feature|epic`.
-- Set priority intentionally: `0..3`.
-- Add labels with consistent naming.
+- Set priority: `0..3`.
+- Labels: consistent naming.
 - Attach spec when scope/acceptance non-trivial.
 - Add explicit deps/relations when relevant.
 
 ### Parallelization guidance
 
-- Prefer multiple independent tasks over one large task.
-- Use `blocks` only when work truly gates another task.
-- Use `starts_after` for sequencing without blocking readiness.
-- Add discovered work as new tasks via `--discovered-from`.
-- Keep each task small enough for one focused agent pass.
+- Prefer multiple independent tasks > one large.
+- `blocks` only when work truly gates another.
+- `starts_after` -> sequencing w/o blocking readiness.
+- Discovered work -> new tasks via `--discovered-from`.
+- Keep tasks small -> one focused agent pass.
 
 ### Practical authoring starter
 
@@ -172,15 +171,15 @@ tsq link add <src> <dst> --type relates_to
 
 ## Required habits
 
-- Keep lifecycle `status` and `planning_state` separate.
-- Use deps to make parallel execution explicit.
-- Create follow-up tasks; avoid chat TODOs.
+- Keep lifecycle `status` + `planning_state` separate.
+- Deps -> make parallel execution explicit.
+- Follow-up tasks; no chat TODOs.
 - Prefer `--json` for automation.
-- Use `--ensure` in scripts to prevent duplicate creates on rerun.
+- `--ensure` in scripts -> prevent dup creates on rerun.
 
 ## Read when needed
 
 - Planning/deferred semantics: `references/planning-workflow.md`
-- JSON schema + durability details: `references/machine-output-and-durability.md`
+- JSON schema + durability: `references/machine-output-and-durability.md`
 - Full option matrix (edge cases): `references/command-reference.md`
 - Install if missing: `npm install -g @bumpyclock/tasque`

@@ -4,7 +4,7 @@
 
 ### Never use `process.exit()` directly
 
-**This is the most common mistake.** Using `process.exit()` leaves the terminal in a broken state (cursor hidden, raw mode, alternate screen).
+**Most common mistake.** Using `process.exit()` leaves terminal in broken state (cursor hidden, raw mode, alternate screen).
 
 ```tsx
 // WRONG - Terminal left in broken state
@@ -22,7 +22,7 @@ function App() {
 }
 ```
 
-`renderer.destroy()` restores the terminal (exits alternate screen, restores cursor, etc.) before exiting.
+`renderer.destroy()` restores terminal (exits alternate screen, restores cursor, etc.) before exit.
 
 ## Configuration Issues
 
@@ -224,7 +224,7 @@ Use `For` for arrays of objects, `Index` for primitives:
 
 ### Missing Fallback
 
-Show requires fallback for proper rendering:
+`Show` needs fallback for safer rendering:
 
 ```tsx
 // May cause issues
@@ -360,7 +360,7 @@ bun run start
 
 ### Async render()
 
-The render function is async when creating a renderer:
+`render()` is async when creating renderer:
 
 ```tsx
 // This is fine - Bun supports top-level await
@@ -378,7 +378,7 @@ render(() => <App />, renderer)
 
 ### "Cannot read properties of undefined"
 
-Usually a missing reactive access:
+Usually missing reactive access:
 
 ```tsx
 // Check if signal is being called
@@ -402,7 +402,7 @@ Check component naming:
 
 ### "store is not a function"
 
-Stores aren't called like signals:
+Stores are not called like signals:
 
 ```tsx
 const [store, setStore] = createStore({ count: 0 })
