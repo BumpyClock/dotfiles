@@ -158,3 +158,8 @@ enabled = true
 [[skills.config]]
 path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
 enabled = true
+
+[marketplaces.openai-bundled]
+last_updated = "2026-04-19T17:26:22Z"
+source_type = "local"
+source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
