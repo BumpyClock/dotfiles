@@ -10,7 +10,7 @@
 
 ---
 
-A Claude Code skill that compresses your project memory files (`CLAUDE.md`, todos, preferences) into caveman format — so every session loads fewer tokens automatically.
+A Claude Code skill that compresses project memory files (`CLAUDE.md`, todos, preferences) with AI judgment directly — so every session loads fewer tokens automatically.
 
 Claude read `CLAUDE.md` on every session start. If file big, cost big. Caveman make file small. Cost go down forever.
 
@@ -25,61 +25,39 @@ CLAUDE.md          ← compressed (Claude reads this — fewer tokens every sess
 CLAUDE.original.md ← human-readable backup (you edit this)
 ```
 
-Original never lost. You can read and edit `.original.md`. Run skill again to re-compress after edits.
+Original never lost. Read and edit `.original.md`.
 
-## Benchmarks
+Need another compression pass later? Manually copy edited backup content back to original filename, rename or remove old `.original.md`, then run skill again so it can create a fresh backup safely.
 
-Real results on real project files:
+## What It Preserve
 
-| File | Original | Compressed | Saved |
-|------|----------:|----------:|------:|
-| `claude-md-preferences.md` | 706 | 285 | **59.6%** |
-| `project-notes.md` | 1145 | 535 | **53.3%** |
-| `claude-md-project.md` | 1122 | 687 | **38.8%** |
-| `todo-list.md` | 627 | 388 | **38.1%** |
-| `mixed-with-code.md` | 888 | 574 | **35.4%** |
-| **Average** | **898** | **494** | **45%** |
+- Code blocks
+- Inline code
+- URLs, file paths, commands, flags
+- Headings, tables, list nesting
+- XML / HTML prompt tags
+- Template placeholders like `{{task}}` and `${INPUT}`
+- Versions, IDs, numbers, proper nouns
 
-All validations passed ✅ — headings, code blocks, URLs, file paths preserved exactly.
+Compress prose only. Structure stay exact.
 
-## Before / After
+## Why AI, not scripts
 
-<table>
-<tr>
-<td width="50%">
+Old helper scripts used rigid detection + validation heuristics. Good for simple prose. Bad for complex prompt files, mixed prose/code docs, nested tables, XML-tagged instructions, placeholder-heavy templates.
 
-### 📄 Original (706 tokens)
-
-> "I strongly prefer TypeScript with strict mode enabled for all new code. Please don't use `any` type unless there's genuinely no way around it, and if you do, leave a comment explaining the reasoning. I find that taking the time to properly type things catches a lot of bugs before they ever make it to runtime."
-
-</td>
-<td width="50%">
-
-### 🪨 Caveman (285 tokens)
-
-> "Prefer TypeScript strict mode always. No `any` unless unavoidable — comment why if used. Proper types catch bugs early."
-
-</td>
-</tr>
-</table>
-
-**Same instructions. 60% fewer tokens. Every. Single. Session.**
+Live behavior now lives in [`SKILL.md`](./SKILL.md). Model reads file directly, freezes structure-heavy regions, compresses prose between them, then self-reviews before writing.
 
 ## Security
 
-`caveman-compress` is flagged as Snyk High Risk due to subprocess and file I/O patterns detected by static analysis. This is a false positive — see [SECURITY.md](./SECURITY.md) for a full explanation of what the skill does and does not do.
+See [SECURITY.md](./SECURITY.md). Short version: live skill path is instruction-only. No helper subprocesses. No local compression scripts required.
 
 ## Install
 
-Compress is built in with the `caveman` plugin. Install `caveman` once, then use `/caveman:compress`.
-
-If you need local files, the compress skill lives at:
+In this repo, skill files live at:
 
 ```bash
-caveman-compress/
+skills/caveman-compress/
 ```
-
-**Requires:** Python 3.10+
 
 ## Usage
 
@@ -94,11 +72,13 @@ Examples:
 /caveman:compress todos.md
 ```
 
+If user gives inline text instead of a filepath, skill can compress inline and return text without writing files.
+
 ### What files work
 
 | Type | Compress? |
 |------|-----------|
-| `.md`, `.txt`, `.rst` | ✅ Yes |
+| `.md`, `.txt`, `.markdown`, `.rst` | ✅ Yes |
 | Extensionless natural language | ✅ Yes |
 | `.py`, `.js`, `.ts`, `.json`, `.yaml` | ❌ Skip (code/config) |
 | `*.original.md` | ❌ Skip (backup files) |
@@ -108,23 +88,21 @@ Examples:
 ```
 /caveman:compress CLAUDE.md
         ↓
-detect file type        (no tokens)
+read file directly
         ↓
-Claude compresses       (tokens — one call)
+freeze structure-heavy regions
         ↓
-validate output         (no tokens)
-  checks: headings, code blocks, URLs, file paths, bullets
+compress prose only
         ↓
-if errors: Claude fixes cherry-picked issues only   (tokens — targeted fix)
-  does NOT recompress — only patches broken parts
-        ↓
-retry up to 2 times
+self-review preserved regions
         ↓
 write compressed → CLAUDE.md
 write original   → CLAUDE.original.md
 ```
 
-Only two things use tokens: initial compression + targeted fix if validation fails. Everything else is local Python.
+If file looks ambiguous or structure-heavy, skill favors less compression over risky edits.
+
+Inline-text mode skips file I/O entirely: compress text, return result, no backup file.
 
 ## What Is Preserved
 
@@ -138,13 +116,15 @@ Caveman compress natural language. It never touch:
 - Technical terms, library names, API names
 - Headings (exact text preserved)
 - Tables (structure preserved, cell text compressed)
+- XML / HTML prompt tags
+- Template placeholders
 - Dates, version numbers, numeric values
 
 ## Why This Matter
 
 `CLAUDE.md` loads on **every session start**. A 1000-token project memory file costs tokens every single time you open a project. Over 100 sessions that's 100,000 tokens of overhead — just for context you already wrote.
 
-Caveman cut that by ~45% on average. Same instructions. Same accuracy. Less waste.
+Caveman usually cuts prose hard while keeping instructions intact. Same meaning. Less waste.
 
 ```
 ┌────────────────────────────────────────────┐

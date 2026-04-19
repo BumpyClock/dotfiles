@@ -1,31 +1,49 @@
 # Security
 
-## Snyk High Risk Rating
+## Current model
 
-`caveman-compress` receives a Snyk High Risk rating due to static analysis heuristics. This document explains what the skill does and does not do.
+`caveman-compress` is instruction-only now. Live behavior is defined in [`SKILL.md`](./SKILL.md), not by helper scripts.
 
-### What triggers the rating
+Compression happens through normal agent behavior:
 
-1. **subprocess usage**: The skill calls the `claude` CLI via `subprocess.run()` as a fallback when `ANTHROPIC_API_KEY` is not set. The subprocess call uses a fixed argument list — no shell interpolation occurs. User file content is passed via stdin, not as a shell argument.
+- filepath mode: read/write only the user-requested file plus sibling backup
+- inline mode: compress user-provided text in memory and return it without file writes
 
-2. **File read/write**: The skill reads the file the user explicitly points it at, compresses it, and writes the result back to the same path. A `.original.md` backup is saved alongside it. No files outside the user-specified path are read or written.
+No helper subprocess, no local validator loop, no custom CLI required.
 
-### What the skill does NOT do
+## What the skill does
 
-- Does not execute user file content as code
-- Does not make network requests except to Anthropic's API (via SDK or CLI)
-- Does not access files outside the path the user provides
-- Does not use shell=True or string interpolation in subprocess calls
-- Does not collect or transmit any data beyond the file being compressed
+- In filepath mode, reads only file user explicitly points to
+- Compresses prose directly with model judgment
+- Preserves structure-heavy regions exactly
+- In filepath mode, writes compressed result back to same path
+- In filepath mode, saves sibling `.original.md` backup before overwrite
+- In filepath mode, stops if backup already exists
+- In inline mode, returns compressed text without creating files
 
-### Auth behavior
+## What the skill does NOT do
 
-If `ANTHROPIC_API_KEY` is set, the skill uses the Anthropic Python SDK directly (no subprocess). If not set, it falls back to the `claude` CLI, which uses the user's existing Claude desktop authentication.
+- Does not rely on helper scripts; live behavior is in `SKILL.md`
+- Does not spawn subprocesses or shell commands for compression
+- In filepath mode, does not scan outside requested path
+- Does not silently overwrite existing backups
+- Does not compress code/config files
+- Does not rewrite code blocks, inline code, URLs, paths, commands, headings, table structure, prompt tags, or placeholders
 
-### File size limit
+## Why this is safer for complex files
 
-Files larger than 500KB are rejected before any API call is made.
+Old scripted flow depended on brittle heuristics and validator regexes. That approach could damage prompt-heavy files with nested structure, XML-like tags, placeholder syntax, or mixed prose/code regions.
 
-### Reporting a vulnerability
+Current skill pushes preservation judgment into the model instructions themselves. When a region is ambiguous, the skill prefers leaving it alone over forcing more compression.
 
-If you believe you've found a genuine security issue, please open a GitHub issue with the label `security`.
+## Scope limits
+
+- Natural-language files only
+- Reject `*.original.md`
+- Reject oversized files before rewrite
+- Backup required before overwrite
+- Inline mode returns text only; no file writes
+
+## Reporting a vulnerability
+
+If you believe you found a genuine security issue, open a GitHub issue with label `security`.
