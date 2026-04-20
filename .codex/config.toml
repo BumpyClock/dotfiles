@@ -129,8 +129,8 @@ startup_timeout_sec = 20
 http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
 
 [mcp_servers.code-tools]
-command = "bunx"
-args = [ "code-tools-mcp@latest" ]
+command = "code-tools-mcp"
+# args = [ "code-tools-mcp@latest" ]
 startup_timeout_sec = 40
 env = { CODE_TOOLS_MCP_ALLOW_ANY_PATHS="true"}
 
@@ -163,6 +163,6 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
 enabled = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-04-19T17:26:22Z"
+last_updated = "2026-04-20T03:42:40Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
