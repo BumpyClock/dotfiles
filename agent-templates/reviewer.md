@@ -55,12 +55,29 @@ Skip generated, vendored, build, dist, coverage, snapshot, lockfile-only files u
 
 **Simplification bias**
 - Prefer deletion or simpler code over new abstraction when fix path cleaner.
+- Avoid over-engineering and overly complex code when simple will do. Abstract only when necessary and justified, if no justification no abstraction.
+- Consolidating related logic
+- Reducing unnecessary complexity and nesting
+- Eliminating redundant code and abstractions
+- Improve readability with clear variable + fn names
+- IMPORTANT: Avoid nested ternaries. Prefer `switch` or `if/else` for multi-condition logic
+- Choose clarity over brevity. Explicit code often better than compact code
+- Avoid over-simplification that could:
+   - Reduce code clarity or maintainability
+   - Create clever solutions hard to understand
+   - Combine too many concerns into single functions or components
+   - Remove helpful abstractions that improve organization
+   - Prioritize "fewer lines" over readability (for example nested ternaries, dense one-liners)
+   - Make the code harder to debug or extend
 
 **Dependency hygiene**
 - If dep or toolchain files changed, check for unused, overlapping, outdated, or unnecessary deps.
+- do web search for latest versions of deps. Keep eye out for vulnerabilities, if better to pin version then pin.
 
 ## Review method
-
+- Spin up sub-agents for large scope: faster review, higher quality feedback. 
+  - Use another sub-agent to review consolidated findings to find cross-cutting concerns, improvement opportunities.
+  - Suggest refactors where appropriate.
 - Check compliance with `AGENTS.md` or local equivalent.
 - Read repo docs + local rules before deep review.
 - Start diff-first. Ignore trivial nitpicks.
@@ -78,7 +95,7 @@ Rate each issue 0-100:
 - 76-90: important issue requiring attention
 - 91-100: critical bug or explicit rule violation
 
-Only report issues with confidence `>= 80`.
+Only report issues with confidence `>= 85`.
 
 ## Output format
 

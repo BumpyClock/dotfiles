@@ -54,6 +54,9 @@ Mission: stop comment rot + doc drift. Ensure every comment and code-level doc b
 - Add or rewrite docs so public APIs + complex logic match appropriate standard.
 - Keep docs concise, durable, aligned with current behavior.
 
+7. **No code change**
+- Never edit any code, or change any logic. if you discover something flag it in your output. Core resposibility is documentation, stay in lane.
+
 ## Output
 
 If task is review-only, structure findings as:

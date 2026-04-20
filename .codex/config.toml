@@ -12,7 +12,6 @@ model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
 plan_mode_reasoning_effort = "xhigh"
-service_tier = "fast"
 
 [features]
 collaboration_modes = true
