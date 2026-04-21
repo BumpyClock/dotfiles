@@ -25,13 +25,13 @@ Skip or simplify (unless user explicitly requests TDD or project policy requires
 
 When doing TDD: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 
-Write code before the test? Delete it and start over if you are committed to TDD.
+Write code before the test? If it was exploratory code generated in this current turn, delete it and start over if you are committed to TDD. For pre-existing or user-authored code, ask or move it to trash before removing it.
 
 If you are following TDD, no exceptions:
 - Don't keep it as "reference"
 - Don't "adapt" it while writing tests
 - Don't look at it
-- Delete means delete
+- Delete means delete only for your own current-turn exploratory implementation
 
 Implement fresh from tests.
 
@@ -71,7 +71,7 @@ Can't check all boxes? If you intended to follow TDD, you didn't. Either restart
 
 ## Debugging Integration
 
-Bug found? Default to a failing test that reproduces it, then follow the TDD cycle. If a test is infeasible, state why and propose the lightest viable verification.
+Bug found? Default to a failing test that reproduces it when feasible and apt, then follow the TDD cycle. If a test is infeasible or disproportionate, state the rationale and use the lightest viable verification.
 
 ## References
 

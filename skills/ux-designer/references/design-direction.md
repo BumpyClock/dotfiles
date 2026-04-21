@@ -47,7 +47,7 @@ The content should drive the layout:
 
 Typography sets tone. Don't always default:
 
-- **System fonts** — fast, native, invisible (good for utility-focused products)
+- **System fonts** — fast, native, invisible (good for native apps, existing design systems, and utility-focused products)
 - **Geometric sans** (Geist, Inter) — modern, clean, technical
 - **Humanist sans** (SF Pro, Satoshi) — warmer, more approachable
 - **Monospace influence** — technical, developer-focused, data-heavy

@@ -22,14 +22,14 @@ Prefer existing design tokens and components when they exist:
 - Audit the project for tokens (CSS variables, theme files, Tailwind config, tokens JSON) and reusable components.
 - Reuse existing tokens and components as-is. Avoid inventing new ones unless requirements demand it.
 - Discovery heuristics: search for `tokens.*`, `theme.*`, `tailwind.config.*`, `:root` CSS vars, `design-system/`, `ui/`, `components/`, Storybook config, or linked design docs.
-- If no design system exists, define a minimal token set (color roles, typography scale, spacing, radius, shadows, motion) and build reusable base components before composing the page.
+- If no design system exists, define a minimal token set (color roles, typography scale, spacing, radius, shadows, motion). Create reusable base components only when repeated patterns justify them.
 - Centralize new styles in tokens and components to prevent one-off styling.
 
 ## Aesthetic Guidelines
 
 ### Typography
 
-Choose fonts that are beautiful, unique, and interesting. Avoid generic stacks like Arial and Inter. Pair a distinctive display font with a refined body font. Prefer existing type tokens and scales, and define them when absent.
+Choose fonts that are beautiful, unique, and interesting. Avoid generic stacks like Arial and Inter unless the app is native, utility-focused, or already governed by an existing design system. Pair a distinctive display font with a refined body font. Prefer existing type tokens and scales, and define them when absent.
 
 ### Color and Theme
 
@@ -50,7 +50,7 @@ Create atmosphere and depth rather than defaulting to solid colors. Use gradient
 ## Anti-Patterns to Avoid
 
 - Generic AI aesthetics: cookie-cutter layouts and predictable component patterns.
-- Overused font families and stacks (Arial, Inter, Roboto, system fonts).
+- Overused font families and stacks (Arial, Inter, Roboto, system fonts) outside native or existing design-system contexts.
 - Cliched color schemes, especially purple gradients on white backgrounds.
 - Converging on trendy defaults across outputs (for example, Space Grotesk everywhere).
 - Indistinct visual direction that does not match the context.

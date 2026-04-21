@@ -85,10 +85,11 @@ If the user did not specify which code component to connect:
 1. Check `figma.config.json` for `paths` and `importPaths` to find where components live
 2. Search the codebase for a component matching the Figma component name. Check common directories (`src/components/`, `components/`, `lib/ui/`, `app/components/`) if `figma.config.json` doesn't specify paths
 3. Read candidate files and compare their props interface against the Figma properties from Step 3 — look for matching variant types, size options, boolean flags, and slot props
-4. If multiple candidates match, pick the one with the closest prop-interface match and explain your reasoning to the user
-5. If no match is found, show the 2 closest candidates and ask the user to confirm or provide the correct path
+4. If one candidate clearly matches, proceed and note the reasoning in your summary
+5. If multiple candidates match, pick the one with the closest prop-interface match and explain your reasoning to the user
+6. If no match is found, show the 2 closest candidates and ask the user to confirm or provide the correct path
 
-**Confirm with the user** before proceeding to Step 5. Present the match: which code component you found, where it lives, and why it matches (prop correspondence, naming, purpose).
+Confirm with the user before proceeding to Step 5 only when the match is ambiguous, risky, or would create a new mapping in an unexpected location. Present the match: which code component you found, where it lives, and why it matches (prop correspondence, naming, purpose).
 
 Read `figma.config.json` for import path aliases — the `importPaths` section maps glob patterns to import specifiers, and the `paths` section maps those specifiers to directories.
 

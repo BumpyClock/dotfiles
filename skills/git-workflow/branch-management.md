@@ -8,10 +8,12 @@ GitHub Flow branching strategy with clean naming conventions.
 
 1. `main` is always deployable
 2. Create feature branches from `main`
-3. Push commits to feature branch
+3. Push commits only when asked
 4. Open PR for discussion and review
 5. Merge to `main` after approval
 6. Deploy immediately after merge
+
+Branch changes need user consent.
 
 ---
 
@@ -55,24 +57,25 @@ refactor/202-cleanup-legacy-code
 ## Creating Branches
 
 ### From main
+Only after the user asks or consents:
+
 ```bash
 # Ensure main is up to date
-git checkout main
+git switch main
 git pull origin main
 
 # Create and switch to new branch
-git checkout -b feature/123-new-feature
-
-# Or using switch (newer syntax)
 git switch -c feature/123-new-feature
 ```
 
 ### From another branch
 ```bash
-git checkout -b fix/456-derived-fix other-branch
+git switch -c fix/456-derived-fix other-branch
 ```
 
 ### Push new branch to remote
+Only when asked:
+
 ```bash
 git push -u origin feature/123-new-feature
 ```
@@ -84,13 +87,13 @@ git push -u origin feature/123-new-feature
 For parallel work on multiple branches, follow `worktree-management.md` in this skill:
 
 ```bash
-# Create worktree for parallel work
+# Create worktree for parallel work after consent
 git worktree add ../project-feature feature/123-new-feature
 
 # List worktrees
 git worktree list
 
-# Remove when done
+# Remove when done and asked
 git worktree remove ../project-feature
 ```
 
@@ -110,15 +113,19 @@ git branch --no-merged main
 ```
 
 ### Delete local branches
+Only when explicitly asked:
+
 ```bash
 # Delete merged branch
 git branch -d feature/123-done
 
-# Force delete unmerged branch
+# Force delete unmerged branch only when explicitly asked
 git branch -D feature/456-abandoned
 ```
 
 ### Delete remote branches
+Only when explicitly asked:
+
 ```bash
 # Delete remote branch
 git push origin --delete feature/123-done
@@ -136,15 +143,9 @@ git remote prune origin
 git fetch --prune
 ```
 
-### Bulk cleanup script
-```bash
-# Delete all local branches merged into main
-git branch --merged main | grep -v "main" | xargs -n 1 git branch -d
+### Bulk cleanup
 
-# Prune and list stale branches
-git fetch --prune
-git branch -vv | grep ': gone]'
-```
+Avoid bulk branch deletion. List candidates, then ask.
 
 ---
 
@@ -187,15 +188,19 @@ git log feature/123-xyz..main
 ## Keeping Branches Updated
 
 ### Rebase onto main (for clean history)
+Only after branch-change consent:
+
 ```bash
-git checkout feature/123-my-feature
+git switch feature/123-my-feature
 git fetch origin
 git rebase origin/main
 ```
 
 ### Merge main into feature (preserves history)
+Only after branch-change consent:
+
 ```bash
-git checkout feature/123-my-feature
+git switch feature/123-my-feature
 git fetch origin
 git merge origin/main
 ```
@@ -231,15 +236,15 @@ gh api repos/{owner}/{repo}/branches --jq '.[].name'
 
 ```bash
 # Create branch
-git checkout -b feature/123-name
+git switch -c feature/123-name
 
-# Push with tracking
+# Push with tracking, only when asked
 git push -u origin feature/123-name
 
-# Delete local
+# Delete local, only when asked
 git branch -d branch-name
 
-# Delete remote
+# Delete remote, only when asked
 git push origin --delete branch-name
 
 # Prune stale

@@ -7,7 +7,7 @@ description: Use when writing or modifying code (not for planning or review-only
 
 world class 10x engineer. Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
 
-Default to a simplification pass on code you touch. Preserve exact behavior while improving clarity, consistency, and maintainability. Prefer explicit, readable code over dense or clever code.
+Keep edits surgical: simplify code required by the task, preserve exact behavior, and prefer explicit readable code over dense or clever code. Broader cleanup needs explicit user approval.
 
 Use parallel sub-agents when needed. Pick between `developer` and `developer-lite` based on task complexity.
 
@@ -61,8 +61,8 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 - **[R21-H]** Default to fail-fast behavior with detailed errors unless the spec defines a safe recovery path.
 - **[R22-H]** Exception and error messages should carry concrete context. In tests, prefer stable identifiers, types, or codes over full-message assertions.
 - **[R23-H]** Apply CQS when it clarifies behavior: queries should not mutate state, and commands should not hide meaningful return values.
-- **[R24-H]** Run a refinement pass on touched code by default. Preserve behavior while reducing duplication, dead branches, wrappers, and unnecessary indirection.
-- **[R25-H]** In active-development or rapidly evolving repos, refinement may run automatically on touched code. Otherwise, inform the user before broadening cleanup beyond the requested change.
+- **[R24-H]** Refine only code required by the task. Preserve behavior while reducing duplication, dead branches, wrappers, and unnecessary indirection introduced or exposed by the requested change.
+- **[R25-H]** Broaden cleanup only when explicitly requested or approved. Otherwise mention adjacent cleanup opportunities instead of editing them.
 - **[R26-H]** Prefer clear control flow over dense expressions. Avoid nested ternaries when `if`/`else`, guard clauses, or `switch` are clearer.
 - **[R27-H]** For behavior changes, tests must thoroughly verify desired outcomes before review or ship.
 - **[R28-H]** Relevant CI workflows should pass before review or ship.
@@ -71,7 +71,7 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 - **[R31-H]** Tests must not cover functionality irrelevant to their stated purpose.
 - **[R32-H]** Tests must close resources they open, stop waiting on timeouts, stay quiet, assume no Internet by default, avoid relying on implicit defaults when explicit inputs are clearer, and avoid asserting on logging side effects unless logging is the behavior.
 - **[R33-H]** Avoid mocking the file system, sockets, memory managers, or similar core infrastructure unless necessary.
-- **[R34-M]** Minor inconsistencies and typos may be fixed when adjacent and low risk.
+- **[R34-M]** Minor inconsistencies and typos outside the requested change should be mentioned, not fixed, unless the user asks.
 - **[R35-M]** Use evergreen names. Avoid labels like `new`, `improved`, or `enhanced`.
 - **[R36-M]** Keep README and user-facing docs concise, accurate, and in correct English. Update docs when behavior or API changes.
 - **[R37-M]** Prefer single-sentence error or log messages without a trailing period unless project conventions differ.

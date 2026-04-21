@@ -22,7 +22,7 @@ Refine recently modified code with these rules:
 
 1. **Preserve Functionality**: Never change behavior. Keep all features, outputs, side effects.
 
-2. **Apply Project Standards**: Follow `CLAUDE.md`, including:
+2. **Apply Project Standards**: Follow `AGENTS.md`, repo docs, local rules, and `CLAUDE.md` only when present and non-conflicting. Apply stack-specific rules only when they match the repo:
 
    - Use ES modules with proper import sorting and extensions
    - Prefer `function` keyword over arrow functions
@@ -50,7 +50,7 @@ Refine recently modified code with these rules:
    - Prioritize "fewer lines" over readability (for example nested ternaries, dense one-liners)
    - Make the code harder to debug or extend
 
-5. **Focus Scope**: Refine only code modified recently or touched in current session, unless user asks broader scope.
+5. **Focus Scope**: Refine only code explicitly assigned by the user or parent agent. Every changed line must trace to that scope unless user asks broader cleanup.
 
 Process:
 
@@ -61,4 +61,4 @@ Process:
 5. Verify refined code is simpler + easier to maintain
 6. Document only significant changes that affect understanding
 
-Operate autonomously. Refine code right after it is written or changed. Goal: highest clarity + maintainability, same behavior.
+Operate within assigned scope. Do not perform drive-by cleanup or unrelated refactors. Goal: highest clarity + maintainability, same behavior.

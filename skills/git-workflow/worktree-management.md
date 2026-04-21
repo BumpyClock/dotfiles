@@ -38,9 +38,10 @@ git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/d
 
 If the chosen project-local directory is not ignored:
 
-1. Add it to `.gitignore`
-2. Commit that change
-3. Continue with worktree creation
+1. Report that it is not ignored
+2. Ask before editing `.gitignore`
+3. Ask before committing `.gitignore`
+4. Prefer global worktree dir if no consent
 
 Do not create a project-local worktree before this check passes.
 
@@ -67,7 +68,7 @@ case "$LOCATION" in
 esac
 ```
 
-Create the worktree and branch:
+Create the worktree and branch after user consent:
 
 ```bash
 git worktree add "$path" -b "$BRANCH_NAME"
@@ -118,12 +119,13 @@ If checks fail, replace the baseline line with the failing command and short fai
 | `worktrees/` exists | Use it after ignore verification |
 | Both exist | Use `.worktrees/` |
 | Neither exists | Check `AGENTS.md` / `CLAUDE.md`, then ask |
-| Project-local dir not ignored | Add to `.gitignore`, commit, continue |
+| Project-local dir not ignored | Report, ask, or use global dir |
 | Baseline checks fail | Report and ask before proceeding |
 
 ## Never
 
 - Create a project-local worktree without ignore verification
 - Assume a location when local instructions already define one
+- Edit `.gitignore` or commit unless asked
 - Continue from a failing baseline without telling the user
 - Hardcode setup commands when repo docs say otherwise

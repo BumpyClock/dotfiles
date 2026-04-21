@@ -12,7 +12,7 @@ description: Build, refactor, test, profile, automate, release, and troubleshoot
 - Keep behavior stable unless user asked for behavior change.
 
 ## Core Rules
-- Add availability guards and fallbacks for platform/version-specific APIs.
+- Add availability guards and fallbacks only for deployment targets the app supports.
 - Prefer SwiftUI-first for Apple UI work; use UIKit/AppKit interop only when needed.
 - For performance work, fix root cause and measure with `xctrace`/Instruments when code review is not enough.
 - For build/release/submission work, prefer `xcodebuild`, `simctl`, `xctrace`, and `asc` CLI flows already captured here.

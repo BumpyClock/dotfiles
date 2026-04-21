@@ -16,7 +16,7 @@ Build professional-grade design systems in Figma that match code. This skill orc
 
 ## 1. The One Rule That Matters Most
 
-**This is NEVER a one-shot task.** Building a design system requires 20–100+ `use_figma` calls across multiple phases, with mandatory user checkpoints between them. Any attempt to create everything in one call WILL produce broken, incomplete, or unrecoverable results. Break every operation to the smallest useful unit, validate, get feedback, proceed.
+**This is NEVER a one-shot task.** Building a design system requires 20–100+ `use_figma` calls across multiple phases. Checkpoints are required for initial approval, destructive actions, scope changes, and unresolved conflicts; otherwise report validated progress and continue within the approved scope. Any attempt to create everything in one call WILL produce broken, incomplete, or unrecoverable results. Break every operation to the smallest useful unit, validate, proceed.
 
 ---
 
@@ -31,7 +31,7 @@ Phase 0: DISCOVERY (always first — no use_figma writes yet)
   0c. Search subscribed libraries → use search_design_system for reusable assets
   0d. Lock v1 scope → agree on exact token set + component list before any creation
   0e. Map code → Figma → resolve conflicts (code and Figma disagree = ask user)
-  ✋ USER CHECKPOINT: present full plan, await explicit approval
+  ✋ USER CHECKPOINT: present full plan, await explicit approval before writes
 
 Phase 1: FOUNDATIONS (tokens first — always before components)
   1a. Create variable collections and modes
@@ -41,13 +41,13 @@ Phase 1: FOUNDATIONS (tokens first — always before components)
   1e. Set code syntax on ALL variables
   1f. Create effect styles (shadows) and text styles (typography)
   → Exit criteria: every token from the agreed plan exists, all scopes set, all code syntax set
-  ✋ USER CHECKPOINT: show variable summary, await approval
+  → Progress report: show variable summary
 
 Phase 2: FILE STRUCTURE (before components)
   2a. Create page skeleton: Cover → Getting Started → Foundations → --- → Components → --- → Utilities
   2b. Create foundations documentation pages (color swatches, type specimens, spacing bars)
   → Exit criteria: all planned pages exist, foundations docs are navigable
-  ✋ USER CHECKPOINT: show page list + screenshot, await approval
+  → Progress report: show page list + screenshot
 
 Phase 3: COMPONENTS (one at a time — never batch)
   For EACH component (in dependency order: atoms before molecules):
@@ -60,7 +60,7 @@ Phase 3: COMPONENTS (one at a time — never batch)
     3g. Validate: get_metadata (structure) + get_screenshot (visual)
     3h. Optional: lightweight Code Connect mapping while context is fresh
     → Exit criteria: variant count correct, all bindings verified, screenshot looks right
-    ✋ USER CHECKPOINT per component: show screenshot, await approval before next component
+    → Progress report per component: show screenshot before next component
 
 Phase 4: INTEGRATION + QA (final pass)
   4a. Finalize all Code Connect mappings
@@ -68,7 +68,7 @@ Phase 4: INTEGRATION + QA (final pass)
   4c. Naming audit (no duplicates, no unnamed nodes, consistent casing)
   4d. Unresolved bindings audit (no hardcoded fills/strokes remaining)
   4e. Final review screenshots of every page
-  ✋ USER CHECKPOINT: complete sign-off
+  ✋ USER CHECKPOINT: complete sign-off if user requested review or release handoff
 ```
 
 ---
@@ -99,7 +99,7 @@ Phase 4: INTEGRATION + QA (final pass)
 13. **NEVER parallelize `use_figma` calls** — Figma state mutations must be strictly sequential. Even if your tool supports parallel calls, never run two use_figma calls simultaneously.
 14. **Never hallucinate Node IDs** — always read IDs from the state ledger returned by previous calls. Never reconstruct or guess an ID from memory.
 15. **Use the helper scripts** — embed scripts from `scripts/` into your use_figma calls. Don't write 200-line inline scripts from scratch.
-16. **Explicit phase approval** — at each checkpoint, name the next phase explicitly. "looks good" is not approval to proceed to Phase 3 if you asked about Phase 1.
+16. **Scoped checkpoints** — ask for approval only before first write, destructive actions, scope changes, or unresolved conflicts. At each approval checkpoint, name the next phase explicitly.
 
 ---
 
@@ -181,14 +181,14 @@ search_design_system({ query, fileKey, includeComponents: true, includeVariables
 
 ## 6. User Checkpoints
 
-Mandatory. Design decisions require human judgment.
+Use checkpoints only when human judgment changes scope, approves writes, resolves conflicts, or permits destructive actions. Otherwise provide progress reports after validation.
 
 | After | Required artifacts | Ask |
 |-------|-------------------|-----|
 | Discovery + scope lock | Token list, component list, gap analysis | "Here's my plan. Approve before I create anything?" |
-| Foundations | Variable summary (N collections, M vars, K modes), style list | "All tokens created. Review before file structure?" |
-| File structure | Page list + screenshot | "Pages set up. Review before components?" |
-| Each component | get_screenshot of component page | "Here's [Component] with N variants. Correct?" |
+| Foundations | Variable summary (N collections, M vars, K modes), style list | Progress report |
+| File structure | Page list + screenshot | Progress report |
+| Each component | get_screenshot of component page | Progress report |
 | Each conflict (code ≠ Figma) | Show both versions | "Code says X, Figma has Y. Which wins?" |
 | Final QA | Per-page screenshots + audit report | "Complete. Sign off?" |
 
@@ -272,7 +272,7 @@ Collection: "Spacing"       modes: ["Value"]
 - ❌ Retrying a failed script without understanding the error first
 - ❌ Using name-prefix matching for cleanup (deletes user-owned nodes)
 - ❌ Building on unvalidated work from the previous step
-- ❌ Skipping user checkpoints to "save time"
+- ❌ Skipping approval checkpoints before writes, destructive actions, scope changes, or unresolved conflicts
 - ❌ Parallelizing use_figma calls (always sequential)
 - ❌ Guessing/hallucinating node IDs from memory (always read from state ledger)
 - ❌ Writing massive inline scripts instead of using the provided helper scripts

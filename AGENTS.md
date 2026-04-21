@@ -28,12 +28,25 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo already uses root `LEARNINGS.md`, follow repo convention. If repo says `no docs`, skip.
 - Deletes -> trash.
 - Need upstream file -> stage in `/tmp/`, cherry-pick. Never overwrite tracked file.
-- Bugs -> add regression test when apt.
 - Keep files <= ~500 LOC. Split/refactor when needed. Big file -> create tracking task.
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer end-to-end verification. If blocked, state missing piece.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. For new deps, do quick health check. If several good options exist, propose 2-3 + recommendation.
 - Use `web_search` / `web_fetch` from `web-skill` for web research/fetch.
+
+## Coding discipline
+- Bias coding decisions toward caution over speed; trivial tasks still use judgment.
+- Before coding: state assumptions. Multiple interpretations -> present options. Unclear -> read more, then ask.
+- Push back when a simpler approach exists or reqs imply overbuild.
+- Minimum code that solves req. No speculative features, single-use abstractions, unrequested config, or impossible-case handling.
+- If impl grows large, simplify. 200 LOC that can be 50 -> rewrite.
+- Surgical edits only. Every changed line should trace to user req.
+- No adjacent cleanup, drive-by formatting, or unrelated refactor. Mention unrelated dead code; do not delete.
+- Match existing style even when suboptimal.
+- Remove only unused imports/vars/fns made unused by own changes.
+- Define success criteria for non-trivial work. Brief plan with verify step per item.
+- Bugs -> reproduce with regression test when apt, then fix.
+- Refactors -> verify before/after when feasible.
 
 ## Priorities
 - Fix root cause, not band-aid.

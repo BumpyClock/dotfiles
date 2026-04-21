@@ -100,18 +100,19 @@ Co-authored-by: Jane Doe <jane@example.com>
 
 ---
 
-## Staging Strategies
+## Staging Strategy
 
-### Stage all changes
-```bash
-git add .
-git add -A
-```
+Use explicit paths. Do not use `git add .` or `git add -A`.
 
-### Stage specific files
 ```bash
 git add path/to/file.ts
-git add src/components/
+git add src/components/Button.tsx
+```
+
+Prefer `committer` for commits; it stages only listed paths and rejects `.`.
+
+```bash
+committer "fix(api): handle null response" path/to/file.ts
 ```
 
 ### Interactive/Partial staging
@@ -142,14 +143,14 @@ git reset HEAD file.ts  # older syntax
 - After pushing to remote
 - When previous commit is complete
 
-### Amend ONLY when ALL conditions met:
+### Amend ONLY when the user asks and ALL conditions met:
 1. Commit hasn't been pushed
 2. You created the commit (check: `git log -1 --format='%an'`)
 3. Adding to incomplete work or fixing typos
 
 ```bash
 # Amend last commit (not pushed)
-git add .
+git add path/to/file.ts
 git commit --amend -m "feat: improved message"
 
 # Amend without changing message
@@ -157,6 +158,7 @@ git commit --amend --no-edit
 ```
 
 ### NEVER amend when:
+- User did not ask for amend
 - Commit has been pushed
 - You didn't create the commit
 - It's a merge commit
@@ -190,16 +192,13 @@ git commit --amend --no-edit
 ```bash
 # Check what will be committed
 git diff --staged
-
-# Run tests on staged changes
-git stash --keep-index
-npm test
-git stash pop
 ```
+
+Avoid manual `git stash`. Use a worktree for isolated verification when needed.
 
 ### If pre-commit hook fails:
 1. Fix the issues
-2. Stage the fixes: `git add .`
+2. Stage the fixes with explicit paths
 3. Create NEW commit (don't amend if previous was rejected)
 
 ---
@@ -208,10 +207,10 @@ git stash pop
 
 ```bash
 # Standard commit
-git commit -m "feat(scope): description"
+committer "feat(scope): description" path/to/file.ts
 
 # Commit with body (heredoc)
-git commit -m "$(cat <<'EOF'
+committer "$(cat <<'EOF'
 feat(auth): add password reset
 
 Implements forgot password flow with email verification.
@@ -219,20 +218,14 @@ Token expires after 24 hours.
 
 Closes #123
 EOF
-)"
-
-# Stage and commit tracked files
-git commit -am "fix: quick fix for tracked files"
+)" path/to/file.ts
 
 # Interactive staging
 git add -p
 
-# Amend (unpushed only!)
+# Amend only when asked
 git commit --amend
 
 # View last commit
 git log -1
-
-# Undo last commit (keep changes)
-git reset --soft HEAD~1
 ```

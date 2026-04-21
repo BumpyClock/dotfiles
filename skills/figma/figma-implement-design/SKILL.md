@@ -123,7 +123,7 @@ Strive for pixel-perfect visual parity with the Figma design.
 - Avoid hardcoded values - use design tokens from Figma where available
 - When conflicts arise between design system tokens and Figma specs, prefer design system tokens but adjust spacing or sizes minimally to match visuals
 - Follow WCAG requirements for accessibility
-- Add component documentation as needed
+- Add component documentation only when repo convention expects it or the API is non-obvious
 
 ### Step 7: Validate Against Figma
 
@@ -152,14 +152,14 @@ Before marking complete, validate the final UI against the Figma screenshot.
 - ALWAYS use components from the project's design system when possible
 - Map Figma design tokens to project design tokens
 - When a matching component exists, extend it rather than creating a new one
-- Document any new components added to the design system
+- Document new components only when they become shared design-system surface area or the repo convention expects it
 
 ### Code Quality
 
 - Avoid hardcoded values - extract to constants or design tokens
-- Keep components composable and reusable
+- Keep components composable; extract reusable shared components only when repeated patterns or repo conventions justify them
 - Add TypeScript types for component props
-- Include JSDoc comments for exported components
+- Include JSDoc comments for exported components only when repo convention expects them or the API is non-obvious
 
 ## Examples
 

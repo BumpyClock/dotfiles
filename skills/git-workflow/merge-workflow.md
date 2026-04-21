@@ -81,13 +81,15 @@ git fetch origin main
 ```
 
 ### Step 2: Start merge or rebase
+Only after branch-change consent:
+
 ```bash
 # Merge approach
-git checkout feature/my-branch
+git switch feature/my-branch
 git merge origin/main
 
 # Rebase approach (cleaner history)
-git checkout feature/my-branch
+git switch feature/my-branch
 git rebase origin/main
 ```
 
@@ -126,8 +128,6 @@ git add path/to/resolved-file.ts
 ```bash
 # For merge
 git merge --continue
-# or just commit
-git commit
 
 # For rebase
 git rebase --continue
@@ -153,8 +153,7 @@ git rebase --abort
 
 ### Lock file conflicts (package-lock.json, yarn.lock)
 ```bash
-# Accept theirs, then regenerate
-git checkout --theirs package-lock.json
+# Regenerate rather than blindly choosing one side
 npm install
 git add package-lock.json
 ```
@@ -167,12 +166,7 @@ git add generated/
 ```
 
 ### Binary files
-```bash
-# Choose one version
-git checkout --ours image.png   # keep yours
-git checkout --theirs image.png # keep theirs
-git add image.png
-```
+Ask before choosing or replacing binary files.
 
 ---
 
@@ -195,9 +189,6 @@ gh pr merge {pr_number} --rebase
 
 ### With options
 ```bash
-# Merge and delete branch
-gh pr merge {pr_number} --merge --delete-branch
-
 # Auto-merge when checks pass
 gh pr merge {pr_number} --auto --merge
 ```
@@ -206,16 +197,18 @@ gh pr merge {pr_number} --auto --merge
 
 ## Post-Merge Cleanup
 
-### Delete remote branch (automatic with --delete-branch)
+### Delete remote branch
+Only when explicitly asked:
+
 ```bash
-gh pr merge --delete-branch
-# or manually
 git push origin --delete feature/123-done
 ```
 
 ### Delete local branch
+Only when explicitly asked:
+
 ```bash
-git checkout main
+git switch main
 git pull origin main
 git branch -d feature/123-done
 ```
@@ -225,14 +218,9 @@ git branch -d feature/123-done
 git fetch --prune
 ```
 
-### Full cleanup sequence
-```bash
-# After PR merged
-git checkout main
-git pull origin main
-git branch -d feature/123-done
-git fetch --prune
-```
+### Full cleanup
+
+Avoid one-shot cleanup. Ask before branch changes or deletes.
 
 ---
 
@@ -270,25 +258,24 @@ gh pr view {pr_number}
 
 ```bash
 # Merge PR (preserves commits)
-gh pr merge --merge --delete-branch
+gh pr merge --merge
 
 # Squash PR (single commit)
-gh pr merge --squash --delete-branch
+gh pr merge --squash
 
 # Rebase PR (linear history)
-gh pr merge --rebase --delete-branch
+gh pr merge --rebase
 
 # Resolve conflicts locally
 git fetch origin main
 git merge origin/main
 # ... resolve ...
-git add .
-git commit
-git push
+git add path/to/resolved-file.ts
+git merge --continue
+# push only when asked
 
 # Abort merge
 git merge --abort
 
-# Cleanup after merge
-git checkout main && git pull && git branch -d feature/xxx && git fetch --prune
+# Cleanup after merge: ask before branch changes or deletes
 ```

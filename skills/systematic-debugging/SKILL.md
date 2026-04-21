@@ -73,7 +73,14 @@ Complete each phase before next.
 
    **WHEN system has multiple components (CI → build → signing, API → service → database):**
 
-   **BEFORE proposing fixes, add diagnostic instrumentation:**
+   **BEFORE proposing fixes, start with read-only diagnostics:**
+   ```
+   - Read logs, traces, config, env, build output, diffs, and health checks
+   - Run safe inspection commands that do not change state
+   - Prefer existing observability before adding new logs or probes
+   ```
+
+   **If read-only evidence is insufficient, add the smallest scoped diagnostic instrumentation:**
    ```
    For EACH component boundary:
      - Log what data enters component
@@ -173,10 +180,10 @@ Complete each phase before next.
 
 1. **Create Failing Test Case**
    - Simplest possible reproduction
-   - Automated test if possible
-   - One-off test script if no framework
-   - MUST have before fixing
-   - Use the `superpowers:test-driven-development` skill for writing proper failing tests
+   - Automated regression test when feasible and apt
+   - One-off test script if no framework and it is proportionate
+   - If no test is feasible or apt, state rationale and use the lightest viable verification
+   - Use the `superpowers:test-driven-development` skill for writing proper failing tests when available
 
 2. **Implement Single Fix**
    - Address root cause identified
@@ -262,7 +269,7 @@ If you catch yourself thinking:
 | **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
 | **2. Pattern** | Find working examples, compare | Identify differences |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
-| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+| **4. Implementation** | Create test when feasible/apt, fix, verify | Bug resolved, tests pass or rationale recorded |
 
 ## When Process Reveals "No Root Cause"
 

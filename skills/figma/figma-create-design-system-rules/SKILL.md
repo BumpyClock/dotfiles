@@ -8,7 +8,7 @@ disable-model-invocation: false
 
 ## Overview
 
-This skill helps you generate custom design system rules tailored to your project's specific needs. These rules guide AI coding agents to produce consistent, high-quality code when implementing Figma designs, ensuring that your team's conventions, component patterns, and architectural decisions are followed automatically.
+This skill helps you generate custom design system rules tailored to observed project conventions. These rules guide AI coding agents when implementing Figma designs without turning local conventions into repo-wide mandates.
 
 ### Supported Rule Files
 
@@ -66,7 +66,7 @@ Structure your design system rules following the template format provided in the
 
 ### Step 2: Analyze the Codebase
 
-Before finalizing rules, analyze the project to understand existing patterns:
+Before finalizing rules, analyze the project to understand existing patterns. Write rules from observed conventions; if a convention is not present, mark it as a proposal or ask before adding it.
 
 **Component Organization:**
 
@@ -94,12 +94,12 @@ Before finalizing rules, analyze the project to understand existing patterns:
 
 ### Step 3: Generate Project-Specific Rules
 
-Based on your codebase analysis, create a comprehensive set of rules. Include:
+Based on your codebase analysis, create a scoped set of rules. Include only conventions that apply to Figma-derived work or clearly observed design-system code.
 
 #### General Component Rules
 
 ```markdown
-- IMPORTANT: Always use components from `[YOUR_PATH]` when possible
+- IMPORTANT: Reuse components from `[YOUR_PATH]` when they match the Figma intent and repo conventions
 - Place new UI components in `[COMPONENT_DIRECTORY]`
 - Follow `[NAMING_CONVENTION]` for component names
 - Components must export as `[EXPORT_PATTERN]`
@@ -135,7 +135,7 @@ These rules define how to translate Figma inputs into code for this project and 
 
 - Treat the Figma MCP output (React + Tailwind) as a representation of design and behavior, not as final code style
 - Replace Tailwind utility classes with `[YOUR_STYLING_APPROACH]` when applicable
-- Reuse existing components from `[COMPONENT_PATH]` instead of duplicating functionality
+- Reuse existing components from `[COMPONENT_PATH]` when they match the Figma intent and repo conventions
 - Use the project's color system, typography scale, and spacing tokens consistently
 - Respect existing routing, state management, and data-fetch patterns
 - Strive for 1:1 visual parity with the Figma design
@@ -192,7 +192,7 @@ alwaysApply: false
 
 Customize the `globs` pattern to match the directories where Figma-derived code will live in the project (e.g., `"src/**/*.tsx"` or `["src/components/**", "src/pages/**"]`).
 
-After saving, the rules will be automatically loaded by the agent and applied to all Figma implementation tasks.
+After saving, the rules will be loaded by the agent for matching Figma implementation tasks according to the file scope/globs.
 
 ### Step 5: Validate and Iterate
 
@@ -253,7 +253,7 @@ After creating rules:
 **Code Quality:**
 
 ```markdown
-- Add JSDoc comments for exported components
+- Add JSDoc comments for exported components only when the repo convention expects them or the component API is non-obvious
 - Include PropTypes or TypeScript types for all props
 - Extract magic numbers to named constants
 ```
@@ -413,7 +413,7 @@ User says: "Generate rules for our design system library"
 ## Documentation Requirements
 
 - Add Storybook story for every component
-- Include JSDoc with @example
+- Include JSDoc with @example only when the repo convention expects it or the API needs it
 - Document all props with descriptions
 - Add accessibility notes
 
@@ -436,7 +436,7 @@ User says: "Generate rules for our design system library"
 
 ### Start Simple, Iterate
 
-Don't try to capture every rule upfront. Start with the most important conventions and add rules as you encounter inconsistencies.
+Don't try to capture every rule upfront. Start with the most important observed conventions and add rules as you encounter repeated inconsistencies.
 
 ### Be Specific
 
