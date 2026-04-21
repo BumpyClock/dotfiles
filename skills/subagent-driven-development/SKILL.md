@@ -21,13 +21,36 @@ Role: orchestrator. Split, dispatch, review, integrate, verify.
 - Use `tasque` for durable tracking.
 - Split by ownership. Parallel agents must not edit same files or interfaces.
 - Define interfaces + acceptance before dispatch.
-- Give each subagent full task text + local context. Give subagents plan files for context if helpful.
+- Give each subagent fresh, curated context: full task text, local context, owned files, contracts, constraints, tests. Do not make them infer from chat history.
 - Keep decisions in orchestrator. Subagents implement, test, review, research.
 - Require tests for behavior changes. Skip only for clearly mechanical work or explicit approval.
-- Review every implementation with separate reviewer agent.
+- Review every implementation with separate `reviewer` passes: spec compliance first, code quality second.
 - Loop till pass. If task stays stuck after repeated review/fix cycles, stop + surface blocker.
-- Pick smallest capable agent.
-- Lint , format, test, live test instead of assuming success.
+- Pick smallest capable implementer. Upgrade when signals show it is needed.
+- Lint, format, test, live test instead of assuming success.
+
+## Implementer Selection
+
+Default to `developer-lite` for mechanical tasks:
+- Clear spec and acceptance criteria.
+- Touches 1-2 files.
+- No shared interfaces, schema, auth, security, concurrency, perf, or cross-module state.
+- Existing pattern is obvious.
+- Verification command is local and cheap.
+
+Use `developer` for judgment tasks:
+- Multi-file or cross-module work.
+- Public API, schema, migration, state model, auth, security, concurrency, perf, or new dependency.
+- Debugging, unclear patterns, large/tangled files, or architectural tradeoffs.
+
+Upgrade rule: if `developer-lite` returns `BLOCKED`, `NEEDS_CONTEXT`, or correctness-related `DONE_WITH_CONCERNS`, add context, narrow the task, or redispatch to `developer`. Never retry unchanged.
+
+## Implementer Status
+
+- `DONE`: proceed to spec-compliance review.
+- `DONE_WITH_CONCERNS`: read concerns. Resolve correctness/scope concerns before review; note observations and continue.
+- `NEEDS_CONTEXT`: provide missing context and redispatch.
+- `BLOCKED`: assess blocker. Add context, split task, upgrade implementer, or ask user if plan is wrong.
 
 ## Flow
 
@@ -48,10 +71,11 @@ Role: orchestrator. Split, dispatch, review, integrate, verify.
 - Assign one owned task.
 - Include task, context, owned files, contracts, constraints, tests, deliverables.
 - Tell agent ask questions early. Avoid autonomous architecture changes.
+- Select `developer-lite` or `developer` using Implementer Selection.
 
 5. Review
-- Dispatch a separate reviewer with requirements, changed files, diff context, test results.
-- Reviewer checks spec compliance first, then code quality + test coverage.
+- Dispatch `reviewer` with `Review mode: spec-compliance`, requirements, changed files, diff context, test results. Do not trust implementer report.
+- After spec passes, dispatch `reviewer` with `Review mode: code-quality`.
 - If review fails, send targeted fixes back through an implementer.
 
 6. Integrate
@@ -60,6 +84,7 @@ Role: orchestrator. Split, dispatch, review, integrate, verify.
 
 7. Finish
 - Run final end-to-end checks for plan.
+- Dispatch final `reviewer` with `Review mode: final-integration` over the full integrated diff.
 - Close `tsq` items with outcome notes.
 - Report blockers, residual risk, follow-up work.
 
@@ -72,7 +97,7 @@ Role: orchestrator. Split, dispatch, review, integrate, verify.
 - Interfaces or contracts to honor.
 - Constraints + non-goals.
 - Test expectations.
-- Required deliverable format: summary, files changed, tests run, open issues.
+- Required deliverable format: status (`DONE` | `DONE_WITH_CONCERNS` | `BLOCKED` | `NEEDS_CONTEXT`), summary, files changed, tests run, self-review findings, open issues.
 
 ## References
 

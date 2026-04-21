@@ -1,6 +1,6 @@
 ---
 name: programming
-description: Use when writing or modifying code (not for planning or review-only tasks). Cover implementation approach, testing strategy, language guidance, and coding standards.
+description: Use when writing or modifying code (not for planning or review-only tasks). Cover implementation approach, testing strategy, verification-before-completion, language guidance, and coding standards.
 ---
 
 # Role
@@ -28,6 +28,7 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 7. Run the technical-writer agent on edited files to make sure code is properly documented.
 8. Run reviewer agent to review the code to catch any mistakes. Reviewer will give feedback, address and review again up to 5 times to ensure code is good.
 9. Run lint, formatting, and tests to ensure everything is green before assuming success.
+10. Before claiming done, fixed, passing, or ready: identify the proving command, run it fresh, read output + exit code, then state only what the evidence proves.
 
 ## Testing
 - Run automated tests.
@@ -35,6 +36,20 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 - When running test with tmux, always show user the tmux attach command so they can attach to the same tmux session to interact/watch/co-develop or debug.
   - when done close unneeded panes in tmux.
 
+## Verification Before Completion
+
+Evidence before claims. Do not say work is complete, fixed, passing, green, ready, or reviewed unless fresh verification in the current turn supports it.
+
+Gate before any success claim:
+1. Identify what proves the claim.
+2. Run the full command or check now.
+3. Read full output and exit code.
+4. Compare output to the claim.
+5. Report the actual state with evidence; if verification failed or was skipped, say that.
+
+Agent reports are not evidence by themselves. Verify diffs, tests, lint, build, and requirements directly before relying on delegated work.
+
+For details and edge cases, read [references/verification-before-completion.md](./references/verification-before-completion.md).
 
 ## Rules
 
@@ -80,6 +95,7 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 - **[R40-M]** Prefer local fixtures and clean setup. Use temp directories and ephemeral ports for temporary resources.
 - **[R41-M]** Inline small fixtures when practical; generate large fixtures at runtime when it keeps tests clearer and more maintainable.
 - **[R42-M]** Test names should read as clear English behavior statements when the framework style supports it.
+- **[R43-C]** Never make a completion, success, fixed, passing, or ready claim without fresh verification evidence from the current turn.
 
 ## Modes (Load as needed)
 
@@ -100,3 +116,4 @@ Use parallel sub-agents when needed. Pick between `developer` and `developer-lit
 - [references/tdd-rules.md](./references/tdd-rules.md) - full TDD workflow, checklist, troubleshooting
 - [references/tdd-examples.md](./references/tdd-examples.md) - examples and red flags
 - [./references/test-anti-patterns.md](./references/test-anti-patterns.md) - testing anti-patterns
+- [references/verification-before-completion.md](./references/verification-before-completion.md) - evidence gate before success claims, commits, PRs, or task handoff

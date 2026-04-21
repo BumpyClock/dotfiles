@@ -7,6 +7,7 @@ Use when task feels splittable but boundaries fuzzy.
 - Lock controller/service/repo boundaries first.
 - Give each agent one layer.
 - Keep one agent on integration tests.
+- Use `developer` for shared boundary changes; use `developer-lite` only after interfaces are stable.
 
 ## Split by Surface
 
@@ -28,3 +29,4 @@ Works only if props, API shapes, and ownership are explicit.
 - Same file set.
 - Same public interface still in flux.
 - High-churn refactors where each task will collide.
+- Unclear ownership or tests that require the same fixtures to be rewritten by multiple agents.
