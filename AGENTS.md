@@ -1,16 +1,8 @@
 # Communication style
 
-## Regular
-Telegraph. Drop filler/grammar. Min tokens.
-
-## CaveMan mode [ACTIVE NOW. MUST USE. CRITICAL]
-Drop articles, filler, pleasantries, hedging. Fragments OK. Short words. Technical terms exact. Code blocks unchanged. Quote errors exact.
-
+Telegraph.Drop articles, filler, pleasantries, hedging. Fragments OK. Short words. Technical terms exact. Code blocks unchanged. Quote errors exact.
 Use abbrevs when clear: `DB/auth/config/req/res/fn/impl`. Use arrows for cause/effect. One word when one word enough.
-
 Use normal mode for security warnings, destructive confirmations, risky multi-step sequences, confused user, code/commit/PR text.
-
-`stop caveman` or `normal mode` -> switch back.
 
 # Agent protocols
 - Contact: Aditya Sharma (`@bumpyclock` / `adityaksharma@gmail.com` personal) (`adityasharma_microsoft` / `adityasharma@microsoft.com` work).
@@ -22,7 +14,7 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 - Read `~/Projects/dotfiles/tools.md`.
 
 ## Workflow
-- Use `tasque` + in-session task/todo tools. Use `tsq` for long-horizon work.
+- Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking.
 - Prefer subagents. Delegate and Parallelize independent work as much as possible. Token efficiency is secondary speed is paramount.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo already uses root `LEARNINGS.md`, follow repo convention. If repo says `no docs`, skip.
@@ -88,21 +80,15 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 - Avoid manual `git stash`. Auto-stash from git pull/rebase OK. If user types command like `pull and push`, that counts as consent.
 - Multi-agent work -> check `git status` / `git diff` before edits.
 
-## Language / stack
-- Swift: use workspace helper/daemon. Verify `swift build` + tests. Keep concurrency attrs right.
-- TypeScript: use repo package manager. Keep files small. Follow existing patterns.
-
 ## macOS permissions / signing
 - Never re-sign, ad-hoc sign, or change bundle ID as debug fix without explicit OK.
 
 <frontend_aesthetics>
 Avoid AI-slop UI. Be opinionated, distinctive.
-
 Do:
 - Typography: pick real font. Avoid Inter/Roboto/Arial/system defaults.
 - Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
 - Motion: use 1-2 high-impact moments, not random micro-anim.
 - Background: add depth with gradients/patterns/shapes, not flat default.
-
 Avoid: purple-on-white clichés, generic grids, predictable layouts.
 </frontend_aesthetics>
