@@ -10,6 +10,7 @@ description: |
 - Identify scope: SwiftUI view/layout, AppKit interop, Liquid Glass, toolbar, navigation, concurrency, testing, logging
 - Read `references/index.md` for Liquid Glass/toolbar quick nav, APIs, decision trees
 - Search `references/swiftui.md` with `rg` and open only relevant sections (huge file)
+- Use `../swiftui-ui-patterns/guide.md` for component-level patterns such as navigation, tabs, sheets, forms, async state, and previews.
 - Apply architecture/state guidance from `references/modern-swift.md`
 - Use `references/swift-concurrency.md` for Swift 6 strict concurrency, Sendable, actor isolation
 - Use `references/swift-testing-playbook.md` for Swift Testing patterns and XCTest migration

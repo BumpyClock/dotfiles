@@ -8,6 +8,8 @@ description: 21 production-ready scripts for iOS app testing, building, and auto
 
 Build, test, and automate iOS applications using accessibility-driven navigation and structured data instead of pixel coordinates.
 
+For live simulator debugging through XcodeBuildMCP, use `../ios-debugger-agent/guide.md` first. Use this guide for repeatable CLI automation, reports, lifecycle scripts, and accessibility/visual checks.
+
 ## Quick Start
 
 ```bash
