@@ -88,6 +88,11 @@ If `secrets/api-keys/env.json` exists, the linker also generates `~/.config/dotf
 git submodule update --init --recursive
 ```
 
+## References and Attribution
+
+- `skills/ux-designer` micro-polish guidance adapts principles from Jakub Krehel's ["Details that make interfaces feel better"](https://jakub.kr/writing/details-that-make-interfaces-feel-better).
+- Related upstream skill: [`jakubkrehel/make-interfaces-feel-better`](https://github.com/jakubkrehel/make-interfaces-feel-better).
+
 ## Notes
 
 - Zsh config sync is managed by `shell/zsh/sync-config.sh`.

@@ -36,6 +36,9 @@ Different products want different things. A developer tool wants precision and d
 ## Craft Principles (Required)
 Apply consistent spacing, surface treatment, typography, and color usage. Pull the specific rules from the reference files and keep them coherent across the entire design.
 
+## Micro-Polish Pass (Required)
+After the main visual system is defined, specify small interface details that make the design feel precise: concentric radius math, optical alignment, text wrapping, tabular numbers, hit areas, image outlines, and motion behavior. These belong in the design doc as implementation-ready specs, not code.
+
 ## Output
 Produce implementation-ready UX design documentation that covers layout, components, interactions, and accessibility. Do not write implementation code.
 
@@ -62,6 +65,12 @@ Follow these steps in order.
 
 **Specify visual system**
 - Define color roles, typography scale, spacing system, and design tokens.
+
+**Specify micro-polish**
+- Define radius relationships for nested surfaces.
+- Specify text wrapping behavior for headings and body copy.
+- Specify tabular number usage for dynamic values and numeric columns.
+- Specify icon alignment, hit areas, image outlines, and motion rules.
 
 **Check accessibility**
 - Provide keyboard navigation, focus order, and contrast guidance.
@@ -160,6 +169,14 @@ Mobile
 - Spacing and sizing
 - Iconography and imagery
 
+## Micro-Polish Specs
+- Concentric radius rules for nested surfaces
+- Text wrapping rules for headings and body copy
+- Tabular number usage
+- Icon optical alignment and hit areas
+- Image outline/depth treatment
+- Motion timing and transition rules
+
 ## Accessibility
 - Keyboard navigation
 - Focus order and states
@@ -178,5 +195,6 @@ Mobile
 - ASCII layout diagram included.
 - Components and states listed.
 - Existing tokens or components reused or new ones defined.
+- Micro-polish specs cover radius, wrapping, numeric alignment, hit areas, motion, and optical alignment.
 - Accessibility guidance documented.
 - Rationale provided for key decisions.
