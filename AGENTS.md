@@ -24,7 +24,7 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer end-to-end verification. If blocked, state missing piece.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. For new deps, do quick health check. If several good options exist, propose 2-3 + recommendation.
-- Use `web_search` / `web_fetch` from `web-skill` for web research/fetch.
+- Inherent knowledge good but use `web_search` / `web_fetch` from `web-skill` for latest & web research/fetch.
 
 ## Coding discipline
 - Bias coding decisions toward caution over speed; trivial tasks still use judgment.
@@ -62,7 +62,7 @@ Use normal mode for security warnings, destructive confirmations, risky multi-st
 ## Docs / build / test
 - Before coding: if repo has docs-list cmd, run it. Prefer `docs-list`, else `docs:list`, else `bin/docs-list`.
 - If repo has `docs/`, open it. Follow `read_when` hints first until domain clear.
-- Research early. Quote exact errors. Prefer 2024-2026 sources. Fallback Brave Search.
+- Research early. Quote exact errors. Prefer 2024-2026 sources.
 - Keep notes short. Add `read_when` hints for cross-cutting docs.
 - Learned docs: evergreen only. Keep rationale, pitfalls, failure modes, architecture decisions. No transient changelog. No secrets, sensitive URLs, personal data.
 - If repo says `no docs`, respect repo rule. Else behavior/API change -> update docs before ship.
