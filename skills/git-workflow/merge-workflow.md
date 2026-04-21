@@ -151,10 +151,16 @@ git rebase --abort
 
 ## Common Conflict Scenarios
 
-### Lock file conflicts (package-lock.json, yarn.lock)
+### Lock file conflicts
 ```bash
-# Regenerate rather than blindly choosing one side
-npm install
+# Regenerate with the repo package manager, not a hardcoded npm command.
+# Examples:
+npm install          # package-lock.json
+yarn install         # yarn.lock
+pnpm install         # pnpm-lock.yaml
+bun install          # bun.lock / bun.lockb
+
+# Stage exact conflicted lockfile paths only.
 git add package-lock.json
 ```
 
