@@ -418,7 +418,14 @@ async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
     await writeGeneratedScript(
       path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
       path.join(binDir, "cz"),
-      { "__ANTHROPIC_AUTH_TOKEN__": glmToken },
+      {
+        "__ANTHROPIC_AUTH_TOKEN__": glmToken,
+        "__ANTHROPIC_BASE_URL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ?? "https://api.z.ai/api/anthropic",
+        "__API_TIMEOUT_MS__": (await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
+        "__ANTHROPIC_DEFAULT_HAIKU_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ?? "glm-5",
+        "__ANTHROPIC_DEFAULT_SONNET_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ?? "glm-5",
+        "__ANTHROPIC_DEFAULT_OPUS_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ?? "glm-5",
+      },
       true,
     );
   }
@@ -473,7 +480,14 @@ async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
     await writeGeneratedScript(
       path.join(dotfilesDir, "shell/bin/powershell/cz.ps1"),
       path.join(binDir, "cz.ps1"),
-      { "__ANTHROPIC_AUTH_TOKEN__": glmToken },
+      {
+        "__ANTHROPIC_AUTH_TOKEN__": glmToken,
+        "__ANTHROPIC_BASE_URL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ?? "https://api.z.ai/api/anthropic",
+        "__API_TIMEOUT_MS__": (await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
+        "__ANTHROPIC_DEFAULT_HAIKU_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ?? "glm-5",
+        "__ANTHROPIC_DEFAULT_SONNET_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ?? "glm-5",
+        "__ANTHROPIC_DEFAULT_OPUS_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ?? "glm-5",
+      },
       false,
     );
   }
