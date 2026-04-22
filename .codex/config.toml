@@ -1,5 +1,5 @@
 model = "gpt-5.4"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
@@ -149,22 +149,22 @@ max_threads = 24
 sandbox = "elevated"
 
 [plugins."google-calendar@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."gmail@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."github@openai-curated"]
 enabled = true
 
 [plugins."google-drive@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."computer-use@openai-bundled"]
-enabled = true
+enabled = false
 
 [plugins."build-ios-apps@openai-curated"]
-enabled = true
+enabled = false
 
 [[skills.config]]
 path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
