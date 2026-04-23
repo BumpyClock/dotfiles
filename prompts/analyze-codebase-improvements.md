@@ -89,7 +89,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
 6. **Validate and Rank Opportunities**
 
-   After agents complete:
+   After agents complete, launch subagents to :
    - Verify each opportunity against the code
    - Merge duplicates and discard speculative or style-only feedback
    - Score each item on:

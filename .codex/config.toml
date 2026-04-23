@@ -12,6 +12,7 @@ model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
 plan_mode_reasoning_effort = "xhigh"
+service_tier = "fast"
 
 [features]
 collaboration_modes = true
@@ -117,6 +118,9 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/intentOS"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/Blender-Wes"]
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -171,6 +175,6 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
 enabled = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-04-21T16:34:33Z"
+last_updated = "2026-04-23T17:27:33Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
