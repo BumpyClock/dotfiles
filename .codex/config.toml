@@ -1,4 +1,4 @@
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
@@ -6,13 +6,14 @@ suppress_unstable_features_warning = true
 tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
 tui.notifications = true
 tui.notification_method = "auto"
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
 model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
 plan_mode_reasoning_effort = "xhigh"
 service_tier = "fast"
+approvals_reviewer = "guardian_subagent"
 
 [features]
 collaboration_modes = true
@@ -24,6 +25,8 @@ personality = true
 multi_agent = true
 prevent_idle_sleep = true
 apps = false
+js_repl = true
+guardian_approval = true
 
 
 
