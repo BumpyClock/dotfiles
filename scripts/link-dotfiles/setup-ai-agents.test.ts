@@ -38,6 +38,17 @@ describe("ai-agent-links config", () => {
     ]);
   });
 
+  test("links personalities into shared AI agent directory", async () => {
+    const config = await loadConfig(configPath);
+
+    expect(config.sources.personalities).toBe("personalities");
+    expect(
+      config.targets
+        .filter((target) => target.source === "personalities")
+        .map((target) => ({ optional: target.optional ?? false, path: target.path })),
+    ).toEqual([{ optional: true, path: "~/.ai_agents/personalities" }]);
+  });
+
   test("links generated agent directories per provider", async () => {
     const config = await loadConfig(configPath);
 

@@ -3,6 +3,7 @@
     "instructions": "AGENTS.md",
     "tools_reference": "tools.md",
     "prompts": "prompts",
+    "personalities": "personalities",
     "skills": "skills",
     "docs": "docs",
     "claude_agents": "agent-templates/dist/claude",
@@ -112,6 +113,11 @@
     {
       "source": "prompts",
       "path": "~/.ai_agents/prompts",
+      "optional": true
+    },
+    {
+      "source": "personalities",
+      "path": "~/.ai_agents/personalities",
       "optional": true
     },
     {

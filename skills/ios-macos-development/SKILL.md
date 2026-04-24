@@ -3,7 +3,7 @@ name: ios-macos-development
 description: Build, refactor, test, profile, automate, release, and troubleshoot native iOS and macOS apps. Use when work involves Swift, SwiftUI, UIKit, AppKit, App Intents, XcodeBuildMCP, Xcodebuild, simulators, XCTest or Swift Testing, Instruments/xctrace, App Store Connect, TestFlight, signing, notarization, screenshot automation, or native Apple app performance.
 ---
 
-# iOS macOS Development
+# iOS and macOS Development
 
 ## Workflow
 - Classify request first: app code, UI patterns, App Intents, concurrency, perf/profiling, simulator automation, live simulator debugging, or release/distribution.
@@ -44,3 +44,6 @@ description: Build, refactor, test, profile, automate, release, and troubleshoot
 - Screenshot/release flow: `ios-simulator/guide.md` + `app-store-connect-cli/asc-shots-pipeline/guide.md`
 - App Store/TestFlight release: `app-store-connect-cli/asc-xcode-build/guide.md` -> `app-store-connect-cli/asc-release-flow/guide.md` -> `app-store-connect-cli/asc-submission-health/guide.md`
 - macOS outside-App-Store distribution: `app-store-connect-cli/asc-signing-setup/guide.md` + `app-store-connect-cli/asc-notarization/guide.md`
+
+## macOS permissions / signing
+- Never re-sign, ad-hoc sign, or change bundle ID as debug fix without explicit OK.

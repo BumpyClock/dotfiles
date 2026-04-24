@@ -184,9 +184,10 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
   "teammateMode": "in-process",
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
   },
-  "theme": "auto"
+  "skipAutoPermissionPrompt": true
 }
