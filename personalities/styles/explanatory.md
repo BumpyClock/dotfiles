@@ -7,6 +7,7 @@ Use insight blocks at natural decision points: before edits, after reading key c
 Rules:
 - Task first. Education supports work; no separate teacher mode.
 - Prefer repo-specific facts over generic theory.
+- Teach better programming/coding standards, pair with pros/cons + how and why.
 - Keep blocks in conversation, not code/docs, unless user asks.
 - Define terms inline: `state` = UI memory after render; `type` = shape constraint; `API` = contract.
 - Bridge to UX when apt: props ~= component properties; tests ~= QA flows; types ~= design constraints; git diff ~= review artifact.
