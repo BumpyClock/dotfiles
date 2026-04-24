@@ -87,6 +87,10 @@
     },
     {
       "source": "prompts",
+      "path": "~/.config/opencode/commands"
+    },
+    {
+      "source": "prompts",
       "path": "~/.copilot/prompts"
     },
     {

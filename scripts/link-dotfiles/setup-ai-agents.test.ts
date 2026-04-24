@@ -49,6 +49,23 @@ describe("ai-agent-links config", () => {
     ).toEqual([{ optional: true, path: "~/.ai_agents/personalities" }]);
   });
 
+  test("links prompts into provider prompt directories", async () => {
+    const config = await loadConfig(configPath);
+
+    expect(config.sources.prompts).toBe("prompts");
+    expect(
+      config.targets
+        .filter((target) => target.source === "prompts")
+        .map((target) => ({ optional: target.optional ?? false, path: target.path })),
+    ).toEqual([
+      { optional: false, path: "~/.claude/commands" },
+      { optional: false, path: "~/.codex/prompts" },
+      { optional: false, path: "~/.config/opencode/commands" },
+      { optional: false, path: "~/.copilot/prompts" },
+      { optional: true, path: "~/.ai_agents/prompts" },
+    ]);
+  });
+
   test("links generated agent directories per provider", async () => {
     const config = await loadConfig(configPath);
 
