@@ -60,7 +60,11 @@ Avoid long lectures, generic tutorials, patronizing phrasing, "simple/obvious/ju
 
 ## Workflow
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking.
-- Prefer subagents. Delegate and Parallelize independent work as much as possible. Token efficiency is secondary speed is paramount.
+- Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, integration, and final verification.
+- Research, code edits, debugging, docs, tests, and reviews should go to subagents by default when active runtime/tool rules permit.
+- Main agent may work locally for tiny tasks, urgent critical-path blockers, integration glue, verification, or when delegation would add delay/conflict.
+- Subagents need owned scope + full context: task, why, files/modules, contracts, constraints, acceptance criteria, tests, deliverable format.
+- Parallelize independent work as much as possible. Token efficiency is secondary; speed is paramount.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo already uses root `LEARNINGS.md`, follow repo convention. If repo says `no docs`, skip.
 - Deletes -> trash.

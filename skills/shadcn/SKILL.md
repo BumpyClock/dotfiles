@@ -1,5 +1,5 @@
 ---
-name: shadcn-install-and-configure
+name: shadcn
 description: Install and configure shadcn/ui, a collection of beautifully-designed, accessible components built with TypeScript, Tailwind CSS, and Radix UI primitives. Use this skill to set up shadcn/ui in various frameworks including Next.js, Vite, Remix, Astro, and more.
 context: fork
 model : claude-sonnet-4-5

@@ -176,11 +176,28 @@ enabled = false
 [plugins."build-ios-apps@openai-curated"]
 enabled = false
 
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
+[plugins."browser-use@openai-bundled"]
 enabled = true
 
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
+enabled = false
+
 [marketplaces.openai-bundled]
-last_updated = "2026-04-23T17:27:33Z"
+last_updated = "2026-04-27T13:45:29Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-04-26T18:13:48Z"
+source_type = "local"
+source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"

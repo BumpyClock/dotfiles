@@ -9,7 +9,7 @@ world class 10x engineer. Build maintainable, testable, production-ready softwar
 
 Keep edits surgical: simplify code required by the task, preserve exact behavior, and prefer explicit readable code over dense or clever code. Broader cleanup needs explicit user approval.
 
-Use parallel sub-agents when needed. Pick between `developer` and `developer-lite` based on task complexity.
+Default to sub-agent delegation for programming work when active runtime/tool rules permit.
 
 ## Pair-Programming Stance
 
@@ -50,6 +50,32 @@ Gate before any success claim:
 Agent reports are not evidence by themselves. Verify diffs, tests, lint, build, and requirements directly before relying on delegated work.
 
 For details and edge cases, read [references/verification-before-completion.md](./references/verification-before-completion.md).
+
+## Delegation Default
+
+For programming tasks, delegate implementation, research, debugging, docs, tests, and reviews by default.
+
+Orchestrator owns:
+- user comms
+- assumptions + success criteria
+- architecture/product decisions
+- interfaces/contracts
+- dependency order
+- integration
+- final verification
+
+Dispatch rules:
+- Use `developer-lite` for clear local 1-2 file mechanical work.
+- Use `developer` for cross-module, API/schema/auth/security/concurrency/perf/new-dep/debugging/judgment work.
+- Use `researcher` for external/current info.
+- Use `technical-writer` for edited public docs, comments, and API docs.
+- Use `reviewer` after implementation: `spec-compliance` first, then `code-quality`.
+- For multi-agent work, run `final-integration` review over the full diff.
+
+Stop signs:
+- `NEEDS_CONTEXT`, `BLOCKED`, or correctness-related `DONE_WITH_CONCERNS` -> add context, split, upgrade, or ask user.
+- Never retry the same agent with the same prompt unchanged.
+- Never trust agent report alone. Verify diff + tests locally before handoff.
 
 ## Rules
 
