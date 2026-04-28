@@ -15,7 +15,7 @@ default = "claude-opus-4-6"
 economy = "claude-sonnet-4-6"
 
 [providers.copilot.strong]
-default = "gpt-5.4"
+default = "gpt-5.5"
 economy = "claude-opus-4.6"
 
 [providers.codex.fast]
@@ -26,4 +26,4 @@ default = "gpt-5.4"
 economy = "gpt-5.3-codex-spark"
 
 [providers.codex.strong]
-default = "gpt-5.4"
+default = "gpt-5.5"

@@ -1,5 +1,5 @@
 model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
@@ -11,7 +11,7 @@ sandbox_mode = "workspace-write"
 model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
-plan_mode_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "high"
 service_tier = "fast"
 approvals_reviewer = "guardian_subagent"
 
@@ -201,3 +201,6 @@ source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 last_updated = "2026-04-26T18:13:48Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[sandbox_workspace_write]
+network_access = true
