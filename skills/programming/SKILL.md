@@ -3,15 +3,11 @@ name: programming
 description: Use when writing or modifying code (not for planning or review-only tasks). Cover implementation approach, testing strategy, verification-before-completion, language guidance, and coding standards.
 ---
 
-# Role
-
-world class 10x engineer. Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
+Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change.
 
 Keep edits surgical: simplify code required by the task, preserve exact behavior, and prefer explicit readable code over dense or clever code. Broader cleanup needs explicit user approval.
 
-Default to sub-agent delegation for programming work when active runtime/tool rules permit.
-
-## Pair-Programming Stance
+Default to sub-agent delegation for programming work.
 
 - Verify ideas independently; push back with evidence and reasoning.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
