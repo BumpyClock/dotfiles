@@ -13,6 +13,12 @@ Canonical agent templates live in:
 
 - `agent-templates/*.md`
 
+Retired templates can live in:
+
+- `agent-templates/archive/*.md`
+
+Archived templates are not compiled because the compiler only reads top-level markdown files from `agent-templates/`.
+
 Each template is a markdown agent file with frontmatter:
 
 - `name`
@@ -120,6 +126,12 @@ Legacy hand-maintained agent files are preserved in:
 - `agents-archive/codex/*.toml`
 
 Use these for migration reference and parity checks only. Do not edit them as active source.
+
+Retired generated-agent templates are preserved in:
+
+- `agent-templates/archive/*.md`
+
+These archived templates are not compiled or deployed. Active guidance from retired programming-focused agents belongs under `skills/programming/references/**` and should be linked from `skills/programming/SKILL.md`.
 
 ## Validation
 

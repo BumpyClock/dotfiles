@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "compile-agents": "bun ./compile-agents.ts"
+    "compile-agents": "bun ./compile-agents.ts --dotfiles-dir ../.."
   },
   "dependencies": {
     "yaml": "^2.8.3"

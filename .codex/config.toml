@@ -193,7 +193,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-04-27T13:45:29Z"
+last_updated = "2026-04-29T15:58:36Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 

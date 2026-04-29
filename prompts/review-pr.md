@@ -1,12 +1,12 @@
 ---
-description: "Comprehensive PR review using specialized agents"
+description: "Comprehensive PR review using agents and programming references"
 argument-hint: "[review-aspects]"
 allowed-tools: ["Bash", "Glob", "Grep", "Read", "Task"]
 ---
 
 # Comprehensive PR Review
 
-Run a comprehensive pull request review using multiple specialized agents, each focusing on a different aspect of code quality.
+Run a comprehensive pull request review using specialized agents plus focused programming references for error handling, type design, and simplification.
 
 **Review Aspects (optional):** "$ARGUMENTS"
 
@@ -24,7 +24,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **errors** - Check error handling for silent failures
    - **types** - Analyze type design and invariants (if new types added)
    - **code** - General code review for project guidelines
-   - **simplify** - Simplify code for clarity and maintainability
+   - **simplify** - Review simplification opportunities for clarity and maintainability
    - **all** - Run all applicable reviews (default)
 
 3. **Identify Changed Files**
@@ -35,14 +35,14 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 4. **Determine Applicable Reviews**
 
    Based on changes:
-   - **Always applicable**: code-reviewer (general quality)
+   - **Always applicable**: reviewer (general quality)
    - **If test files changed**: pr-test-analyzer
-   - **If comments/docs added**: technical-writer
-   - **If error handling changed**: silent-failure-hunter
-   - **If types added/modified**: type-design-analyzer
-   - **After passing review**: code-simplifier (polish and refine)
+   - **If comments/docs added**: technical-writer, with `skills/programming/references/documentation/code-documentation.md`
+   - **If error handling changed**: reviewer, with `skills/programming/references/error-handling/silent-failures.md`
+   - **If types added/modified**: reviewer, with `skills/programming/references/design/type-design.md`
+   - **If simplification is requested**: reviewer, with `skills/programming/references/refactoring/code-simplification.md`
 
-5. **Launch Review Agents**
+5. **Launch Review Passes**
 
    **Sequential approach** (one at a time):
    - Easier to understand and act on
@@ -50,13 +50,13 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - Good for interactive review
 
    **Parallel approach** (user can request):
-   - Launch all agents simultaneously
+   - Launch independent agent passes simultaneously
    - Faster for comprehensive review
    - Results come back together
 
 6. **Aggregate Results**
 
-   After agents complete, summarize:
+   After review passes complete, summarize:
    - **Critical Issues** (must fix before merge)
    - **Important Issues** (should fix)
    - **Suggestions** (nice to have)
@@ -103,16 +103,16 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 # Reviews only code comments
 
 /pr-review-toolkit:review-pr simplify
-# Simplifies code after passing review
+# Reviews simplification opportunities after passing review
 ```
 
 **Parallel review:**
 ```
 /pr-review-toolkit:review-pr all parallel
-# Launches all agents in parallel
+# Launches independent review passes in parallel
 ```
 
-## Agent Descriptions:
+## Launchable Agents:
 
 **technical-writer**:
 - Verifies comment accuracy vs code
@@ -124,23 +124,25 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 - Identifies critical gaps
 - Evaluates test quality
 
-**silent-failure-hunter**:
+**error-handling reference**:
 - Finds silent failures
 - Reviews catch blocks
 - Checks error logging
 
-**type-design-analyzer**:
+**type-design reference**:
 - Analyzes type encapsulation
 - Reviews invariant expression
 - Rates type design quality
 
-**code-reviewer**:
-- Checks CLAUDE.md compliance
+**reviewer**:
+- Checks repo instructions and local agent docs
 - Detects bugs and issues
 - Reviews general code quality
 
-**code-simplifier**:
-- Simplifies complex code
+## Programming References:
+
+**code-simplification reference**:
+- Reviews simplification opportunities
 - Improves clarity and readability
 - Applies project standards
 - Preserves functionality
@@ -182,8 +184,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
 ## Notes:
 
-- Agents run autonomously and return detailed reports
-- Each agent focuses on its specialty for deep analysis
+- Some passes use launchable agents; others load focused programming references into `reviewer` or the orchestrator
+- Each pass focuses on its specialty for deep analysis
 - Results are actionable with specific file:line references
-- Agents use appropriate models for their complexity
-- All agents available in `/agents` list
+- Launchable agents use appropriate models for their complexity

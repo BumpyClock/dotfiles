@@ -131,6 +131,15 @@ Stop signs:
 - [references/roles/software-architect.md](./references/roles/software-architect.md) - architectural analysis and system design guidance
 - [references/roles/sprint-planner.md](./references/roles/sprint-planner.md) - sprint planning and parallel workstream orchestration
 
+## Focused References (Load as needed)
+
+- [references/architecture/architecture-planning.md](./references/architecture/architecture-planning.md) - read before decomposing hard problems, defining ADRs, contracts, boundaries, or parallel workstreams
+- [references/design/type-design.md](./references/design/type-design.md) - read when creating or reviewing domain models, public APIs, schemas, state machines, or type-level invariants
+- [references/documentation/code-documentation.md](./references/documentation/code-documentation.md) - read when comments, public API docs, README snippets, or generated docs change
+- [references/error-handling/silent-failures.md](./references/error-handling/silent-failures.md) - read when reviewing catch blocks, fallbacks, retries, null/default handling, logging, or user-visible failures
+- [references/refactoring/code-flow-analysis.md](./references/refactoring/code-flow-analysis.md) - read before simplifying code whose behavior spans multiple files, entry points, async paths, callbacks, or side effects
+- [references/refactoring/code-simplification.md](./references/refactoring/code-simplification.md) - read when refining assigned code for clarity while preserving exact behavior and scope
+
 ## Language Index
 
 - [references/languages/go.md](references/languages/go.md) - Go 1.21+ guidance, plus Go-specific rules moved out of the core skill

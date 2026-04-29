@@ -1,16 +1,16 @@
 ---
-description: "Analyze the codebase for high-value improvements using specialized agents"
+description: "Analyze the codebase for high-value improvements using agents and programming references"
 argument-hint: "[scope] [focus-areas]"
 allowed-tools: ["Bash", "Glob", "Grep", "Read", "Task"]
 ---
 
 # Whole Codebase Improvement Analysis
 
-Run a comprehensive codebase-wide improvement analysis using multiple specialized agents. Focus on the highest-leverage improvements with concrete evidence. Do not make code changes.
+Run a comprehensive codebase-wide improvement analysis using specialized agents plus focused programming references. Focus on the highest-leverage improvements with concrete evidence. Do not make code changes.
 
 **Scope / Focus (optional):** "$ARGUMENTS"
 
-**Primary directive:** Use parallel specialized sub-agents and agent teams to review the entire codebase and look for stale legacy code, dead code, bridges for legacy code to new code, hard coded values, orphan code paths, logical inconsistencies, and meaningful time-complexity bottlenecks.
+**Primary directive:** Use available specialized agents plus reference-guided analysis passes to review the entire codebase and look for stale legacy code, dead code, bridges for legacy code to new code, hard coded values, orphan code paths, logical inconsistencies, and meaningful time-complexity bottlenecks.
 
 ## Analysis Workflow:
 
@@ -47,14 +47,15 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
    Based on repository shape and requested focus:
    - **Always applicable**: `reviewer` for general code quality and design issues
+   - **If architecture is central**: use `skills/programming/references/architecture/architecture-planning.md`
    - **If tests exist or look thin**: `pr-test-analyzer` for critical test gaps
-   - **If comments/docs matter**: `technical-writer`
-   - **If error handling is important**: `silent-failure-hunter`
-   - **If types/models/APIs are central**: `type-design-analyzer`
-   - **If complexity or duplication stands out**: `code-simplifier`
+   - **If comments/docs matter**: `technical-writer`, with `skills/programming/references/documentation/code-documentation.md`
+   - **If error handling is important**: use `skills/programming/references/error-handling/silent-failures.md`
+   - **If types/models/APIs are central**: use `skills/programming/references/design/type-design.md`
+   - **If complexity or duplication stands out**: use `skills/programming/references/refactoring/code-flow-analysis.md` and `skills/programming/references/refactoring/code-simplification.md`
    - **If time-complexity matters**: quantify current Big O costs, identify the exact loops or repeated operations causing them, and only recommend lower-complexity refactors when the trade-off is justified
 
-5. **Launch Analysis Agents**
+5. **Launch Analysis Passes**
 
    **Parallel approach** (default):
    - Launch independent analyses simultaneously
@@ -65,14 +66,14 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
    - Use when scope is narrow or findings need iterative refinement
    - Easier to inspect each pass before continuing
 
-    For every agent:
+    For every agent or reference-guided pass:
     - Give it a bounded scope
     - Require specific file/symbol references
     - Ask for the smallest viable improvement, not a full rewrite
     - Ask it to separate quick wins from strategic refactors
 
    For `technical-writer` passes:
-   - When focus includes `comments`, `docs`, or `all`, invoke `technical-writer`
+   - When focus includes `comments`, `docs`, or `all`, invoke `technical-writer` with `skills/programming/references/documentation/code-documentation.md`
    - Require it to validate all existing comments in scope for accuracy, value, and drift
    - Require it to classify stale comments, redundant comments, and missing documentation coverage separately
    - Require it to audit language-appropriate documentation standards, for example:
@@ -89,7 +90,7 @@ Run a comprehensive codebase-wide improvement analysis using multiple specialize
 
 6. **Validate and Rank Opportunities**
 
-   After agents complete, launch subagents to :
+   After initial passes complete, validate findings:
    - Verify each opportunity against the code
    - Merge duplicates and discard speculative or style-only feedback
    - Score each item on:

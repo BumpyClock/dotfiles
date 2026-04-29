@@ -164,8 +164,9 @@ describe("compileAgents", () => {
     const templateMap = new Map(templates.map((template) => [template.name, template]));
 
     const copilotEntries = await readdir(path.join(outputDir, "copilot"));
-    expect(copilotEntries).toContain("architect.md");
+    expect(copilotEntries).toContain("planner.md");
     expect(copilotEntries).toContain("developer-lite.md");
+    expect(copilotEntries).not.toContain("architect.md");
     expect(copilotEntries).not.toContain("os2020.md");
 
     for (const entry of copilotEntries.filter((name) => name.endsWith(".md"))) {
@@ -192,8 +193,9 @@ describe("compileAgents", () => {
     const templateMap = new Map(templates.map((template) => [template.name, template]));
 
     const opencodeEntries = await readdir(path.join(outputDir, "opencode"));
-    expect(opencodeEntries).toContain("architect.md");
+    expect(opencodeEntries).toContain("planner.md");
     expect(opencodeEntries).toContain("developer-lite.md");
+    expect(opencodeEntries).not.toContain("architect.md");
     expect(opencodeEntries).not.toContain("os2020.md");
 
     for (const entry of opencodeEntries.filter((name) => name.endsWith(".md"))) {
