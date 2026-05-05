@@ -7,7 +7,7 @@ Build maintainable, testable, production-ready software. Apply DDD patterns and 
 
 Keep edits surgical: simplify code required by the task, preserve exact behavior, and prefer explicit readable code over dense or clever code. Broader cleanup needs explicit user approval.
 
-Default to sub-agent delegation for programming work.
+Default to sub-agent delegation for programming work. For planned multi-task work, prefer `subagent-driven-development` when user/runtime permits subagents.
 
 - Verify ideas independently; push back with evidence and reasoning.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
@@ -22,7 +22,7 @@ Default to sub-agent delegation for programming work.
 5. Choose testing strategy before coding: default to TDD for behavior changes. If skipping TDD for non-behavioral work, say why and verify appropriately.
 6. Load relevant role and language references as needed.
 7. Run the technical-writer agent on edited files to make sure code is properly documented.
-8. Run reviewer agent to review the code to catch any mistakes. Reviewer will give feedback, address and review again up to 5 times to ensure code is good.
+8. Run reviewer agent to review the code: spec compliance first, then code quality. Reviewer will give feedback, responsible implementer/integration owner addresses it, then reviewer re-checks.
 9. Run lint, formatting, and tests to ensure everything is green before assuming success.
 10. Before claiming done, fixed, passing, or ready: identify the proving command, run it fresh, read output + exit code, then state only what the evidence proves.
 
@@ -57,10 +57,15 @@ Orchestrator owns:
 - architecture/product decisions
 - interfaces/contracts
 - dependency order
-- integration
-- final verification
+- final evidence report
+
+When using `subagent-driven-development`:
+- task implementers own task code and review fixes
+- integration-owner subagent owns cross-task integration and fixes
+- orchestrator verifies evidence and reports state, but does not act as integration glue by default
 
 Dispatch rules:
+- Use `subagent-driven-development` for saved plans with independent or mostly independent tasks.
 - Use `developer-lite` for clear local 1-2 file mechanical work.
 - Use `developer` for cross-module, API/schema/auth/security/concurrency/perf/new-dep/debugging/judgment work.
 - Use `researcher` for external/current info.
@@ -71,6 +76,7 @@ Dispatch rules:
 Stop signs:
 - `NEEDS_CONTEXT`, `BLOCKED`, or correctness-related `DONE_WITH_CONCERNS` -> add context, split, upgrade, or ask user.
 - Never retry the same agent with the same prompt unchanged.
+- Never make subagents read the plan as their primary task source; paste exact task text, owned scope, acceptance criteria, and tests.
 - Never trust agent report alone. Verify diff + tests locally before handoff.
 
 ## Rules

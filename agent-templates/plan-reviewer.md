@@ -70,6 +70,7 @@ Read repo instructions and referenced docs when needed to judge buildability.
 | Spec alignment | Plan covers spec requirements, avoids major scope creep, preserves explicit constraints |
 | Task decomposition | Tasks have clear boundaries, correct order, independent review points, explicit dependencies |
 | Buildability | Exact files, commands, expected results, code shapes, test strategy, docs/config steps |
+| Execution handoff | Plan is ready for `subagent-driven-development`: task text can be pasted independently, owned scopes are clear, review gates are explicit, and integration-owner pass is represented for cross-task integration |
 | Consistency | Types, function names, file names, API contracts, and commands do not drift across tasks |
 | Tasque tracking | Long-term plans map to a parent task, child tasks, and explicit `blocks` or `starts_after` deps where needed |
 
@@ -81,6 +82,7 @@ Only flag issues that would cause real problems during implementation:
 - implementer gets stuck due to missing context
 - test or build command cannot be run as written
 - task order is impossible or dependency is missing
+- task ownership or integration ownership is unclear enough that subagents may collide or leave cross-task drift unresolved
 - placeholders hide required design or code
 - plan contradicts the spec or repo rules
 - long-term plan cannot be tracked or resumed because Tasque parent/child/dependency state is missing or contradictory

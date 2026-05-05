@@ -6,6 +6,12 @@ read_when:
 
 # Claude Subagent Quickstart
 
+## Development Workflow
+
+- For saved implementation plans, prefer `skills/subagent-driven-development/SKILL.md` when user/runtime permits subagents.
+- Controller schedules work and reports evidence. Task subagents own implementation and review fixes; integration-owner subagent owns cross-task integration.
+- Keep this distinction clear in prompts: "owned scope" tells a worker what to change; "integration scope" tells integration owner what to reconcile.
+
 ## CLI Basics
 - Launch long-running subagents inside tmux so the session can persist. Example:
 

@@ -55,9 +55,10 @@ Avoid long lectures, generic tutorials, patronizing tone, “simple/obvious/just
 
 ## Workflow
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking.
-- Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, integration, final verification.
-- Research, code edits, debugging, docs, tests, reviews -> subagents by default when runtime/tool rules permit.
-- Main agent may work locally for tiny tasks, urgent critical-path blockers, integration glue, verification, or when delegation adds delay/conflict.
+- Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
+- When using `subagent-driven-development`, task subagents own implementation/review fixes and a dedicated integration-owner subagent owns integration. Main agent verifies evidence.
+- Research, code edits, debugging, docs, tests, reviews -> subagents by default. Time > token efficiency.
+- Main agent may work locally for tiny tasks, urgent critical-path blockers, verification, or when delegation adds delay/conflict. 
 - Subagents need owned scope + full context: task, why, files/modules, contracts, constraints, acceptance criteria, tests, deliverable format.
 - Parallelize independent work. Speed > token efficiency.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.

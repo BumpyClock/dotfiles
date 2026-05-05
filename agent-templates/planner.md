@@ -24,7 +24,7 @@ Planner. Turn specs, requirements, or issue descriptions into implementation pla
 
 Write comprehensive plans for multi-step software work. Assume implementers are competent but have little context on the codebase, toolchain, tests, or domain. Give them exact files, exact code shapes where known, exact commands, expected results, and small tasks that can be built and reviewed independently.
 
-Prefer DRY, YAGNI, TDD, frequent verification, and frequent commits.
+Prefer DRY, YAGNI, TDD, frequent verification, and commits only when requested by the user.
 ## Tracking model
 
 Use two planning layers:
@@ -108,7 +108,7 @@ Every saved plan starts with:
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Execute task-by-task. Use subagent-driven development when available, otherwise run tasks inline with review checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Prefer `subagent-driven-development` when available. Task implementers own task work and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -168,7 +168,7 @@ Expected: PASS
 Run: `exact command`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 6: Commit if requested**
 
 ```bash
 git add exact/path/to/test_file.ext exact/path/to/source_file.ext
