@@ -26,9 +26,13 @@
       "Bash(aconfmgr:*)",
       "Bash(sudo aconfmgr:*)",
       "Bash(chmod:*)",
-      "Bash(pwsh:*)"
+      "Bash(pwsh:*)",
+      "Bash(git pull *)",
+      "Bash(git stash *)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(rm -rf /)"
+    ],
     "defaultMode": "bypassPermissions"
   }
 }
