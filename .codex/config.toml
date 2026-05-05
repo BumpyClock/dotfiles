@@ -12,8 +12,8 @@ model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
-service_tier = "fast"
 approvals_reviewer = "guardian_subagent"
+service_tier = "fast"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -30,6 +30,10 @@ prevent_idle_sleep = true
 apps = false
 js_repl = true
 guardian_approval = true
+goals = true
+
+[notice]
+fast_default_opt_out = true
 
 
 
@@ -127,6 +131,21 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/Blender-Wes"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/gpui"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/agent-term"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Projects/Andromeda"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/Documents/Codex/2026-05-01/what-is-immediate-mode-ui-library"]
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -176,31 +195,106 @@ enabled = false
 [plugins."build-ios-apps@openai-curated"]
 enabled = false
 
-[plugins."browser-use@openai-bundled"]
-enabled = true
-
 [plugins."documents@openai-primary-runtime"]
-enabled = true
+enabled = false
 
 [plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
+enabled = false
 
 [plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."browser-use@openai-bundled"]
 enabled = true
 
 [[skills.config]]
 path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
 enabled = false
 
+[[skills.config]]
+path = "/Users/adityasharma/.codex/plugins/cache/openai-bundled/browser-use/0.1.0-alpha1/skills/browser/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/documents/26.430.10722/skills/documents/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-code-connect/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-design-system-rules/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-new-file/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-design/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-library/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-implement-design/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-use/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/opentui/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/peeku-windows/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/playwriter/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/shadcn/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.430.10722/skills/spreadsheets/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/winui3-csharp-app/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/.system/plugin-creator/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-creator/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKILL.md"
+enabled = false
+
 [marketplaces.openai-bundled]
-last_updated = "2026-04-29T15:58:36Z"
+last_updated = "2026-05-04T20:02:21Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-04-26T18:13:48Z"
+last_updated = "2026-04-30T17:13:54Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [sandbox_workspace_write]
 network_access = true
+
+# [mcp_servers.openaiDeveloperDocs]
+# url = "https://developers.openai.com/mcp"

@@ -142,6 +142,9 @@ If service not up:
 cd ~/Projects/dotfiles/skills/web-skill
 podman compose ps
 podman compose up -d
+# Mac fallback when Podman machine is not configured:
+docker compose ps
+docker compose up -d
 ```
 
 ---
@@ -182,4 +185,7 @@ If service not up:
 cd ~/Projects/dotfiles/skills/web-skill
 podman compose ps
 podman compose up -d
+# Mac fallback when Podman machine is not configured:
+docker compose ps
+docker compose up -d
 ```

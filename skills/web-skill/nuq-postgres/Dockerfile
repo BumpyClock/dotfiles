@@ -1,0 +1,18 @@
+# Native Firecrawl NuQ Postgres image for local Apple Silicon Docker.
+# Based on upstream apps/nuq-postgres/Dockerfile.
+
+ARG PG_MAJOR=17
+FROM postgres:${PG_MAJOR}
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        postgresql-${PG_MAJOR}-cron; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN set -eux; \
+    conf_sample="/usr/share/postgresql/${PG_MAJOR}/postgresql.conf.sample"; \
+    sed -ri "s/^#?shared_preload_libraries\s*=.*/shared_preload_libraries = 'pg_cron'/" "$conf_sample"; \
+    printf "\n# Added for pg_cron\ncron.database_name = 'postgres'\n" >> "$conf_sample"
+
+ADD https://raw.githubusercontent.com/firecrawl/firecrawl/main/apps/nuq-postgres/nuq.sql /docker-entrypoint-initdb.d/010-nuq.sql
