@@ -4,4 +4,4 @@ arguments:
    - name: ARGUMENTS
      type: string
 ---
-use the `issue-investig8tor` skill to accomplish tasks handed to you by the user in $ARGUMENTS.
+Use the `programming` skill with `issue-investigation/guide.md` to accomplish tasks handed to you by the user in $ARGUMENTS.

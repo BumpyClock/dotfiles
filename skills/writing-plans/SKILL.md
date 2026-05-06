@@ -24,7 +24,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 - Follow repo/user git policy when stricter than this skill. In this dotfiles repo, do not create commits unless the user explicitly asks.
 - Use `subagent-driven-development` when current runtime and user instructions permit subagents. Otherwise, plan for inline implementation with normal checkpoints.
-- If referenced Superpowers execution skills are unavailable, map them to local skills/workflows: implementation uses `programming`, debugging uses `systematic-debugging`, frontend work uses `web-development`, and git work uses `git-workflow`.
+- If referenced Superpowers execution skills are unavailable, map them to local skills/workflows: implementation and debugging use `programming` (with `systematic-debugging/guide.md` when needed), frontend work uses `web-development`, and git work uses `git-workflow`.
 
 ## Scope Check
 

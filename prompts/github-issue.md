@@ -11,7 +11,7 @@ arguments:
 Please get the details for the following issue(s): $ISSUE_NUMBER
 
 
-Relevant skills `git-workflow` , `programming`, `issue-investig8tor`, `systematic-debugging`, `test-driven-development` (use only when explicitly required), `dispatching-parallel-agents`. Read the skills you feel you need to complete the tasks before proceeding, do not read skills you don't need.
+Relevant skills `git-workflow`, `programming` (use `issue-investigation/guide.md` and `systematic-debugging/guide.md` when needed), `test-driven-development` (use only when explicitly required), `dispatching-parallel-agents`. Read the skills you feel you need to complete the tasks before proceeding, do not read skills you don't need.
 
 create or reuse an existing subagent or use the task tool or bash tool for git-workflow to fetch the details of issue number $ISSUE_NUMBER or all issues for the repo if the user argument is `all` ,`all issues`, nil, or something similar. DO NOT perform any git operations directly yourself. 
 

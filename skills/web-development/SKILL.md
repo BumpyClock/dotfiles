@@ -1,6 +1,6 @@
 ---
 name: web-development
-description: Build, refactor, review, debug, polish, and verify modern web apps and interfaces. Use when work involves frontend UI, HTML, CSS, JavaScript, TypeScript, React, Next.js, design systems, accessibility, forms, motion, responsive behavior, performance, or React-specific diagnostics such as react-doctor.
+description: Build, refactor, review, debug, polish, and verify modern web apps and interfaces. Use when work involves frontend UI, HTML, CSS, JavaScript, TypeScript, React, Next.js, design systems, shadcn/ui, accessibility, forms, motion, responsive behavior, performance, or React-specific diagnostics such as react-doctor.
 ---
 
 # Web Development
@@ -26,6 +26,7 @@ description: Build, refactor, review, debug, polish, and verify modern web apps 
 - `design-engineering/PRACTICAL-TIPS.md` -> concrete animation implementation patterns and fixes.
 - `react/guide.md` -> React and Next.js implementation and review guidance.
 - `react/react-doctor.md` -> when and how to run `react-doctor`, plus how to interpret findings.
+- `shadcn/guide.md` -> shadcn/ui install/configuration, component docs, theming, registries, and framework-specific setup references.
 
 ## Common Stacks
 - UI polish: `design-engineering/guide.md`
@@ -34,3 +35,4 @@ description: Build, refactor, review, debug, polish, and verify modern web apps 
 - Marketing pages: `design-engineering/marketing.md` + `design-engineering/aesthetic-direction.md`
 - React feature or bug work: `react/guide.md`
 - React verification pass: `react/guide.md` + `react/react-doctor.md`
+- shadcn/ui setup or component work: `shadcn/guide.md`

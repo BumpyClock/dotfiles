@@ -1,6 +1,6 @@
 ---
 name: programming
-description: Use when writing or modifying code (not for planning or review-only tasks). Cover implementation approach, testing strategy, verification-before-completion, language guidance, and coding standards.
+description: Use when writing, modifying, debugging, or investigating software (not for planning or review-only tasks). Cover implementation approach, root-cause investigation, testing strategy, verification-before-completion, language guidance, and coding standards.
 ---
 
 Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change. Bias coding decisions toward caution over speed; trivial tasks still require judgment.
@@ -78,6 +78,11 @@ Stop signs:
 - Never retry the same agent with the same prompt unchanged.
 - Never make subagents read the plan as their primary task source; paste exact task text, owned scope, acceptance criteria, and tests.
 - Never trust agent report alone. Verify diff + tests locally before handoff.
+
+## Guide Index
+
+- `issue-investigation/guide.md` -> structured investigation reports, incident triage, root-cause hypothesis ranking, and validation plans.
+- `systematic-debugging/guide.md` -> required root-cause workflow for bugs, test failures, build failures, regressions, and unexpected behavior before proposing fixes.
 
 ## Rules
 

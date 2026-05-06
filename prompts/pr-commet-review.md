@@ -17,7 +17,7 @@ arguments:
 
 ---
 
-Relevant skills: `git-workflow`, `programming`, `issue-investig8tor`, `systematic-debugging`, `subagent-driven-development`, `dispatching-parallel-agents`.
+Relevant skills: `git-workflow`, `programming` (use `issue-investigation/guide.md` and `systematic-debugging/guide.md` when needed), `subagent-driven-development`, `dispatching-parallel-agents`.
 Read only what you need.
 
 ## Steps
