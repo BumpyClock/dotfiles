@@ -5,181 +5,157 @@ description: Operational guide for Tasque (tsq) local task tracking and manageme
 
 <!-- tsq-managed-skill:v1 -->
 
-Tasque = durable local-first task memory for agent work. Default daily playbook.
+Tasque (`tsq`) = durable local task graph for agent work.
 
-## When to use tsq
+## Use
 
-- `tsq` -> multi-step/multi-session/dep-blocked/shared-agent work.
-- Transient checklist or inbuilt `todoWrite`/task tool -> short linear single-session work.
+- Use `tsq`: multi-step, multi-session, blocked, shared-agent, release, or follow-up work.
+- Use transient checklist: short linear same-session work.
 
-## Session routine (default)
-
-```bash
-tsq ready --lane planning
-tsq ready --lane coding
-tsq list --status blocked
-```
-
-Pick task; inspect ctx:
+## Start
 
 ```bash
+tsq find ready --lane planning
+tsq find ready --lane coding
+tsq find blocked
 tsq show <id>
 ```
 
+Pick one task. Inspect before edit.
 
-### 1) Capture new work
-
-```bash
-tsq create "Implement <feature>" --kind feature -p 1 --needs-planning
-tsq create "Fix <bug>" --kind task -p 1 --needs-planning
-```
-
-Planning done:
+## Create
 
 ```bash
-tsq create "Implement <feature>" --planning planned
+tsq create "Implement <feature>" --kind feature -p 1 --needs-plan
+tsq create "Fix <bug>" --kind task -p 1 --needs-plan
+tsq create "Implement <feature>" --planned
 ```
 
-### 2) Split parent into many children (single command)
+Good task = verb + object + scope. Set `kind`, priority, labels, spec/deps when useful.
+
+## Split
 
 ```bash
 tsq create --parent <parent-id> \
-  --child "Design API contract" \
-  --child "Implement service logic" \
-  --child "Add regression tests"
+  "Design API contract" \
+  "Implement service logic" \
+  "Add regression tests"
 ```
 
-Shared defaults for all children:
+Shared defaults:
 
 ```bash
-tsq create --parent <parent-id> --kind task -p 2 --planning planned \
-  --child "Wire CLI args" \
-  --child "Update docs" \
-  --child "Add integration tests"
+tsq create --parent <parent-id> --kind task -p 2 --planned \
+  "Wire CLI args" \
+  "Update docs" \
+  "Add integration tests"
 ```
 
-Safe reruns, no dup children:
+Safe rerun:
 
 ```bash
 tsq create --parent <parent-id> --ensure \
-  --child "Wire CLI args" \
-  --child "Update docs" \
-  --child "Add integration tests"
+  "Wire CLI args" \
+  "Update docs" \
+  "Add integration tests"
 ```
 
-### 3) Planning handoff -> coding
+`tasks.md` batch. Two-space nested bullets create child hierarchy.
 
-```bash
-tsq spec attach <id> --text "## Plan\n...\n## Acceptance\n..."
-tsq update <id> --planning planned
-tsq update <id> --claim --assignee <name>
-tsq update <id> --status in_progress
+```md
+- Add parser tests
+  - Cover nested task hierarchy
+  - Cover invalid indentation
+- Wire CLI command
+- Update skill docs
 ```
 
-### 4) Model deps for parallel agents
-
-Hard blocker (changes readiness):
-
 ```bash
-tsq dep add <child-id> <blocker-id> --type blocks
+tsq create --parent <parent-id> --from-file tasks.md
 ```
 
-Soft ordering only:
+## Plan -> Code
 
 ```bash
-tsq dep add <later-id> <earlier-id> --type starts_after
+tsq spec <id> --text "## Plan\n...\n## Acceptance\n..."
+tsq spec <id> --show
+tsq planned <id>
+tsq claim <id> --assignee <name> --start
 ```
 
-Check actionable:
+Use `tsq spec <id> --show` when spec markdown lives in sync worktree.
+
+## Parallel Work
+
+Hard blocker; affects readiness:
 
 ```bash
-tsq ready --lane coding
-tsq ready --lane planning
+tsq block <child-id> by <blocker-id>
 ```
 
-### 5) Capture discovered follow-up work
+Soft order; no readiness block:
 
 ```bash
-tsq create "Handle edge case <x>" --discovered-from <current-id> --needs-planning
-tsq link add <new-id> <current-id> --type relates_to
+tsq order <later-id> after <earlier-id>
 ```
 
-### 5b) Idempotent root/parent create for automation
+Check next:
 
 ```bash
-tsq create "Implement auth module" --ensure
-tsq create --parent <parent-id> --child "Add tests" --ensure
+tsq find ready --lane coding
+tsq find ready --lane planning
 ```
 
-`--ensure` -> returns existing task when same normalized title exists under same parent.
+Prefer many independent tasks. Use `blocks` only for true gates. Use `starts_after`/`order` for sequence.
 
-### 6) Park / unpark work
+## Follow-Up
 
 ```bash
-tsq update <id> --status deferred
-tsq list --status deferred
-tsq update <id> --status open
+tsq create "Handle edge case <x>" --discovered-from <current-id> --needs-plan
+tsq relate <new-id> <current-id>
 ```
 
-### 7) Resolve duplicate/superseded work
+Follow-up work belongs in `tsq`, not chat TODOs.
+
+## Park / Resume
 
 ```bash
-tsq duplicate <id> --of <canonical-id> --reason "same root issue"
+tsq defer <id> --note "waiting"
+tsq find deferred
+tsq open <id>
+```
+
+## Duplicate / Replace
+
+```bash
+tsq duplicate <id> of <canonical-id> --note "same root issue"
 tsq duplicates
 tsq merge <source-id...> --into <target-id> --dry-run
 tsq merge <source-id...> --into <target-id> --force
-tsq supersede <old-id> --with <new-id> --reason "replaced approach"
+tsq supersede <old-id> with <new-id> --note "replaced approach"
 ```
 
-### 8) Close / report
+## Close / Report
 
 ```bash
-tsq update <id> --status closed
+tsq done <id> --note "verified"
 tsq history <id> --limit 20
-tsq list --tree
+tsq find open --tree
 ```
 
-Agent/tool handoff: add `--json` for structured output.
+Use `--format json` for scripts/parsers. Human output fine for inspection.
 
-## Built-in task authoring checklist
+## Habits
 
-### Minimum quality bar
+- Keep `status` and `planning_state` separate.
+- Use deps/relations to expose parallel shape.
+- Use `--ensure` in rerunnable automation.
+- Keep task small enough for one focused agent pass.
+- Need edge flags? Run `tsq <cmd> --help`.
 
-- Titles: clear, action-oriented (verb+object+scope).
-- Set `kind`: `task|feature|epic`.
-- Set priority: `0..3`.
-- Labels: consistent naming.
-- Attach spec when scope/acceptance non-trivial.
-- Add explicit deps/relations when relevant.
+## Need More
 
-### Parallelization guidance
-
-- Prefer multiple independent tasks > one large.
-- `blocks` only when work truly gates another.
-- `starts_after` -> sequencing w/o blocking readiness.
-- Discovered work -> new tasks via `--discovered-from`.
-- Keep tasks small -> one focused agent pass.
-
-### Practical authoring starter
-
-```bash
-tsq create "<title>" --kind task -p 2 --needs-planning
-tsq spec attach <id> --text "<markdown spec>"
-tsq dep add <child> <blocker> --type blocks
-tsq link add <src> <dst> --type relates_to
-```
-
-## Required habits
-
-- Keep lifecycle `status` + `planning_state` separate.
-- Deps -> make parallel execution explicit.
-- Follow-up tasks; no chat TODOs.
-- Prefer `--json` for automation.
-- `--ensure` in scripts -> prevent dup creates on rerun.
-
-## Read when needed
-
-- Planning/deferred semantics: `references/planning-workflow.md`
-- JSON schema + durability: `references/machine-output-and-durability.md`
-- Full option matrix (edge cases): `references/command-reference.md`
-- Install if missing: `npm install -g @bumpyclock/tasque`
+- Edge flags/full command matrix: `references/command-reference.md` or `tsq <cmd> --help`.
+- Planning/deferred semantics: `references/planning-workflow.md`.
+- JSON/durability: `references/machine-output-and-durability.md`.
+- Missing install: `npm install -g @bumpyclock/tasque`.
