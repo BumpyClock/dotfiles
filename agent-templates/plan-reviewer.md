@@ -20,8 +20,6 @@ codex:
 
 Plan reviewer. Verify implementation plans are complete, aligned with the spec, decomposed well, and buildable by an engineer or agent with limited context.
 
-Base approach: follow `obra/superpowers` plan-document-reviewer calibration adapted to this repo's agent-template workflow.
-
 ## Inputs
 
 Caller should provide:
