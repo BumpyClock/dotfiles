@@ -35,6 +35,8 @@ describe("ai-agent-links config", () => {
       { optional: false, path: "~/.config/opencode/tools.md" },
       { optional: false, path: "~/.copilot/tools.md" },
       { optional: true, path: "~/.ai_agents/tools.md" },
+      { optional: false, path: "~/.pi/tools.md" },
+      { optional: false, path: "~/.agents/tools.md" },
     ]);
   });
 
@@ -47,6 +49,42 @@ describe("ai-agent-links config", () => {
         .filter((target) => target.source === "personalities")
         .map((target) => ({ optional: target.optional ?? false, path: target.path })),
     ).toEqual([{ optional: true, path: "~/.ai_agents/personalities" }]);
+  });
+
+  test("links AGENTS.md into shared agent directories", async () => {
+    const config = await loadConfig(configPath);
+
+    expect(config.sources.instructions).toBe("AGENTS.md");
+    expect(
+      config.targets
+        .filter((target) => target.source === "instructions")
+        .map((target) => ({ optional: target.optional ?? false, path: target.path })),
+    ).toEqual([
+      { optional: false, path: "~/.claude/CLAUDE.md" },
+      { optional: false, path: "~/.codex/AGENTS.md" },
+      { optional: false, path: "~/.copilot/copilot-instructions.md" },
+      { optional: true, path: "~/.ai_agents/AGENTS.md" },
+      { optional: false, path: "~/.pi/agent/AGENTS.md" },
+      { optional: false, path: "~/.agents/AGENTS.md" },
+    ]);
+  });
+
+  test("links skills into shared agent directories", async () => {
+    const config = await loadConfig(configPath);
+
+    expect(config.sources.skills).toBe("skills");
+    expect(
+      config.targets
+        .filter((target) => target.source === "skills")
+        .map((target) => ({ optional: target.optional ?? false, path: target.path })),
+    ).toEqual([
+      { optional: false, path: "~/.claude/skills" },
+      { optional: false, path: "~/.codex/skills" },
+      { optional: false, path: "~/.config/opencode/skills" },
+      { optional: false, path: "~/.copilot/skills" },
+      { optional: true, path: "~/.ai_agents/skills" },
+      { optional: false, path: "~/.agents/skills" },
+    ]);
   });
 
   test("links prompts into provider prompt directories", async () => {

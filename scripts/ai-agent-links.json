@@ -130,9 +130,25 @@
       "optional": true
     },
     {
+      "source": "instructions",
+      "path": "~/.pi/agent/AGENTS.md"
+    },
+    {
+      "source": "instructions",
+      "path": "~/.agents/AGENTS.md"
+    },
+    {
       "source": "tools_reference",
       "path": "~/.ai_agents/tools.md",
       "optional": true
+    },
+    {
+      "source": "tools_reference",
+      "path": "~/.pi/tools.md"
+    },
+    {
+      "source": "tools_reference",
+      "path": "~/.agents/tools.md"
     },
     {
       "source": "docs",
@@ -143,6 +159,10 @@
       "source": "skills",
       "path": "~/.ai_agents/skills",
       "optional": true
+    },
+    {
+      "source": "skills",
+      "path": "~/.agents/skills"
     }
   ]
 }

@@ -137,6 +137,7 @@ async function main(): Promise<void> {
   const scriptsDir = path.join(options.dotfilesDir, "scripts", "link-dotfiles");
   const dotfilesScript = path.join(scriptsDir, "setup-dotfiles.ts");
   const aiAgentsScript = path.join(scriptsDir, "setup-ai-agents.ts");
+  const aiAgentConfigPath = path.join(options.dotfilesDir, "scripts", "ai-agent-links.json");
 
   if (options.show) {
     await runScript(dotfilesScript, ["--dotfiles-dir", options.dotfilesDir, "--show"]);
@@ -164,7 +165,7 @@ async function main(): Promise<void> {
 
   if (setupMode === "ai-agents") {
     info("Running AI agents setup...");
-    await runScript(aiAgentsScript, ["--dotfiles-dir", options.dotfilesDir]);
+    await runScript(aiAgentsScript, ["--dotfiles-dir", options.dotfilesDir, "--config", aiAgentConfigPath]);
     return;
   }
 
@@ -179,7 +180,7 @@ async function main(): Promise<void> {
   await runScript(dotfilesScript, dotfilesArgs);
 
   info("Running AI agents setup...");
-  await runScript(aiAgentsScript, ["--dotfiles-dir", options.dotfilesDir]);
+  await runScript(aiAgentsScript, ["--dotfiles-dir", options.dotfilesDir, "--config", aiAgentConfigPath]);
 }
 
 main().catch((error) => {

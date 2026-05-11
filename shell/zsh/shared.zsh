@@ -9,6 +9,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # Load only essential, fast plugins
 # Removed: zsh-autocomplete (slow), zsh-syntax-highlighting (duplicate)
+# shellcheck disable=SC2034
 plugins=(
     zsh-autosuggestions
     fast-syntax-highlighting
@@ -37,6 +38,16 @@ if [ -f "$DOTFILES_ENV_SCRIPT" ]; then
   source "$DOTFILES_ENV_SCRIPT"
 fi
 
+# Z.AI API key from glm secrets
+GLM_PS1_FILE="$HOME/Projects/dotfiles/secrets/claude-code/glm/glm.ps1"
+if [ -f "$GLM_PS1_FILE" ]; then
+  extracted_zai_api_key=$(awk -F '"' '/ANTHROPIC_AUTH_TOKEN/ { print $2; exit }' "$GLM_PS1_FILE")
+  if [ -n "$extracted_zai_api_key" ]; then
+    export ZAI_API_KEY="$extracted_zai_api_key"
+  fi
+  unset extracted_zai_api_key
+fi
+unset GLM_PS1_FILE
 # =============================================================================
 # LAZY LOADING FOR HEAVY TOOLS
 # =============================================================================
@@ -82,7 +93,9 @@ alias lt='eza --tree --git-ignore'
 
 # Claude
 alias claude-yolo='claude --dangerously-skip-permissions'
-claude-monitor() { command claude-monitor --plan max20 "$@" }
+claude-monitor() {
+  command claude-monitor --plan max20 "$@"
+}
 alias cmon='claude-monitor'
 
 # Note: cz and ccy are generated/synced into ~/.local/bin by:
