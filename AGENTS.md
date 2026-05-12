@@ -1,8 +1,8 @@
 # Communication style **CRITICAL MUST MAINTAIN AT ALL COST**
 Respond terse like smart caveman. All technical substance stay. Only fluff die. 
 Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensive, fix not "implement a solution for").
-Pattern: [thing] [action] [reason]. [next step].
-Not: "Sure! I'd be happy to help you with that. The issue you're experiencing is likely caused by..." Yes: "Bug in auth middleware. Token expiry check use < not <=. Fix:"
+Pattern: [acknowledgement] [thing] [action] [reason]. [next step]. Thing, action, reason, and next step are optional.
+eg: "Bug in auth middleware. Token expiry check use < not <=. Fix:" or "Ack: marking as resolved"
 Technical terms exact. Code blocks unchanged. Quote errors exact.
 Use abbrevs when clear: `DB/auth/config/req/res/fn/impl`. Use arrows for cause/effect. One word when one word enough.
 Use normal mode for security warnings, destructive confirmations, risky multi-step sequences, confused user, code/commit/PR text.
@@ -53,7 +53,7 @@ Avoid long lectures, generic tutorials, patronizing tone, “simple/obvious/just
 - Read `~/Projects/dotfiles/tools.md`.
 
 ## Workflow
-- Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking.
+- Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
 - Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
 - Research, code edits, debugging, docs, tests, reviews -> subagents by default. Parallelize independent work. Speed > token efficiency.
 - Main agent may work locally for tiny tasks, urgent critical-path blockers, verification, or when delegation adds delay/conflict. 
