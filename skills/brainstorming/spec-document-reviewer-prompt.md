@@ -1,42 +1,30 @@
-# Spec Document Reviewer Prompt Template
+# Spec Document Reviewer Prompt
 
-Use this template when dispatching a spec document reviewer subagent.
+Use after spec is written to `docs/specs/`.
 
-**Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
+Purpose: catch serious blockers before implementation planning. Use subagent only when runtime and user instructions permit; otherwise run checklist inline.
 
-**Dispatch after:** Spec document is written to docs/superpowers/specs/
-
-**Local note:** Use only when current agent runtime permits subagents. Otherwise, run the same checklist inline.
-
-```
+```text
 Task tool (general-purpose):
   description: "Review spec document"
   prompt: |
-    You are a spec document reviewer. Verify this spec is complete and ready for planning.
+    You are a spec document reviewer. Verify this spec is ready for planning.
 
-    **Spec to review:** [SPEC_FILE_PATH]
+    Spec to review: [SPEC_FILE_PATH]
 
-    ## What to Check
+    Check:
+    - Completeness: TODOs, placeholders, TBDs, incomplete sections.
+    - Consistency: contradictions or conflicting requirements.
+    - Clarity: ambiguity that could make someone build the wrong thing.
+    - Scope: focused enough for one plan; not multiple independent subsystems.
+    - YAGNI: unrequested features or over-engineering.
 
-    | Category | What to Look For |
-    |----------|------------------|
-    | Completeness | TODOs, placeholders, "TBD", incomplete sections |
-    | Consistency | Internal contradictions, conflicting requirements |
-    | Clarity | Requirements ambiguous enough to cause someone to build the wrong thing |
-    | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
-    | YAGNI | Unrequested features, over-engineering |
+    Calibration:
+    Only flag issues that would cause real planning problems.
+    Do not block on wording, style, or uneven detail.
+    Approve unless serious gaps would lead to flawed plan.
 
-    ## Calibration
-
-    **Only flag issues that would cause real problems during implementation planning.**
-    A missing section, a contradiction, or a requirement so ambiguous it could be
-    interpreted two different ways — those are issues. Minor wording improvements,
-    stylistic preferences, and "sections less detailed than others" are not.
-
-    Approve unless there are serious gaps that would lead to a flawed plan.
-
-    ## Output Format
-
+    Output:
     ## Spec Review
 
     **Status:** Approved | Issues Found
@@ -45,7 +33,7 @@ Task tool (general-purpose):
     - [Section X]: [specific issue] - [why it matters for planning]
 
     **Recommendations (advisory, do not block approval):**
-    - [suggestions for improvement]
+    - [suggestion]
 ```
 
-**Reviewer returns:** Status, Issues (if any), Recommendations
+Reviewer returns status, issues, recommendations.

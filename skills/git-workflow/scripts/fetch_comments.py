@@ -9,8 +9,8 @@ Requires:
   - `gh auth login` already set up
   - current branch has an associated (open) PR
 
-Usage:
-  python3 fetch_comments.py > pr_comments.json
+Usage from repo root:
+  python3 skills/git-workflow/scripts/fetch_comments.py > pr_comments.json
 """
 
 from __future__ import annotations

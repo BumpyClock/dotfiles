@@ -250,7 +250,14 @@ Addressed in abc123:
 
 ## Re-request review
 
-Only after blocking/significant feedback done:
+Only after blocking/significant feedback done. Re-request existing reviewer via API:
+
+```bash
+gh api -X POST repos/{owner}/{repo}/pulls/{pr}/requested_reviewers \
+  -f 'reviewers[]={username}'
+```
+
+Add new reviewer only when needed:
 
 ```bash
 gh pr edit {pr} --add-reviewer {username}

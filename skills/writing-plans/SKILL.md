@@ -7,57 +7,68 @@ license: MIT
 
 # Writing Plans
 
-## Overview
-
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent verification. Commits only when requested by the user.
-
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+Create implementation plan from approved spec/requirements before code. Plan must let skilled engineer with near-zero repo context build safely.
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** If working in an isolated worktree, follow local git workflow instructions.
+**Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+- User path preference wins.
 
-## Local Integration Notes
+## Local rules
 
-- Follow repo/user git policy when stricter than this skill. In this dotfiles repo, do not create commits unless the user explicitly asks.
-- Use `subagent-driven-development` when current runtime and user instructions permit subagents. Otherwise, plan for inline implementation with normal checkpoints.
-- If referenced Superpowers execution skills are unavailable, map them to local skills/workflows: implementation and debugging use `programming` (with `systematic-debugging/guide.md` when needed), frontend work uses `web-development`, and git work uses `git-workflow`.
+- Follow stricter repo/user git policy.
+- In dotfiles, do not create commits unless user explicitly asks.
+- Use `subagent-driven-development` only when runtime and user instructions permit.
+- If subagents unavailable/inappropriate or user instructions forbid them, plan inline implementation with checkpoints.
+- If working in an isolated worktree, follow local git workflow instructions.
+- If referenced Superpowers skills unavailable, map locally:
+  - implementation/debugging → `programming`
+  - frontend/web → `web-development`
+  - git/GitHub → `git-workflow`
 
-## Scope Check
+## Scope check
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+If spec covers independent subsystems, suggest separate plans. Each plan must produce working, testable software on its own.
 
-## File Structure
+Do not bury decomposition inside one mega-plan.
 
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
+## File structure first
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
+Before tasks, map files to create/modify and each file responsibility.
 
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
+Rules:
 
-## Bite-Sized Task Granularity
+- Clear boundaries, clear interfaces.
+- One file = one main responsibility where practical.
+- Files that change together should live together.
+- Split by responsibility, not technical layer by default.
+- Follow existing repo patterns.
+- If touched file is unwieldy, plan focused split only when it serves current goal.
+- Do not add unrelated refactors.
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit if requested" - step
+This file map drives task decomposition.
 
-## Plan Document Header
+## Task granularity
 
-**Every plan MUST start with this header:**
+Each step should be one small action, about 2-5 minutes.
+
+Prefer TDD loop when possible:
+
+- write failing test
+- run and confirm failure
+- implement minimum code
+- run and confirm pass
+- commit only if requested
+
+## Plan document header
+
+Every plan MUST start with this header:
 
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Prefer `subagent-driven-development` for execution when available. Task implementers own task work and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Prefer `subagent-driven-development` for execution when available and permitted by user/runtime. Task implementers own task work and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -68,12 +79,15 @@ This structure informs the task decomposition. Each task should produce self-con
 ---
 ```
 
-## Task Structure
+## Task structure
+
+Use exact file paths, complete code, exact commands, expected output.
 
 ````markdown
 ### Task N: [Component Name]
 
 **Files:**
+
 - Create: `exact/path/to/file.py`
 - Modify: `exact/path/to/existing.py:123-145`
 - Test: `tests/exact/path/to/test.py`
@@ -111,51 +125,72 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-## No Placeholders
+## No placeholders
 
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+These are plan failures. Never write them:
 
-## Remember
-- Exact file paths always
-- Complete code in every step — if a step changes code, show the code
-- Exact commands with expected output
-- DRY, YAGNI, TDD, commits only when requested by the user
+- `TBD`, `TODO`, `implement later`, `fill in details`
+- `Add appropriate error handling`
+- `Add validation`
+- `Handle edge cases`
+- `Write tests for the above` without actual test code
+- `Similar to Task N` — repeat code because tasks may be read out of order
+- Steps that describe code changes without showing how
+- References to undefined types, functions, methods, props, commands, files
 
-## Self-Review
+## Required detail
 
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
+Every plan needs:
 
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
+- Exact file paths.
+- Complete code in code-changing steps.
+- Exact commands with expected output.
+- Tests/verification for each behavior, with enough test-design detail for someone weak at test design.
+- Docs/changelog steps when behavior/API/user flow changes.
+- DRY, YAGNI, TDD where useful.
+- Commits only when requested by user.
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+## Self-review
 
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+After writing plan, review against spec. This is mandatory.
 
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
+1. Spec coverage — every requirement maps to task(s). Add missing tasks.
+2. Placeholder scan — remove failures listed above.
+3. Type/signature consistency — names used later match definitions earlier.
+4. Buildability — implementer can follow without repo lore or guessing.
 
-## Execution Handoff
+Fix issues inline. No need to re-review from scratch.
 
-After saving the plan, offer execution choice:
+## Plan reviewer prompt
 
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
+If runtime and user instructions permit subagents, use `skills/writing-plans/plan-document-reviewer-prompt.md` after plan is written. Otherwise run same checklist inline.
 
-**1. Subagent-Driven (recommended)** - Use `subagent-driven-development`: fresh subagent per task, spec review, code-quality review, integration-owner pass
+## Task tracking
 
-**2. Inline Execution** - Execute tasks in this session with checkpoints when subagents are unavailable or inappropriate
+After saving plan, link it to the appropriate `tsq` task. Use same task the spec was linked to when possible.
+
+```bash
+# Use current/parent feature task. If unsure which task, ask.
+tsq note <task-id> "Plan: docs/plans/YYYY-MM-DD-<feature-name>.md"
+tsq planned <task-id>
+```
+
+If plan supersedes previous task spec/plan, add note explaining replacement. Do not create a new `tsq` task just to attach the plan unless no appropriate task exists and user wants one.
+
+Reviewer is advisory to catch serious implementation blockers only.
+
+## Execution handoff
+
+After saving plan, offer exactly:
+
+**"Plan complete and saved to `docs/plans/<filename>.md`. Linked to `tsq` task `<task-id>`. Two execution options:**
+
+**1. Subagent-Driven (recommended when available and permitted)** - Use `subagent-driven-development`: fresh subagent per task, spec review, code-quality review, integration-owner pass
+
+**2. Inline Execution** - Execute tasks in this session with checkpoints when subagents are unavailable, inappropriate, or not permitted
 
 **Which approach?"**
 
-**If Subagent-Driven chosen:**
-- Invoke local `subagent-driven-development`
-- Fresh implementer per task + spec review + code-quality review
-- Integration-owner subagent owns cross-task integration before final evidence report
+If user chooses subagent-driven and runtime/user instructions permit, invoke local `subagent-driven-development`.
 
-**If Inline Execution chosen:**
-- Use normal local implementation workflow
-- Batch execution with checkpoints for review
+If subagents are unavailable/not permitted or user chooses inline, use normal implementation workflow with checkpoints.
