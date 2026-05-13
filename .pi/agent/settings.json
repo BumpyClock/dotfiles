@@ -2,14 +2,15 @@
   "lastChangelogVersion": "0.74.0",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "xhigh",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
         "model": "openai-codex/gpt-5.3-codex-spark"
       },
       "delegate": {
-        "model": "openai-codex/gpt-5.3-codex-spark"
+        "model": "openai-codex/claude-opus-4.6",
+        "disabled": true
       },
       "oracle": {
         "model": "github-copilot/gpt-5.5"
@@ -27,7 +28,8 @@
         "model": "openai-codex/gpt-5.3-codex-spark"
       },
       "worker": {
-        "model": "github-copilot/gpt-5.5"
+        "model": "github-copilot/claude-opus-4.6",
+        "disabled": true
       }
     }
   },

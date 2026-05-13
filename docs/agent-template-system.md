@@ -1,8 +1,8 @@
 ---
-summary: "How agent templates compile into Claude, Copilot, OpenCode, and Codex agent configs from one shared markdown source."
+summary: "How agent templates compile into Claude, Copilot, OpenCode, Codex, and Pi agent configs from one shared markdown source."
 read_when:
   - Updating agent prompts, model mappings, or generated agent outputs.
-  - Debugging why Claude, Copilot, OpenCode, or Codex agent configs differ.
+  - Debugging why Claude, Copilot, OpenCode, Codex, or Pi agent configs differ.
 ---
 
 # Agent template system
@@ -26,7 +26,7 @@ Each template is a markdown agent file with frontmatter:
 - optional common fields such as `tools`
 - `model_class`
 - optional `model_profile`
-- optional provider blocks like `claude:`, `copilot:`, `opencode:`, and `codex:`
+- optional provider blocks like `claude:`, `copilot:`, `opencode:`, `codex:`, and `pi:`
 
 `model_class` is required. Current classes:
 
@@ -52,6 +52,7 @@ This file controls:
 - Copilot model output
 - OpenCode model output
 - Codex model output
+- Pi subagent model output
 
 If a provider model name changes, update `agent-templates/config.toml` instead of editing individual templates.
 
@@ -61,7 +62,7 @@ Current resolution flow:
 2. template optionally declares `model_profile`
 3. compiler loads provider mappings from `agent-templates/config.toml`
 4. compiler merges provider-specific frontmatter blocks from the template
-5. generated output gets concrete Claude, Copilot, OpenCode, or Codex model name
+5. generated output gets concrete Claude, Copilot, OpenCode, Codex, or Pi model name
 
 Per-agent provider-specific settings live in the template frontmatter itself, for example:
 
@@ -74,6 +75,12 @@ Per-agent provider-specific settings live in the template frontmatter itself, fo
 - `codex.personality`
 - `codex.suppress_unstable_features_warning`
 - `codex.tui_status_line`
+- `pi.model`
+- `pi.thinking`
+- `pi.tools`
+- `pi.defaultContext`
+- `pi.defaultReads`
+- `pi.defaultProgress`
 
 ## Generated outputs
 
@@ -83,6 +90,7 @@ Compiled agent configs are written to:
 - `agent-templates/dist/copilot/*.md`
 - `agent-templates/dist/opencode/*.md`
 - `agent-templates/dist/codex/*.toml`
+- `agent-templates/dist/pi/*.md`
 
 The compile entrypoint is:
 
@@ -111,6 +119,7 @@ On each run, it force-refreshes generated home-directory `agents/` directories f
 - Copilot -> `agent-templates/dist/copilot`
 - OpenCode -> `agent-templates/dist/opencode`
 - Codex -> `agent-templates/dist/codex`
+- Pi -> `agent-templates/dist/pi`
 
 Generated home-directory `agents` folders are copied from `agent-templates/dist/*`, not symlinked.
 
@@ -119,9 +128,11 @@ Source-authored shared content like `prompts`, `docs`, `skills`, `AGENTS.md`, an
 Pi-specific state uses canonical Pi paths:
 
 - `~/.pi/agent/settings.json` links to `.pi/agent/settings.json`
-- `~/.pi/agent/agents` links to `.pi/agent/agents`
+- `~/.pi/agent/agents` is mirror-copied from `agent-templates/dist/pi`
 
 Use `~/.pi/agent/agents`, not legacy `~/.pi/agents`, because `pi-subagents` discovers user agents only under `~/.pi/agent/agents/**/*.md`.
+
+Pi subagent frontmatter must stay flat scalar `key: value` lines. `pi-subagents` does not parse full YAML maps or arrays in agent files, so the compiler serializes list values as comma-separated strings.
 
 Home-directory generated provider agent paths should never point directly at `agent-templates/`.
 
@@ -154,6 +165,7 @@ Current validation checks:
 - Copilot output uses mapped model IDs from current provider config
 - OpenCode output uses provider-prefixed model IDs and subagent mode
 - Codex output matches current template metadata while using shared markdown body
+- Pi output uses flat subagent frontmatter and shared markdown body
 - deploy config marks generated provider agent directories for mirror-copy
 
 Tests intentionally derive expected model IDs from the current `agent-templates/config.toml` mappings instead of pinning to archived model IDs. This keeps the validation aligned with the design goal that provider model mappings are user-editable.
@@ -168,7 +180,7 @@ bun test .\scripts\link-dotfiles
 
 1. Edit or add `agent-templates/<agent>.md`
 2. If provider model mappings change, update `agent-templates/config.toml`
-3. If agent-specific provider behavior changes, update the relevant `claude:`, `copilot:`, `opencode:`, or `codex:` block inside the template
+3. If agent-specific provider behavior changes, update the relevant `claude:`, `copilot:`, `opencode:`, `codex:`, or `pi:` block inside the template
 4. Run compiler/tests
 5. Re-run `setup-ai-agents.ts` if you want home-directory agent deploys refreshed; generated `agents/` directories are replaced from the newly compiled output on each run
 
@@ -176,6 +188,8 @@ bun test .\scripts\link-dotfiles
 
 `agent-templates/os2020.md` is not part of the generated system because it does not use standard agent frontmatter. The compiler skips files without valid frontmatter.
 
-Codex output is generated only for templates that define a `codex:` block. If that block is missing, Claude, Copilot, and OpenCode files are still generated, but no Codex TOML file is emitted.
+Codex output is generated only for templates that define a `codex:` block. If that block is missing, Claude, Copilot, OpenCode, and Pi files are still generated, but no Codex TOML file is emitted.
 
 OpenCode markdown agents are generated in `agent-templates/dist/opencode/` and deployed to `~/.config/opencode/agents/`. Their model mappings mirror Copilot mappings, but use OpenCode's required `provider/model-id` format.
+
+Pi markdown agents are generated in `agent-templates/dist/pi/` and deployed to `~/.pi/agent/agents/`. User-scope Pi agents override packaged `pi-subagents` builtins when names collide, so template names such as `planner`, `researcher`, and `reviewer` become the active Pi subagents after deploy.

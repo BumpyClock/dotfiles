@@ -27,3 +27,14 @@ economy = "gpt-5.3-codex-spark"
 
 [providers.codex.strong]
 default = "gpt-5.5"
+
+[providers.pi.fast]
+default = "github-copilot/claude-sonnet-4.6"
+
+[providers.pi.balanced]
+default = "github-copilot/claude-opus-4.6"
+economy = "github-copilot/claude-sonnet-4.6"
+
+[providers.pi.strong]
+default = "github-copilot/gpt-5.5"
+economy = "github-copilot/claude-opus-4.6"

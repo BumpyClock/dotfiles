@@ -13,7 +13,7 @@
     "codex_config": ".codex/config.toml",
     "codex_agents": "agent-templates/dist/codex",
     "pi_settings": ".pi/agent/settings.json",
-    "pi_agents": ".pi/agent/agents"
+    "pi_agents": "agent-templates/dist/pi"
   },
   "targets": [
     {
@@ -141,7 +141,8 @@
     },
     {
       "source": "pi_agents",
-      "path": "~/.pi/agent/agents"
+      "path": "~/.pi/agent/agents",
+      "mode": "mirror"
     },
     {
       "source": "instructions",

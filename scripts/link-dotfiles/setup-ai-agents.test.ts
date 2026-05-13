@@ -139,6 +139,7 @@ describe("ai-agent-links config", () => {
 		expect(config.sources.claude_agents).toBe("agent-templates/dist/claude");
 		expect(config.sources.copilot_agents).toBe("agent-templates/dist/copilot");
 		expect(config.sources.codex_agents).toBe("agent-templates/dist/codex");
+		expect(config.sources.pi_agents).toBe("agent-templates/dist/pi");
 		expect(config.sources.opencode_agents).toBe(
 			"agent-templates/dist/opencode",
 		);
@@ -159,7 +160,7 @@ describe("ai-agent-links config", () => {
 				source: "opencode_agents",
 			},
 			{ mode: "mirror", path: "~/.copilot/agents", source: "copilot_agents" },
-			{ mode: "link", path: "~/.pi/agent/agents", source: "pi_agents" },
+			{ mode: "mirror", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
 	});
 
@@ -167,7 +168,7 @@ describe("ai-agent-links config", () => {
 		const config = await loadConfig(configPath);
 
 		expect(config.sources.pi_settings).toBe(".pi/agent/settings.json");
-		expect(config.sources.pi_agents).toBe(".pi/agent/agents");
+		expect(config.sources.pi_agents).toBe("agent-templates/dist/pi");
 		expect(
 			config.targets
 				.filter((target) => target.path.startsWith("~/.pi/agent/"))
@@ -183,7 +184,7 @@ describe("ai-agent-links config", () => {
 				path: "~/.pi/agent/settings.json",
 				source: "pi_settings",
 			},
-			{ mode: "link", path: "~/.pi/agent/agents", source: "pi_agents" },
+			{ mode: "mirror", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
 	});
 
