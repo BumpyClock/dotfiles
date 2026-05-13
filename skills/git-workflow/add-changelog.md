@@ -1,80 +1,107 @@
 # Add Changelog
 
-Create and maintain a project changelog.
+Purpose: create/update `CHANGELOG.md` with user-facing release notes.
 
-## Instructions
+## Use format
 
-Set up or update `CHANGELOG.md` using these steps. Apply **$ARGUMENTS** as scope or constraints.
+Prefer Keep a Changelog + SemVer unless repo has stricter convention.
 
-1. **Changelog format (Keep a Changelog)**
-   ```markdown
-   # Changelog
-   
-   All notable changes to this project will be documented in this file.
-   
-   The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-   and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-   
-   ## [Unreleased]
-   ### Added
-   - New features
-   
-   ### Changed
-   - Changes in existing functionality
-   
-   ### Deprecated
-   - Soon-to-be removed features
-   
-   ### Removed
-   - Removed features
-   
-   ### Fixed
-   - Bug fixes
-   
-   ### Security
-   - Security improvements
-   ```
+Starter:
 
-2. **Version entries**
-   ```markdown
-   ## [1.2.3] - 2024-01-15
-   ### Added
-   - User authentication system
-   - Dark mode toggle
-   - Export functionality for reports
-   
-   ### Fixed
-   - Memory leak in background tasks
-   - Timezone handling issues
-   ```
+```markdown
+# Changelog
 
-3. **Automation tools**
-   ```bash
-   # Generate changelog from git commits
-   npm install -D conventional-changelog-cli
-   npx conventional-changelog -p angular -i CHANGELOG.md -s
-   
-   # Auto-changelog
-   npm install -D auto-changelog
-   npx auto-changelog
-   ```
+All notable changes to this project will be documented in this file.
 
-4. **Commit convention**
-   ```bash
-   # Conventional commits for auto-generation
-   feat: add user authentication
-   fix: resolve memory leak in tasks
-   docs: update API documentation
-   style: format code with prettier
-   refactor: reorganize user service
-   test: add unit tests for auth
-   chore: update dependencies
-   ```
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-5. **Integration with releases**
-   - Update changelog before each release
-   - Include in release notes
-   - Link to GitHub releases
-   - Tag versions consistently
+## [Unreleased]
 
-Keep entries clear, categorized, and focused on user-facing changes.
+### Added
+
+- New features.
+
+### Changed
+
+- Changes in existing behavior.
+
+### Deprecated
+
+- Soon-to-be removed features.
+
+### Removed
+
+- Removed features.
+
+### Fixed
+
+- Bug fixes.
+
+### Security
+
+- Security fixes.
+```
+
+## Version entry
+
+```markdown
+## [1.2.3] - YYYY-MM-DD
+
+### Added
+
+- User authentication.
+- Dark mode toggle.
+
+### Fixed
+
+- Memory leak in background tasks.
+- Timezone handling in reports.
+```
+
+## Entry rules
+
+- User-facing changes only unless repo uses dev-facing changelog.
+- Group by category.
+- Plain language. No commit hashes unless repo style wants them.
+- Mention breaking changes clearly.
+- Keep unreleased at top.
+- Update before release and mirror into GitHub release notes when asked.
+
+## From commits
+
+If repo wants generated changelog, use existing tool first. If none exists, ask before adding deps.
+
+Possible tools:
+
+```bash
+npm install -D conventional-changelog-cli
+npx conventional-changelog -p angular -i CHANGELOG.md -s
+
+npm install -D auto-changelog
+npx auto-changelog
+```
+
+Need dependency health/approval before adding new packages.
+
+## Commit convention support
+
+Good changelog input:
+
+```text
+feat: add user authentication
+fix: resolve task memory leak
+docs: update API docs
+refactor: reorganize user service
+test: add auth unit tests
+chore: update deps
+```
+
+## Release links
+
+When repo uses compare links, add/update footers:
+
+```markdown
+[Unreleased]: https://github.com/org/repo/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/org/repo/compare/v1.2.2...v1.2.3
+```
