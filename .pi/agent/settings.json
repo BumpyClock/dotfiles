@@ -1,0 +1,48 @@
+{
+  "lastChangelogVersion": "0.74.0",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "high",
+  "subagents": {
+    "agentOverrides": {
+      "context-builder": {
+        "model": "openai-codex/gpt-5.3-codex-spark"
+      },
+      "delegate": {
+        "model": "openai-codex/gpt-5.3-codex-spark"
+      },
+      "oracle": {
+        "model": "github-copilot/gpt-5.5"
+      },
+      "planner": {
+        "model": "github-copilot/gpt-5.5"
+      },
+      "researcher": {
+        "model": "github-copilot/gpt-5.5"
+      },
+      "reviewer": {
+        "model": "github-copilot/gpt-5.5"
+      },
+      "scout": {
+        "model": "openai-codex/gpt-5.3-codex-spark"
+      },
+      "worker": {
+        "model": "github-copilot/gpt-5.5"
+      }
+    }
+  },
+  "packages": [
+    "npm:pi-subagents",
+    "npm:pi-mcp-adapter",
+    "npm:pi-web-access",
+    "npm:pi-lens",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-markdown-preview",
+    "npm:pi-powerline-footer",
+    "npm:@juicesharp/rpiv-advisor",
+    "npm:@juicesharp/rpiv-btw",
+    "npm:pi-codex-goal",
+    "npm:pi-intercom"
+  ]
+}

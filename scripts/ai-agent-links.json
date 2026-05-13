@@ -11,7 +11,9 @@
     "opencode_agents": "agent-templates/dist/opencode",
     "claude_settings": ".claude/settings.json",
     "codex_config": ".codex/config.toml",
-    "codex_agents": "agent-templates/dist/codex"
+    "codex_agents": "agent-templates/dist/codex",
+    "pi_settings": ".pi/agent/settings.json",
+    "pi_agents": ".pi/agent/agents"
   },
   "targets": [
     {
@@ -132,6 +134,14 @@
     {
       "source": "instructions",
       "path": "~/.pi/agent/AGENTS.md"
+    },
+    {
+      "source": "pi_settings",
+      "path": "~/.pi/agent/settings.json"
+    },
+    {
+      "source": "pi_agents",
+      "path": "~/.pi/agent/agents"
     },
     {
       "source": "instructions",

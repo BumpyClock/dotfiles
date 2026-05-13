@@ -159,6 +159,31 @@ describe("ai-agent-links config", () => {
 				source: "opencode_agents",
 			},
 			{ mode: "mirror", path: "~/.copilot/agents", source: "copilot_agents" },
+			{ mode: "link", path: "~/.pi/agent/agents", source: "pi_agents" },
+		]);
+	});
+
+	test("links Pi settings and custom agents into canonical Pi paths", async () => {
+		const config = await loadConfig(configPath);
+
+		expect(config.sources.pi_settings).toBe(".pi/agent/settings.json");
+		expect(config.sources.pi_agents).toBe(".pi/agent/agents");
+		expect(
+			config.targets
+				.filter((target) => target.path.startsWith("~/.pi/agent/"))
+				.map((target) => ({
+					mode: target.mode ?? "link",
+					path: target.path,
+					source: target.source,
+				})),
+		).toEqual([
+			{ mode: "link", path: "~/.pi/agent/AGENTS.md", source: "instructions" },
+			{
+				mode: "link",
+				path: "~/.pi/agent/settings.json",
+				source: "pi_settings",
+			},
+			{ mode: "link", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
 	});
 

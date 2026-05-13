@@ -1,5 +1,5 @@
 ---
-summary: 'How agent templates compile into Claude, Copilot, OpenCode, and Codex agent configs from one shared markdown source.'
+summary: "How agent templates compile into Claude, Copilot, OpenCode, and Codex agent configs from one shared markdown source."
 read_when:
   - Updating agent prompts, model mappings, or generated agent outputs.
   - Debugging why Claude, Copilot, OpenCode, or Codex agent configs differ.
@@ -116,7 +116,14 @@ Generated home-directory `agents` folders are copied from `agent-templates/dist/
 
 Source-authored shared content like `prompts`, `docs`, `skills`, `AGENTS.md`, and `tools.md` still uses links.
 
-Home-directory agent paths should never point directly at `agent-templates/`.
+Pi-specific state uses canonical Pi paths:
+
+- `~/.pi/agent/settings.json` links to `.pi/agent/settings.json`
+- `~/.pi/agent/agents` links to `.pi/agent/agents`
+
+Use `~/.pi/agent/agents`, not legacy `~/.pi/agents`, because `pi-subagents` discovers user agents only under `~/.pi/agent/agents/**/*.md`.
+
+Home-directory generated provider agent paths should never point directly at `agent-templates/`.
 
 ## Archives
 

@@ -80,6 +80,9 @@ function parseArgs(argv: string[]): CliOptions {
 				"  --setup <dotfiles|ai-agents|both>  Run without interactive prompt",
 			);
 			console.log(
+				"                                      AI agents includes Claude, Codex, Copilot, OpenCode, and Pi",
+			);
+			console.log(
 				"  --project-agents <path>          Link repo agents into <path>/.claude/agents",
 			);
 			console.log(
