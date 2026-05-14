@@ -1,0 +1,32 @@
+{
+  "providers": {
+    "github-copilot": {
+      "models": [
+        {
+          "id": "claude-opus-4.6-1m",
+          "name": "Claude Opus 4.6 1M",
+          "api": "anthropic-messages",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "xhigh": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
+          "maxTokens": 64000
+        },
+        {
+          "id": "claude-opus-4.7-1m",
+          "name": "Claude Opus 4.7 1M",
+          "api": "anthropic-messages",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "xhigh": "xhigh"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
+          "maxTokens": 64000
+        }
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.74.0",
   "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.5",
+  "defaultModel": "claude-opus-4.7-1m",
   "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {

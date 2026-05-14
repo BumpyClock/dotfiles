@@ -1,45 +1,79 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "Use for new features, UX/UI changes, behavior changes, architecture decisions, or ambiguous work where intent/design must be clarified before implementation. Use micro-flow only for trivial mechanical/non-behavior changes."
 source: https://github.com/obra/superpowers/tree/main/skills/brainstorming
 license: MIT
 ---
 
 # Brainstorming Ideas Into Designs
 
-Use before creative/behavior-changing work. Goal: turn idea into approved design spec before any implementation.
+Use full flow before creative/behavior-changing work. Goal: turn idea into approved design spec before implementation planning.
 
-Start with project context. Ask focused questions. Present design. Get approval. Write spec. Get written-spec approval. Then move to implementation planning.
+Use micro-flow only for trivial mechanical/non-behavior changes with exact user instructions and no design choice.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+For full brainstorming flow, do NOT invoke implementation planning, write code, scaffold projects, or take implementation action until:
+1. design direction is approved,
+2. written spec is saved,
+3. spec gate review passes when available,
+4. user approves the written spec.
+
+Micro-flow is only for trivial mechanical/non-behavior changes with exact user instructions and no design choice.
 </HARD-GATE>
 
 ## Local rules
 
 - Follow stricter repo/user git policy.
 - In dotfiles, do not commit design docs unless user explicitly asks.
-- After design approval + spec review, invoke local `writing-plans`.
+- After design approval + saved spec + spec gate pass when used + user written-spec approval, invoke local `writing-plans`.
 - If `writing-plans` unavailable, use repo normal implementation-planning workflow.
+
+## Flow selection
+
+Match ceremony to risk.
+
+**Micro-flow** — use only for trivial mechanical/non-behavior changes:
+
+1. Inspect relevant files/docs.
+2. State assumptions if needed.
+3. Ask at most one blocking question if needed.
+4. Proceed per user request.
+
+Examples: typo fix, narrow config rename, doc formatting, exact one-line requested change.
+
+**Full flow** — use for new features, UX/UI, behavior changes, architecture, ambiguous requirements, or multi-file/cross-system work:
+
+1. Explore context.
+2. Ask focused questions.
+3. Present approaches.
+4. Get design approval.
+5. Write spec.
+6. Run spec gate when available.
+7. Get user written-spec approval.
+8. Move to implementation planning.
+
+Do not create governance, stakeholder, process, or executive-workflow docs unless user explicitly asks.
 
 ## Required sequence
 
-Create/track tasks for each item. Complete in order.
+Create/track tasks for each full-flow item. Complete in order.
 
 1. Explore project context — files, docs, recent commits.
-2. Offer visual companion only if upcoming questions are visual. Offer is its own message. No other content.
-3. Ask clarifying questions one at a time. Learn purpose, constraints, success criteria.
-4. Propose 2-3 approaches. Include tradeoffs + recommendation.
-5. Present design in sections. Get user approval after each section.
-6. Write design spec to `docs/specs/YYYY-MM-DD-<topic>-design.md` unless user preference overrides.
-7. Self-review spec. Fix inline.
-8. Ask user to review written spec. Wait for approval.
-9. Transition to implementation planning with `writing-plans`.
+2. Create or reuse a `tsq` parent task when the planned implementation is SDD-backed or durable. If `tsq` is unavailable or downstream work is explicitly inline, carry the spec in conversation/runtime artifacts and say why.
+3. Offer visual companion only if upcoming questions are visual. Offer is its own message. No other content.
+4. Ask clarifying questions one at a time. Learn purpose, constraints, success criteria.
+5. Propose 2-3 approaches. Include tradeoffs + recommendation.
+6. Present design in sections. Get user approval after each section.
+7. Write design spec into the `tsq` parent when one exists because work is SDD-backed or durable. If `tsq` is unavailable or downstream work is explicitly inline, keep the spec in conversation/runtime artifacts and say why. Export to repo file only when user asks, repo convention requires one, or `tsq` is unavailable.
+8. Self-review spec. Fix inline.
+9. Run spec gate when available. Fix blockers before user review.
+10. Ask user to review written spec. Wait for approval.
+11. Transition to implementation planning with `writing-plans`.
 
 Tiny flow:
 
 ```text
-context → visual offer? → questions → approaches → design approval → spec → self-review → user review → plan
+context → visual offer? → questions → approaches → design approval → spec in tsq → spec gate → user review → plan
 ```
 
 Terminal state: implementation planning. Not implementation.
@@ -87,25 +121,26 @@ Cover when relevant:
 
 Ask after each section whether it looks right. If user rejects, revise. Do not advance on unresolved disagreement.
 
-## Spec doc
+## Spec storage
 
-Write validated design to:
+Write validated full-flow design spec into the `tsq` parent task only when a parent exists because work is SDD-backed or durable. If `tsq` is unavailable or downstream work is explicitly inline, keep the spec in conversation/runtime artifacts and say why.
 
-```text
-docs/specs/YYYY-MM-DD-<topic>-design.md
-```
+Repo spec files under `docs/specs/YYYY-MM-DD-<topic>-design.md` are optional exports. Write one only when:
 
-User path preference wins.
+- user asks for a saved doc,
+- repo convention requires one,
+- `tsq` is unavailable.
 
-After saving spec, link it to the appropriate `tsq` task:
+When exporting a repo spec file, user path preference wins.
+
+When a `tsq` parent exists, attach or note the spec on the parent task:
 
 ```bash
-# Use current/parent feature task. If unsure which task, ask.
-tsq spec <task-id> --file docs/specs/YYYY-MM-DD-<topic>-design.md
-tsq note <task-id> "Spec: docs/specs/YYYY-MM-DD-<topic>-design.md"
+tsq spec <task-id> --text "<markdown spec>"
+tsq note <task-id> "Spec approved for planning"
 ```
 
-Do not create a new `tsq` task just to attach the spec unless no appropriate task exists and user wants one.
+Never claim a path, task ID, dependency, or `tsq` state that was not actually created.
 
 Spec should include enough for planning:
 
@@ -128,13 +163,23 @@ Run before user review:
 3. Scope — confirm single implementable project or decompose.
 4. Ambiguity — if requirement can mean 2 things, pick/ask and write explicit meaning.
 
-Fix inline. Then user review gate.
+Fix inline. Then run spec gate when available.
 
 ## User review gate
 
-After self-review, ask exactly:
+After self-review and spec gate, ask based on actual storage.
 
-> "Spec written to `<path>` and linked to `tsq` task `<task-id>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+If exported to repo file and linked to `tsq`:
+
+> "Spec written to `<path>` and linked to `tsq` task `<task-id>`. Please review it and let me know if you want changes before we start the implementation plan."
+
+If stored in `tsq` only:
+
+> "Spec saved to `tsq` task `<task-id>`. Please review it and let me know if you want changes before we start the implementation plan."
+
+If not linked because `tsq` is unavailable:
+
+> "Spec written to `<path>`. I did not link it to `tsq` because `tsq` is unavailable. Please review it and let me know if you want changes before we start the implementation plan."
 
 Wait for user response.
 
@@ -142,13 +187,14 @@ If user requests changes:
 
 - Edit spec.
 - Re-run self-review.
+- Re-run spec gate when available.
 - Ask for review again.
 
 Proceed only after user approves.
 
 ## Spec reviewer prompt
 
-If runtime and user instructions permit subagents, use `skills/brainstorming/spec-document-reviewer-prompt.md` after spec is written. Otherwise run same checklist inline.
+Use `skills/brainstorming/spec-document-reviewer-prompt.md` after spec is written. If the reviewer cannot run, apply the same checklist inline and say why.
 
 Reviewer is advisory to catch serious planning blockers only.
 

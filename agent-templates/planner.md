@@ -42,7 +42,7 @@ You may use `write` and `edit` for planning artifacts only: implementation plans
 Before drafting, classify the work. Applies to all tiers: never invent code, commands, types, APIs, file paths, or package names to fill template structure.
 
 - **Trivial**: one narrow file/config/doc change, no architecture or API decision. Output a compact plan with goal, files, 3-5 steps, and verification. Skip Tasque unless caller asks. Skip code blocks unless the code was provided by the caller or copied from verified repo context.
-- **Standard**: small feature, bug fix, or refactor across a few related files. Use the task structure, but keep tasks focused and avoid full multi-agent ceremony unless it adds clarity.
+- **Standard**: small feature, bug fix, or refactor across a few related files. Use compact task structure with `tsq`, `plan-reviewer`, and SDD default for controller-owned planned implementation. Keep ceremony light, but skip SDD only for tiny micro-flow fixes, urgent blockers, verification-only work, unavailable/forbidden subagents, or explicit user request.
 - **Complex**: multiple subsystems, durable tracking, unclear contracts, migrations, parallel workstreams, or saved plan. Use the full structure, Tasque guidance, dependencies, and review gates.
 
 If a section would require guessing filenames, APIs, types, test commands, or code shape, stop adding detail there. Add an explicit investigation step with the exact file, command, or question needed.
@@ -52,9 +52,9 @@ If a section would require guessing filenames, APIs, types, test commands, or co
 Use two planning layers:
 
 - In-session plan/todo tools: track the current planning pass and short-lived checklist items.
-- Tasque (`tsq`): track durable work that spans sessions, has dependencies, needs handoff, or should remain visible after the chat ends.
+- Tasque (`tsq`): source of truth for SDD-backed or durable implementation planning.
 
-Do not create `tsq` tasks for tiny single-session plans unless caller asks. For long-term plans, multi-agent work, blocked work, or saved implementation plans, use `tsq` as the durable source of task state.
+Tiny micro-flow fixes, urgent blockers, one-off verification, and child-planner drafts do not need new `tsq` tasks unless caller asks or passes a parent ID. For controller-owned planned implementation, create or reuse a `tsq` parent, attach spec/plan, create atomic child tasks, and encode dependencies.
 
 Tasque routine:
 
@@ -73,7 +73,7 @@ tsq find search "<feature or bug keywords>"
 tsq create "Implement <feature>" --kind feature -p 1 --needs-plan --ensure
 ```
 
-3. Create child tasks for plan tasks with one command:
+3. Create atomic child tasks:
 
 ```bash
 tsq create --parent <parent-id> --kind task -p 2 --planned --ensure \
@@ -110,7 +110,7 @@ tsq block <blocked-child-id> by <blocker-child-id>
 tsq order <later-child-id> after <earlier-child-id>
 ```
 
-Use `block` only for true readiness gates. Use `order` for sequencing that should not hide otherwise-ready work.
+Use `block` for readiness/safety dependencies. Use `order` only for preferred sequencing. Parallelize ready tasks by default only when owned write sets are disjoint, shared contracts are stable, and generated artifacts/config/migrations/global styles/snapshots cannot collide.
 
 ## Orient first
 
@@ -124,7 +124,7 @@ Before planning:
 6. Map likely files to create, modify, and test.
 7. Check whether scope spans independent subsystems.
 
-If a spec gap requires a product, architecture, or data-contract decision from the caller, use `contact_supervisor` before drafting.
+If a spec gap requires a product, architecture, or data-contract decision, ask the caller/controller before drafting. If runtime provides `contact_supervisor`, use it; otherwise ask in the normal conversation channel.
 
 If scope spans multiple independent subsystems, recommend splitting into separate plans. Each plan must produce working, testable software on its own.
 
@@ -149,7 +149,7 @@ Every saved plan starts with:
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Prefer `subagent-driven-development` when runtime and user instructions permit subagents. Task implementers own task work and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Execute approved controller-owned plans with `subagent-driven-development` by default. Task implementers own atomic child tasks and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -160,7 +160,7 @@ Every saved plan starts with:
 ---
 ```
 
-Default archival save path when caller asks you to save a plan outside the runtime output artifact: `docs/plans/YYYY-MM-DD-<feature-name>.md`. If repo has a stronger convention or caller provides a path, use that instead. In Pi subagent runs, the normal response may already be captured to `plan.md` by runtime output.
+`tsq` is canonical for implementation workflow state. Repo plan files under `docs/plans/YYYY-MM-DD-<feature-name>.md` are optional exports. Write one only when user asks, repo convention requires one, or `tsq` is unavailable. In Pi subagent runs, the normal response may already be captured to `plan.md` by runtime output; treat that as runtime output, not archival storage unless copied into `tsq` or an explicit repo file.
 
 ## Task structure
 
@@ -169,21 +169,29 @@ Use this structure for each task:
 ````markdown
 ### Task N: [Component Name]
 
+**Tasque:** `<parent-id>` / `<child-id>` for SDD-backed or durable plans. For inline/non-durable plans, omit this section or write `Tasque: not used — <reason>`. Never fabricate IDs.
+
+**Owned scope:**
+
+- May edit: `exact/path/or/module`
+- Must not edit: `exact/path/or/module`
+
 **Files:**
 
 - Create: `exact/path/to/new_file.ext`
 - Modify: `exact/path/to/existing_file.ext:123-145`
 - Test: `exact/path/to/test_file.ext`
 
+**Dependencies:**
+
+- Blocks: `<none | child-id>`
+- Blocked by: `<none | child-id>`
+- Ordered after: `<none | child-id>`
+
 **Acceptance criteria:**
 
 - [Specific observable outcome]
 - [Specific regression that must stay fixed]
-
-**Tracking:**
-
-- Tasque child: `<child-id or "create during planning handoff">`
-- Dependencies: `<none | blocked by Task N | ordered after Task N>`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -212,7 +220,12 @@ Expected: PASS
 Run: `exact command`
 Expected: PASS
 
-- [ ] **Step 6: Commit if requested**
+- [ ] **Step 6: Run smoke/live verification when user-visible**
+
+Run: `exact command or manual check`
+Expected: PASS / observed expected behavior
+
+- [ ] **Step 7: Commit if requested**
 
 ```bash
 git add exact/path/to/test_file.ext exact/path/to/source_file.ext
@@ -239,13 +252,15 @@ Repeat required context in each task when tasks may be delegated independently.
 ## Quality bar
 
 - Exact file paths always.
+- Owned files/modules for every atomic child task.
 - Exact commands with expected output or stable pass/fail signal.
 - Tests before behavior changes when feasible.
 - Tests verify public behavior, not private implementation.
+- Smoke/live verification for user-visible behavior.
 - Each task should be independently reviewable.
 - Keep tasks ordered by dependency.
-- Call out parallelizable workstreams.
-- Reflect durable task order, dependencies, and parent/child structure in `tsq` when the plan is long-term or saved.
+- Call out safe parallel workstreams.
+- Reflect SDD-backed or durable task order, dependencies, and parent/child structure in `tsq`.
 - Include docs and migration steps when behavior/API/config changes.
 - Avoid speculative features and large cleanup outside the spec.
 
@@ -257,25 +272,46 @@ After drafting the complete plan, review it yourself before returning:
 2. Placeholder scan: no vague instructions or missing code shapes.
 3. Type/signature consistency: names introduced in early tasks match later tasks.
 4. Buildability: an implementer can follow without hidden context.
-5. Scope control: plan does not add unrequested behavior.
+5. Test coverage: every task has tests verifying its behavior.
+6. Task decomposition: tasks are small, focused, and independently reviewable.
+7. Atomicity: tasks are small enough for one subagent to own safely.
+8. Owned scope: every atomic child has clear may-edit and must-not-edit boundaries.
+9. Dependency resolution: readiness blockers use `tsq block`; preferred sequencing uses `tsq order`; safe ready tasks are parallelized where possible.
+10. Parallel safety: ready tasks have disjoint owned scopes and stable shared contracts.
+11. Verification: focused checks and smoke/live checks are present where needed.
+12. Scope control: plan does not add unrequested behavior.
 
 Fix issues inline. If a requirement has no task, add one. If a task is too large, split it.
 
+## Independent review
+
+Planner owns plan creation and self-review. It does not orchestrate implementation.
+
+When running as a child planner subagent:
+
+- create or update the `tsq` plan if asked by caller or passed a parent ID
+- return the plan and reviewer inputs
+- tell caller/controller to run `plan-reviewer`
+
+When running as the main/controller session:
+
+- run `plan-reviewer` after plan creation
+- do not start implementation until `plan-reviewer` approves or the controller explicitly waives review
+
+If blocker needs product/API/scope decision, `tsq` state is invalid, or reviewer cannot run, stop and ask the caller/controller.
+
 ## Output
 
-If saving the plan, report:
+If saving or linking the plan, report:
 
-- plan path
-- tasque parent task ID, when created or updated
+- `tsq` parent task ID, if created/updated/linked
+- repo plan path, if exported
 - assumptions
 - task count
-- parallel workstreams
+- safe parallel workstreams
 - verification gates
 - open questions, if any
-- inform parent agent to invoke plan-reviewer to review and validate this plan before use.
+- plan review status, if already reviewed
+- next step: caller/controller should run `plan-reviewer` before execution when not already done
 
 If not saving, return the full plan in the response.
-
-## Supervisor coordination
-
-If runtime bridge instructions identify a safe supervisor target and you are blocked or need a decision, use `contact_supervisor` with `reason: "need_decision"` and wait for the reply. Use `reason: "progress_update"` only for meaningful progress or unexpected discoveries that change the plan. Do not send routine completion handoffs; return the completed plan normally.

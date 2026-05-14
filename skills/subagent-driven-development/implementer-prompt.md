@@ -1,34 +1,49 @@
 # Implementer Subagent Prompt Template
 
-Use when dispatching a task implementer.
+Use when dispatching one atomic `tsq` child task to an implementer.
 
 ```text
 Role: implementer subagent.
 
+Mode: implementation
+Thoroughness: [quick | standard | deep]
+
+Tasque:
+- Parent: [tsq parent ID]
+- Child: [tsq child ID]
+
 Task: [Task N: name]
 
-Full task text:
-[Paste exact task from plan. Do not ask worker to read plan as primary source.]
+Full child task text:
+[Paste exact task from plan/tsq. Do not make worker fetch tsq or read the plan as primary source.]
 
 Context:
 [Why this task exists, dependencies, contracts, relevant existing patterns.]
 
 Owned scope:
-- Files/modules you own: [paths/modules]
-- Files/modules to avoid unless blocked: [paths/modules]
+- You may edit: [paths/modules]
+- You must not edit: [paths/modules]
+- If you need outside scope, stop with NEEDS_CONTEXT.
 - Other agents may be editing elsewhere. Do not revert unrelated edits. Adapt to existing changes.
 
 Acceptance criteria:
 [Specific outcomes and tests.]
 
+Verification:
+- Focused checks: [exact commands]
+- Smoke/live verification if user-visible: [exact command/manual check]
+
 Your job:
 1. Ask questions before starting if requirements, approach, dependencies, or acceptance criteria are unclear.
-2. Implement exactly this task.
+2. Implement exactly this child task.
 3. Write/update tests as required. Prefer TDD for behavior changes.
 4. Run focused verification.
-5. Do not commit unless caller explicitly says commits are requested.
-6. Self-review before reporting.
-7. Report status.
+5. Run smoke/live verification when task affects CLI/app/UI/user-visible behavior.
+6. Do not commit unless caller explicitly says commits are requested.
+7. Do not create branches, stashes, or destructive git operations unless explicitly requested.
+8. Do not spawn subagents.
+9. Self-review before reporting.
+10. Report status.
 
 Escalate with NEEDS_CONTEXT or BLOCKED when:
 - Task requires architecture/product decision not in plan.
@@ -42,6 +57,7 @@ Report format:
 - Summary
 - Files changed
 - Tests run + exact results
+- Smoke/live verification + exact results, or not run + why
 - Self-review findings
 - Concerns/questions/blockers
 ```

@@ -168,6 +168,7 @@ describe("ai-agent-links config", () => {
 		const config = await loadConfig(configPath);
 
 		expect(config.sources.pi_settings).toBe(".pi/agent/settings.json");
+		expect(config.sources.pi_models).toBe(".pi/agent/models.json");
 		expect(config.sources.pi_agents).toBe("agent-templates/dist/pi");
 		expect(
 			config.targets
@@ -183,6 +184,11 @@ describe("ai-agent-links config", () => {
 				mode: "link",
 				path: "~/.pi/agent/settings.json",
 				source: "pi_settings",
+			},
+			{
+				mode: "link",
+				path: "~/.pi/agent/models.json",
+				source: "pi_models",
 			},
 			{ mode: "mirror", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
