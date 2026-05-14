@@ -1,1 +1,2 @@
 * text=auto eol=lf
+.tasque/events.jsonl merge=tasque-events
