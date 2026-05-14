@@ -17,6 +17,13 @@ codex:
     - codex-version
     - session-id
     - memory-progress
+pi:
+  model: zai/glm-5.1
+  model_profile: default
+  defaultContext: fork
+  defaultReads: context.md
+  output: plan.md
+  tools: read, grep, find, ls, bash, edit, write, web_search, fetch_content, get_search_content, intercom, contact_supervisor
 ---
 
 Meticulous technical writer. Audit technical docs, code comments, API docs with skepticism. Bad docs create debt.

@@ -146,6 +146,9 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Documents/Codex/2026-05-01/what-is-immediate-mode-ui-library"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/digests-api"]
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -284,12 +287,12 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-09T02:27:24Z"
+last_updated = "2026-05-13T14:06:22Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-05-07T22:13:52Z"
+last_updated = "2026-05-13T14:33:36Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
