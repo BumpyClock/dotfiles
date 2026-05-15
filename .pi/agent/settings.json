@@ -49,9 +49,19 @@
     "npm:@juicesharp/rpiv-todo",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-markdown-preview",
-    "npm:pi-powerline-footer",
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
-    "npm:pi-codex-goal"
-  ]
+    "npm:pi-codex-goal",
+    "pi-powerline-footer",
+    "npm:@vanillagreen/pi-task-panel",
+    "npm:@ifi/oh-pi-themes",
+    "npm:pi-tool-display",
+    "npm:pi-teams"
+  ],
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "quietStartup": true,
+  "theme": "catppuccin-macchiato",
+  "hideThinkingBlock": true
 }

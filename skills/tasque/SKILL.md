@@ -79,11 +79,15 @@ tsq create --parent <parent-id> --from-file tasks.md
 ```bash
 tsq spec <id> --text "## Plan\n...\n## Acceptance\n..."
 tsq spec <id> --show
+# Choose one edit mode when changing an existing spec:
+tsq spec <id> --update --stdin
+tsq spec <id> --patch --stdin
 tsq planned <id>
 tsq claim <id> --assignee <name> --start
 ```
 
 Use `tsq spec <id> --show` when spec markdown lives in sync worktree.
+Use `--update` for whole-spec replacement. Use `--patch` for small agent edits; patch applies only to the attached spec and fails if context is stale. Prefer `--stdin` or `--file` for patches because unified diffs start with `---`.
 
 ## Parallel Work
 

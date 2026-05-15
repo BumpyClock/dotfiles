@@ -14,6 +14,9 @@
     "codex_agents": "agent-templates/dist/codex",
     "pi_settings": ".pi/agent/settings.json",
     "pi_models": ".pi/agent/models.json",
+    "pi_cloak": ".pi/agent/cloak.json",
+    "pi_extensions": ".pi/agent/extensions",
+    "pi_themes": ".pi/agent/themes",
     "pi_agents": "agent-templates/dist/pi"
   },
   "targets": [
@@ -143,6 +146,18 @@
     {
       "source": "pi_models",
       "path": "~/.pi/agent/models.json"
+    },
+    {
+      "source": "pi_cloak",
+      "path": "~/.pi/agent/cloak.json"
+    },
+    {
+      "source": "pi_extensions",
+      "path": "~/.pi/agent/extensions"
+    },
+    {
+      "source": "pi_themes",
+      "path": "~/.pi/agent/themes"
     },
     {
       "source": "pi_agents",

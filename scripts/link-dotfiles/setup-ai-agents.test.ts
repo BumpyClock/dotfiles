@@ -169,6 +169,9 @@ describe("ai-agent-links config", () => {
 
 		expect(config.sources.pi_settings).toBe(".pi/agent/settings.json");
 		expect(config.sources.pi_models).toBe(".pi/agent/models.json");
+		expect(config.sources.pi_cloak).toBe(".pi/agent/cloak.json");
+		expect(config.sources.pi_extensions).toBe(".pi/agent/extensions");
+		expect(config.sources.pi_themes).toBe(".pi/agent/themes");
 		expect(config.sources.pi_agents).toBe("agent-templates/dist/pi");
 		expect(
 			config.targets
@@ -189,6 +192,21 @@ describe("ai-agent-links config", () => {
 				mode: "link",
 				path: "~/.pi/agent/models.json",
 				source: "pi_models",
+			},
+			{
+				mode: "link",
+				path: "~/.pi/agent/cloak.json",
+				source: "pi_cloak",
+			},
+			{
+				mode: "link",
+				path: "~/.pi/agent/extensions",
+				source: "pi_extensions",
+			},
+			{
+				mode: "link",
+				path: "~/.pi/agent/themes",
+				source: "pi_themes",
 			},
 			{ mode: "mirror", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
