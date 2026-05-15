@@ -1,0 +1,6 @@
+{
+  "asyncByDefault": true,
+  "intercomBridge": {
+    "mode": "always"
+  }
+}

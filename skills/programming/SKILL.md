@@ -22,11 +22,12 @@ Default to sub-agent delegation for programming work. For planned multi-task wor
 5. Choose testing strategy before coding: default to TDD for behavior changes. If skipping TDD for non-behavioral work, say why and verify appropriately.
 6. Load relevant role and language references as needed.
 7. Run the technical-writer agent on edited files to make sure code is properly documented.
-8. Run reviewer agent to review the code: spec compliance first, then code quality. Reviewer will give feedback, responsible implementer/integration owner addresses it, then reviewer re-checks.
+8. Run reviewer agent to review the code with one combined pass: spec compliance first, then code quality. For planned multi-task/SDD work, run reviewer loops at parent/subtree aggregation boundaries instead of per peer leaf task. Reviewer will give feedback, responsible implementer/integration owner addresses it, then reviewer re-checks.
 9. Run lint, formatting, and tests to ensure everything is green before assuming success.
 10. Before claiming done, fixed, passing, or ready: identify the proving command, run it fresh, read output + exit code, then state only what the evidence proves.
 
 ## Testing
+
 - Run automated tests.
 - Run interactive tests where needed and possible in tmux.
 - When running test with tmux, always show user the tmux attach command so they can attach to the same tmux session to interact/watch/co-develop or debug.
@@ -37,6 +38,7 @@ Default to sub-agent delegation for programming work. For planned multi-task wor
 Evidence before claims. Do not say work is complete, fixed, passing, green, ready, or reviewed unless fresh verification in the current turn supports it.
 
 Gate before any success claim:
+
 1. Identify what proves the claim.
 2. Run the full command or check now.
 3. Read full output and exit code.
@@ -52,6 +54,7 @@ For details and edge cases, read [references/verification-before-completion.md](
 For programming tasks, delegate implementation, research, debugging, docs, tests, and reviews by default.
 
 Orchestrator owns:
+
 - user comms
 - assumptions + success criteria
 - architecture/product decisions
@@ -60,20 +63,24 @@ Orchestrator owns:
 - final evidence report
 
 When using `subagent-driven-development`:
-- task implementers own task code and review fixes
-- integration-owner subagent owns cross-task integration and fixes
+
+- leaf task implementers own atomic task code and fixes for findings assigned back to them
+- integration-owner subagents own parent/subtree or root integration and fixes
+- reviewers run one combined aggregation-boundary pass over integrated parent/subtree work instead of reviewing every peer leaf task by default
 - orchestrator verifies evidence and reports state, but does not act as integration glue by default
 
 Dispatch rules:
+
 - Use `subagent-driven-development` for saved plans with independent or mostly independent tasks.
 - Use `developer-lite` for clear local 1-2 file mechanical work.
 - Use `developer` for cross-module, API/schema/auth/security/concurrency/perf/new-dep/debugging/judgment work.
 - Use `researcher` for external/current info.
 - Use `technical-writer` for edited public docs, comments, and API docs.
-- Use `reviewer` after implementation: `spec-compliance` first, then `code-quality`.
-- For multi-agent work, run `final-integration` review over the full diff.
+- Use one combined `reviewer` after implementation: check `spec-compliance` first, then `code-quality` in the same reviewer pass.
+- For multi-agent/SDD work, run reviewer loops at parent/subtree aggregation boundaries and run `final-integration` review over the full diff.
 
 Stop signs:
+
 - `NEEDS_CONTEXT`, `BLOCKED`, or correctness-related `DONE_WITH_CONCERNS` -> add context, split, upgrade, or ask user.
 - Never retry the same agent with the same prompt unchanged.
 - Never make subagents read the plan as their primary task source; paste exact task text, owned scope, acceptance criteria, and tests.

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-5-turbo",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
@@ -52,10 +52,10 @@
     "npm:@juicesharp/rpiv-btw",
     "npm:pi-codex-goal",
     "npm:pi-powerline-footer",
-    "npm:@vanillagreen/pi-task-panel",
     "npm:@ifi/oh-pi-themes",
-    "npm:pi-tool-display",
-    "npm:pi-teams"
+    "npm:pi-teams",
+    "npm:pi-intercom",
+    "../../Projects/pi-tasque"
   ],
   "terminal": {
     "showTerminalProgress": true
@@ -70,6 +70,10 @@
       "styles": [
         "explanatory"
       ]
+    },
+    "dynamicTitle": {
+      "model": "openai-codex/gpt-5.3-codex-spark",
+      "updateAfterTurns": 10
     }
   }
 }

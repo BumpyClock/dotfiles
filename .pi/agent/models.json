@@ -5,7 +5,7 @@
         {
           "id": "claude-opus-4.6-1m",
           "name": "Claude Opus 4.6 1M",
-          "api": "anthropic-messages",
+
           "reasoning": true,
           "thinkingLevelMap": {
             "xhigh": "max"
@@ -15,9 +15,9 @@
           "maxTokens": 64000
         },
         {
-          "id": "claude-opus-4.7-1m",
+          "id": "claude-opus-4.7-1m-internal",
           "name": "Claude Opus 4.7 1M",
-          "api": "anthropic-messages",
+
           "reasoning": true,
           "thinkingLevelMap": {
             "xhigh": "xhigh"

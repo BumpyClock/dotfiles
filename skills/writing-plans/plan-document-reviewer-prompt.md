@@ -19,7 +19,7 @@ Check:
 - Spec alignment: covers requirements, avoids major scope creep, preserves explicit constraints.
 - Task decomposition: tasks are atomic enough for one implementer, with clear boundaries and explicit dependencies.
 - Buildability: exact files, commands, expected results, code shapes, test strategy, docs/config steps.
-- Execution handoff: task text can be pasted independently, owned scopes are clear, review gates are explicit, integration-owner pass is represented.
+- Execution handoff: task text can be pasted independently, owned scopes are clear, reviewer loops run at parent/subtree aggregation boundaries instead of per peer leaf task, each aggregation review combines spec compliance plus code quality unless leaf-level/two-stage review was explicitly requested, and integration-owner pass is represented.
 - Parallel safety: ready tasks can run concurrently only when write sets are disjoint, shared contracts are stable, and generated artifacts/config/migrations/global styles/snapshots cannot collide.
 - Verification: focused checks are specified, and smoke/live checks are planned for user-visible behavior.
 - Tasque tracking: SDD-backed or durable implementation plans map to parent/child tasks and explicit `tsq block` readiness deps where needed.

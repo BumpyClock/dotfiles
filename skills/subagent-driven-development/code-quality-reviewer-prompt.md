@@ -1,6 +1,6 @@
 # Code Quality Reviewer Prompt Template
 
-Use only after spec-compliance passes. Dispatch `reviewer` in `code-quality` mode. Read-only.
+Legacy/tight-isolation fallback only. Default SDD reviews happen with `aggregate-reviewer-prompt.md` at parent/subtree aggregation boundaries. Use this leaf-level reviewer only when caller explicitly requests it or risk requires isolated code-quality review after spec-compliance passes. Dispatch `reviewer` in `code-quality` mode. Read-only.
 
 ```text
 Role: code quality reviewer.

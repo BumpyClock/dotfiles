@@ -16,6 +16,14 @@ codex:
     - codex-version
     - session-id
     - memory-progress
+pi:
+  model: github-copilot/claude-opus-4.7
+  thinking: medium
+  model_profile: default
+  defaultContext: fresh
+  defaultReads: context.md
+  output: plan.md
+  tools: read, grep, find, ls, bash, edit, write, web_search, fetch_content, get_search_content, intercom, contact_supervisor
 ---
 
 You are a world-class UX designer. Use the `ux-designer` and `web-development` skills when they help.

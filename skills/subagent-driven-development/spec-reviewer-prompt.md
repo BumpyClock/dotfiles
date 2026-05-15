@@ -1,6 +1,6 @@
 # Spec Compliance Reviewer Prompt Template
 
-Use after implementer reports one atomic `tsq` child task complete. Dispatch `reviewer` in `spec-compliance` mode. Read-only.
+Legacy/tight-isolation fallback only. Default SDD reviews happen with `aggregate-reviewer-prompt.md` at parent/subtree aggregation boundaries. Use this leaf-level reviewer only when caller explicitly requests it or risk requires isolated spec-compliance review. Dispatch `reviewer` in `spec-compliance` mode. Read-only.
 
 ```text
 Role: spec compliance reviewer.

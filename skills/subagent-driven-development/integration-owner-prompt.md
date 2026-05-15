@@ -1,6 +1,6 @@
 # Integration Owner Prompt Template
 
-Use after all task-level spec-compliance and code-quality reviews pass.
+Use when a parent/subtree or root needs integration work after its child leaves/subtrees are implemented. Aggregation-boundary review happens after this integration pass.
 
 ```text
 Role: integration owner subagent.
@@ -9,19 +9,19 @@ Mode: integration
 Thoroughness: [standard | deep]
 
 Goal:
-Own final integration across all completed tasks. Parent/controller is scheduler, not glue code.
+Own integration across the requested parent/subtree or root. Parent/controller is scheduler, not glue code.
 
 Inputs:
-- Tasque parent: [tsq parent ID]
+- Tasque parent/subtree: [tsq parent or subtree ID]
 - Plan/spec: [path, tsq summary, or pasted summary]
-- Completed child tasks: [list of tsq child IDs]
-- Task implementer reports: [summaries]
-- Task review results: [summaries]
+- Completed child leaves/subtrees: [list of tsq child IDs/subtree IDs]
+- Implementer reports: [summaries]
+- Prior aggregate review results, if any: [summaries]
 - Current diff/scope: [paths or git diff range]
 
 Your job:
 1. Read full integrated diff and relevant files.
-2. Check cross-task contracts, naming, docs, tests, migrations/config, generated artifacts, and build assumptions.
+2. Check cross-child/subtree contracts, naming, docs, tests, migrations/config, generated artifacts, and build assumptions.
 3. Fix integration issues you find within integration scope.
 4. Run full relevant verification gates.
 5. Run smoke/live verification for user-visible behavior.

@@ -14,6 +14,7 @@ Create implementation plans from approved specs/requirements before code. Plans 
 - Follow stricter repo/user git policy.
 - In dotfiles, do not create commits unless user explicitly asks.
 - Use `subagent-driven-development` by default for approved controller-owned plans.
+- For SDD handoffs created from this skill, run reviewer loops at aggregation boundaries, not per peer leaf task. If a task has children, implement safe ready children first, integrate their work under the parent/subtree, then run one combined read-only `reviewer` for that parent/subtree covering both spec compliance and code quality. Apply this recursively for nested task trees, bottom-up. Only dispatch leaf-level reviewers when the caller explicitly asks, risk requires tight isolation, or stricter repo policy requires it.
 - Inline execution is allowed for tiny micro-flow fixes, urgent critical-path blockers, verification-only work, unavailable/forbidden subagents, or explicit user request.
 - If working in an isolated worktree, follow local git workflow instructions.
 - If referenced Superpowers skills unavailable, map locally:
@@ -117,7 +118,7 @@ Every plan MUST start with this header:
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Execute approved controller-owned plans with `subagent-driven-development` by default. Task implementers own atomic child tasks and review fixes; integration owner owns final integration. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Execute approved controller-owned plans with `subagent-driven-development` by default. Task implementers own atomic leaf tasks; reviewer loops run at parent/subtree aggregation boundaries, not per peer leaf task, with one combined read-only reviewer checking spec compliance and code quality for the integrated subtree. Integration owner owns final root integration. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -268,6 +269,7 @@ Plan-reviewer must verify:
 - dependencies are explicit in `tsq`,
 - ready tasks can be parallelized safely,
 - owned scopes are clear,
+- review loops run at parent/subtree aggregation boundaries instead of per peer leaf task, with one combined reviewer pass covering both spec compliance and code quality for each integrated subtree unless the caller explicitly requested leaf-level or two-stage review,
 - verification includes smoke/live checks where needed.
 
 If this skill is being followed inside a `planner` subagent, do not dispatch review. Return the plan and tell the caller/controller to run `plan-reviewer`.
@@ -284,8 +286,8 @@ Inline execution is allowed for:
 - unavailable/forbidden subagents,
 - explicit user request.
 
-Do not show an execution-choice prompt when SDD clearly applies. Start SDD and report:
+Do not show an execution-choice prompt when SDD clearly applies. Start SDD with reviewer loops at aggregation boundaries. For each parent/subtree, dispatch safe ready leaf implementers, integrate their outputs, then run one combined reviewer over the integrated subtree. The combined reviewer prompt must check spec compliance first, then code quality, and return one PASS/FAIL with evidence. Report:
 
 ```text
-Plan-reviewer approved `tsq` parent `<id>`. Starting SDD: dispatching safe ready child tasks concurrently where write sets are disjoint and shared contracts are stable, one subagent per atomic task.
+Plan-reviewer approved `tsq` parent `<id>`. Starting SDD: dispatching safe ready leaf tasks concurrently where write sets are disjoint and shared contracts are stable, then reviewing integrated parent/subtree boundaries with one combined reviewer per aggregation point.
 ```
