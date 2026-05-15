@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5-turbo",
   "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
@@ -46,7 +46,6 @@
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
     "npm:pi-lens",
-    "npm:@juicesharp/rpiv-todo",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-markdown-preview",
     "npm:@juicesharp/rpiv-advisor",
@@ -64,5 +63,13 @@
   "quietStartup": true,
   "theme": "catppuccin-macchiato",
   "hideThinkingBlock": true,
-  "powerline": "default"
+  "powerline": "default",
+  "extensionSettings": {
+    "personalitySwitcher": {
+      "personality": "caveman",
+      "styles": [
+        "explanatory"
+      ]
+    }
+  }
 }

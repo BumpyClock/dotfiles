@@ -3,7 +3,7 @@ import {
 	registerPersonalityInsightTool,
 	togglePersonalityInsightCollapsed,
 } from "./insight-tool.js";
-import { buildPromptSection } from "./prompt.js";
+import { appendPromptSectionToSystemPrompt } from "./prompt.js";
 import { emptyState, readPersistedState } from "./state.js";
 import type { ExtensionAPI, PersonalityState } from "./types.js";
 
@@ -38,12 +38,11 @@ export default function personalitySwitcher(pi: ExtensionAPI) {
 	});
 
 	pi.on("before_agent_start", async (event) => {
-		const promptSection = buildPromptSection(state);
-		if (!promptSection) return;
-		return {
-			systemPrompt: `${event.systemPrompt}
-
-${promptSection}`,
-		};
+		const systemPrompt = appendPromptSectionToSystemPrompt(
+			event.systemPrompt,
+			state,
+		);
+		if (systemPrompt === event.systemPrompt) return;
+		return { systemPrompt };
 	});
 }

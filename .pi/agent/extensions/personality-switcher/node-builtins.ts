@@ -41,12 +41,22 @@ export function fsPromises(): FsPromises {
 	return builtin("node:fs/promises");
 }
 
+/** Legacy config path used as a read-only migration fallback. */
 export function configPath(): string {
 	return builtin("node:path").join(
 		builtin("node:os").homedir(),
 		".pi",
 		"agent",
 		"personality.json",
+	);
+}
+
+export function settingsPath(): string {
+	return builtin("node:path").join(
+		builtin("node:os").homedir(),
+		".pi",
+		"agent",
+		"settings.json",
 	);
 }
 

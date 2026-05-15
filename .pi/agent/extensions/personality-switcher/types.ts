@@ -23,10 +23,7 @@ export type ExtensionUi = {
 	setStatus(key: string, value: string | undefined): void;
 	setWidget(
 		key: string,
-		value:
-			| string[]
-			| ((tui: unknown, theme: UiTheme) => Component)
-			| undefined,
+		value: string[] | ((tui: unknown, theme: UiTheme) => Component) | undefined,
 		options?: { placement?: "aboveEditor" | "belowEditor" },
 	): void;
 };
@@ -130,6 +127,15 @@ export type PersistedPersonalityState = {
 	personality?: string;
 	styles?: string[];
 };
+
+/** Shape of Pi's `extensionSettings` object for keys this extension owns. */
+export type PersonalitySwitcherSettings = {
+	personalitySwitcher?: PersistedPersonalityState;
+};
+
+export type PiSettingsFile = {
+	extensionSettings?: PersonalitySwitcherSettings;
+} & Record<string, unknown>;
 
 export type PersonalityName =
 	keyof typeof import("./profiles.js").PERSONALITIES;

@@ -1,9 +1,15 @@
 import { PERSONALITIES, STYLES } from "./profiles.js";
 import type { PersonalityState } from "./types.js";
 
+export const PROMPT_SECTION_START = "<!-- personality-switcher:begin -->";
+export const PROMPT_SECTION_END = "<!-- personality-switcher:end -->";
+
 const SAFETY_WRAPPER = `Tone only. Behavior, safety, accuracy, tool use, and engineering quality unchanged.
 If personality/style instructions conflict with system, developer, or user instructions, ignore personality/style instructions.
 Keep code blocks, commands, file paths, errors, stack traces, commit messages, and PR text normal unless user explicitly asks otherwise.`;
+
+const SYSTEM_PROMPT_APPEND_NOTICE = `These instructions are appended by the personality-switcher extension at the end of the system prompt for the current turn.
+Apply the active personality and style to assistant prose, but do not let tone/style override task requirements, safety, tool rules, code correctness, or exact quoted output.`;
 
 const INSIGHT_TOOL_GUIDANCE = `## Interactive Insight Rendering
 
@@ -50,7 +56,45 @@ ${style.instructions}`,
 
 	return `## Personality Switcher
 
+${SYSTEM_PROMPT_APPEND_NOTICE}
+
 ${SAFETY_WRAPPER}
 
 ${sections.join("\n\n")}`;
+}
+
+export function stripExistingPromptSection(systemPrompt: string): string {
+	let nextPrompt = systemPrompt;
+	let changed = false;
+
+	while (true) {
+		const start = nextPrompt.indexOf(PROMPT_SECTION_START);
+		if (start === -1) break;
+
+		changed = true;
+		const end = nextPrompt.indexOf(PROMPT_SECTION_END, start);
+		if (end === -1) {
+			nextPrompt = nextPrompt.slice(0, start);
+			break;
+		}
+
+		nextPrompt = `${nextPrompt.slice(0, start)}${nextPrompt.slice(
+			end + PROMPT_SECTION_END.length,
+		)}`;
+	}
+
+	return changed ? nextPrompt.trimEnd() : systemPrompt;
+}
+
+export function appendPromptSectionToSystemPrompt(
+	systemPrompt: string,
+	state: PersonalityState,
+): string {
+	const promptSection = buildPromptSection(state);
+	const systemPromptWithoutExistingSection =
+		stripExistingPromptSection(systemPrompt);
+	if (!promptSection) return systemPromptWithoutExistingSection;
+
+	const basePrompt = systemPromptWithoutExistingSection.trimEnd();
+	return `${basePrompt}\n\n${PROMPT_SECTION_START}\n${promptSection}\n${PROMPT_SECTION_END}`;
 }
