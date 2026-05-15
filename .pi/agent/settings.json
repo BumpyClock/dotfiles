@@ -16,16 +16,21 @@
         "model": "github-copilot/gpt-5.5"
       },
       "planner": {
-        "model": "github-copilot/gpt-5.5"
+        "model": "github-copilot/gpt-5.5",
+        "thinking": "xhigh",
+        "disabled": true
       },
       "researcher": {
-        "model": "github-copilot/gpt-5.5"
+        "model": "github-copilot/claude-sonnet-4.6",
+        "disabled": true
       },
       "reviewer": {
-        "model": "github-copilot/gpt-5.5"
+        "model": "github-copilot/gpt-5.5",
+        "disabled": true
       },
       "scout": {
-        "model": "openai-codex/gpt-5.3-codex-spark"
+        "model": "openai-codex/gpt-5.3-codex-spark",
+        "thinking": "medium"
       },
       "worker": {
         "model": "github-copilot/claude-opus-4.6",
@@ -47,7 +52,6 @@
     "npm:pi-powerline-footer",
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
-    "npm:pi-codex-goal",
-    "npm:pi-intercom"
+    "npm:pi-codex-goal"
   ]
 }

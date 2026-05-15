@@ -21,7 +21,7 @@ pi:
   model: github-copilot/claude-opus-4.7
   thinking: medium
   tools: read, grep, find, ls, bash, edit, write, contact_supervisor
-  defaultContext: fork
+  defaultContext: fresh
   defaultReads: context.md, plan.md
   defaultProgress: true
 ---

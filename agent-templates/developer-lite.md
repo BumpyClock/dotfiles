@@ -21,7 +21,7 @@ pi:
   model: zai/glm-5.1
   thinking: high
   tools: read, grep, find, ls, bash, edit, write, contact_supervisor
-  defaultContext: fork
+  defaultContext: fresh
   defaultReads: context.md, plan.md
   defaultProgress: true
 ---
