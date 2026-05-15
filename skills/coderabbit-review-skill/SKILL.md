@@ -7,32 +7,10 @@ description: Run a codereview using coderabbit cli and review the output.
 
 Run `coderabbit review --agent`, wait for finish (may take a while). Slow → run background, keep working. Timeout up to 5 min for large codebases.
 
-## CLI help
-coderabbit review --help
-Usage: coderabbit review [options]
-
-AI-driven code review for the current git repository
-
-Options:
-  -V, --version            output the version number
-  --plain                  Output in plain text format (non-interactive, default)
-  --interactive            Start in interactive mode
-  --prompt-only            Show only AI agent prompts
-  --agent                  Emit structured findings for agent workflows
-  -t, --type <type>        Review type: all, committed, uncommitted (default: "all")
-  -f, --files <files...>   Review only the specified files
-  -c, --config <files...>  Additional instructions for CodeRabbit AI (e.g., claude.md, coderabbit.yaml)
-  --base <branch>          Base branch for comparison
-  --base-commit <commit>   Base commit on current branch for comparison
-  --dir <path>             Review only git changes inside this directory
-  --no-color               Disable colored output
-  --api-key <key>          API key for authentication
-  -h, --help               display help for command
 
 Examples:
   coderabbit review                           # Plain-text review of all local changes
   coderabbit review --agent                   # Emit structured findings for agents
-  coderabbit review --interactive             # Full-screen terminal review UI
   coderabbit review --base main               # Compare current branch against main
   coderabbit review --type committed          # Review only committed changes
   coderabbit review --files src/index.ts      # Review only selected files
@@ -68,7 +46,13 @@ Notes:
    - Valid: category (bug/security/perf/style/test/docs), impacted files, risk, proposed fix
    - Invalid: brief why + repo evidence
 
-4. **Implement fixes — valid + actionable**
+4. **Analyze findings**
+   - Review findings for emerging architecture smells that we should address holistically rather than hot-patching individual files. 
+   - Identify patterns/overrides that should be refactored together.
+   - Prioritize fixes based on risk and impact.
+
+
+5. **Implement fixes — valid + actionable**
    - Parallel sub-agents for independent groups (no file overlap)
    - Minimal changes; no unrelated refactor
    - Update/add tests when behavior changes
