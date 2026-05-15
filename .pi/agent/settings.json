@@ -52,7 +52,7 @@
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
     "npm:pi-codex-goal",
-    "pi-powerline-footer",
+    "npm:pi-powerline-footer",
     "npm:@vanillagreen/pi-task-panel",
     "npm:@ifi/oh-pi-themes",
     "npm:pi-tool-display",
@@ -63,5 +63,6 @@
   },
   "quietStartup": true,
   "theme": "catppuccin-macchiato",
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "powerline": "default"
 }
