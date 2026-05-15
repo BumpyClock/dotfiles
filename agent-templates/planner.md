@@ -17,7 +17,7 @@ codex:
     - session-id
     - memory-progress
 pi:
-  defaultContext: fork
+  defaultContext: fresh
   defaultReads: context.md
   output: plan.md
   tools: read, grep, find, ls, bash, edit, write, web_search, fetch_content, get_search_content, intercom, contact_supervisor
