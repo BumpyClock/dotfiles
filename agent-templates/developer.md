@@ -1,12 +1,12 @@
 ---
 name: developer
-description: Developer agent for coding and debugging for medium and hard tasks
+description: Coding agent for writing and debugging for medium and hard tasks
 model_class: strong
 model_profile: economy
 claude:
   color: orange
 codex:
-  description: Developer agent for coding and debugging for medium and hard tasks
+  description: Coding agent for writing and debugging for medium and hard tasks
   model_reasoning_effort: high
   web_search: live
   personality: pragmatic
@@ -18,7 +18,7 @@ codex:
     - session-id
     - memory-progress
 pi:
-  model: github-copilot/claude-opus-4.7
+  model: github-copilot/claude-opus-4.7-1m
   thinking: medium
   tools: read, grep, find, ls, bash, edit, write, contact_supervisor
   defaultContext: fresh

@@ -1,12 +1,12 @@
 ---
 name: developer-lite
-description: Lite developer agent for coding and debugging simpler tasks
+description: Lite coding agent for writing and debugging for simple focused tasks
 model_class: balanced
 model_profile: economy
 claude:
   color: yellow
 codex:
-  description: Lite developer agent for coding and debugging simpler tasks
+  description: Lite coding agent for writing and debugging for simple focused tasks
   model_reasoning_effort: high
   web_search: live
   personality: pragmatic
