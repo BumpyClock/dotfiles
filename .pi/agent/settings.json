@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "github-copilot",
+  "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "high",
   "subagents": {
@@ -67,12 +67,18 @@
     "preset": "default",
     "fixedEditor": false,
     "mouseScroll": false,
-    "customItems": []
+    "customItems": [
+      {
+        "id": "context_gauge"
+      }
+    ]
   },
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": ["explanatory"]
+      "styles": [
+        "explanatory"
+      ]
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",
