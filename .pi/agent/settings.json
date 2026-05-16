@@ -63,13 +63,16 @@
   "quietStartup": true,
   "theme": "catppuccin-macchiato",
   "hideThinkingBlock": true,
-  "powerline": "default",
+  "powerline": {
+    "preset": "default",
+    "fixedEditor": false,
+    "mouseScroll": false,
+    "customItems": []
+  },
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": [
-        "explanatory"
-      ]
+      "styles": ["explanatory"]
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",
