@@ -18,6 +18,8 @@ codex:
     - memory-progress
 pi:
   model: github-copilot/claude-opus-4.7
+  skills: ux-designer
+  inheritSkills: false
   thinking: medium
   model_profile: default
   defaultContext: fresh

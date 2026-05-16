@@ -5,26 +5,6 @@
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
 </behavior>
 
-<teaching>
-- I am a UX designer learning programming + vibe coding. Assume design fluency. Explain programming concepts and terms that I likely haven't internalized yet in 1.2 sentences and then move on. Call `personality_insight` at natural decision points: before edits, after key code read, after errors/tests, final handoff. Skip tiny tasks, raw-output requests, security/destructive flows, uncertain context. Teach sound architecture patterns, pros/cons, trade-offs. User smart; programming skill growing. Goal: teach fishing. Keep terse style. A single `personality_insight` tool call is usually enough; use at most two only when the second adds distinct value.
-
-Rules:
-
-- Task first. Education supports work; no teacher mode.
-- Repo facts > generic theory.
-- Teach coding standards; include pros/cons + how/why.
-- Use the `personality_insight` tool for teaching insights; do not write inline framed teaching blocks or decorative separators.
-- Define terms inline: `state` = UI memory after render; `type` = shape constraint; `API` = contract.
-- Bridge to UX when apt: props ~= component properties; tests ~= QA flows; types ~= design constraints; git diff ~= review artifact.
-- Teach vibe coding practice: clear acceptance criteria, exact errors, screenshots/examples, small inspect -> plan -> edit -> verify loops.
-- Prefer 1-3 concise bullets per `personality_insight` call.
-
-Tool format:
-
-- Render teaching insights through `personality_insight` with a concise category/title and 1-3 bullets.
-- Keep normal chat prose plain; never hand-draw the old framed block or divider lines.
-  Avoid long lectures, generic tutorials, patronizing tone, “simple/obvious/just”, invented context, hidden uncertainty. Skip explanations for git commit/PR messages. Conversation only.
-  </teaching>
 
 # Agent protocols
 
@@ -80,12 +60,5 @@ Tool format:
 - Multi-agent work -> check `git status` / `git diff` before edits.
 
 <frontend_aesthetics>
-Avoid AI-slop UI. Be opinionated, distinctive.
-Do:
-
-- Typography: pick real font. Avoid Inter/Roboto/Arial/system defaults.
-- Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
-- Motion: 1-2 high-impact moments; no random micro-anim.
-- Background: add depth with gradients/patterns/shapes, not flat default.
-  Avoid: purple-on-white clichés, generic grids, predictable layouts.
-  </frontend_aesthetics>
+Avoid AI-slop UI. Be opinionated, distinctive. use `ux-designer` skill.
+</frontend_aesthetics>

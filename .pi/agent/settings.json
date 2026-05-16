@@ -13,7 +13,8 @@
         "disabled": true
       },
       "oracle": {
-        "model": "github-copilot/gpt-5.5"
+        "model": "github-copilot/gpt-5.5",
+        "context": "fresh"
       },
       "planner": {
         "model": "github-copilot/gpt-5.5",
@@ -51,7 +52,7 @@
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
     "npm:pi-codex-goal",
-    "npm:pi-powerline-footer",
+    "../../Projects/pi-statusbar",
     "npm:@ifi/oh-pi-themes",
     "npm:pi-teams",
     "npm:pi-intercom",
@@ -61,10 +62,24 @@
     "showTerminalProgress": true
   },
   "quietStartup": true,
-  "theme": "catppuccin-macchiato",
-  "hideThinkingBlock": true,
-  "powerline": {
-    "preset": "default",
+  "theme": "catppuccin-mocha",
+  "hideThinkingBlock": false,
+  "statusbar": {
+    "preset": "default-no-cost",
+    "presets": {
+      "default-no-cost": {
+        "extends": "default",
+        "leftSegments": [
+          "model",
+          "thinking",
+          "shell_mode",
+          "path",
+          "git",
+          "context_pct",
+          "cache_read"
+        ]
+      }
+    },
     "fixedEditor": false,
     "mouseScroll": false,
     "customItems": [

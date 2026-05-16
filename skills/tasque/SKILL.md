@@ -1,7 +1,6 @@
 ---
 name: tasque
 description: Operational guide for Tasque (tsq) local task tracking and management.
-disable-model-invocation: true
 ---
 
 <!-- tsq-managed-skill:v1 -->

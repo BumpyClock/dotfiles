@@ -6,6 +6,7 @@ context: fork
 
 # Core Workflow
 
+
 Design precise, crafted UX documentation for consumer apps, enterprise software, SaaS dashboards, admin interfaces, and web applications etc. Treat UX as the end-to-end experience, not just visuals. Make the interface feel intentionally designed for its context. UX is not just about aesthetics or visuals. It's about understanding the user's needs, behaviors, and emotions. It's about creating a seamless experience that meets the user's expectations and exceeds their needs. Even a CLI tool or TUI benefits from UX design principles.
 
 The philosophy is precision with intentional personality — every interface is polished, and each is designed for its specific context. 
@@ -79,12 +80,13 @@ Follow these steps in order.
 - Deliver a Markdown design document with ASCII layout diagram(s).
 
 ## Design Rules
-- Do not write implementation code.
-- Use a named component library when provided; otherwise describe components generically.
-- Prefer existing design tokens and components; define new ones only when gaps exist and document them.
-- If no tokens or components exist, define a minimal system before composing layouts.
-- Ask clarifying questions when requirements or constraints are missing.
+- Typography: pick a real font. Avoid Inter/Roboto/Arial/system defaults.
+- Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
+- Motion: 1-2 high-impact moments; no random micro-animations.
+- Background: add depth with gradients/patterns/shapes, not flat default.
+  Avoid: purple-on-white clichés, generic grids, predictable layouts.
 - Prefer concrete measurements, labels, and states over vague descriptions.
+
 
 ## Design Doc Output (Markdown)
 Always output a single Markdown design document. Include an ASCII representation of the layout inside a fenced code block.
