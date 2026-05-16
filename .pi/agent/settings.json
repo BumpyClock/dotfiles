@@ -56,7 +56,7 @@
     "npm:@ifi/oh-pi-themes",
     "npm:pi-teams",
     "npm:pi-intercom",
-    "../../Projects/pi-tasque"
+    "npm:@bumpyclock/pi-tasque"
   ],
   "terminal": {
     "showTerminalProgress": true
@@ -80,7 +80,7 @@
         ]
       }
     },
-    "fixedEditor": false,
+    "fixedEditor": true,
     "mouseScroll": false,
     "customItems": [
       {
