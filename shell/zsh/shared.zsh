@@ -7,10 +7,16 @@
 # Oh My Zsh Setup (minimal)
 export ZSH="$HOME/.oh-my-zsh"
 
+# Completion paths must be set before Oh My Zsh runs compinit.
+if [ -d "$HOME/.docker/completions" ]; then
+  fpath=("$HOME/.docker/completions" $fpath)
+fi
+
 # Load only essential, fast plugins
 # Removed: zsh-autocomplete (slow), zsh-syntax-highlighting (duplicate)
 # shellcheck disable=SC2034
 plugins=(
+    git
     zsh-autosuggestions
     fast-syntax-highlighting
 )
@@ -21,9 +27,7 @@ source $ZSH/oh-my-zsh.sh
 # PATH CONFIGURATION (optimized - no subshells)
 # =============================================================================
 
-# Static PATH additions (no dynamic evaluations)
-eval "$(fnm env --use-on-cd --shell zsh)"
-
+# Static PATH additions before dynamic tool initialization.
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/share/fnm:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
@@ -32,6 +36,10 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/.lmstudio/bin:$PATH"
 export PATH="$HOME/.opencode/bin:$PATH"
+
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
 
 DOTFILES_ENV_SCRIPT="$HOME/.config/dotfiles/env.sh"
 if [ -f "$DOTFILES_ENV_SCRIPT" ]; then
@@ -51,11 +59,6 @@ unset GLM_PS1_FILE
 # =============================================================================
 # LAZY LOADING FOR HEAVY TOOLS
 # =============================================================================
-
-# Ensure Node (fnm) is initialized early so tools like pnpm work at login
-if [ -x "$HOME/.local/share/fnm/fnm" ]; then
-  eval "$("$HOME/.local/share/fnm/fnm" env --use-on-cd)"
-fi
 
 # Lazy load conda (only when needed)
 conda() {
@@ -111,5 +114,7 @@ eval "$(starship init zsh)"
 # FZF (fuzzy finder) SETUP
 # =============================================================================
 
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+# Set up fzf key bindings and fuzzy completion when ZLE is active.
+if [[ -o zle ]] && command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh) 2>/dev/null
+fi

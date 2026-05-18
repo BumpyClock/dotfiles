@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-5-turbo",
+  "lastChangelogVersion": "0.75.3",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
@@ -81,12 +81,24 @@
       }
     },
     "fixedEditor": true,
-    "mouseScroll": false,
+    "mouseScroll": true,
     "customItems": [
       {
         "id": "context_gauge"
       }
-    ]
+    ],
+    "vibe": {
+      "enabled": true,
+      "source": "packs",
+      "disabledPacks": [],
+      "safeMode": true,
+      "animation": "shimmer",
+      "generated": {
+        "model": "openai-codex/gpt-5.4-mini",
+        "prompt": "Generate a 2-4 word \"{theme}\" themed loading message ending in \"...\".\n\nTask: {task}\n\nBe creative, funny, sarcastic, and unexpected. Avoid obvious/clichéd phrases for this theme.\nRelevant catchphrases, quotes, and themes should be incorporated into the message.\nThe message should hint at the task using theme vocabulary. modify catchphrase, quotes, and themes as needed.\n{exclude}\nOutput only the message, nothing else.",
+        "refreshInterval": 30
+      }
+    }
   },
   "extensionSettings": {
     "personalitySwitcher": {

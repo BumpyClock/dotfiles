@@ -1,3 +1,4 @@
+import { truncateToWidth } from "@earendil-works/pi-tui";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
@@ -300,11 +301,15 @@ export function createPersonalityInsightTool(): ToolDefinition<
 		},
 		renderResult(result: ToolResult<PersonalityInsightDetails>) {
 			return {
-				render() {
+				render(width: number) {
 					const text =
 						result.content.find((item) => item.type === "text")?.text ??
 						"Insight widget updated";
-					return [text];
+					const safeWidth = Math.max(0, Math.floor(width || 0));
+					if (safeWidth === 0) return [""];
+					return text
+						.split(/\r?\n/)
+						.map((line) => truncateToWidth(line, safeWidth, "…"));
 				},
 				invalidate() {},
 			};
