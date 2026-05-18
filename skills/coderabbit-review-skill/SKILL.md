@@ -5,7 +5,7 @@ description: Run a codereview using coderabbit cli and review the output.
 
 # CodeRabbit Review
 
-Run `coderabbit review --agent`, wait for finish (may take a while). Slow → run background, keep working. Timeout up to 5 min for large codebases.
+Run `coderabbit review --agent`, wait for finish (may take a while). Slow → run background, keep working. Long running task, timeout=10m min.
 
 
 Examples:
@@ -16,11 +16,6 @@ Examples:
   coderabbit review --files src/index.ts      # Review only selected files
   coderabbit review --dir /path/to/repo       # Review only git changes inside that directory
   coderabbit review --prompt-only             # Print agent prompts only
-
-Notes:
-  Plain text is the default review mode.
-  --interactive does not support API key authentication.
-  Use coderabbit auth login --agent for agent-driven OAuth login.
 
 ## Workflow
 
@@ -50,11 +45,12 @@ Notes:
    - Review findings for emerging architecture smells that we should address holistically rather than hot-patching individual files. 
    - Identify patterns/overrides that should be refactored together.
    - Prioritize fixes based on risk and impact.
+   - When architectural refactor makes sense, stop and notify user. Continue, normally otherwise.
 
 
 5. **Implement fixes — valid + actionable**
    - Parallel sub-agents for independent groups (no file overlap)
-   - Minimal changes; no unrelated refactor
+   - No unrelated refactor or changes.
    - Update/add tests when behavior changes
 
 5. **Verify**

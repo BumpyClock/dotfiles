@@ -1,17 +1,32 @@
-import { chmod, copyFile, lstat, mkdir, readFile, readlink, rm, writeFile } from "node:fs/promises";
+import {
+	chmod,
+	copyFile,
+	lstat,
+	mkdir,
+	readFile,
+	readlink,
+	rename,
+	rm,
+	writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import { installTools, showToolStatus } from "./install-tools";
-import { ensureLinked, linkAiAgents, pathExists, showAiAgentLinks } from "./setup-ai-agents";
+import {
+	ensureLinked,
+	linkAiAgents,
+	pathExists,
+	showAiAgentLinks,
+} from "./setup-ai-agents";
 
 type CliOptions = {
-  dotfilesDir: string;
-  projectAgentsPath?: string;
-  show: boolean;
-  skipSubmodules: boolean;
-  skipAiAgents: boolean;
+	dotfilesDir: string;
+	projectAgentsPath?: string;
+	show: boolean;
+	skipSubmodules: boolean;
+	skipAiAgents: boolean;
 };
 
 type EnvironmentConfigValue = Record<string, string> | string;
@@ -22,603 +37,840 @@ const ENV_SCRIPT_NAME = "env.sh";
 const POWERSHELL_ENV_SCRIPT_NAME = "env.ps1";
 
 function info(message: string): void {
-  console.log(`[INFO] ${message}`);
+	console.log(`[INFO] ${message}`);
 }
 
 function warn(message: string): void {
-  console.log(`[WARN] ${message}`);
+	console.log(`[WARN] ${message}`);
 }
 
 function action(message: string): void {
-  console.log(`[ACTION] ${message}`);
+	console.log(`[ACTION] ${message}`);
 }
 
 function parseArgs(argv: string[]): CliOptions {
-  let dotfilesDir = process.cwd();
-  let projectAgentsPath: string | undefined;
-  let show = false;
-  let skipSubmodules = false;
-  let skipAiAgents = false;
+	let dotfilesDir = process.cwd();
+	let projectAgentsPath: string | undefined;
+	let show = false;
+	let skipSubmodules = false;
+	let skipAiAgents = false;
 
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
+	for (let i = 0; i < argv.length; i += 1) {
+		const arg = argv[i];
 
-    if (arg === "--dotfiles-dir") {
-      const value = argv[i + 1];
-      if (!value) {
-        throw new Error("Missing value for --dotfiles-dir");
-      }
-      dotfilesDir = value;
-      i += 1;
-      continue;
-    }
+		if (arg === "--dotfiles-dir") {
+			const value = argv[i + 1];
+			if (!value) {
+				throw new Error("Missing value for --dotfiles-dir");
+			}
+			dotfilesDir = value;
+			i += 1;
+			continue;
+		}
 
-    if (arg === "--project-agents") {
-      const value = argv[i + 1];
-      if (!value) {
-        throw new Error("Missing value for --project-agents");
-      }
-      projectAgentsPath = value;
-      i += 1;
-      continue;
-    }
+		if (arg === "--project-agents") {
+			const value = argv[i + 1];
+			if (!value) {
+				throw new Error("Missing value for --project-agents");
+			}
+			projectAgentsPath = value;
+			i += 1;
+			continue;
+		}
 
-    if (arg === "--show" || arg === "-s") {
-      show = true;
-      continue;
-    }
+		if (arg === "--show" || arg === "-s") {
+			show = true;
+			continue;
+		}
 
-    if (arg === "--skip-submodules") {
-      skipSubmodules = true;
-      continue;
-    }
+		if (arg === "--skip-submodules") {
+			skipSubmodules = true;
+			continue;
+		}
 
-    if (arg === "--skip-ai-agents") {
-      skipAiAgents = true;
-      continue;
-    }
+		if (arg === "--skip-ai-agents") {
+			skipAiAgents = true;
+			continue;
+		}
 
-    if (arg === "--help" || arg === "-h") {
-      console.log("Usage: bun scripts/link-dotfiles/setup-dotfiles.ts [options]");
-      console.log("");
-      console.log("Options:");
-      console.log("  --dotfiles-dir <path>   Dotfiles repo root (default: cwd)");
-      console.log("  --project-agents <path> Link repo agents into <path>/.claude/agents");
-      console.log("  --show, -s              Show current link status");
-      console.log("  --skip-submodules       Skip git submodule initialization");
-      console.log("  --skip-ai-agents        Do not run AI agent mapping links");
-      process.exit(0);
-    }
+		if (arg === "--help" || arg === "-h") {
+			console.log(
+				"Usage: bun scripts/link-dotfiles/setup-dotfiles.ts [options]",
+			);
+			console.log("");
+			console.log("Options:");
+			console.log(
+				"  --dotfiles-dir <path>   Dotfiles repo root (default: cwd)",
+			);
+			console.log(
+				"  --project-agents <path> Link repo agents into <path>/.claude/agents",
+			);
+			console.log("  --show, -s              Show current link status");
+			console.log(
+				"  --skip-submodules       Skip git submodule initialization",
+			);
+			console.log(
+				"  --skip-ai-agents        Do not run AI agent mapping links",
+			);
+			process.exit(0);
+		}
 
-    throw new Error(`Unknown argument: ${arg}`);
-  }
+		throw new Error(`Unknown argument: ${arg}`);
+	}
 
-  return {
-    dotfilesDir: path.resolve(dotfilesDir),
-    projectAgentsPath: projectAgentsPath ? path.resolve(projectAgentsPath) : undefined,
-    show,
-    skipSubmodules,
-    skipAiAgents,
-  };
+	return {
+		dotfilesDir: path.resolve(dotfilesDir),
+		projectAgentsPath: projectAgentsPath
+			? path.resolve(projectAgentsPath)
+			: undefined,
+		show,
+		skipSubmodules,
+		skipAiAgents,
+	};
 }
 
 function homePath(relativePath: string): string {
-  return path.join(os.homedir(), relativePath);
+	return path.join(os.homedir(), relativePath);
 }
 
 async function initializeSubmodules(dotfilesDir: string): Promise<void> {
-  info("Initializing git submodules...");
-  const result = Bun.spawnSync(["git", "submodule", "update", "--init", "--recursive"], {
-    cwd: dotfilesDir,
-    stdout: "ignore",
-    stderr: "pipe",
-  });
+	info("Initializing git submodules...");
+	const result = Bun.spawnSync(
+		["git", "submodule", "update", "--init", "--recursive"],
+		{
+			cwd: dotfilesDir,
+			stdout: "ignore",
+			stderr: "pipe",
+		},
+	);
 
-  if (result.exitCode !== 0) {
-    const stderr = Buffer.from(result.stderr).toString("utf8").trim();
-    warn(`Failed to initialize submodules: ${stderr || "unknown error"}`);
-    return;
-  }
+	if (result.exitCode !== 0) {
+		const stderr = Buffer.from(result.stderr).toString("utf8").trim();
+		warn(`Failed to initialize submodules: ${stderr || "unknown error"}`);
+		return;
+	}
 
-  info("Git submodules initialized");
+	info("Git submodules initialized");
 }
 
-async function linkIfPresent(dotfilesDir: string, sourceRelative: string, targetPath: string): Promise<void> {
-  const sourcePath = path.join(dotfilesDir, sourceRelative);
-  if (!(await pathExists(sourcePath))) {
-    return;
-  }
+async function linkIfPresent(
+	dotfilesDir: string,
+	sourceRelative: string,
+	targetPath: string,
+): Promise<void> {
+	const sourcePath = path.join(dotfilesDir, sourceRelative);
+	if (!(await pathExists(sourcePath))) {
+		return;
+	}
 
-  await ensureLinked(sourcePath, targetPath);
+	await ensureLinked(sourcePath, targetPath);
 }
 
 async function linkDotfiles(dotfilesDir: string): Promise<void> {
-  info("Linking base dotfiles...");
-  const targets = [
-    { source: ".gitconfig", target: homePath(".gitconfig") },
-    { source: ".gitignore_global", target: homePath(".gitignore_global") },
-    { source: ".tmux.conf", target: homePath(".tmux.conf") },
-    { source: ".vimrc", target: homePath(".vimrc") },
-  ];
+	info("Linking base dotfiles...");
+	const targets = [
+		{ source: ".gitconfig", target: homePath(".gitconfig") },
+		{ source: ".gitignore_global", target: homePath(".gitignore_global") },
+		{ source: ".tmux.conf", target: homePath(".tmux.conf") },
+		{ source: ".vimrc", target: homePath(".vimrc") },
+	];
 
-  for (const target of targets) {
-    await linkIfPresent(dotfilesDir, target.source, target.target);
-  }
+	for (const target of targets) {
+		await linkIfPresent(dotfilesDir, target.source, target.target);
+	}
 }
 
 async function linkGitHubConfig(dotfilesDir: string): Promise<void> {
-  info("Linking GitHub configuration...");
-  const githubRoot = homePath(".github");
-  await mkdir(githubRoot, { recursive: true });
+	info("Linking GitHub configuration...");
+	const githubRoot = homePath(".github");
+	await mkdir(githubRoot, { recursive: true });
 
-  await linkIfPresent(dotfilesDir, ".github/copilot-instructions.md", path.join(githubRoot, "copilot-instructions.md"));
-  await linkIfPresent(dotfilesDir, ".github/prompts", path.join(githubRoot, "prompts"));
-  await linkIfPresent(dotfilesDir, "agents", path.join(githubRoot, "agents"));
+	await linkIfPresent(
+		dotfilesDir,
+		".github/copilot-instructions.md",
+		path.join(githubRoot, "copilot-instructions.md"),
+	);
+	await linkIfPresent(
+		dotfilesDir,
+		".github/prompts",
+		path.join(githubRoot, "prompts"),
+	);
+	await linkIfPresent(dotfilesDir, "agents", path.join(githubRoot, "agents"));
 }
 
 async function linkConfigDirs(dotfilesDir: string): Promise<void> {
-  info("Linking configuration directories...");
-  const configRoot = homePath(".config");
-  await mkdir(configRoot, { recursive: true });
+	info("Linking configuration directories...");
+	const configRoot = homePath(".config");
+	await mkdir(configRoot, { recursive: true });
 
-  const targets = [
-    { source: ".config/starship.toml", target: path.join(configRoot, "starship.toml") },
-    { source: ".config/nvim", target: path.join(configRoot, "nvim") },
-    { source: ".config/alacritty", target: path.join(configRoot, "alacritty") },
-    { source: ".config/kitty", target: path.join(configRoot, "kitty") },
-    { source: ".config/wezterm", target: path.join(configRoot, "wezterm") },
-  ];
+	const targets = [
+		{
+			source: ".config/starship.toml",
+			target: path.join(configRoot, "starship.toml"),
+		},
+		{ source: ".config/nvim", target: path.join(configRoot, "nvim") },
+		{ source: ".config/alacritty", target: path.join(configRoot, "alacritty") },
+		{ source: ".config/kitty", target: path.join(configRoot, "kitty") },
+		{ source: ".config/wezterm", target: path.join(configRoot, "wezterm") },
+	];
 
-  for (const target of targets) {
-    await linkIfPresent(dotfilesDir, target.source, target.target);
-  }
+	for (const target of targets) {
+		await linkIfPresent(dotfilesDir, target.source, target.target);
+	}
 }
 
 async function linkWindowsExtras(dotfilesDir: string): Promise<void> {
-  if (process.platform !== "win32") {
-    return;
-  }
+	if (process.platform !== "win32") {
+		return;
+	}
 
-  info("Linking Windows-specific configuration...");
+	info("Linking Windows-specific configuration...");
 
-  const terminalSettingsSource = path.join(dotfilesDir, ".config/windows-terminal/settings.json");
-  const terminalRoots = [
-    path.join(os.homedir(), "AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"),
-    path.join(os.homedir(), "AppData/Local/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState"),
-  ];
+	const terminalSettingsSource = path.join(
+		dotfilesDir,
+		".config/windows-terminal/settings.json",
+	);
+	const terminalRoots = [
+		path.join(
+			os.homedir(),
+			"AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState",
+		),
+		path.join(
+			os.homedir(),
+			"AppData/Local/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState",
+		),
+	];
 
-  if (await pathExists(terminalSettingsSource)) {
-    for (const terminalRoot of terminalRoots) {
-      if (await pathExists(terminalRoot)) {
-        await ensureLinked(terminalSettingsSource, path.join(terminalRoot, "settings.json"));
-      }
-    }
-  }
+	if (await pathExists(terminalSettingsSource)) {
+		for (const terminalRoot of terminalRoots) {
+			if (await pathExists(terminalRoot)) {
+				await ensureLinked(
+					terminalSettingsSource,
+					path.join(terminalRoot, "settings.json"),
+				);
+			}
+		}
+	}
 
-  const profileSource = path.join(dotfilesDir, "shell/powershell/Microsoft.PowerShell_profile.ps1");
-  if (await pathExists(profileSource)) {
-    const profileTargets = [
-      path.join(os.homedir(), "Documents/PowerShell/Microsoft.PowerShell_profile.ps1"),
-      path.join(os.homedir(), "Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1"),
-    ];
+	const profileSource = path.join(
+		dotfilesDir,
+		"shell/powershell/Microsoft.PowerShell_profile.ps1",
+	);
+	if (await pathExists(profileSource)) {
+		const profileTargets = [
+			path.join(
+				os.homedir(),
+				"Documents/PowerShell/Microsoft.PowerShell_profile.ps1",
+			),
+			path.join(
+				os.homedir(),
+				"Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1",
+			),
+		];
 
-    for (const profileTarget of profileTargets) {
-      await ensureLinked(profileSource, profileTarget);
-    }
-  }
+		for (const profileTarget of profileTargets) {
+			await ensureLinked(profileSource, profileTarget);
+		}
+	}
 }
 
-async function parseEnvValue(filePath: string, key: string): Promise<string | undefined> {
-  if (!(await pathExists(filePath))) {
-    return undefined;
-  }
+async function parseEnvValue(
+	filePath: string,
+	key: string,
+): Promise<string | undefined> {
+	if (!(await pathExists(filePath))) {
+		return undefined;
+	}
 
-  const content = await readFile(filePath, "utf8");
-  const regex = new RegExp(`${key}\\s*=\\s*\"([^\"]+)\"`);
-  const match = content.match(regex);
-  return match?.[1];
+	const content = await readFile(filePath, "utf8");
+	const regex = new RegExp(`${key}\\s*=\\s*"([^"]+)"`);
+	const match = content.match(regex);
+	return match?.[1];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function validateEnvironmentVariableName(name: string, context: string): void {
-  if (!/^[A-Z_][A-Z0-9_]*$/.test(name)) {
-    throw new Error(`Invalid environment variable '${name}' in ${context}`);
-  }
+	if (!/^[A-Z_][A-Z0-9_]*$/.test(name)) {
+		throw new Error(`Invalid environment variable '${name}' in ${context}`);
+	}
 }
 
-export function flattenEnvironmentConfig(config: unknown): Record<string, string> {
-  if (!isRecord(config)) {
-    throw new Error("Environment config must be a JSON object");
-  }
+export function flattenEnvironmentConfig(
+	config: unknown,
+): Record<string, string> {
+	if (!isRecord(config)) {
+		throw new Error("Environment config must be a JSON object");
+	}
 
-  const environment = new Map<string, string>();
+	const environment = new Map<string, string>();
 
-  const addVariable = (name: string, value: string, context: string): void => {
-    validateEnvironmentVariableName(name, context);
+	const addVariable = (name: string, value: string, context: string): void => {
+		validateEnvironmentVariableName(name, context);
 
-    if (environment.has(name)) {
-      throw new Error(`Duplicate environment variable '${name}' in ${context}`);
-    }
+		if (environment.has(name)) {
+			throw new Error(`Duplicate environment variable '${name}' in ${context}`);
+		}
 
-    environment.set(name, value);
-  };
+		environment.set(name, value);
+	};
 
-  for (const [groupName, groupValue] of Object.entries(config as Record<string, EnvironmentConfigValue>)) {
-    if (typeof groupValue === "string") {
-      addVariable(groupName, groupValue, "root");
-      continue;
-    }
+	for (const [groupName, groupValue] of Object.entries(
+		config as Record<string, EnvironmentConfigValue>,
+	)) {
+		if (typeof groupValue === "string") {
+			addVariable(groupName, groupValue, "root");
+			continue;
+		}
 
-    if (!isRecord(groupValue)) {
-      throw new Error(`Environment group '${groupName}' must be an object or string`);
-    }
+		if (!isRecord(groupValue)) {
+			throw new Error(
+				`Environment group '${groupName}' must be an object or string`,
+			);
+		}
 
-    for (const [name, value] of Object.entries(groupValue)) {
-      if (typeof value !== "string") {
-        throw new Error(`Environment variable '${name}' in '${groupName}' must be a string`);
-      }
+		for (const [name, value] of Object.entries(groupValue)) {
+			if (typeof value !== "string") {
+				throw new Error(
+					`Environment variable '${name}' in '${groupName}' must be a string`,
+				);
+			}
 
-      addVariable(name, value, groupName);
-    }
-  }
+			addVariable(name, value, groupName);
+		}
+	}
 
-  return Object.fromEntries([...environment.entries()].sort(([left], [right]) => left.localeCompare(right)));
+	return Object.fromEntries(
+		[...environment.entries()].sort(([left], [right]) =>
+			left.localeCompare(right),
+		),
+	);
 }
 
 function escapeShellValue(value: string): string {
-  return `'${value.replaceAll("'", `'\"'\"'`)}'`;
+	return `'${value.replaceAll("'", `'"'"'`)}'`;
 }
 
 function escapePowerShellValue(value: string): string {
-  return value.replaceAll("'", "''");
+	return value.replaceAll("'", "''");
 }
 
-export function renderShellEnvironmentScript(environment: Record<string, string>): string {
-  const lines = [
-    "# Generated by scripts/link-dotfiles/setup-dotfiles.ts",
-    "# Source of truth: secrets/api-keys/env.json",
-  ];
+export function renderShellEnvironmentScript(
+	environment: Record<string, string>,
+): string {
+	const lines = [
+		"# Generated by scripts/link-dotfiles/setup-dotfiles.ts",
+		"# Source of truth: secrets/api-keys/env.json",
+	];
 
-  for (const [name, value] of Object.entries(environment)) {
-    lines.push(`export ${name}=${escapeShellValue(value)}`);
-  }
+	for (const [name, value] of Object.entries(environment)) {
+		lines.push(`export ${name}=${escapeShellValue(value)}`);
+	}
 
-  return `${lines.join("\n")}\n`;
+	return `${lines.join("\n")}\n`;
 }
 
-export function renderPowerShellEnvironmentScript(environment: Record<string, string>): string {
-  const lines = [
-    "# Generated by scripts/link-dotfiles/setup-dotfiles.ts",
-    "# Source of truth: secrets/api-keys/env.json",
-  ];
+export function renderPowerShellEnvironmentScript(
+	environment: Record<string, string>,
+): string {
+	const lines = [
+		"# Generated by scripts/link-dotfiles/setup-dotfiles.ts",
+		"# Source of truth: secrets/api-keys/env.json",
+	];
 
-  for (const [name, value] of Object.entries(environment)) {
-    lines.push(`$env:${name} = '${escapePowerShellValue(value)}'`);
-  }
+	for (const [name, value] of Object.entries(environment)) {
+		lines.push(`$env:${name} = '${escapePowerShellValue(value)}'`);
+	}
 
-  return `${lines.join("\n")}\n`;
+	return `${lines.join("\n")}\n`;
 }
 
-export async function loadManagedEnvironment(dotfilesDir: string): Promise<Record<string, string>> {
-  const configPath = path.join(dotfilesDir, ENV_CONFIG_RELATIVE_PATH);
-  if (!(await pathExists(configPath))) {
-    return {};
-  }
+export async function loadManagedEnvironment(
+	dotfilesDir: string,
+): Promise<Record<string, string>> {
+	const configPath = path.join(dotfilesDir, ENV_CONFIG_RELATIVE_PATH);
+	if (!(await pathExists(configPath))) {
+		return {};
+	}
 
-  const content = await readFile(configPath, "utf8");
-  return flattenEnvironmentConfig(JSON.parse(content));
+	const content = await readFile(configPath, "utf8");
+	return flattenEnvironmentConfig(JSON.parse(content));
 }
 
 async function promptUser(question: string): Promise<string> {
-  const rl = createInterface({ input, output });
-  const answer = await rl.question(question);
-  rl.close();
-  return answer.trim();
+	const rl = createInterface({ input, output });
+	const answer = await rl.question(question);
+	rl.close();
+	return answer.trim();
 }
 
 async function ensureWritableTarget(targetPath: string): Promise<void> {
-  await mkdir(path.dirname(targetPath), { recursive: true });
+	await mkdir(path.dirname(targetPath), { recursive: true });
 
-  if (!(await pathExists(targetPath))) {
-    return;
-  }
+	if (!(await pathExists(targetPath))) {
+		return;
+	}
 
-  const stat = await lstat(targetPath);
-  if (stat.isSymbolicLink()) {
-    await rm(targetPath, { force: true, recursive: true });
-  }
+	const stat = await lstat(targetPath);
+	if (stat.isSymbolicLink()) {
+		await rm(targetPath, { force: true, recursive: true });
+	}
 }
 
 async function writeGeneratedScript(
-  templatePath: string,
-  targetPath: string,
-  replacements: Record<string, string>,
-  executable: boolean,
+	templatePath: string,
+	targetPath: string,
+	replacements: Record<string, string>,
+	executable: boolean,
 ): Promise<void> {
-  if (!(await pathExists(templatePath))) {
-    return;
-  }
+	if (!(await pathExists(templatePath))) {
+		return;
+	}
 
-  let content = await readFile(templatePath, "utf8");
-  for (const [token, value] of Object.entries(replacements)) {
-    content = content.replaceAll(token, value);
-  }
+	let content = await readFile(templatePath, "utf8");
+	for (const [token, value] of Object.entries(replacements)) {
+		content = content.replaceAll(token, value);
+	}
 
-  await ensureWritableTarget(targetPath);
-  await writeFile(targetPath, content, "utf8");
-  if (executable) {
-    await chmod(targetPath, 0o755);
-  }
-  action(`Generated: ${targetPath}`);
+	await ensureWritableTarget(targetPath);
+	await writeFile(targetPath, content, "utf8");
+	if (executable) {
+		await chmod(targetPath, 0o755);
+	}
+	action(`Generated: ${targetPath}`);
 }
 
 async function removeGeneratedFile(targetPath: string): Promise<void> {
-  if (!(await pathExists(targetPath))) {
-    return;
-  }
+	if (!(await pathExists(targetPath))) {
+		return;
+	}
 
-  await rm(targetPath, { force: true });
-  action(`Removed: ${targetPath}`);
+	await rm(targetPath, { force: true });
+	action(`Removed: ${targetPath}`);
 }
 
-async function writeManagedEnvironmentFile(targetPath: string, content: string): Promise<void> {
-  await ensureWritableTarget(targetPath);
-  await writeFile(targetPath, content, "utf8");
-  action(`Generated: ${targetPath}`);
+async function writeManagedEnvironmentFile(
+	targetPath: string,
+	content: string,
+): Promise<void> {
+	await ensureWritableTarget(targetPath);
+	await writeFile(targetPath, content, "utf8");
+	action(`Generated: ${targetPath}`);
 }
 
 async function installManagedEnvironment(dotfilesDir: string): Promise<void> {
-  info("Installing managed environment variables...");
+	info("Installing managed environment variables...");
 
-  const configPath = path.join(dotfilesDir, ENV_CONFIG_RELATIVE_PATH);
-  const targetDir = homePath(ENV_CONFIG_TARGET_DIR);
-  const shellTargetPath = path.join(targetDir, ENV_SCRIPT_NAME);
-  const powershellTargetPath = path.join(targetDir, POWERSHELL_ENV_SCRIPT_NAME);
+	const configPath = path.join(dotfilesDir, ENV_CONFIG_RELATIVE_PATH);
+	const targetDir = homePath(ENV_CONFIG_TARGET_DIR);
+	const shellTargetPath = path.join(targetDir, ENV_SCRIPT_NAME);
+	const powershellTargetPath = path.join(targetDir, POWERSHELL_ENV_SCRIPT_NAME);
 
-  if (!(await pathExists(configPath))) {
-    info(`No managed environment config found at ${configPath}`);
-    await removeGeneratedFile(shellTargetPath);
-    await removeGeneratedFile(powershellTargetPath);
-    return;
-  }
+	if (!(await pathExists(configPath))) {
+		info(`No managed environment config found at ${configPath}`);
+		await removeGeneratedFile(shellTargetPath);
+		await removeGeneratedFile(powershellTargetPath);
+		return;
+	}
 
-  const environment = await loadManagedEnvironment(dotfilesDir);
-  if (Object.keys(environment).length === 0) {
-    warn(`No environment variables defined in ${configPath}`);
-    await removeGeneratedFile(shellTargetPath);
-    await removeGeneratedFile(powershellTargetPath);
-    return;
-  }
+	const environment = await loadManagedEnvironment(dotfilesDir);
+	if (Object.keys(environment).length === 0) {
+		warn(`No environment variables defined in ${configPath}`);
+		await removeGeneratedFile(shellTargetPath);
+		await removeGeneratedFile(powershellTargetPath);
+		return;
+	}
 
-  await mkdir(targetDir, { recursive: true });
-  await writeManagedEnvironmentFile(shellTargetPath, renderShellEnvironmentScript(environment));
-  await writeManagedEnvironmentFile(powershellTargetPath, renderPowerShellEnvironmentScript(environment));
+	await mkdir(targetDir, { recursive: true });
+	await writeManagedEnvironmentFile(
+		shellTargetPath,
+		renderShellEnvironmentScript(environment),
+	);
+	await writeManagedEnvironmentFile(
+		powershellTargetPath,
+		renderPowerShellEnvironmentScript(environment),
+	);
 }
 
 async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
-  info("Installing Unix bin scripts...");
-  const binDir = homePath(".local/bin");
-  await mkdir(binDir, { recursive: true });
+	info("Installing Unix bin scripts...");
+	const binDir = homePath(".local/bin");
+	await mkdir(binDir, { recursive: true });
 
-  const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.sh");
-  let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.sh");
+	let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
 
-  if (!glmToken) {
-    warn(`GLM secrets not found at ${glmSecrets}`);
-    const response = (await promptUser("Install cz script anyway? (y/n): ")).toLowerCase();
-    if (response === "y") {
-      glmToken = await promptUser("Enter your Z.ai GLM API key: ");
-    }
-  }
+	if (!glmToken) {
+		warn(`GLM secrets not found at ${glmSecrets}`);
+		const response = (
+			await promptUser("Install cz script anyway? (y/n): ")
+		).toLowerCase();
+		if (response === "y") {
+			glmToken = await promptUser("Enter your Z.ai GLM API key: ");
+		}
+	}
 
-  if (glmToken) {
-    await writeGeneratedScript(
-      path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
-      path.join(binDir, "cz"),
-      {
-        "__ANTHROPIC_AUTH_TOKEN__": glmToken,
-        "__ANTHROPIC_BASE_URL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ?? "https://api.z.ai/api/anthropic",
-        "__API_TIMEOUT_MS__": (await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
-        "__ANTHROPIC_DEFAULT_HAIKU_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ?? "glm-5",
-        "__ANTHROPIC_DEFAULT_SONNET_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ?? "glm-5",
-        "__ANTHROPIC_DEFAULT_OPUS_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ?? "glm-5",
-      },
-      true,
-    );
-  }
+	if (glmToken) {
+		await writeGeneratedScript(
+			path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
+			path.join(binDir, "cz"),
+			{
+				__ANTHROPIC_AUTH_TOKEN__: glmToken,
+				__ANTHROPIC_BASE_URL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ??
+					"https://api.z.ai/api/anthropic",
+				__API_TIMEOUT_MS__:
+					(await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
+				__ANTHROPIC_DEFAULT_HAIKU_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ??
+					"glm-5",
+				__ANTHROPIC_DEFAULT_SONNET_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ??
+					"glm-5",
+				__ANTHROPIC_DEFAULT_OPUS_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ??
+					"glm-5",
+			},
+			true,
+		);
+	}
 
-  const kimiSecrets = path.join(dotfilesDir, "secrets/claude-code/kimi/kimi.sh");
-  const kimiToken = await parseEnvValue(kimiSecrets, "ANTHROPIC_AUTH_TOKEN");
-  const kimiBaseUrl = await parseEnvValue(kimiSecrets, "ANTHROPIC_BASE_URL");
-  const kimiModel = await parseEnvValue(kimiSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL");
+	const kimiSecrets = path.join(
+		dotfilesDir,
+		"secrets/claude-code/kimi/kimi.sh",
+	);
+	const kimiToken = await parseEnvValue(kimiSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const kimiBaseUrl = await parseEnvValue(kimiSecrets, "ANTHROPIC_BASE_URL");
+	const kimiModel = await parseEnvValue(
+		kimiSecrets,
+		"ANTHROPIC_DEFAULT_SONNET_MODEL",
+	);
 
-  if (kimiToken && kimiToken !== "__KIMI_AUTH_TOKEN__" && kimiBaseUrl && kimiModel) {
-    await writeGeneratedScript(
-      path.join(dotfilesDir, "shell/bin/zsh/ck.sh"),
-      path.join(binDir, "ck"),
-      {
-        "__KIMI_AUTH_TOKEN__": kimiToken,
-        "__KIMI_BASE_URL__": kimiBaseUrl,
-        "__KIMI_MODEL__": kimiModel,
-      },
-      true,
-    );
-  } else {
-    warn("Kimi not configured, skipping ck script generation");
-  }
+	if (
+		kimiToken &&
+		kimiToken !== "__KIMI_AUTH_TOKEN__" &&
+		kimiBaseUrl &&
+		kimiModel
+	) {
+		await writeGeneratedScript(
+			path.join(dotfilesDir, "shell/bin/zsh/ck.sh"),
+			path.join(binDir, "ck"),
+			{
+				__KIMI_AUTH_TOKEN__: kimiToken,
+				__KIMI_BASE_URL__: kimiBaseUrl,
+				__KIMI_MODEL__: kimiModel,
+			},
+			true,
+		);
+	} else {
+		warn("Kimi not configured, skipping ck script generation");
+	}
 
-  const ccySource = path.join(dotfilesDir, "shell/bin/zsh/ccy.sh");
-  const ccyTarget = path.join(binDir, "ccy");
-  if (await pathExists(ccySource)) {
-    await ensureWritableTarget(ccyTarget);
-    await copyFile(ccySource, ccyTarget);
-    await chmod(ccyTarget, 0o755);
-    action(`Copied: ${ccyTarget}`);
-  }
+	const ccySource = path.join(dotfilesDir, "shell/bin/zsh/ccy.sh");
+	const ccyTarget = path.join(binDir, "ccy");
+	if (await pathExists(ccySource)) {
+		await ensureWritableTarget(ccyTarget);
+		await copyFile(ccySource, ccyTarget);
+		await chmod(ccyTarget, 0o755);
+		action(`Copied: ${ccyTarget}`);
+	}
 }
 
 async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
-  info("Installing PowerShell bin scripts...");
-  const binDir = homePath(".local/bin");
-  await mkdir(binDir, { recursive: true });
+	info("Installing PowerShell bin scripts...");
+	const binDir = homePath(".local/bin");
+	await mkdir(binDir, { recursive: true });
 
-  const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.ps1");
-  let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.ps1");
+	let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
 
-  if (!glmToken) {
-    warn(`GLM secrets not found at ${glmSecrets}`);
-    const response = (await promptUser("Install cz.ps1 script anyway? (y/n): ")).toLowerCase();
-    if (response === "y") {
-      glmToken = await promptUser("Enter your Z.ai GLM API key: ");
-    }
-  }
+	if (!glmToken) {
+		warn(`GLM secrets not found at ${glmSecrets}`);
+		const response = (
+			await promptUser("Install cz.ps1 script anyway? (y/n): ")
+		).toLowerCase();
+		if (response === "y") {
+			glmToken = await promptUser("Enter your Z.ai GLM API key: ");
+		}
+	}
 
-  if (glmToken) {
-    await writeGeneratedScript(
-      path.join(dotfilesDir, "shell/bin/powershell/cz.ps1"),
-      path.join(binDir, "cz.ps1"),
-      {
-        "__ANTHROPIC_AUTH_TOKEN__": glmToken,
-        "__ANTHROPIC_BASE_URL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ?? "https://api.z.ai/api/anthropic",
-        "__API_TIMEOUT_MS__": (await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
-        "__ANTHROPIC_DEFAULT_HAIKU_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ?? "glm-5",
-        "__ANTHROPIC_DEFAULT_SONNET_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ?? "glm-5",
-        "__ANTHROPIC_DEFAULT_OPUS_MODEL__": (await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ?? "glm-5",
-      },
-      false,
-    );
-  }
+	if (glmToken) {
+		await writeGeneratedScript(
+			path.join(dotfilesDir, "shell/bin/powershell/cz.ps1"),
+			path.join(binDir, "cz.ps1"),
+			{
+				__ANTHROPIC_AUTH_TOKEN__: glmToken,
+				__ANTHROPIC_BASE_URL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ??
+					"https://api.z.ai/api/anthropic",
+				__API_TIMEOUT_MS__:
+					(await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
+				__ANTHROPIC_DEFAULT_HAIKU_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ??
+					"glm-5",
+				__ANTHROPIC_DEFAULT_SONNET_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ??
+					"glm-5",
+				__ANTHROPIC_DEFAULT_OPUS_MODEL__:
+					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ??
+					"glm-5",
+			},
+			false,
+		);
+	}
 
-  const kimiSecrets = path.join(dotfilesDir, "secrets/claude-code/kimi/kimi.ps1");
-  const kimiToken = await parseEnvValue(kimiSecrets, "ANTHROPIC_AUTH_TOKEN");
-  const kimiBaseUrl = await parseEnvValue(kimiSecrets, "ANTHROPIC_BASE_URL");
-  const kimiModel = await parseEnvValue(kimiSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL");
+	const kimiSecrets = path.join(
+		dotfilesDir,
+		"secrets/claude-code/kimi/kimi.ps1",
+	);
+	const kimiToken = await parseEnvValue(kimiSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const kimiBaseUrl = await parseEnvValue(kimiSecrets, "ANTHROPIC_BASE_URL");
+	const kimiModel = await parseEnvValue(
+		kimiSecrets,
+		"ANTHROPIC_DEFAULT_SONNET_MODEL",
+	);
 
-  if (kimiToken && kimiToken !== "__KIMI_AUTH_TOKEN__" && kimiBaseUrl && kimiModel) {
-    await writeGeneratedScript(
-      path.join(dotfilesDir, "shell/bin/powershell/ck.ps1"),
-      path.join(binDir, "ck.ps1"),
-      {
-        "__KIMI_AUTH_TOKEN__": kimiToken,
-        "__KIMI_BASE_URL__": kimiBaseUrl,
-        "__KIMI_MODEL__": kimiModel,
-      },
-      false,
-    );
-  } else {
-    warn("Kimi not configured, skipping ck.ps1 script generation");
-  }
+	if (
+		kimiToken &&
+		kimiToken !== "__KIMI_AUTH_TOKEN__" &&
+		kimiBaseUrl &&
+		kimiModel
+	) {
+		await writeGeneratedScript(
+			path.join(dotfilesDir, "shell/bin/powershell/ck.ps1"),
+			path.join(binDir, "ck.ps1"),
+			{
+				__KIMI_AUTH_TOKEN__: kimiToken,
+				__KIMI_BASE_URL__: kimiBaseUrl,
+				__KIMI_MODEL__: kimiModel,
+			},
+			false,
+		);
+	} else {
+		warn("Kimi not configured, skipping ck.ps1 script generation");
+	}
 
-  const ccySource = path.join(dotfilesDir, "shell/bin/powershell/ccy.ps1");
-  const ccyTarget = path.join(binDir, "ccy.ps1");
-  if (await pathExists(ccySource)) {
-    await ensureWritableTarget(ccyTarget);
-    await copyFile(ccySource, ccyTarget);
-    action(`Copied: ${ccyTarget}`);
-  }
+	const ccySource = path.join(dotfilesDir, "shell/bin/powershell/ccy.ps1");
+	const ccyTarget = path.join(binDir, "ccy.ps1");
+	if (await pathExists(ccySource)) {
+		await ensureWritableTarget(ccyTarget);
+		await copyFile(ccySource, ccyTarget);
+		action(`Copied: ${ccyTarget}`);
+	}
 }
 
-async function linkProjectAgents(dotfilesDir: string, projectPath: string): Promise<void> {
-  info(`Linking agents into project: ${projectPath}`);
-  if (!(await pathExists(projectPath))) {
-    throw new Error(`Project path does not exist: ${projectPath}`);
-  }
+async function linkProjectAgents(
+	dotfilesDir: string,
+	projectPath: string,
+): Promise<void> {
+	info(`Linking agents into project: ${projectPath}`);
+	if (!(await pathExists(projectPath))) {
+		throw new Error(`Project path does not exist: ${projectPath}`);
+	}
 
-  const projectStat = await lstat(projectPath);
-  if (!projectStat.isDirectory()) {
-    throw new Error(`Project path is not a directory: ${projectPath}`);
-  }
+	const projectStat = await lstat(projectPath);
+	if (!projectStat.isDirectory()) {
+		throw new Error(`Project path is not a directory: ${projectPath}`);
+	}
 
-  const source = path.join(dotfilesDir, "agents");
-  if (!(await pathExists(source))) {
-    throw new Error(`Agents source missing: ${source}`);
-  }
+	const source = path.join(dotfilesDir, "agents");
+	if (!(await pathExists(source))) {
+		throw new Error(`Agents source missing: ${source}`);
+	}
 
-  const target = path.join(projectPath, ".claude/agents");
-  await ensureLinked(source, target);
+	const target = path.join(projectPath, ".claude/agents");
+	await ensureLinked(source, target);
 }
 
-async function printLinkStatus(pathLabel: string, targetPath: string): Promise<void> {
-  if (!(await pathExists(targetPath))) {
-    return;
-  }
+async function printLinkStatus(
+	pathLabel: string,
+	targetPath: string,
+): Promise<void> {
+	if (!(await pathExists(targetPath))) {
+		return;
+	}
 
-  const stat = await lstat(targetPath);
-  if (!stat.isSymbolicLink()) {
-    return;
-  }
+	const stat = await lstat(targetPath);
+	if (!stat.isSymbolicLink()) {
+		return;
+	}
 
-  const linkTarget = await readlink(targetPath);
-  console.log(`  ${pathLabel} -> ${linkTarget}`);
+	const linkTarget = await readlink(targetPath);
+	console.log(`  ${pathLabel} -> ${linkTarget}`);
 }
 
 async function showStatus(dotfilesDir: string): Promise<void> {
-  info("Current link status");
-  console.log("");
+	info("Current link status");
+	console.log("");
 
-  await printLinkStatus(".gitconfig", homePath(".gitconfig"));
-  await printLinkStatus(".gitignore_global", homePath(".gitignore_global"));
-  await printLinkStatus(".tmux.conf", homePath(".tmux.conf"));
-  await printLinkStatus(".vimrc", homePath(".vimrc"));
+	await printLinkStatus(".gitconfig", homePath(".gitconfig"));
+	await printLinkStatus(".gitignore_global", homePath(".gitignore_global"));
+	await printLinkStatus(".tmux.conf", homePath(".tmux.conf"));
+	await printLinkStatus(".vimrc", homePath(".vimrc"));
 
-  console.log("\nAI mappings:");
-  await showAiAgentLinks({
-    configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
-    dotfilesDir,
-  });
+	console.log("\nAI mappings:");
+	await showAiAgentLinks({
+		configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
+		dotfilesDir,
+	});
 
-  await showToolStatus(dotfilesDir);
+	await showToolStatus(dotfilesDir);
+}
+
+// =============================================================================
+// Managed .zshrc helpers
+// =============================================================================
+
+export const ZSHRC_MANAGED_MARKER =
+	"# MANAGED BY dotfiles/scripts/link-dotfiles - DO NOT EDIT";
+
+export function renderManagedZshrc(dotfilesDir: string): string {
+	const sharedZshPath = path.join(dotfilesDir, "shell", "zsh", "shared.zsh");
+	const lines = [
+		ZSHRC_MANAGED_MARKER,
+		"# Edits go in ~/.zshrc.local (sourced below).",
+		"",
+		`source ${escapeShellValue(sharedZshPath)}`,
+		"",
+		"# Source local overrides if present.",
+		'if [ -f "$HOME/.zshrc.local" ]; then',
+		'  source "$HOME/.zshrc.local"',
+		"fi",
+		"",
+	];
+
+	return lines.join("\n");
+}
+
+export function renderZshrcLocal(): string {
+	const lines = [
+		"# ~/.zshrc.local - machine-specific zsh configuration",
+		"# This file is sourced by the managed ~/.zshrc after shared.zsh.",
+		"# Add local PATH tweaks, aliases, or env vars here.",
+		"# This file is NOT managed by dotfiles and will not be overwritten.",
+		"",
+	];
+
+	return lines.join("\n");
+}
+
+export function isManagedZshrc(content: string): boolean {
+	return content.startsWith(ZSHRC_MANAGED_MARKER);
+}
+
+function formatTimestamp(date: Date): string {
+	const pad = (value: number): string => String(value).padStart(2, "0");
+
+	return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+}
+
+async function uniqueBackupPath(basePath: string): Promise<string> {
+	if (!(await pathExists(basePath))) {
+		return basePath;
+	}
+
+	for (let index = 1; ; index += 1) {
+		const candidate = `${basePath}.${index}`;
+		if (!(await pathExists(candidate))) {
+			return candidate;
+		}
+	}
+}
+
+export type SetupZshrcOptions = {
+	dotfilesDir: string;
+	homeDir?: string;
+	now?: Date;
+};
+
+export async function setupZshrc(options: SetupZshrcOptions): Promise<void> {
+	if (process.platform === "win32") {
+		return;
+	}
+
+	const homeDir = options.homeDir ?? os.homedir();
+	const zshrcPath = path.join(homeDir, ".zshrc");
+	const zshrcLocalPath = path.join(homeDir, ".zshrc.local");
+	const desiredContent = renderManagedZshrc(options.dotfilesDir);
+
+	if (await pathExists(zshrcPath)) {
+		const existingContent = await readFile(zshrcPath, "utf8");
+
+		if (existingContent === desiredContent) {
+			info(".zshrc already managed and current");
+		} else if (isManagedZshrc(existingContent)) {
+			await writeFile(zshrcPath, desiredContent, "utf8");
+			action("Updated managed .zshrc");
+		} else {
+			const timestamp = formatTimestamp(options.now ?? new Date());
+			const backupPath = await uniqueBackupPath(
+				`${zshrcPath}.backup.${timestamp}`,
+			);
+			await rename(zshrcPath, backupPath);
+			action(`Backed up .zshrc to ${path.basename(backupPath)}`);
+			await writeFile(zshrcPath, desiredContent, "utf8");
+			action("Installed managed .zshrc");
+		}
+	} else {
+		await writeFile(zshrcPath, desiredContent, "utf8");
+		action("Created managed .zshrc");
+	}
+
+	if (!(await pathExists(zshrcLocalPath))) {
+		await writeFile(zshrcLocalPath, renderZshrcLocal(), "utf8");
+		action("Created ~/.zshrc.local (add local overrides here)");
+	}
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(process.argv.slice(2));
-  const dotfilesDir = options.dotfilesDir;
+	const options = parseArgs(process.argv.slice(2));
+	const dotfilesDir = options.dotfilesDir;
 
-  if (options.show) {
-    await showStatus(dotfilesDir);
-    return;
-  }
+	if (options.show) {
+		await showStatus(dotfilesDir);
+		return;
+	}
 
-  if (options.projectAgentsPath) {
-    await linkProjectAgents(dotfilesDir, options.projectAgentsPath);
-    return;
-  }
+	if (options.projectAgentsPath) {
+		await linkProjectAgents(dotfilesDir, options.projectAgentsPath);
+		return;
+	}
 
-  if (!options.skipSubmodules) {
-    await initializeSubmodules(dotfilesDir);
-  }
+	if (!options.skipSubmodules) {
+		await initializeSubmodules(dotfilesDir);
+	}
 
-  await linkDotfiles(dotfilesDir);
+	await linkDotfiles(dotfilesDir);
 
-  if (!options.skipAiAgents) {
-    await linkAiAgents({
-      configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
-      dotfilesDir,
-    });
-  }
+	if (!options.skipAiAgents) {
+		await linkAiAgents({
+			configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
+			dotfilesDir,
+		});
+	}
 
-  await linkGitHubConfig(dotfilesDir);
-  await linkConfigDirs(dotfilesDir);
-  await installManagedEnvironment(dotfilesDir);
-  await linkWindowsExtras(dotfilesDir);
+	await linkGitHubConfig(dotfilesDir);
+	await linkConfigDirs(dotfilesDir);
+	await installManagedEnvironment(dotfilesDir);
+	await setupZshrc({ dotfilesDir });
+	await linkWindowsExtras(dotfilesDir);
 
-  if (process.platform === "win32") {
-    await installWindowsBinScripts(dotfilesDir);
-  } else {
-    await installUnixBinScripts(dotfilesDir);
-  }
+	if (process.platform === "win32") {
+		await installWindowsBinScripts(dotfilesDir);
+	} else {
+		await installUnixBinScripts(dotfilesDir);
+	}
 
-  await installTools(dotfilesDir);
+	await installTools(dotfilesDir);
 
-  info("All linking tasks completed");
+	info("All linking tasks completed");
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error("link-dotfiles failed:", error);
-    process.exit(1);
-  });
+	main().catch((error) => {
+		console.error("link-dotfiles failed:", error);
+		process.exit(1);
+	});
 }

@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.75.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "minimal",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -52,7 +52,7 @@
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
     "npm:pi-codex-goal",
-    "../../Projects/pi-statusbar",
+    "npm:@bumpyclock/pi-statusbar",
     "npm:@ifi/oh-pi-themes",
     "npm:pi-teams",
     "npm:pi-intercom",

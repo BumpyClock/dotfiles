@@ -44,8 +44,9 @@ cd dotfiles
 ```bash
 ./shell/zsh/install-deps.sh
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
-./shell/zsh/sync-config.sh
 ```
+
+On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged file once, writes a small managed entrypoint that sources `shell/zsh/shared.zsh`, and creates `~/.zshrc.local` for machine-specific customizations.
 
 ### Windows (PowerShell)
 
@@ -82,6 +83,8 @@ During setup, installable CLI sources in `tools/` are also published into `~/.lo
 TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
 If `secrets/api-keys/env.json` exists, the linker also generates `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` so shells can load managed API keys automatically.
 
+On Unix/macOS, the linker also manages `~/.zshrc`. Existing unmanaged content is moved to a timestamped backup such as `~/.zshrc.backup.20260518_143000`; personal shell snippets belong in `~/.zshrc.local`, which the managed entrypoint sources after the shared config.
+
 ## Submodules
 
 ```bash
@@ -100,6 +103,6 @@ git submodule update --init --recursive
 
 ## Notes
 
-- Zsh config sync is managed by `shell/zsh/sync-config.sh`.
+- `~/.zshrc` is managed by the linker on Unix/macOS. Use `~/.zshrc.local` for machine-specific shell snippets; existing unmanaged `~/.zshrc` content is preserved in a timestamped backup on first migration.
 - `scripts/sync-github-folder.{sh,ps1}` remain available for project-level `.github` syncing.
 - `tools/trash.ts` moves files and directories to the system trash on macOS, Windows, and Linux; Linux support is best-effort through the underlying XDG-compatible backend.
