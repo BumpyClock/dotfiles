@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5-turbo",
   "defaultThinkingLevel": "minimal",
   "subagents": {
     "agentOverrides": {
