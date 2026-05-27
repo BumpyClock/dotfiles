@@ -70,6 +70,8 @@ Find conflicts:
 
 ```bash
 git status --short
+git diff --name-only --diff-filter=U
+rg -n '^(<<<<<<<|=======|>>>>>>>)' .
 ```
 
 Conflict markers:
@@ -83,6 +85,15 @@ theirs
 ```
 
 Resolve by choosing one side, combining, or rewriting. If binary conflict, ask before choosing/replacing.
+
+Resolution rules:
+
+- Resolve with minimal, correctness-first edits.
+- Prefer preserving both sides when behavior and compileability are clear.
+- If neither side is clearly right, stop and ask instead of guessing.
+- Regenerate lockfiles and generated files with repo tools instead of hand-editing.
+- Do not leave conflict markers in any file.
+- Avoid broad refactors while resolving conflicts.
 
 Mark resolved:
 
@@ -108,6 +119,13 @@ npm run build
 ```
 
 Use repo docs/package manager; commands above are examples, not default mandate.
+
+Conflict summary should include:
+
+- files resolved,
+- notable resolution choices,
+- build/test outcome,
+- remaining risks or checks not run.
 
 ## Common conflicts
 
@@ -177,6 +195,16 @@ gh api "/repos/<owner>/<repo>/actions/jobs/<job_id>/logs" > /tmp/job.log
 ```
 
 External checks: report name + URL. Do not chase Buildkite/other providers unless user asks.
+
+Fix loop:
+
+1. Inspect the failed check set before editing.
+2. Extract the first actionable error with exact log text.
+3. Identify likely root cause; do not retry blindly.
+4. Apply the smallest safe fix.
+5. Run the matching local command when available.
+6. Push only when the user asks.
+7. Re-check the PR check set and repeat only with new evidence.
 
 ## CI summary format
 

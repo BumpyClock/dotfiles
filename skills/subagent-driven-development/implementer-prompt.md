@@ -25,6 +25,7 @@ Owned scope:
 - You must not edit: [paths/modules]
 - If you need outside scope, stop with NEEDS_CONTEXT.
 - Other agents may be editing elsewhere. Do not revert unrelated edits. Adapt to existing changes.
+- Do not coordinate directly with sibling workers. Report up through your handoff.
 
 Acceptance criteria:
 [Specific outcomes and tests.]
@@ -54,10 +55,13 @@ Escalate with NEEDS_CONTEXT or BLOCKED when:
 
 Report format:
 - Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+- Role and owned scope
 - Summary
 - Files changed
+- Acceptance criteria covered
 - Tests run + exact results
 - Smoke/live verification + exact results, or not run + why
 - Self-review findings
 - Concerns/questions/blockers
+- Durable artifact paths, if any
 ```

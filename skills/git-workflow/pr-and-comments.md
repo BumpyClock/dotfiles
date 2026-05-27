@@ -49,6 +49,63 @@ Title prefix when repo has no stricter convention:
 - `[Build]` build/deps/CI
 - `[BREAKING]` breaking change
 
+## Make PR easy to review
+
+Use when the user asks to make a PR easier to review, tidy a PR, clean up reviewer guidance, annotate a diff, or reduce PR noise.
+
+Default goal: improve reviewability without changing behavior.
+
+1. Resolve the target PR from URL, number, or current branch.
+2. Inspect commits, diff size, changed paths, generated files, and PR description.
+3. Identify reviewability problems:
+   - noisy or misleading commits,
+   - stale PR description,
+   - unrelated changes,
+   - mixed mechanical and logic changes,
+   - missing tests or verification notes,
+   - unclear reviewer entry points.
+4. Prefer safe improvements first: PR body, review notes, file grouping, and explicit test/risk notes.
+5. Propose a plan before rewriting history, rebasing, squashing, or force-pushing.
+6. Verify the resulting tree or diff still matches the intended code.
+
+Reviewer guidance should include:
+
+- TL;DR matching the actual diff.
+- Core files vs generated/mechanical files.
+- Risky behavior changes, migration order, rollout plan, and rollback notes when relevant.
+- Test coverage and any checks not run.
+- Specific reviewer focus areas.
+
+If the PR is too large to make reviewable with notes, recommend splitting instead of polishing around the problem.
+
+### History cleanup
+
+Only rewrite history when the user asks or agrees to the plan. Before rewriting:
+
+```bash
+gh pr view <PR> --json title,headRefName,baseRefName,state,commits
+git fetch origin <headRefName> <baseRefName>
+ORIGINAL_TREE=$(git rev-parse origin/<headRefName>^{tree})
+```
+
+Useful commit grouping order:
+
+1. Schema/storage or generated API definitions.
+2. Core logic.
+3. Wiring and integration.
+4. UI or surface behavior.
+5. Tests.
+
+After rewriting, verify content identity:
+
+```bash
+echo "Original tree: $ORIGINAL_TREE"
+echo "Current tree:  $(git rev-parse HEAD^{tree})"
+git diff origin/<headRefName> --stat
+```
+
+Do not push if the tree changed unintentionally. Push still needs user approval.
+
 ## Breaking changes
 
 Must include:
@@ -169,6 +226,8 @@ gh pr create --draft --title "..." --body "..."
 Push only when user asks, even for PR updates.
 
 ## Fetch comments
+
+Use when the user asks to fetch PR comments, summarize review feedback, or address comments. Return a grouped action list ordered by priority, plus open questions that need user clarification.
 
 Preferred unresolved count:
 

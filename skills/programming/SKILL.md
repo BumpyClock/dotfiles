@@ -11,6 +11,7 @@ Default to sub-agent delegation for programming work. For planned multi-task wor
 
 - Verify ideas independently; push back when requirements imply needless complexity or a simpler approach exists.
 - Prefer root-cause analysis over band-aids; avoid quick fixes that hide issues.
+- After AI-assisted edits, run a deslop pass when the diff shows abnormal comments, needless defensive code, type-system escapes, or single-use abstractions.
 - Before coding, state assumptions. If requirements have multiple plausible interpretations, present options with a recommendation. If intent remains unclear after reading context, ask.
 
 ## Quick Start (Required)
@@ -90,6 +91,8 @@ Stop signs:
 
 - `issue-investigation/guide.md` -> structured investigation reports, incident triage, root-cause hypothesis ranking, and validation plans.
 - `systematic-debugging/guide.md` -> required root-cause workflow for bugs, test failures, build failures, regressions, and unexpected behavior before proposing fixes.
+- `references/refactoring/deslop.md` -> cleanup pass for AI-generated code slop while preserving behavior and scope.
+- For explicit proof requests, use the standalone `verify-this` skill.
 
 ## Rules
 

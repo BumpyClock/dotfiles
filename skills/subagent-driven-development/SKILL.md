@@ -13,12 +13,28 @@ Core principle: controller schedules; leaf subagents implement atomic tasks, agg
 
 Inline execution is allowed for tiny micro-flow fixes, urgent critical-path blockers, verification-only work, unavailable/forbidden subagents, or explicit user request.
 
+This is the local-agent counterpart to cloud orchestration systems: use `tsq` as the durable task graph and scheduler, local git as the shared medium, explicit handoffs as meaning, and controller-owned scheduling as the loop. Do not import cloud-agent assumptions such as `plan.json`, automatic clone creation, automatic PR creation, Slack coupling, or API-key driven spawning unless the user explicitly asks for that system.
+
+## Node roles
+
+| Node | Scope | Output |
+| --- | --- | --- |
+| Controller | Entire user goal | User communication, scheduling, scope decisions, final evidence |
+| Planner | Plan/spec only | Approved `tsq` task graph and execution handoff |
+| Implementer | One atomic leaf task | Code/docs/tests in owned scope plus handoff report |
+| Integration owner | Parent/subtree or root | Cross-task integration fixes plus verification evidence |
+| Reviewer | Parent/subtree or final diff | PASS/FAIL with spec and quality evidence |
+| Verifier | One measurable acceptance claim | VERIFIED/NOT VERIFIED/INCONCLUSIVE evidence |
+
 ## Local Rules
 
 - Do not commit unless the user explicitly asks. If commits are requested, use local `git-workflow`.
 - Do not force worktrees, branch changes, stashes, resets, or destructive git ops unless the user asks.
 - Parent/controller verifies evidence before saying done, but should not integrate code except for tiny coordinator metadata or blocked emergency work. If it must patch manually, say why.
 - `tsq` is canonical for workflow state. Subagent prompts still include full child task payload so children do not need to fetch context to understand the task.
+- Workers do not coordinate with sibling workers. Information flows up through handoffs and down through controller/planner prompts.
+- For long-running or resumable work, keep `tsq` as the source of truth and optionally write durable handoff summaries under `/tmp/sdd-handoffs/<root-tsq-id>/` or another user-approved scratch path. Handoff files supplement `tsq`; they do not replace it.
+- Before closing the root, check for late handoffs, stale `tsq` states, and unresolved review/verifier findings.
 
 ## Default execution model
 
@@ -42,7 +58,8 @@ SDD executes the `tsq` dependency graph:
 9. Mark a parent/subtree complete only after its aggregation review passes, or mark a leaf complete without review only when its parent aggregation review will cover it.
 10. Continue bottom-up through nested task trees until the root is integrated.
 11. Run final root integration review and smoke/live verification.
-12. Parent/controller verifies diff, status, aggregate review results, and evidence before final report.
+12. Use verifier agents or local `verify-this` style checks for measurable acceptance claims that need independent proof beyond review.
+13. Parent/controller verifies diff, status, handoffs, aggregate review results, and evidence before final report.
 
 ## Parallel queue
 
@@ -62,6 +79,23 @@ At each execution wave:
 3. Dispatch remaining safe ready tasks concurrently.
 4. Update `tsq` status as tasks start, pass, or block.
 5. When blockers clear, start the next wave.
+
+## Handoff discipline
+
+Every implementer, integration owner, reviewer, and verifier report is a handoff. Handoffs must be concise, structured, and sufficient for a parent/controller to resume without reading the worker's full transcript.
+
+Minimum handoff fields:
+
+- role and owned scope,
+- status,
+- files changed or reviewed,
+- acceptance criteria covered,
+- commands run with exact outcomes,
+- smoke/live evidence or why not run,
+- risks, blockers, and follow-ups,
+- durable artifact paths if created.
+
+If work spans sessions, mirror these reports into scratch files and reference them from `tsq` notes/status when useful. Do not put transient handoffs in repo docs unless the user asks to preserve them.
 
 ## Dispatch Rules
 
@@ -87,6 +121,8 @@ Investigation and review subagents are read-only. Implementation subagents edit 
 
 Use `developer-lite` for clear 1-2 file mechanical tasks. Use `developer` for cross-module, API/schema/auth/security/concurrency/perf/new-dep/debugging/judgment work. Use `reviewer` with explicit modes: `aggregate-review` for parent/subtree boundaries and `final-integration` for the root. Use separate `spec-compliance` or `code-quality` modes only when the caller explicitly requests leaf-level/two-stage review or risk requires tight isolation.
 
+Use `verify-this` workflow or a verifier subagent for claims that need repeatable measurement, before/after comparison, screenshots, traces, API response diffs, perf data, or memory evidence. Reviewer findings are not a substitute for verification evidence.
+
 ## Workflow
 
 1. Read the approved `tsq` root, nested child task list, dependency graph, and plan/spec.
@@ -103,7 +139,8 @@ Use `developer-lite` for clear 1-2 file mechanical tasks. Use `developer` for cr
 12. Dispatch root integration owner using `integration-owner-prompt.md` when root-level integration work is needed.
 13. Run final integration review over the root integrated diff.
 14. Send final issues to integration owner. Repeat until final review passes or blocker needs user/controller decision.
-15. Parent/controller verifies diff, status, aggregate review output, and verification evidence, then reports.
+15. Check for late handoffs or stale `tsq` states before closing the root.
+16. Parent/controller verifies diff, status, handoffs, aggregate review output, and verification evidence, then reports.
 
 ## Status Handling
 
@@ -136,6 +173,7 @@ Before final report, parent/controller verifies:
 - plan-review approval or explicit controller waiver
 - aggregate parent/subtree review pass results
 - final integration review pass result
+- verifier verdicts for measurable acceptance claims, when used
 - focused test outputs
 - broader gate outputs
 - smoke/live verification for implemented user-visible behavior
@@ -160,5 +198,6 @@ If smoke/live verification was not run, say why.
 - `implementer-prompt.md` - leaf task implementer
 - `aggregate-reviewer-prompt.md` - combined parent/subtree reviewer
 - `integration-owner-prompt.md` - parent/subtree or root integration owner
+- `verifier-prompt.md` - independent measurable acceptance claim verifier
 - `spec-reviewer-prompt.md` - legacy/tight-isolation spec-compliance reviewer only when explicitly requested
 - `code-quality-reviewer-prompt.md` - legacy/tight-isolation code-quality reviewer only when explicitly requested

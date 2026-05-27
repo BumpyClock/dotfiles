@@ -6,13 +6,14 @@ suppress_unstable_features_warning = true
 tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
 tui.notifications = true
 tui.notification_method = "auto"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 model_context_window = 450000
 model_auto_compact_token_limit = 500000
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
-approvals_reviewer = "guardian_subagent"
+approvals_reviewer = "user"
+
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -27,7 +28,7 @@ personality = true
 multi_agent = true
 prevent_idle_sleep = true
 apps = false
-js_repl = true
+js_repl = false
 guardian_approval = true
 goals = true
 
@@ -41,7 +42,7 @@ hide_rate_limit_model_nudge = true
 "gpt-5.1-codex-max" = "gpt-5.2-codex"
 "gpt-5.2" = "gpt-5.2-codex"
 "gpt-5.2-codex" = "gpt-5.3-codex"
-"gpt-5.3-codex" = "gpt-5.4"
+"gpt-5.3-codex" = "gpt-5.5"
 
 
 [projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
@@ -149,6 +150,9 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/digests-api"]
 trust_level = "trusted"
 
+[projects."/Users/adityasharma/Projects/Gurukul/SchoolWeb"]
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -161,6 +165,23 @@ max_threads = 24
 url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
 http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/Codex.app/Contents/Resources/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = ""
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
+CODEX_HOME = "/Users/adityasharma/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "496c7b3cb95b4bc20cff49b513150606e0da0000c92bf752206bee5a6c248423"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_MARKETPLACE_NAME = "openai-bundled"
+NODE_REPL_UNTRUSTED_ENV_ALLOWLIST = "BROWSER_USE_MARKETPLACE_NAME"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.code-tools]
 # command = "code-tools-mcp"
@@ -208,6 +229,9 @@ enabled = false
 enabled = false
 
 [plugins."browser-use@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [[skills.config]]
@@ -287,7 +311,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-13T14:06:22Z"
+last_updated = "2026-05-27T16:36:05Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -296,8 +320,7 @@ last_updated = "2026-05-13T14:33:36Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
-[sandbox_workspace_write]
-network_access = true
+[desktop]
 
 # [mcp_servers.openaiDeveloperDocs]
 # url = "https://developers.openai.com/mcp"

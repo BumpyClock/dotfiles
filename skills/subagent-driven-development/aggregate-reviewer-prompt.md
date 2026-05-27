@@ -34,4 +34,5 @@ Rules:
 Output:
 - PASS if implementation matches requirements and has no Critical/Important quality issues.
 - FAIL with file:line evidence for each spec or Critical/Important quality issue, including the responsible child/subtree when identifiable and concrete fix direction.
+- Include reviewed scope, acceptance criteria covered, verification evidence checked, and remaining risks.
 ```

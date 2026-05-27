@@ -39,7 +39,12 @@ import sys
 from pathlib import Path
 
 # Import our modular components
+from common.env_config import env_int
+
 from xcode import BuildRunner, OutputFormatter, XCResultCache, XCResultParser
+
+BUILD_LOG_PREVIEW_CHARS = env_int("IOS_SIM_BUILD_LOG_PREVIEW", 4000)
+BUILD_JSON_CAP = env_int("IOS_SIM_BUILD_JSON_CAP", 50)
 
 
 def main():
@@ -76,8 +81,7 @@ Examples:
     build_group.add_argument(
         "--configuration",
         default="Debug",
-        choices=["Debug", "Release"],
-        help="Build configuration (default: Debug)",
+        help="Build configuration (default: Debug). Accepts any valid Xcode configuration.",
     )
     build_group.add_argument("--simulator", help="Simulator name (default: iPhone 15)")
     build_group.add_argument("--clean", action="store_true", help="Clean before building")
@@ -194,7 +198,7 @@ Examples:
                     "warning_count": warning_count,
                     "errors": errors,
                     "warnings": warnings,
-                    "log_preview": build_log[:1000] if build_log else None,
+                    "log_preview": build_log[:BUILD_LOG_PREVIEW_CHARS] if build_log else None,
                 }
                 print(json.dumps(data, indent=2))
             else:
@@ -258,15 +262,28 @@ Examples:
     # Format output
     status = "SUCCESS" if success else "FAILED"
 
-    # Generate hints for failed builds
-    hints = None
-    if not success:
-        errors = parser.get_errors()
-        hints = OutputFormatter.generate_hints(errors)
+    # Collect errors on failure (used by all output modes)
+    errors = parser.get_errors() if not success else None
+    hints = OutputFormatter.generate_hints(errors) if errors else None
+
+    # Collect test info and failed tests when testing
+    test_info = None
+    failed_tests = None
+    if args.test and xcresult_path:
+        test_results = parser.get_test_results()
+        if test_results:
+            test_info = {
+                "total": test_results.get("total", 0),
+                "passed": test_results.get("passed", 0),
+                "failed": test_results.get("failed", 0),
+                "duration": test_results.get("duration", 0.0),
+            }
+        if not success:
+            failed_tests = parser.get_failed_tests()
 
     if args.verbose:
         # Verbose mode with error/warning details
-        errors = parser.get_errors() if error_count > 0 else None
+        verbose_errors = errors if error_count > 0 else None
         warnings = parser.get_warnings() if warning_count > 0 else None
 
         output = OutputFormatter.format_verbose(
@@ -274,8 +291,9 @@ Examples:
             error_count=error_count,
             warning_count=warning_count,
             xcresult_id=xcresult_id or "N/A",
-            errors=errors,
+            errors=verbose_errors,
             warnings=warnings,
+            test_info=test_info,
         )
         print(output)
     elif args.json:
@@ -286,6 +304,13 @@ Examples:
             "error_count": error_count,
             "warning_count": warning_count,
         }
+        if test_info:
+            data["test_info"] = test_info
+        if not success:
+            if errors:
+                data["errors"] = errors[:BUILD_JSON_CAP]
+            if failed_tests:
+                data["failed_tests"] = failed_tests[:BUILD_JSON_CAP]
         if hints:
             data["hints"] = hints
         import json
@@ -298,7 +323,10 @@ Examples:
             error_count=error_count,
             warning_count=warning_count,
             xcresult_id=xcresult_id or "N/A",
+            test_info=test_info,
             hints=hints,
+            errors=errors,
+            failed_tests=failed_tests,
         )
         print(output)
 

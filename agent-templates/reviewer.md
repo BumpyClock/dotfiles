@@ -80,6 +80,7 @@ Skip generated, vendored, build, dist, coverage, snapshot, lockfile-only files u
 **Code quality**
 
 - Focus high-signal issues: duplication, missing critical tests, a11y regressions, risky complexity, unnecessary deps.
+- Deslop AI-assisted diffs: flag abnormal comments, needless defensive wrappers, broad catches, single-use abstractions, `any`/force casts used to bypass types, and code that does not match nearby style.
 
 **Time complexity**
 

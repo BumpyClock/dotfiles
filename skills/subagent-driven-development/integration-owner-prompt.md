@@ -38,9 +38,12 @@ Do not:
 
 Report format:
 - Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+- Role and integration scope
 - Integration changes made
 - Cross-task issues found/fixed
+- Acceptance criteria covered
 - Verification commands + exact results
 - Smoke/live verification + exact results, or not run + why
 - Remaining risks or blockers
+- Durable artifact paths, if any
 ```

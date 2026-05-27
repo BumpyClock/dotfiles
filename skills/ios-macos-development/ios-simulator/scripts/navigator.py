@@ -67,6 +67,10 @@ from common import (
     resolve_udid,
     transform_screenshot_coords,
 )
+from common.env_config import env_float, env_int
+
+MAX_ELEMENTS_LISTED = env_int("IOS_SIM_MAX_ELEMENTS", 25)
+TAP_SETTLE_SECONDS = env_float("IOS_SIM_TAP_SETTLE_MS", 500.0) / 1000.0
 
 
 @dataclass
@@ -135,6 +139,11 @@ class Navigator:
             self._flatten_tree(child, elements)
 
         return elements
+
+    def list_elements(self, force_refresh: bool = False) -> list[Element]:
+        """Get flat list of all UI elements on current screen."""
+        tree = self.get_accessibility_tree(force_refresh)
+        return self._flatten_tree(tree)
 
     def find_element(
         self,
@@ -226,7 +235,7 @@ class Navigator:
             # Small delay for focus
             import time
 
-            time.sleep(0.5)
+            time.sleep(TAP_SETTLE_SECONDS)
 
         # Enter text
         cmd = ["idb", "ui", "text", text]
@@ -345,8 +354,7 @@ def main():
 
     # List mode
     if args.list:
-        tree = navigator.get_accessibility_tree()
-        elements = navigator._flatten_tree(tree)
+        elements = navigator.list_elements()
 
         # Filter to tappable elements
         tappable = [
@@ -356,11 +364,11 @@ def main():
         ]
 
         print(f"Tappable elements ({len(tappable)}):")
-        for elem in tappable[:10]:  # Limit output for tokens
+        for elem in tappable[:MAX_ELEMENTS_LISTED]:
             print(f"  {elem.type}: \"{elem.label or elem.value or 'Unnamed'}\" {elem.center}")
 
-        if len(tappable) > 10:
-            print(f"  ... and {len(tappable) - 10} more")
+        if len(tappable) > MAX_ELEMENTS_LISTED:
+            print(f"  ... and {len(tappable) - MAX_ELEMENTS_LISTED} more")
         sys.exit(0)
 
     # Direct tap at coordinates

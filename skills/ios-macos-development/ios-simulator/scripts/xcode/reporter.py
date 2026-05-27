@@ -6,6 +6,12 @@ Provides multiple output formats with progressive disclosure support.
 
 import json
 
+from common.env_config import env_int
+
+BUILD_SUMMARY_CAP = env_int("IOS_SIM_BUILD_SUMMARY_CAP", 15)
+BUILD_VERBOSE_CAP = env_int("IOS_SIM_BUILD_VERBOSE_CAP", 100)
+BUILD_LOG_TAIL = env_int("IOS_SIM_LOG_TAIL", 200)
+
 
 class OutputFormatter:
     """
@@ -22,9 +28,14 @@ class OutputFormatter:
         xcresult_id: str,
         test_info: dict | None = None,
         hints: list[str] | None = None,
+        errors: list[dict] | None = None,
+        failed_tests: list[dict] | None = None,
     ) -> str:
         """
-        Format ultra-minimal output (5-10 tokens).
+        Format ultra-minimal output (5-10 tokens on success, more on failure).
+
+        On failure, automatically surfaces top errors/failed tests inline so agents
+        don't need a second round-trip with --get-errors.
 
         Args:
             status: Build status (SUCCESS/FAILED)
@@ -33,13 +44,11 @@ class OutputFormatter:
             xcresult_id: XCResult bundle ID
             test_info: Optional test results dict
             hints: Optional list of actionable hints
+            errors: Optional error list to surface on failure
+            failed_tests: Optional failed test list to surface on failure
 
         Returns:
             Minimal formatted string
-
-        Example:
-            Build: SUCCESS (0 errors, 3 warnings) [xcresult-20251018-143052]
-            Tests: PASS (12/12 passed, 4.2s) [xcresult-20251018-143052]
         """
         lines = []
 
@@ -60,6 +69,18 @@ class OutputFormatter:
                 f"Build: {status} ({error_count} errors, {warning_count} warnings) [{xcresult_id}]"
             )
 
+        # Surface errors inline on failure
+        if status == "FAILED" and errors:
+            lines.append("")
+            lines.append(OutputFormatter.format_errors(errors, limit=BUILD_SUMMARY_CAP))
+
+        # Surface failed tests inline on failure
+        if failed_tests:
+            lines.append("")
+            lines.append(
+                OutputFormatter.format_test_failures(failed_tests, limit=BUILD_SUMMARY_CAP)
+            )
+
         # Add hints if provided and build failed
         if hints and status == "FAILED":
             lines.append("")
@@ -68,7 +89,38 @@ class OutputFormatter:
         return "\n".join(lines)
 
     @staticmethod
-    def format_errors(errors: list[dict], limit: int = 10) -> str:
+    def format_test_failures(failed_tests: list[dict], limit: int = BUILD_SUMMARY_CAP) -> str:
+        """
+        Format failed test details.
+
+        Args:
+            failed_tests: List of dicts with test_name and failure_message
+            limit: Maximum failures to show
+
+        Returns:
+            Formatted failure list
+        """
+        if not failed_tests:
+            return "No test failures found."
+
+        lines = [f"Failed tests ({len(failed_tests)}):"]
+        lines.append("")
+
+        for i, test in enumerate(failed_tests[:limit], 1):
+            name = test.get("test_name", "Unknown")
+            message = test.get("failure_message", "")
+            lines.append(f"{i}. {name}")
+            if message:
+                lines.append(f"   {message}")
+            lines.append("")
+
+        if len(failed_tests) > limit:
+            lines.append(f"... and {len(failed_tests) - limit} more failures")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def format_errors(errors: list[dict], limit: int = BUILD_VERBOSE_CAP) -> str:
         """
         Format error details.
 
@@ -109,7 +161,7 @@ class OutputFormatter:
         return "\n".join(lines)
 
     @staticmethod
-    def format_warnings(warnings: list[dict], limit: int = 10) -> str:
+    def format_warnings(warnings: list[dict], limit: int = BUILD_VERBOSE_CAP) -> str:
         """
         Format warning details.
 
@@ -150,7 +202,7 @@ class OutputFormatter:
         return "\n".join(lines)
 
     @staticmethod
-    def format_log(log: str, lines: int = 50) -> str:
+    def format_log(log: str, lines: int = BUILD_LOG_TAIL) -> str:
         """
         Format build log (show last N lines).
 
@@ -277,12 +329,12 @@ class OutputFormatter:
 
         # Errors
         if errors and len(errors) > 0:
-            lines.append(OutputFormatter.format_errors(errors, limit=5))
+            lines.append(OutputFormatter.format_errors(errors, limit=BUILD_VERBOSE_CAP))
             lines.append("")
 
         # Warnings
         if warnings and len(warnings) > 0:
-            lines.append(OutputFormatter.format_warnings(warnings, limit=5))
+            lines.append(OutputFormatter.format_warnings(warnings, limit=BUILD_VERBOSE_CAP))
             lines.append("")
 
         # Summary
