@@ -16,13 +16,15 @@
 - Put files in repo or `~/Projects/dotfiles`.
 - Read `~/Projects/dotfiles/tools.md`.
 
-<workflow>
+## Workflow
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
+- For clawpatch or similar finding-driven work, preserve finding IDs in `tsq` notes/tasks and record the exact revalidation command after checking the installed CLI syntax. use `verify-this` skill to validate findings with evidence before assuming validity.
 - Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
 - Research, code edits, debugging, docs, tests, reviews -> subagents by default. Parallelize independent work. Speed > token efficiency.
 - Main agent may work locally for tiny tasks, urgent critical-path blockers, verification, or when delegation adds delay/conflict. 
 - Subagents need owned scope + full context: task, why, files/modules, contracts, constraints, acceptance criteria, tests, deliverable format.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
+- Keep PRs logically grouped for review and testing. Avoid bundling unrelated flows or surfaces into one PR just because tasks are available in parallel.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo uses root `LEARNINGS.md`, follow. Keep learned docs evergreen: rationale, pitfalls, failure modes, architecture decisions. No transient changelog, secrets, sensitive URLs, or personal data. If repo says `no docs`, skip.
 - Requested deletes -> trash. Unexpected deletes/renames -> stop + ask.
 - Need upstream file -> stage in `/tmp/`, cherry-pick. Never overwrite tracked files.
@@ -30,12 +32,13 @@
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
 - Use inherent knowledge for stable facts. Use `web_search` / `web_fetch` for current, latest, high-risk, or uncertain info.
-</workflow>
+
 
 ## PR feedback
 
 - Comments: `gh pr view` + `gh api .../comments --paginate`.
 - Replies: cite fix + file/line. Resolve threads after fix lands.
+- GitHub issue/PR comments must state the exact scope completed. Do not imply an overarching issue or plan is done when only a baseline, subtask, or enabling slice landed.
 - Merge contributor PR -> thank contributor in `CHANGELOG.md`.
 
 ## Docs / build / test

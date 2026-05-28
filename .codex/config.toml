@@ -15,6 +15,8 @@ plan_mode_reasoning_effort = "high"
 approvals_reviewer = "user"
 
 
+notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
@@ -311,7 +313,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-27T16:36:05Z"
+last_updated = "2026-05-28T02:00:16Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -321,6 +323,9 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [desktop]
+default-service-tier = "priority"
+reviewDelivery = "detached"
+keepRemoteControlAwakeWhilePluggedIn = true
 
 # [mcp_servers.openaiDeveloperDocs]
 # url = "https://developers.openai.com/mcp"
