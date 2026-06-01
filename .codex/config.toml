@@ -323,7 +323,6 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [desktop]
-default-service-tier = "priority"
 reviewDelivery = "detached"
 keepRemoteControlAwakeWhilePluggedIn = true
 
