@@ -186,8 +186,8 @@
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "teammateMode": "in-process",
+  "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
-  },
-  "skipAutoPermissionPrompt": true
+  }
 }
