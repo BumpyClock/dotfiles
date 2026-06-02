@@ -110,7 +110,7 @@ export function normalizeForCompare(input: string): string {
       normalized = `\\\\${normalized.slice(4)}`;
     }
 
-    normalized = normalized.replace(/[\\\/]+$/, "");
+    normalized = normalized.replace(/[\\/]+$/, "");
     return normalized.toLowerCase();
   }
 
@@ -442,7 +442,25 @@ export async function showLinks(config: LinkConfig, dotfilesDir: string): Promis
   }
 }
 
+export async function ensureLocalAgentsDefault(dotfilesDir: string): Promise<void> {
+  const targetPath = path.join(dotfilesDir, "AGENTS.local.md");
+  if (await pathExists(targetPath)) {
+    console.log(`[SKIP] Local agent instructions already exist: ${targetPath}`);
+    return;
+  }
+
+  const sourcePath = path.join(dotfilesDir, "secrets", "AGENTS.local.md");
+  if (!(await pathExists(sourcePath))) {
+    throw new Error(`Missing local agent instructions default: ${sourcePath}`);
+  }
+
+  await cp(sourcePath, targetPath);
+  console.log(`[COPY] ${sourcePath} -> ${targetPath}`);
+}
+
 export async function linkAiAgents(opts: { configPath: string; dotfilesDir: string }): Promise<void> {
+  await ensureLocalAgentsDefault(opts.dotfilesDir);
+
   info("Compiling agent templates...");
   const templates = await compileAgents({
     agentsDir: path.join(opts.dotfilesDir, "agent-templates"),

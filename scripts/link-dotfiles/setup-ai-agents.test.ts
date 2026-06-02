@@ -11,7 +11,12 @@ import {
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { ensureMirrored, loadConfig, pathExists } from "./setup-ai-agents";
+import {
+	ensureLocalAgentsDefault,
+	ensureMirrored,
+	loadConfig,
+	pathExists,
+} from "./setup-ai-agents";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const configPath = path.resolve(testDirectory, "..", "ai-agent-links.json");
@@ -89,6 +94,27 @@ describe("ai-agent-links config", () => {
 			{ optional: true, path: "~/.ai_agents/AGENTS.md" },
 			{ optional: false, path: "~/.pi/agent/AGENTS.md" },
 			{ optional: false, path: "~/.agents/AGENTS.md" },
+		]);
+	});
+
+	test("links AGENTS.local.md into the same shared agent directories", async () => {
+		const config = await loadConfig(configPath);
+
+		expect(config.sources.local_instructions).toBe("AGENTS.local.md");
+		expect(
+			config.targets
+				.filter((target) => target.source === "local_instructions")
+				.map((target) => ({
+					optional: target.optional ?? false,
+					path: target.path,
+				})),
+		).toEqual([
+			{ optional: false, path: "~/.claude/AGENTS.local.md" },
+			{ optional: false, path: "~/.codex/AGENTS.local.md" },
+			{ optional: false, path: "~/.copilot/AGENTS.local.md" },
+			{ optional: true, path: "~/.ai_agents/AGENTS.local.md" },
+			{ optional: false, path: "~/.pi/agent/AGENTS.local.md" },
+			{ optional: false, path: "~/.agents/AGENTS.local.md" },
 		]);
 	});
 
@@ -185,6 +211,11 @@ describe("ai-agent-links config", () => {
 			{ mode: "link", path: "~/.pi/agent/AGENTS.md", source: "instructions" },
 			{
 				mode: "link",
+				path: "~/.pi/agent/AGENTS.local.md",
+				source: "local_instructions",
+			},
+			{
+				mode: "link",
 				path: "~/.pi/agent/settings.json",
 				source: "pi_settings",
 			},
@@ -210,6 +241,46 @@ describe("ai-agent-links config", () => {
 			},
 			{ mode: "mirror", path: "~/.pi/agent/agents", source: "pi_agents" },
 		]);
+	});
+
+	test("creates AGENTS.local.md from secrets default when missing", async () => {
+		const root = await createTemporaryDirectory();
+		await mkdir(path.join(root, "secrets"), { recursive: true });
+		await writeFile(
+			path.join(root, "secrets", "AGENTS.local.md"),
+			"local-default",
+		);
+
+		await ensureLocalAgentsDefault(root);
+
+		expect(await readFile(path.join(root, "AGENTS.local.md"), "utf8")).toBe(
+			"local-default",
+		);
+	});
+
+	test("does not overwrite an existing AGENTS.local.md", async () => {
+		const root = await createTemporaryDirectory();
+		await mkdir(path.join(root, "secrets"), { recursive: true });
+		await writeFile(
+			path.join(root, "secrets", "AGENTS.local.md"),
+			"local-default",
+		);
+		await writeFile(path.join(root, "AGENTS.local.md"), "existing-local");
+
+		await ensureLocalAgentsDefault(root);
+
+		expect(await readFile(path.join(root, "AGENTS.local.md"), "utf8")).toBe(
+			"existing-local",
+		);
+	});
+
+	test("fails AGENTS.local.md creation when secrets default is missing", async () => {
+		const root = await createTemporaryDirectory();
+
+		expect(ensureLocalAgentsDefault(root)).rejects.toThrow(
+			"Missing local agent instructions default",
+		);
+		expect(await pathExists(path.join(root, "AGENTS.local.md"))).toBe(false);
 	});
 
 	test("mirrors generated agent directories by replacing stale files", async () => {
