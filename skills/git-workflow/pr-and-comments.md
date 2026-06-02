@@ -217,11 +217,14 @@ gh pr create --draft --title "..." --body "..."
 
 1. Fetch unresolved first.
 2. Read all relevant feedback before editing.
-3. Triage: blocking, suggestion, question, nit, praise.
-4. Ask user which numbered items to address when scope ambiguous.
-5. Fix blocking items first.
-6. Reply with exact fix/file/commit.
-7. Resolve only safe conversations; let reviewer resolve significant ones.
+3. Validate each comment against current code before acting. Do not fix stale, already-addressed, or incorrect feedback without saying why.
+4. Triage: blocking, suggestion, question, nit, praise.
+5. Separate architecture smell from normal fixes. If a valid comment points to missing boundary, owner, or contract, pause and notify the user before hot-patching around it.
+6. Ask user which numbered items to address when scope ambiguous.
+7. Fix blocking valid items first.
+8. Reply with exact fix/file/commit.
+9. Resolve only safe conversations after fix lands; let reviewer resolve significant ones unless user/repo expects agent resolution.
+10. When user asks to fully clear feedback, wait/re-fetch after the requested interval and repeat until no actionable unresolved comments remain or a blocker needs user decision.
 
 Push only when user asks, even for PR updates.
 
@@ -271,6 +274,8 @@ If `gh auth status` fails, ask user to run `gh auth login`.
 | Question   | Answer with evidence              |
 | Nit        | Optional unless user wants polish |
 | Praise     | No action, maybe acknowledge      |
+| Stale/invalid | Reply with current-code evidence; no code change |
+| Architecture smell | Stop normal fix loop; explain missing boundary/owner/contract and ask/propose path |
 
 Conflicting reviewer feedback:
 

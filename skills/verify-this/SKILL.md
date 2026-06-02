@@ -9,6 +9,8 @@ license: MIT
 
 Use this when the user asks to verify, prove, measure, confirm a fix, or show evidence for a concrete claim. This is stricter than a normal test run: the goal is to prove or disprove one falsifiable statement.
 
+Use GO/NO-GO mode when the user asks for acceptance verification, high-risk completion checks, browser/data capture validation, migration readiness, PR cleanup readiness, or an independent verifier decision.
+
 Do not use it for vague quality claims like "the code is cleaner". Ask for a measurable claim first.
 
 ## Workflow
@@ -19,6 +21,20 @@ Do not use it for vague quality claims like "the code is cleaner". Ask for a mea
 4. Capture treatment evidence with the same command, data, warmup, and environment.
 5. Compare raw artifacts: test output, terminal transcript, HTTP response, screenshot, trace, profile, timing, or heap snapshot.
 6. Return exactly one verdict: `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE`.
+
+## GO/NO-GO Mode
+
+Use this for acceptance gates where the user needs a shipping decision rather than a single claim verdict.
+
+1. Restate acceptance criteria as falsifiable checks.
+2. Verify against current local artifacts/code/live UI as required. Do not trust prior assistant reports.
+3. Check every saved/generated artifact exists, is non-empty when expected, and matches the manifest or source of truth.
+4. Check sensitive data handling when relevant: no secrets, credentials, private prompts, customer data, or unrelated personal data persisted.
+5. Return `GO` only when every required acceptance check passes with current evidence.
+6. Return `NO-GO` when any required check fails, is blocked, or cannot be verified.
+7. If `NO-GO`, list exact repair actions. If `GO`, list residual risks only when real.
+
+Output starts with `GO` or `NO-GO` before explanation.
 
 ## Local Surfaces
 
@@ -53,6 +69,8 @@ Do not store sensitive prompts, screenshots, HTTP bodies, heap data, customer da
 
 ## Output
 
+Claim verification:
+
 ```text
 VERIFIED | NOT VERIFIED | INCONCLUSIVE
 Claim: <falsifiable claim>
@@ -62,6 +80,24 @@ Evidence:
 
 Reasoning:
 <one tight paragraph naming evidence and confounds>
+```
+
+GO/NO-GO verification:
+
+```text
+GO | NO-GO
+Scope: <what was verified>
+
+Evidence:
+| Check | Evidence | Result |
+| --- | --- | --- |
+| <criterion> | <artifact/command/live check> | PASS/FAIL |
+
+Repair actions:
+- <only when NO-GO>
+
+Residual risks:
+- <only real remaining risks>
 ```
 
 Do not soften a negative result. A clear `NOT VERIFIED` is useful.

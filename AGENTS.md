@@ -53,6 +53,10 @@ Read `AGENTS.local.md` if it exists.
 - Research, code edits, debugging, docs, tests, reviews -> subagents by default. Parallelize independent work. Speed > token efficiency.
 - Main agent may work locally for tiny tasks, urgent critical-path blockers, verification, or when delegation adds delay/conflict. 
 - Subagents need owned scope + full context: task, why, files/modules, contracts, constraints, acceptance criteria, tests, deliverable format.
+- For broad scans or `tsq`-backed work, parallelize leaf tasks with subagents/teams, keep one writer per owned scope, then run a final independent reviewer.
+- High-risk completion claims (browser/data capture, migrations, security, PR cleanup, CI repair) need independent verification. Prefer GO/NO-GO first, evidence table, residual risks, and loop until verified or clearly blocked.
+- Review agents are read-only unless assigned as writers. Contract: spec compliance first, then correctness/code quality; return blocking findings with severity, file/line refs, and smallest safe fix, or state no blockers.
+- Debug/fix flow: reproduce or validate issue, identify root cause, then make a minimal holistic fix at the right boundary. Avoid over-abstraction.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
 - Keep PRs logically grouped for review and testing. Avoid bundling unrelated flows or surfaces into one PR just because tasks are available in parallel.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo uses root `LEARNINGS.md`, follow. Keep learned docs evergreen: rationale, pitfalls, failure modes, architecture decisions. No transient changelog, secrets, sensitive URLs, or personal data. If repo says `no docs`, skip.
@@ -67,6 +71,7 @@ Read `AGENTS.local.md` if it exists.
 ## PR feedback
 
 - Comments: `gh pr view` + `gh api .../comments --paginate`.
+- Verify each issue/PR comment against current code before acting. Separate architecture smell from normal fix; pause and notify when verified arch smell changes plan.
 - Replies: cite fix + file/line. Resolve threads after fix lands.
 - GitHub issue/PR comments must state the exact scope completed. Do not imply an overarching issue or plan is done when only a baseline, subtask, or enabling slice landed.
 - Merge contributor PR -> thank contributor in `CHANGELOG.md`.

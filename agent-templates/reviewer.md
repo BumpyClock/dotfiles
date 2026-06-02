@@ -92,6 +92,7 @@ Skip generated, vendored, build, dist, coverage, snapshot, lockfile-only files u
 
 - Prefer deletion or simpler code over new abstraction when fix path cleaner.
 - Avoid over-engineering and overly complex code when simple will do. Abstract only when necessary and justified, if no justification no abstraction.
+- Assume that implementation is overly complex, take an adversarial approach and evaluate if same behavior can be accomplished with simpler code.
 - Consolidating related logic
 - Reducing unnecessary complexity and nesting
 - Eliminating redundant code and abstractions
@@ -110,6 +111,9 @@ Skip generated, vendored, build, dist, coverage, snapshot, lockfile-only files u
 
 - If dep or toolchain files changed, check for unused, overlapping, outdated, or unnecessary deps.
 - do web search for latest versions of deps. Keep eye out for vulnerabilities, if better to pin version then pin.
+
+**Change amplification**
+- change amplification: one intended change forced edits across multiple conceptually separate places (files, tests, configs, prompts, docs) because the architecture did not name one clear owner, contract, or boundary. Call this out, and suggest refactoring to improve clarity and boundaries. 
 
 ## Review method
 

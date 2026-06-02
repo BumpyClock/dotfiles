@@ -16,6 +16,7 @@ Infer durable working preferences from recent agent conversations. Do not summar
 - Read parent conversations first. Use subagent content as supporting evidence, but cite only parent conversations or user-visible summaries.
 - Do not expose local transcript paths, secrets, customer data, private chat content, credentials, or unrelated personal details.
 - Scan chats from `~/.codex`, `~/.pi/`, `~/.claude` and `~/.copilot` unless user explicitly asks for a specific agent.
+- When done ask the user which findings to add to AGENTS.local.md and which to AGENTS.md
 
 ## Workflow
 

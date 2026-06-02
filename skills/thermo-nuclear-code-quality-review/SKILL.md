@@ -10,6 +10,17 @@ Use this skill for an unusually strict review focused on implementation quality,
 
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
 
+## Team Mode for Whole-Codebase Audits
+
+Use team/parallel mode when the user asks for a whole-codebase thermo-nuclear review, deep audit across many subsystems, or explicitly asks for agents/parallel subagents.
+
+1. Inventory major subsystems, entry points, generated folders, tests, and docs before dispatch.
+2. Shard review by subsystem or concern, not arbitrary file count. Avoid overlapping write/review scopes when possible.
+3. Sub-reviewers are read-only by default. Each returns high-conviction structural findings with evidence paths, why it matters, and smallest cleanup path.
+4. Run a synthesizer pass to dedupe, reject weak findings, rank by future leverage, and separate genuine architectural debt from ordinary feature breadth.
+5. Do not edit code unless the user separately asks for implementation. Output backlog first.
+6. If a finding depends on current code state, verify it against the current branch before including it as actionable.
+
 ## Core Prompt
 
 Start from this baseline:
