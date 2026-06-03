@@ -182,7 +182,7 @@
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "teammateMode": "in-process",

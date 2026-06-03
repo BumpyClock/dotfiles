@@ -1,12 +1,12 @@
 ---
 name: ios-macos-development
-description: Build, refactor, test, profile, automate, release, and troubleshoot native iOS and macOS apps. Use when work involves Swift, SwiftUI, UIKit, AppKit, App Intents, XcodeBuildMCP, Xcodebuild, simulators, XCTest or Swift Testing, Instruments/xctrace, App Store Connect, TestFlight, signing, notarization, screenshot automation, or native Apple app performance.
+description: Build, refactor, test, profile, automate, release, and troubleshoot native iOS and macOS apps. Use when work involves Swift, SwiftUI, Swift Concurrency, Liquid Glass, UIKit, AppKit, App Intents, XcodeBuildMCP, xcodebuild, simulators, XCTest or Swift Testing, Instruments/xctrace, App Store Connect, TestFlight, signing, notarization, screenshot automation, or native Apple app performance.
 ---
 
 # iOS and macOS Development
 
 ## Workflow
-- Classify request first: app code, UI patterns, App Intents, concurrency, perf/profiling, simulator automation, live simulator debugging, or release/distribution.
+- Classify request first: app code, SwiftUI patterns, Swift Concurrency, Liquid Glass, App Intents, perf/profiling, simulator automation, live simulator debugging, or release/distribution.
 - Open only the most relevant nested guide first; pull deeper refs/scripts from that guide as needed.
 - Prefer Apple-native APIs and tools over custom wrappers.
 - Keep behavior stable unless user asked for behavior change.
@@ -17,7 +17,13 @@ description: Build, refactor, test, profile, automate, release, and troubleshoot
 - For performance work, fix root cause and measure with `xctrace`/Instruments when code review is not enough.
 - For live iOS simulator debugging, prefer XcodeBuildMCP tools when available; use bundled CLI scripts for repeatable automation and reports.
 - For build/release/submission work, prefer `xcodebuild`, `simctl`, `xctrace`, and `asc` CLI flows captured here.
-- This parent skill is the only live trigger. Nested guides keep old content without loading as separate skills.
+- This parent skill is the broad Apple-platform trigger. Use nested guides for depth; do not paste whole nested guides into this file.
+
+## Specialized Swift routing
+- Swift 6.2 compiler errors, `Sendable`, actor isolation, data-race warnings -> read `swift-concurrency-expert/guide.md` first.
+- SwiftUI architecture, navigation, state (`state` = UI memory after render), or component structure -> read `swift-ui/guide.md` + `swiftui-ui-patterns/guide.md`.
+- Liquid Glass design/adoption/review -> read `swiftui-liquid-glass/guide.md`; verify iOS 26+ availability and fallback before shipping.
+- SwiftUI performance symptoms -> read `swiftui-performance-audit/guide.md`; if trace evidence needed, combine with `native-app-performance/guide.md` or `instruments-profiling/guide.md`.
 
 ## Guide Index
 - `swift-ui/guide.md` -> SwiftUI architecture, state/data flow, AppKit interop, toolbars, testing, logging.

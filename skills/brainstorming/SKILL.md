@@ -11,6 +11,15 @@ Use full flow before creative/behavior-changing work. Goal: turn idea into appro
 
 Use micro-flow only for trivial mechanical/non-behavior changes with exact user instructions and no design choice.
 
+# Interactive brainstorming
+
+Purpose: show mockups, diagrams, comparisons, and visual options in browser while terminal remains source of truth.
+Create a self contained interactive HTML file to show options to the user at the right fidelity. It enables and empowers you to be creative and show not tell the user and help user ideate and refine.
+
+When done open the HTML file. For a brainstorming session unless user asks keep updating the same file.
+
+save file in /tmp or /docs/ideation folder if present in .gitignore. Do not commit these files unless explict ask. These are throwaway artifacts.
+
 <HARD-GATE>
 For full brainstorming flow, do NOT invoke implementation planning, write code, scaffold projects, or take implementation action until:
 1. design direction is approved,

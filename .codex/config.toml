@@ -333,8 +333,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-02T01:03:34Z"
-last_revision = "bf7e85273119dc0bdca41c81dbb1289e6efb3a60"
+last_updated = "2026-06-03T20:34:04Z"
+last_revision = "42eb33dcd14802ecb612e6a9734e996e6e4425c0"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 

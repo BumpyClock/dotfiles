@@ -135,23 +135,11 @@
     },
     {
       "source": "prompts",
-      "path": "~/.ai_agents/prompts",
-      "optional": true
+      "path": "~/.agents/prompts"
     },
     {
       "source": "personalities",
-      "path": "~/.ai_agents/personalities",
-      "optional": true
-    },
-    {
-      "source": "instructions",
-      "path": "~/.ai_agents/AGENTS.md",
-      "optional": true
-    },
-    {
-      "source": "local_instructions",
-      "path": "~/.ai_agents/AGENTS.local.md",
-      "optional": true
+      "path": "~/.agents/personalities"
     },
     {
       "source": "instructions",
@@ -196,26 +184,11 @@
     },
     {
       "source": "tools_reference",
-      "path": "~/.ai_agents/tools.md",
-      "optional": true
-    },
-    {
-      "source": "tools_reference",
       "path": "~/.pi/tools.md"
     },
     {
       "source": "tools_reference",
       "path": "~/.agents/tools.md"
-    },
-    {
-      "source": "docs",
-      "path": "~/.ai_agents/docs",
-      "optional": true
-    },
-    {
-      "source": "skills",
-      "path": "~/.ai_agents/skills",
-      "optional": true
     },
     {
       "source": "skills",

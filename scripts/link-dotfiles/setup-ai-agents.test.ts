@@ -56,7 +56,6 @@ describe("ai-agent-links config", () => {
 			{ optional: false, path: "~/.codex/tools.md" },
 			{ optional: false, path: "~/.config/opencode/tools.md" },
 			{ optional: false, path: "~/.copilot/tools.md" },
-			{ optional: true, path: "~/.ai_agents/tools.md" },
 			{ optional: false, path: "~/.pi/tools.md" },
 			{ optional: false, path: "~/.agents/tools.md" },
 		]);
@@ -73,7 +72,7 @@ describe("ai-agent-links config", () => {
 					optional: target.optional ?? false,
 					path: target.path,
 				})),
-		).toEqual([{ optional: true, path: "~/.ai_agents/personalities" }]);
+		).toEqual([{ optional: false, path: "~/.agents/personalities" }]);
 	});
 
 	test("links AGENTS.md into shared agent directories", async () => {
@@ -91,7 +90,6 @@ describe("ai-agent-links config", () => {
 			{ optional: false, path: "~/.claude/CLAUDE.md" },
 			{ optional: false, path: "~/.codex/AGENTS.md" },
 			{ optional: false, path: "~/.copilot/copilot-instructions.md" },
-			{ optional: true, path: "~/.ai_agents/AGENTS.md" },
 			{ optional: false, path: "~/.pi/agent/AGENTS.md" },
 			{ optional: false, path: "~/.agents/AGENTS.md" },
 		]);
@@ -112,7 +110,6 @@ describe("ai-agent-links config", () => {
 			{ optional: false, path: "~/.claude/AGENTS.local.md" },
 			{ optional: false, path: "~/.codex/AGENTS.local.md" },
 			{ optional: false, path: "~/.copilot/AGENTS.local.md" },
-			{ optional: true, path: "~/.ai_agents/AGENTS.local.md" },
 			{ optional: false, path: "~/.pi/agent/AGENTS.local.md" },
 			{ optional: false, path: "~/.agents/AGENTS.local.md" },
 		]);
@@ -134,7 +131,6 @@ describe("ai-agent-links config", () => {
 			{ optional: false, path: "~/.codex/skills" },
 			{ optional: false, path: "~/.config/opencode/skills" },
 			{ optional: false, path: "~/.copilot/skills" },
-			{ optional: true, path: "~/.ai_agents/skills" },
 			{ optional: false, path: "~/.agents/skills" },
 		]);
 	});
@@ -155,7 +151,7 @@ describe("ai-agent-links config", () => {
 			{ optional: false, path: "~/.codex/prompts" },
 			{ optional: false, path: "~/.config/opencode/commands" },
 			{ optional: false, path: "~/.copilot/prompts" },
-			{ optional: true, path: "~/.ai_agents/prompts" },
+			{ optional: false, path: "~/.agents/prompts" },
 		]);
 	});
 
