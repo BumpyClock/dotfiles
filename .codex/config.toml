@@ -30,11 +30,11 @@ personality = true
 multi_agent = true
 prevent_idle_sleep = true
 apps = false
-js_repl = false
 guardian_approval = true
 goals = true
 terminal_resize_reflow = true
 mentions_v2 = true
+js_repl = false
 
 [notice]
 fast_default_opt_out = true
@@ -184,12 +184,11 @@ NODE_REPL_NODE_MODULE_DIRS = ""
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
 CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b0d41e7a14a4903d2f95b0b3f427ed796b12c8edca2fa392a03df43997075ae"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "4b6bfaf4ed2ce9b5cd68e60a61642eb4927a36306ba8c8993f6058607b3530fb"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-SKY_CUA_SERVICE_PATH = "/Users/adityasharma/.codex/plugins/cache/openai-bundled/computer-use/1.0.799/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.code-tools]
@@ -222,9 +221,6 @@ enabled = true
 [plugins."google-drive@openai-curated"]
 enabled = true
 
-[plugins."computer-use@openai-bundled"]
-enabled = true
-
 [plugins."build-ios-apps@openai-curated"]
 enabled = true
 
@@ -240,10 +236,10 @@ enabled = true
 [plugins."browser-use@openai-bundled"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
+[plugins."linear@openai-curated"]
 enabled = true
 
-[plugins."linear@openai-curated"]
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [[skills.config]]
@@ -323,7 +319,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-02T03:01:23Z"
+last_updated = "2026-06-04T04:14:51Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -333,8 +329,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-03T21:05:38Z"
-last_revision = "42eb33dcd14802ecb612e6a9734e996e6e4425c0"
+last_updated = "2026-06-04T04:14:44Z"
+last_revision = "1c23816966668311effd450998da177893c7990d"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
