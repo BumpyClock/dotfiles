@@ -1,6 +1,6 @@
 ---
 name: verify-this
-description: Verify a concrete claim with fresh local evidence:restate it falsifiably, compare baseline and treatment when possible, and return VERIFIED, NOT VERIFIED, or INCONCLUSIVE.
+description: "Verify concrete claims with fresh evidence; return VERIFIED/NOT VERIFIED/INCONCLUSIVE."
 source: https://github.com/shaneholloman/cursor-plugins/tree/main/cursor-team-kit/skills/verify-this
 license: MIT
 ---

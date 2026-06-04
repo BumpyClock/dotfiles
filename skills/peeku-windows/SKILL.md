@@ -1,6 +1,6 @@
 ---
 name: peeku-windows
-description: Use when automating Windows UI/apps with peeku CLI or MCP. Exposes peeku primitives (targeting, observing, selecting, acting, waiting, streaming, recipes, batch, performance gates) with selection heuristics and reliability rules so agents can choose the right workflow instead of following a fixed sequence.
+description: "Automate Windows UI/apps via peeku CLI/MCP: observe, act, wait, stream."
 ---
 
 # Peeku Windows

@@ -1,7 +1,6 @@
 ---
 name: winui3-csharp-app
-description: |
-  Build, refactor, or troubleshoot WinUI 3 / Windows App SDK desktop apps in C# and XAML. Use when requests mention WinUI, WinUI 3, Windows App SDK/WinAppSDK, XAML desktop apps, MVVM/ViewModels, bindings, navigation, threading, system backdrops (Mica/Acrylic), windowing/multi-window, packaging/deployment, or WinUI 3 performance.
+description: "WinUI 3 / Windows App SDK desktop apps in C#/XAML. MVVM, bindings, navigation, Mica/Acrylic, windowing, packaging, performance."
 ---
 
 # WinUI 3 C# App

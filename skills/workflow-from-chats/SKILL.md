@@ -1,6 +1,6 @@
 ---
 name: workflow-from-chats
-description: Extract durable working preferences from recent local agent chats and convert them into skills, rules, or workflow docs. Use when asked to learn preferences, mine feedback, personalize workflows, or generate user/team-specific agent guidance.
+description: "Extract preferences from agent chats → skills, rules, workflow docs. For learning preferences, mining feedback, personalizing workflows."
 source: https://github.com/shaneholloman/cursor-plugins/tree/main/cursor-team-kit/skills/workflow-from-chats
 license: MIT
 ---

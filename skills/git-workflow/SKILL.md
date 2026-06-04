@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Preferred way to use git - PRs, commits, branches, worktrees, merges, merge conflicts, PR comments, reviewability, and CI checks. Use for any git/GitHub task, including isolated worktree setup for feature work, or any time the user asks for an action that requires interacting with git/GitHub like commit, push, comments, create PR, make a PR easier to review, resolve conflicts, or fix CI.
+description: "Git/GitHub: PRs, commits, branches, worktrees, conflicts, comments, CI."
 context: fork
 model: claude-sonnet-4-6
 ---

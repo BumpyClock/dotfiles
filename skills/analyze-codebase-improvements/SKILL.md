@@ -1,6 +1,6 @@
 ---
 name: analyze-codebase-improvements
-description: Analyze a repository for high-value maintainability, correctness, testing, documentation, dependency, performance, and simplification opportunities without changing code. Use when the user wants a whole-codebase improvement scan, a scoped cleanup review, a ranked list of high-leverage refactors, deletions, or modernization work, or a time-complexity and performance-oriented analysis.
+description: "Read-only repo audit: maintainability, correctness, tests, docs, deps, perf."
 ---
 
 # Analyze Codebase Improvements

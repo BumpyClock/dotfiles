@@ -1,6 +1,6 @@
 ---
 name: gpui
-description: GPUI component development, styling, actions/shortcuts, async/background work, contexts, entities, events, focus handling, global state, testing, component stories/docs, and GPUI PR descriptions. Use when implementing or reviewing GPUI UI components, writing stories/docs, adding actions/keybindings, coordinating async/UI state, or producing GPUI-specific guidance.
+description: "GPUI components: styling, actions/shortcuts, async, contexts, entities, events, focus, global state, testing, stories/docs, PR descriptions."
 ---
 
 # GPUI Unified Skill

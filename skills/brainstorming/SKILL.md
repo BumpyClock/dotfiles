@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Use for new features, UX/UI changes, behavior changes, architecture decisions, or ambiguous work where intent/design must be clarified before implementation. Use micro-flow only for trivial mechanical/non-behavior changes."
+description: "Clarify ambiguous features, UX/UI changes, architecture decisions before coding."
 source: https://github.com/obra/superpowers/tree/main/skills/brainstorming
 license: MIT
 ---

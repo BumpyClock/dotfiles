@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: Execute approved tsq-backed implementation plans with fresh subagents per atomic leaf task, aggregation-boundary review loops, and subagent-owned integration.
+description: "Execute approved tsq plans via subagents, aggregation reviews, integration."
 source: https://github.com/obra/superpowers/tree/main/skills/subagent-driven-development
 license: MIT
 ---

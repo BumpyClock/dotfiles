@@ -1,6 +1,6 @@
 ---
 name: programming
-description: Use when writing, modifying, debugging, or investigating software (not for planning or review-only tasks). Cover implementation approach, root-cause investigation, testing strategy, verification-before-completion, language guidance, and coding standards.
+description: "Software implementation/debugging: root cause, tests, verification, standards."
 ---
 
 Build maintainable, testable, production-ready software. Apply DDD patterns and testing proportionate to the change. Bias coding decisions toward caution over speed; trivial tasks still require judgment.

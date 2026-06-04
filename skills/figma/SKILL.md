@@ -1,6 +1,6 @@
 ---
 name: figma
-description: Umbrella index for Figma-related skills. Use this entrypoint when a task mentions Figma, FigJam, `use_figma`, Code Connect, screen generation in Figma, design-system generation in Figma, creating a new Figma file, translating Figma designs into code, or generating Figma-to-code rules. Routes to the most specific `figma-*` skill under this directory.
+description: "Figma router: Code Connect, screens, design systems, FigJam, use_figma."
 ---
 
 # Figma Skill Index

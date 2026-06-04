@@ -1,6 +1,6 @@
 ---
 name: web-development
-description: Build, refactor, review, debug, polish, and verify modern web apps and interfaces. Use when work involves frontend UI, HTML, CSS, JavaScript, TypeScript, React, Next.js, design systems, shadcn/ui, accessibility, forms, motion, responsive behavior, performance, or React-specific diagnostics such as react-doctor.
+description: "Web apps: HTML, CSS, JS, TS, React, Next.js, shadcn/ui, accessibility, forms, motion, responsive, performance, react-doctor."
 ---
 
 # Web Development

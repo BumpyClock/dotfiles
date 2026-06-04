@@ -1,6 +1,6 @@
 ---
 name: change-amplification
-description: Find PRs where one intended change forced edits across conceptually separate files/tests/configs/prompts/docs because architecture lacks one clear owner, contract, or boundary. Use when asked for change amplification, missing boundaries, PR-based architecture debt, or ranked cleanup backlog from PR history.
+description: "Find PR change-amplification from missing owners/contracts; rank cleanup backlog."
 ---
 
 # Change Amplification

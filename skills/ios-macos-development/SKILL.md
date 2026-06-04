@@ -1,6 +1,6 @@
 ---
 name: ios-macos-development
-description: Build, refactor, test, profile, automate, release, and troubleshoot native iOS and macOS apps. Use when work involves Swift, SwiftUI, Swift Concurrency, Liquid Glass, UIKit, AppKit, App Intents, XcodeBuildMCP, xcodebuild, simulators, XCTest or Swift Testing, Instruments/xctrace, App Store Connect, TestFlight, signing, notarization, screenshot automation, or native Apple app performance.
+description: "iOS/macOS dev: Swift, SwiftUI, UIKit/AppKit, xcodebuild, XCTest, signing."
 ---
 
 # iOS and macOS Development

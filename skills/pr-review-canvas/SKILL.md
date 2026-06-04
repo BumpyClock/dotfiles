@@ -1,6 +1,6 @@
 ---
 name: pr-review-canvas
-description: Generate an interactive local HTML PR review walkthrough. Fetches PR data via gh, groups core vs mechanical changes, adds reviewer annotations, and renders diffs with moved-code detection.
+description: "Interactive local HTML PR review walkthrough with grouped diffs and annotations."
 disable-model-invocation: true
 source: https://github.com/shaneholloman/cursor-plugins/tree/main/cursor-team-kit/skills/pr-review-canvas
 license: MIT
