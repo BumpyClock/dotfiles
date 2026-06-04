@@ -3,25 +3,17 @@ name: playwriter
 description: "Chrome automation via Playwriter/Playwright for JS-heavy sites; run `playwriter skill`."
 ---
 
-## REQUIRED: Read Full Documentation First
+# Playwriter
 
-**Before using playwriter, you MUST run this command:**
+**REQUIRED: Read full docs first:**
 
 ```bash
-playwriter skill # IMPORTANT! do not use | head here. read in full!
+playwriter skill # IMPORTANT! do not use | head. read in full!
 ```
 
-This outputs the complete documentation including:
+Outputs complete docs: session management, timeout config, selector strategies (which to AVOID), timeout/failure prevention rules, slow pages, SPAs, context variables, utility functions.
 
-- Session management and timeout configuration
-- Selector strategies (and which ones to AVOID)
-- Rules to prevent timeouts and failures
-- Best practices for slow pages and SPAs
-- Context variables, utility functions, and more
-
-**Do NOT skip this step.** The quick examples below will fail without understanding timeouts, selector rules, and common pitfalls from the full docs.
-
-**Read the ENTIRE output.** Do NOT pipe through `head`, `tail`, or any truncation command. The skill output must be read in its entirety — critical rules about timeouts, selectors, and common pitfalls are spread throughout the document, not just at the top.
+Read ENTIRE output. Do NOT pipe through `head`, `tail`, or truncation. Critical rules about timeouts, selectors, pitfalls are spread throughout, not just at top.
 
 ## Minimal Example (after reading full docs)
 
@@ -30,6 +22,6 @@ playwriter session new
 playwriter -s 1 -e 'await page.goto("https://example.com")'
 ```
 
-**Always use single quotes** for the `-e` argument. Single quotes prevent bash from interpreting `$`, backticks, and backslashes inside your JS code. Use double quotes or backtick template literals for strings inside the JS.
+Always use single quotes for `-e`. Prevents bash interpreting `$`, backticks, backslashes in JS. Use double quotes or backtick template literals for JS strings.
 
-If `playwriter` is not found, use `npx playwriter@latest` or `bunx playwriter@latest`.
+If `playwriter` not found: `npx playwriter@latest` or `bunx playwriter@latest`.

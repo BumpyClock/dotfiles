@@ -5,7 +5,7 @@ description: "Read-only repo audit: maintainability, correctness, tests, docs, d
 
 # Analyze Codebase Improvements
 
-Use this skill for analysis-only repo reviews. Do not make code changes.
+Analysis-only repo reviews. Do not make code changes.
 
 ## Inputs
 
@@ -28,33 +28,31 @@ Use this skill for analysis-only repo reviews. Do not make code changes.
 - `comments` - stale, misleading, or redundant comments; missing code-level documentation
 - `docs` - setup drift, architecture drift, missing API or contributor guidance
 - `deps` - unused, outdated, overlapping, or unnecessary dependencies
-- `simplify` - places where smaller or clearer code would help most
+- `simplify` - places where smaller/clearer code would help most
 - `all` - run all applicable analyses
 
 ## Workflow
 
 1. Read repo-level docs and local instructions first.
-2. Parse user input into scope and focus. Exclude generated, vendored, build, and lockfile-only areas unless explicitly requested.
-3. Map the repo shape: directories, languages, frameworks, tooling, hotspots, large files, and stale areas.
-4. Choose applicable review lenses from the focus areas above.
-5. When focus includes `comments`, `docs`, or `all`, invoke the `technical-writer` subagent if available. Otherwise, perform an equivalent local documentation audit. Require it to:
-   - validate all existing comments in scope for accuracy, drift, and long-term value
-   - separate stale comments, redundant comments, and missing documentation coverage
-   - audit language-appropriate documentation standards such as JSDoc/TSDoc for TypeScript and JavaScript, docstrings for Python, Go doc comments for exported Go symbols, rustdoc for public Rust APIs, and `///` DocC-style comments for public Swift APIs
-6. When focus includes `time-complexity` or `all`, inspect hot functions, loop nests, traversals, searches, sorts, repeated allocations, and repeated recomputation. For each worthwhile item:
-   - identify the current time complexity
-   - name the exact operation driving the cost
-   - propose a lower-complexity alternative when it materially helps
+2. Parse user input into scope and focus. Exclude generated, vendored, build, lockfile-only areas unless explicitly requested.
+3. Map repo shape: directories, languages, frameworks, tooling, hotspots, large files, stale areas.
+4. Choose applicable review lenses from focus areas.
+5. Focus includes `comments`, `docs`, or `all` → invoke `technical-writer` subagent if available. Otherwise equivalent local documentation audit. Require it to:
+   - validate all existing comments in scope for accuracy, drift, long-term value
+   - separate stale, redundant, and missing documentation coverage
+   - audit language-appropriate documentation standards (JSDoc/TSDoc for TS/JS, docstrings for Python, Go doc comments for exported symbols, rustdoc for public Rust APIs, `///` DocC for public Swift APIs)
+6. Focus includes `time-complexity` or `all` → inspect hot functions, loop nests, traversals, searches, sorts, repeated allocations, recomputation. For each worthwhile item:
+   - identify current time complexity
+   - name exact operation driving cost
+   - propose lower-complexity alternative when materially helpful
    - call out space, readability, preprocessing, caching, or behavior trade-offs
-   - say when an optimization is not worth the churn
-7. If subagents are available and allowed in the current session, split the work into bounded parallel passes. Otherwise, perform equivalent local passes by subsystem or focus area.
-8. Require concrete evidence for every finding: file paths, symbols, repeated patterns, hot operations, or specific failure modes.
+   - say when optimization not worth churn
+7. Subagents available/allowed → split into bounded parallel passes. Otherwise equivalent local passes by subsystem or focus area.
+8. Require concrete evidence for every finding: file paths, symbols, repeated patterns, hot operations, specific failure modes.
 9. Merge duplicate findings. Drop speculative, style-only, or low-signal feedback.
-10. Rank remaining opportunities by impact, effort, confidence, and regression risk.
+10. Rank remaining opportunities by impact, effort, confidence, regression risk.
 
 ## Output Format
-
-Use this structure:
 
 ```markdown
 # Codebase Improvement Summary
@@ -85,7 +83,7 @@ Use this structure:
 - Uncertainties that need confirmation
 ```
 
-For `time-complexity` findings, include these extra fields inside the relevant item:
+For `time-complexity` findings, include extra fields inside relevant item:
 
 - Current complexity: ...
 - Bottleneck: ...
@@ -101,5 +99,5 @@ For `time-complexity` findings, include these extra fields inside the relevant i
 - Favor deletion and simplification over new abstraction.
 - Validate findings against existing patterns and local repo rules.
 - Separate quick wins from strategic refactors.
-- Report uncertainty explicitly when confidence is low.
-- Do not force an optimization when the asymptotic win is negligible or the trade-off is poor.
+- Report uncertainty explicitly when confidence low.
+- Do not force optimization when asymptotic win negligible or trade-off poor.

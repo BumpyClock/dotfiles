@@ -5,87 +5,40 @@ description: "GPUI components: styling, actions/shortcuts, async, contexts, enti
 
 # GPUI Unified Skill
 
-## Consolidated Summary
+## Summary
 
-- Build GPUI components by following existing `crates/ui` patterns and the style guide; keep APIs consistent and builder-style.
-- Choose stateless vs stateful components deliberately; use `Entity<T>` for stateful patterns and notify on updates.
-- Use GPUI styling primitives (`StyleRefinement`, `Styled`, fluent builders) and theme tokens for visual consistency.
-- Wire actions and focus explicitly with `key_context`, `actions!`, and `FocusHandle` patterns.
-- Write stories and docs that mirror existing story/doc patterns in `crates/story` and `docs`.
-- Test with `TestAppContext` for non-visual logic and `VisualTestContext` for window/rendering behavior.
+- Build GPUI components following existing `crates/ui` patterns + style guide. Keep APIs consistent, builder-style.
+- Stateless vs stateful: deliberate choice. Use `Entity<T>` for stateful patterns, notify on updates.
+- Styling: `StyleRefinement`, `Styled`, fluent builders, theme tokens.
+- Actions/focus: wire explicitly with `key_context`, `actions!`, `FocusHandle`.
+- Stories/docs: mirror `crates/story` and `docs` patterns.
+- Tests: `TestAppContext` for non-visual logic, `VisualTestContext` for window/rendering.
 
-## Component Build Guidance
+## Component Build Steps
 
-### 1) Decide component type
-
-- Use a stateless element for pure presentation.
-- Use a stateful element when UI state must persist or be shared; store an `Entity<State>`.
-
-### 2) Use the standard struct layout
-
-- Include identity and styling fields: `id: ElementId`, `base: Div`, `style: StyleRefinement`.
-- Group fields in this order: identity → configuration → content/children → callbacks.
-- Store callbacks as `Option<Rc<dyn Fn(...)>>` for cheap cloning.
-
-### 3) Provide builder-style API
-
-- Return `Self` from setters (e.g., `label`, `on_click`, `disabled`).
-- Keep naming and API surface consistent with existing components.
-
-### 4) Implement required traits
-
-- `InteractiveElement` for interactivity
-- `StatefulInteractiveElement` when stateful
-- `Styled` for `style()` access
-- `RenderOnce` for rendering
-- Add `Sizable`, `Selectable`, `Disableable` when appropriate
-
-### 5) Render with theme + layout primitives
-
-- Use `cx.theme()` for colors and tokens.
-- Compose layout with fluent builders (`flex`, `gap`, `items_center`, `rounded`, etc.).
-- Keep `RenderOnce` focused and avoid side effects.
-
-### 6) Handle state and async safely
-
-- Use `WeakEntity` in closures to avoid retain cycles.
-- Use `cx.spawn` for foreground async and `cx.background_spawn` for heavy work.
-- Avoid nested entity updates; sequence updates instead.
-
-### 7) Wire actions, focus, and events
-
-- Define actions with `actions!` or `#[derive(Action)]`.
-- Bind keys with `cx.bind_keys()` and set `key_context()` on the root element.
-- Track focus with `FocusHandle` and `track_focus()` where needed.
-- Use `cx.emit`, `cx.subscribe`, and `cx.observe` for event-driven patterns.
-
-### 8) Add stories, docs, and tests
-
-- Stories: follow `crates/story/src/stories` structure with `section!` groups.
-- Docs: follow `docs/*.md` patterns and link API references when appropriate.
-- Tests: use `TestAppContext` for logic, `VisualTestContext` for window/rendering; follow component test rules.
+1. **Decide type**: stateless element for pure presentation; stateful element + `Entity<State>` when UI state persists.
+2. **Struct layout**: `id: ElementId`, `base: Div`, `style: StyleRefinement`. Field order: identity → config → content/children → callbacks. Callbacks as `Option<Rc<dyn Fn(...)>>`.
+3. **Builder API**: return `Self` from setters (`label`, `on_click`, `disabled`). Keep naming consistent with existing components.
+4. **Traits**: `InteractiveElement`, `StatefulInteractiveElement` (when stateful), `Styled`, `RenderOnce`. Add `Sizable`/`Selectable`/`Disableable` when appropriate.
+5. **Render**: `cx.theme()` for colors/tokens. Compose with fluent builders (`flex`, `gap`, `items_center`, `rounded`). `RenderOnce` focused, no side effects.
+6. **State/async**: `WeakEntity` in closures to avoid retain cycles. `cx.spawn` foreground, `cx.background_spawn` heavy work. Sequence entity updates, don't nest.
+7. **Actions/focus/events**: `actions!` or `#[derive(Action)]`. `cx.bind_keys()`, `key_context()` on root. `FocusHandle` + `track_focus()`. `cx.emit`/`cx.subscribe`/`cx.observe`.
+8. **Stories/docs/tests**: stories follow `crates/story/src/stories` with `section!`. Docs follow `docs/*.md`. Tests: `TestAppContext` logic, `VisualTestContext` window/rendering.
 
 ## Task Routing
 
-- For new components or component refactors, read `references/style-guide.md` and `references/new-component.md`; pull in `references/layout-and-style.md` as needed.
-- For component stories, read `references/generate-component-story.md`.
-- For component documentation, read `references/generate-component-documentation.md`.
-- For actions and key bindings, read `references/actions.md`.
-- For async/background work, read `references/async.md`.
-- For context usage and window/entity operations, read `references/context.md`.
-- For entity state patterns, read `references/entity.md`.
-- For events, subscriptions, and observers, read `references/event.md`.
-- For focus management and keyboard navigation, read `references/focus-handle.md`.
-- For global state, read `references/global.md`.
-- For tests, read `references/test.md`, `references/test-reference.md`, `references/test-examples.md`, and `references/component-test-rules.md`.
-- For PR descriptions, read `references/github-pull-request-description.md`.
-
-## Workflow
-
-1. Identify the task category and load the matching reference files.
-2. Prefer existing patterns in the GPUI codebase (`crates/ui`, `crates/story`) before introducing new patterns.
-3. Keep changes minimal and consistent with the style guide.
-4. For tests, choose `TestAppContext` vs `VisualTestContext` based on whether windows/rendering are required.
+- New components/refactors → `references/style-guide.md` + `references/new-component.md` (+ `references/layout-and-style.md` as needed)
+- Component stories → `references/generate-component-story.md`
+- Component docs → `references/generate-component-documentation.md`
+- Actions/key bindings → `references/actions.md`
+- Async/background work → `references/async.md`
+- Context/window/entity → `references/context.md`
+- Entity state → `references/entity.md`
+- Events/subscriptions/observers → `references/event.md`
+- Focus/keyboard nav → `references/focus-handle.md`
+- Global state → `references/global.md`
+- Tests → `references/test.md`, `references/test-reference.md`, `references/test-examples.md`, `references/component-test-rules.md`
+- PR descriptions → `references/github-pull-request-description.md`
 
 ## Reference Index
 

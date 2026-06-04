@@ -6,92 +6,95 @@ context: fork
 
 # Core Workflow
 
+Design precise, crafted UX documentation for consumer apps, enterprise software, SaaS dashboards, admin interfaces, web apps etc. Treat UX as end-to-end experience, not just visuals. CLI/TUI also benefits from UX design principles.
 
-Design precise, crafted UX documentation for consumer apps, enterprise software, SaaS dashboards, admin interfaces, and web applications etc. Treat UX as the end-to-end experience, not just visuals. Make the interface feel intentionally designed for its context. UX is not just about aesthetics or visuals. It's about understanding the user's needs, behaviors, and emotions. It's about creating a seamless experience that meets the user's expectations and exceeds their needs. Even a CLI tool or TUI benefits from UX design principles.
+Philosophy: precision with intentional personality — every interface polished, designed for its specific context.
 
-The philosophy is precision with intentional personality — every interface is polished, and each is designed for its specific context. 
-
-**The craft is in the choice, not the complexity.** A flat interface with perfect spacing and typography is more polished than a shadow-heavy interface with sloppy details.
+**Craft is in the choice, not the complexity.** Flat interface with perfect spacing and typography > shadow-heavy interface with sloppy details.
 
 ## The Standard
 
-Every interface should look designed by a team that obsesses over 1-pixel differences. Not stripped — *crafted*. And designed for its specific context.
+Every interface should look designed by a team that obsesses over 1-pixel differences. Not stripped — *crafted*. Designed for its specific context.
 
-Different products want different things. A developer tool wants precision and density. A collaborative product wants warmth and space. A financial product wants trust and sophistication. Let the product context guide the aesthetic and design decisions.
+Different products want different things. Developer tool → precision and density. Collaborative product → warmth and space. Financial product → trust and sophistication. Let product context guide aesthetic and design decisions.
 
-**The goal:** intricate minimalism with appropriate personality. Same quality bar, context-driven execution.
-
+**Goal:** intricate minimalism with appropriate personality. Same quality bar, context-driven execution.
 
 ## Design Direction (Required)
+
 **Before writing any code, commit to a design direction.** Don't default. Think about what this specific product needs to feel like.
- Use `references/design-direction.md` to select a personality, color foundation, layout approach, and typography direction.
- 
+Use `references/design-direction.md` to select personality, color foundation, layout approach, and typography direction.
 
 ## Reference Index
-- `references/design-direction.md` - Use when choosing or revising product personality, color foundation, layout approach, and typography direction.
-- `references/craft-foundations.md` - Use for spacing, padding, radius, depth, and surface treatment rules.
-- `references/components-typography-icons.md` - Use for control treatment, type hierarchy, data formatting, and icon usage.
-- `references/interaction-visual-clarity.md` - Use for motion, contrast, color usage, navigation context, dark mode, and anti-patterns.
 
+- `references/design-direction.md` - personality, color foundation, layout approach, typography direction.
+- `references/craft-foundations.md` - spacing, padding, radius, depth, surface treatment rules.
+- `references/components-typography-icons.md` - control treatment, type hierarchy, data formatting, icon usage.
+- `references/interaction-visual-clarity.md` - motion, contrast, color usage, navigation context, dark mode, anti-patterns.
 
 ## Craft Principles (Required)
-Apply consistent spacing, surface treatment, typography, and color usage. Pull the specific rules from the reference files and keep them coherent across the entire design.
+
+Apply consistent spacing, surface treatment, typography, color usage. Pull rules from reference files, keep coherent across entire design.
 
 ## Micro-Polish Pass (Required)
-After the main visual system is defined, specify small interface details that make the design feel precise: concentric radius math, optical alignment, text wrapping, tabular numbers, hit areas, image outlines, and motion behavior. These belong in the design doc as implementation-ready specs, not code.
+
+After main visual system defined, specify small interface details: concentric radius math, optical alignment, text wrapping, tabular numbers, hit areas, image outlines, motion behavior. Implementation-ready specs in design doc, not code.
 
 ## Output
-Produce implementation-ready UX design documentation that covers layout, components, interactions, and accessibility. Do not write implementation code.
+
+Produce implementation-ready UX design documentation covering layout, components, interactions, accessibility. Do not write implementation code.
 
 ## Workflow
-Follow these steps in order.
+
+Follow in order.
 
 **Gather inputs**
-- Ask for goals, target users, platforms, constraints, and content requirements.
-- Identify any existing design system or component library.
-- Audit existing tokens and reusable components when project context is available.
-- Look for tokens files, theme configs, CSS variables, component libraries, or Storybook.
+- Ask for goals, target users, platforms, constraints, content requirements.
+- Identify existing design system or component library.
+- Audit existing tokens and reusable components when project context available.
+- Look for tokens files, theme configs, CSS variables, component libraries, Storybook.
 
 **Define structure**
 - Map information architecture and key user flows.
 - Identify primary tasks and success criteria.
 
 **Compose layout**
-- Establish regions, grid, and responsive behavior.
+- Establish regions, grid, responsive behavior.
 - Choose navigation and hierarchy patterns.
 
 **Specify interactions**
-- Document states, transitions, and feedback.
-- Cover loading, empty, error, and validation behavior.
+- Document states, transitions, feedback.
+- Cover loading, empty, error, validation behavior.
 
 **Specify visual system**
-- Define color roles, typography scale, spacing system, and design tokens.
+- Define color roles, typography scale, spacing system, design tokens.
 
 **Specify micro-polish**
-- Define radius relationships for nested surfaces.
-- Specify text wrapping behavior for headings and body copy.
-- Specify tabular number usage for dynamic values and numeric columns.
-- Specify icon alignment, hit areas, image outlines, and motion rules.
+- Radius relationships for nested surfaces.
+- Text wrapping behavior for headings/body copy.
+- Tabular number usage for dynamic values/numeric columns.
+- Icon alignment, hit areas, image outlines, motion rules.
 
 **Check accessibility**
-- Provide keyboard navigation, focus order, and contrast guidance.
+- Keyboard navigation, focus order, contrast guidance.
 
 **Produce design doc**
-- Deliver a Markdown design document with ASCII layout diagram(s).
+- Markdown design document with ASCII layout diagram(s).
 
 ## Design Rules
+
 - Typography: pick a real font. Avoid Inter/Roboto/Arial/system defaults.
 - Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
 - Motion: 1-2 high-impact moments; no random micro-animations.
-- Background: add depth with gradients/patterns/shapes, not flat default.
+- Background: depth with gradients/patterns/shapes, not flat default.
   Avoid: purple-on-white clichés, generic grids, predictable layouts.
-- Prefer concrete measurements, labels, and states over vague descriptions.
-
+- Prefer concrete measurements, labels, states over vague descriptions.
 
 ## Design Doc Output (Markdown)
-Always output a single Markdown design document. Include an ASCII representation of the layout inside a fenced code block.
 
-Use this default structure and adapt as needed:
+Always output single Markdown design document. Include ASCII layout representation in fenced code block.
+
+Use this default structure, adapt as needed:
 
 ````markdown
 # [Feature or Page Name] Design Doc
@@ -116,7 +119,7 @@ Use this default structure and adapt as needed:
 ## Design System Strategy
 - Existing tokens/components to reuse
 - Discovery notes (where tokens/components were found or not found)
-- New tokens/components needed (only if none exist or gaps are confirmed)
+- New tokens/components needed (only if none exist or gaps confirmed)
 - Token naming conventions and reuse rules
 
 ## Layout and Responsive Behavior
@@ -196,7 +199,7 @@ Mobile
 - Clear layout hierarchy for each breakpoint.
 - ASCII layout diagram included.
 - Components and states listed.
-- Existing tokens or components reused or new ones defined.
-- Micro-polish specs cover radius, wrapping, numeric alignment, hit areas, motion, and optical alignment.
+- Existing tokens/components reused or new ones defined.
+- Micro-polish specs cover radius, wrapping, numeric alignment, hit areas, motion, optical alignment.
 - Accessibility guidance documented.
 - Rationale provided for key decisions.

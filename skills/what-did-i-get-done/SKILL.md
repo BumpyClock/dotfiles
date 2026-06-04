@@ -7,27 +7,27 @@ license: MIT
 
 # What Did I Get Done
 
-Use this when the user asks for a short, high-signal work summary for a specific time range, such as yesterday, the last 3 days, or last week.
+Use when user asks for short, high-signal work summary for a specific time range (yesterday, last 3 days, last week).
 
 ## Workflow
 
-1. Resolve the requested time window into concrete dates.
-2. Read commits authored by the current git user email within that range.
-3. Exclude merge commits and uncommitted changes unless explicitly requested.
-4. Inspect diffs only when commit messages are too vague to support a factual summary.
-5. Synthesize the most important shipped changes into a concise status update.
-6. Include the actual date range used.
+1. Resolve requested time window to concrete dates.
+2. Read commits authored by current git user email in range.
+3. Exclude merges and uncommitted changes unless explicitly requested.
+4. Inspect diffs only when messages too vague for factual summary.
+5. Synthesize most important changes into concise status update.
+6. Include actual date range.
 
 ## Guardrails
 
-- Be extremely concise and information-dense.
-- Prioritize substantial behavior, architecture, infrastructure, or workflow changes.
-- Omit cosmetic-only changes unless they were the main work.
-- Do not infer intent or motivation; describe changes functionally.
-- If git email is missing, ask the user to set it before proceeding.
+- Extremely concise, information-dense.
+- Prioritize substantial behavior, architecture, infrastructure, workflow changes.
+- Omit cosmetic-only changes unless main work.
+- Don't infer intent/motivation; describe changes functionally.
+- Git email missing → ask user to set before proceeding.
 
 ## Output
 
 - One short status summary.
 - Real date range.
-- Optional 2-5 bullets for major changes only.
+- Optional 2-5 bullets for major changes.

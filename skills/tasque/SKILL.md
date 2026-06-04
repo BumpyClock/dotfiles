@@ -9,8 +9,8 @@ Tasque (`tsq`) = durable local task graph for agent work.
 
 ## Use
 
-- Use `tsq`: multi-step, multi-session, blocked, shared-agent, release, or follow-up work.
-- Use transient checklist: short linear same-session work.
+- `tsq`: multi-step, multi-session, blocked, shared-agent, release, or follow-up work.
+- Transient checklist: short linear same-session work.
 
 ## Start
 
@@ -79,25 +79,24 @@ tsq create --parent <parent-id> --from-file tasks.md
 ```bash
 tsq spec <id> --text "## Plan\n...\n## Acceptance\n..."
 tsq spec <id> --show
-# Choose one edit mode when changing an existing spec:
+# Edit modes:
 tsq spec <id> --update --stdin
 tsq spec <id> --patch --stdin
 tsq planned <id>
 tsq claim <id> --assignee <name> --start
 ```
 
-Use `tsq spec <id> --show` when spec markdown lives in sync worktree.
-Use `--update` for whole-spec replacement. Use `--patch` for small agent edits; patch applies only to the attached spec and fails if context is stale. Prefer `--stdin` or `--file` for patches because unified diffs start with `---`.
+`--update` = whole-spec replacement. `--patch` = small agent edits; applies only to attached spec, fails if context stale. Prefer `--stdin` or `--file` for patches (unified diffs start with `---`).
 
 ## Parallel Work
 
-Hard blocker; affects readiness:
+Hard blocker (affects readiness):
 
 ```bash
 tsq block <child-id> by <blocker-id>
 ```
 
-Soft order; no readiness block:
+Soft order (no readiness block):
 
 ```bash
 tsq order <later-id> after <earlier-id>
@@ -110,7 +109,7 @@ tsq find ready --lane coding
 tsq find ready --lane planning
 ```
 
-Prefer many independent tasks. Use `blocks` only for true gates. Use `starts_after`/`order` for sequence.
+Prefer many independent tasks. `blocks` for true gates only. `starts_after`/`order` for sequence.
 
 ## Follow-Up
 
@@ -147,15 +146,15 @@ tsq history <id> --limit 20
 tsq find open --tree
 ```
 
-Use `--format json` for scripts/parsers. Human output fine for inspection.
+`--format json` for scripts/parsers. Human output for inspection.
 
 ## Habits
 
 - Keep `status` and `planning_state` separate.
 - Use deps/relations to expose parallel shape.
-- Use `--ensure` in rerunnable automation.
-- Keep task small enough for one focused agent pass.
-- Need edge flags? Run `tsq <cmd> --help`.
+- `--ensure` in rerunnable automation.
+- Task small enough for one focused agent pass.
+- Edge flags: `tsq <cmd> --help`.
 
 ## Need More
 

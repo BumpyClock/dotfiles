@@ -7,26 +7,26 @@ license: MIT
 
 # Weekly Review
 
-Use this for a weekly recap of shipped work for status updates, retros, or planning.
+Use for weekly recap of shipped work — status updates, retros, planning.
 
 ## Workflow
 
-1. Determine the current git user email from repo config.
-2. Resolve the review window. Default to the last 7 days; use 7-10 days only when needed to cover the work week.
-3. Collect authored commits in the current repo context. Exclude merge commits.
-4. Inspect diffs only enough to avoid overstating vague commit messages.
-5. Group meaningful changes into 2-5 concise bullets.
-6. Add a short classification paragraph covering likely bug fixes, tech debt, and net-new functionality.
+1. Current git user email from repo config.
+2. Review window: default last 7 days; 7-10 only to cover work week.
+3. Collect authored commits, exclude merges.
+4. Inspect diffs only enough to avoid overstating vague messages.
+5. Group into 2-5 concise bullets.
+6. Classification paragraph: bug fixes, tech debt, net-new.
 
 ## Guardrails
 
-- Keep the recap short and executive-readable.
-- Base claims only on commit history and inspected diffs.
-- If git email is missing, ask the user to set it before proceeding.
-- Do not include uncommitted work unless the user explicitly asks.
+- Short, executive-readable.
+- Claims based on commit history + inspected diffs only.
+- Git email missing → ask user to set before proceeding.
+- Uncommitted work only when explicitly asked.
 
 ## Output
 
 - Date range used.
 - 2-5 bullet weekly summary.
-- Brief classification paragraph: bugfix, tech debt, net-new.
+- Brief classification: bugfix, tech debt, net-new.

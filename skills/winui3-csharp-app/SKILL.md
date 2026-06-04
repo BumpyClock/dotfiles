@@ -6,42 +6,41 @@ description: "WinUI 3 / Windows App SDK desktop apps in C#/XAML. MVVM, bindings,
 # WinUI 3 C# App
 
 ## Workflow
-1. Classify the task: new app, existing app, or specific issue.
-2. For new app work, follow Quick Start (New).
-3. For existing app work, follow Quick Start (Existing).
-4. Use the Reference Index to open the right topic file.
+1. Classify: new app, existing app, or specific issue.
+2. New app → Quick Start (New). Existing app → Quick Start (Existing).
+3. Use Reference Index for topic files.
 
 ## Core Rules
 - Prefer Windows App SDK / WinUI APIs over custom interop.
-- Keep code-behind as view glue; move state/logic to ViewModels.
-- Prefer `x:Bind` for typed bindings; use `Binding` for dynamic DataContext.
+- Code-behind = view glue only; state/logic in ViewModels.
+- Prefer `x:Bind` (typed); `Binding` for dynamic DataContext.
 - Marshal UI work through `DispatcherQueue`.
-- Apply system backdrops via `Window.SystemBackdrop` and provide a fallback.
-- Keep behavior stable unless explicitly asked to change it.
-- When choosing architecture, packaging, or libraries, present 2–3 options with tradeoffs and a recommendation.
+- System backdrops via `Window.SystemBackdrop` with fallback.
+- Keep behavior stable unless explicitly asked to change.
+- Architecture/packaging/library choices: present 2–3 options + tradeoffs + recommendation.
 
 ## Scope
-- In scope: WinUI 3 / Windows App SDK desktop apps in C# and XAML, MVVM, navigation, windowing, packaging, and performance.
-- Out of scope: WPF, UWP, WinForms, or C++/WinRT unless explicitly requested.
+- In: WinUI 3 / Windows App SDK desktop apps, C#/XAML, MVVM, navigation, windowing, packaging, performance.
+- Out: WPF, UWP, WinForms, C++/WinRT unless explicitly requested.
 
 ## Reference Index
-- `references/foundations.md` -> project setup, release channels, MVVM/tooling, threading migration
-- `references/ui-ux.md` -> navigation, layout, title bar, backdrops, accessibility
-- `references/design-fluent.md` -> Fluent design principles and UX polish
-- `references/windowing.md` -> AppWindow, multi-window, dialogs, pickers
-- `references/performance.md` -> bindings, x:Load, list virtualization, perf basics
+- `references/foundations.md` → project setup, release channels, MVVM/tooling, threading migration
+- `references/ui-ux.md` → navigation, layout, title bar, backdrops, accessibility
+- `references/design-fluent.md` → Fluent design principles, UX polish
+- `references/windowing.md` → AppWindow, multi-window, dialogs, pickers
+- `references/performance.md` → bindings, x:Load, list virtualization, perf basics
 
 ## Quick Start (New)
-1. Decide packaging and target framework; document constraints.
-2. Choose architecture: code-behind for small apps, MVVM Toolkit for larger apps.
-3. Create a ViewModel and expose it for `x:Bind`.
-4. Build layout with `Grid`/`StackPanel`.
-5. Wire commands via `RelayCommand`/`AsyncRelayCommand`.
+1. Decide packaging + target framework; document constraints.
+2. Architecture: code-behind for small apps, MVVM Toolkit for larger.
+3. Create ViewModel, expose for `x:Bind`.
+4. Layout with `Grid`/`StackPanel`.
+5. Commands via `RelayCommand`/`AsyncRelayCommand`.
 6. Add navigation if multi-page.
 
 ## Quick Start (Existing)
-1. Audit binding modes and `DataContext`; fix `x:Bind` vs `Binding` mismatches.
+1. Audit binding modes + `DataContext`; fix `x:Bind` vs `Binding` mismatches.
 2. Move logic to ViewModels; keep code-behind thin.
-3. Fix threading: UI updates on UI thread via `DispatcherQueue`.
-4. Validate system backdrop usage and fallbacks.
-5. Check dialogs, pickers, and multi-window behavior in `references/windowing.md`.
+3. Threading: UI updates on UI thread via `DispatcherQueue`.
+4. Validate system backdrop usage + fallbacks.
+5. Check dialogs, pickers, multi-window in `references/windowing.md`.

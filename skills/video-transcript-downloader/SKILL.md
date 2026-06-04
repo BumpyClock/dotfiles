@@ -5,13 +5,11 @@ description: "yt-dlp downloads: video, audio, subtitles, transcripts, clips, pla
 
 # Video Transcript Downloader
 
-`./scripts/vtd.js` can:
-- Print a transcript as a clean paragraph (timestamps optional).
-- Download video/audio/subtitles.
+`./scripts/vtd.js`: print transcript (clean paragraph, timestamps optional), download video/audio/subtitles.
 
 Transcript behavior:
-- YouTube: fetch via `youtube-transcript-plus` when possible.
-- Otherwise: pull subtitles via `yt-dlp`, then clean into a paragraph.
+- YouTube: `youtube-transcript-plus` when possible.
+- Fallback: subtitles via `yt-dlp`, cleaned into paragraph.
 
 ## Setup
 
@@ -19,14 +17,14 @@ Transcript behavior:
 cd ~/Projects/agent-scripts/skills/video-transcript-downloader && npm ci
 ```
 
-CLI syntax:
+CLI help:
 
 ```bash
 ./scripts/vtd.js --help
 ./scripts/vtd.js transcript --help
 ```
 
-Subcommands support focused help without requiring `--url`.
+Subcommands support focused help without `--url`.
 
 ## Transcript (default: clean paragraph)
 
@@ -45,21 +43,21 @@ Subcommands support focused help without requiring `--url`.
 ./scripts/vtd.js subs --url 'https://…' --output-dir ~/Downloads --lang en
 ```
 
-## Formats (list + choose)
+## Formats
 
-List available formats (format ids, resolution, container, audio-only, etc):
+List available (format ids, resolution, container, audio-only):
 
 ```bash
 ./scripts/vtd.js formats --url 'https://…'
 ```
 
-Download a specific format id (example):
+Download specific format id:
 
 ```bash
 ./scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --format 137+140
 ```
 
-Prefer MP4 container without re-encoding (remux when possible):
+Prefer MP4 without re-encoding (remux):
 
 ```bash
 ./scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --remux-video mp4
@@ -67,23 +65,23 @@ Prefer MP4 container without re-encoding (remux when possible):
 
 ## Notes
 
-- Default transcript output is a single paragraph. Use `--timestamps` only when asked.
-- Bracketed cues like `[Music]` are stripped by default; keep them via `--keep-brackets`.
-- Pass extra `yt-dlp` args after `--` for `transcript` fallback, `download`, `audio`, `subs`, `formats`.
+- Default transcript: single paragraph. `--timestamps` only when asked.
+- Bracketed cues `[Music]` stripped by default; `--keep-brackets` to preserve.
+- Extra `yt-dlp` args after `--` for `transcript` fallback, `download`, `audio`, `subs`, `formats`:
 
 ```bash
 ./scripts/vtd.js formats --url 'https://…' -- -v
 ```
 
-## Troubleshooting (only when needed)
+## Troubleshooting
 
-- Missing `yt-dlp` / `ffmpeg`:
+Missing `yt-dlp` / `ffmpeg`:
 
 ```bash
 brew install yt-dlp ffmpeg
 ```
 
-- Verify:
+Verify:
 
 ```bash
 yt-dlp --version

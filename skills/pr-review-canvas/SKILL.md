@@ -8,15 +8,15 @@ license: MIT
 
 # PR Review Canvas
 
-Generate an interactive HTML review of a GitHub PR that reads like a peer walking through what matters. This is a local-browser adaptation of Cursor's canvas workflow.
+Generate interactive HTML review of a GitHub PR — reads like a peer walking through what matters. Local-browser adaptation of Cursor's canvas workflow.
 
-Use when the user asks for a PR review canvas, walkthrough, interactive review, or reviewer-friendly diff map. For normal PR comments, CI, merge conflicts, or PR body edits, use `git-workflow`.
+Use when: PR review canvas, walkthrough, interactive review, reviewer-friendly diff map. For normal PR comments/CI/merge conflicts/PR body edits → `git-workflow`.
 
 ## Workflow
 
 ### 1. Fetch PR Data
 
-Resolve the PR from URL, number, or current branch. Use `gh`; do not open browser URLs for PR data.
+Resolve PR from URL, number, or current branch. Use `gh`; no browser URLs.
 
 ```bash
 gh pr view <pr> --json number,title,body,author,state,additions,deletions,changedFiles,baseRefName,headRefName,url
@@ -25,7 +25,7 @@ gh api repos/{owner}/{repo}/pulls/{number}/files --paginate --jq '.[] | {filenam
 gh api repos/{owner}/{repo}/pulls/{number}/comments --paginate --jq '.[] | {user: .user.login, body, path, line}'
 ```
 
-Save patches safely with JSON escaping:
+Save patches safely (JSON escaping):
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/{number}/files --paginate \
@@ -35,31 +35,22 @@ gh api repos/{owner}/{repo}/pulls/{number}/files --paginate \
 
 ### 2. Write Body HTML
 
-Write only the HTML that belongs inside `<body>` to `/tmp/pr-review-{number}-body.html`. Use whatever structure best explains the PR:
+Write only `<body>` contents to `/tmp/pr-review-{number}-body.html`. Structure:
 
-- Header with title, PR number, author, stats.
-- TL;DR summary.
-- Core files expanded by default with annotations.
-- Wiring/integration condensed.
-- Mechanical, generated, import-only, formatting, or rename-only files collapsed.
-- Review checklist with risks, questions, and suggested review order.
+- Header: title, PR number, author, stats
+- TL;DR summary
+- Core files expanded with annotations
+- Wiring/integration condensed
+- Mechanical/generated/import-only/formatting/rename-only files collapsed
+- Review checklist: risks, questions, suggested review order
 
-Useful representations:
-
-- Pseudocode summaries for verbose algorithms.
-- Before/after behavior tables.
-- Flow diagrams or inline SVG when they clarify control flow.
-- Callouts for breaking changes, race conditions, migration order, security, perf, or rollback concerns.
+Useful representations: pseudocode summaries, before/after behavior tables, flow diagrams/inline SVG, callouts for breaking changes/race conditions/migration order/security/perf/rollback.
 
 ### 3. Use Bundled Renderer
 
-Read these files from this skill directory before assembling:
+Read from skill directory before assembling: `styles.css`, `renderer.js`, `template.html`
 
-- `styles.css`
-- `renderer.js`
-- `template.html`
-
-Available CSS classes include:
+CSS classes:
 
 | Class | Purpose |
 | --- | --- |
@@ -74,7 +65,7 @@ Available CSS classes include:
 | `.bp-section`, `.bp-hdr`, `.bp-body` | Collapsed boilerplate card |
 | `.verdict` | Review checklist box |
 
-Available JS functions:
+JS functions:
 
 | Function | Usage |
 | --- | --- |
@@ -83,7 +74,7 @@ Available JS functions:
 | `renderDiff(target, diffInput)` | Render unified diff |
 | `esc(string)` | HTML-escape a string |
 
-Prefer `<div data-diff="KEY"></div>` placeholders. The renderer auto-fills them from the JSON stored in `template.html`.
+Prefer `<div data-diff="KEY"></div>` placeholders. Renderer auto-fills from JSON in `template.html`.
 
 ### 4. Assemble Safely
 
@@ -115,26 +106,19 @@ PY
 
 ### 5. Serve Locally
 
-Start a local server and give the user the URL:
-
 ```bash
 cd /tmp && python3 -m http.server 8432 --bind 127.0.0.1
 ```
 
-If port 8432 is taken, try 8433, 8434, and so on. Do not leave long-running servers open after the task is done unless the user wants to keep viewing the page.
+Port 8432 taken → try 8433, 8434, etc. Don't leave long-running servers open after task unless user wants.
 
 ## Diff Features
 
-The bundled renderer automatically:
-
-- filters import-only lines,
-- collapses whitespace-only changes into context,
-- detects moved code blocks,
-- highlights near-moved blocks separately.
+Renderer auto-filters import-only lines, collapses whitespace-only changes into context, detects moved code blocks, highlights near-moved blocks separately.
 
 ## Guardrails
 
-- This is an explanatory artifact, not a substitute for review findings.
-- Keep generated or mechanical files collapsed unless risk hides there.
-- Do not expose private tokens, internal URLs, secrets, or unrelated PR comments in the HTML.
-- If the PR is too large, produce an index page or recommend splitting instead of pretending the whole diff is easy.
+- Explanatory artifact, not substitute for review findings
+- Keep generated/mechanical files collapsed unless risk hides there
+- No private tokens, internal URLs, secrets, or unrelated PR comments in HTML
+- PR too large → produce index page or recommend splitting

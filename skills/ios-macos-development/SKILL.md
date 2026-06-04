@@ -6,50 +6,50 @@ description: "iOS/macOS dev: Swift, SwiftUI, UIKit/AppKit, xcodebuild, XCTest, s
 # iOS and macOS Development
 
 ## Workflow
-- Classify request first: app code, SwiftUI patterns, Swift Concurrency, Liquid Glass, App Intents, perf/profiling, simulator automation, live simulator debugging, or release/distribution.
-- Open only the most relevant nested guide first; pull deeper refs/scripts from that guide as needed.
-- Prefer Apple-native APIs and tools over custom wrappers.
+- Classify request: app code, SwiftUI patterns, Swift Concurrency, Liquid Glass, App Intents, perf/profiling, simulator automation, live simulator debugging, or release/distribution.
+- Open most relevant nested guide first; pull deeper refs from that guide.
+- Prefer Apple-native APIs/tools over custom wrappers.
 - Keep behavior stable unless user asked for behavior change.
 
 ## Core Rules
-- Add availability guards and fallbacks only for deployment targets the app supports.
-- Prefer SwiftUI-first for Apple UI work; use UIKit/AppKit interop only when needed.
-- For performance work, fix root cause and measure with `xctrace`/Instruments when code review is not enough.
-- For live iOS simulator debugging, prefer XcodeBuildMCP tools when available; use bundled CLI scripts for repeatable automation and reports.
-- For build/release/submission work, prefer `xcodebuild`, `simctl`, `xctrace`, and `asc` CLI flows captured here.
-- This parent skill is the broad Apple-platform trigger. Use nested guides for depth; do not paste whole nested guides into this file.
+- Add availability guards/fallbacks only for supported deployment targets.
+- Prefer SwiftUI-first; UIKit/AppKit interop only when needed.
+- Perf work: fix root cause, measure with `xctrace`/Instruments when code review insufficient.
+- Live iOS simulator debugging: prefer XcodeBuildMCP tools when available; bundled CLI scripts for repeatable automation.
+- Build/release/submission: prefer `xcodebuild`, `simctl`, `xctrace`, `asc` CLI flows.
+- This parent skill is the broad Apple-platform trigger. Use nested guides for depth; don't paste whole nested guides here.
 
-## Specialized Swift routing
-- Swift 6.2 compiler errors, `Sendable`, actor isolation, data-race warnings -> read `swift-concurrency-expert/guide.md` first.
-- SwiftUI architecture, navigation, state (`state` = UI memory after render), or component structure -> read `swift-ui/guide.md` + `swiftui-ui-patterns/guide.md`.
-- Liquid Glass design/adoption/review -> read `swiftui-liquid-glass/guide.md`; verify iOS 26+ availability and fallback before shipping.
-- SwiftUI performance symptoms -> read `swiftui-performance-audit/guide.md`; if trace evidence needed, combine with `native-app-performance/guide.md` or `instruments-profiling/guide.md`.
+## Specialized Swift Routing
+- Swift 6.2 compiler errors, `Sendable`, actor isolation, data-race warnings → `swift-concurrency-expert/guide.md`
+- SwiftUI architecture, navigation, state, component structure → `swift-ui/guide.md` + `swiftui-ui-patterns/guide.md`
+- Liquid Glass design/adoption/review → `swiftui-liquid-glass/guide.md`; verify iOS 26+ availability + fallback before shipping
+- SwiftUI performance symptoms → `swiftui-performance-audit/guide.md`; combine with `native-app-performance/guide.md` or `instruments-profiling/guide.md` for trace evidence
 
 ## Guide Index
-- `swift-ui/guide.md` -> SwiftUI architecture, state/data flow, AppKit interop, toolbars, testing, logging.
-- `swiftui-ui-patterns/guide.md` -> SwiftUI UI patterns, navigation stacks, tabs, sheets, forms, async state, previews, component references.
-- `swift-concurrency-expert/guide.md` -> Swift 6.2 actor isolation, `Sendable`, concurrency compiler remediation.
-- `ios-app-intents/guide.md` -> App Intents, app entities, App Shortcuts, Shortcuts/Siri/Spotlight/widgets integration.
-- `swiftui-liquid-glass/guide.md` -> iOS 26+ Liquid Glass adoption and review.
-- `swiftui-view-refactor/guide.md` -> SwiftUI file structure, MV patterns, Observation, dependency injection, stable view trees.
-- `swiftui-performance-audit/guide.md` -> SwiftUI-specific performance audit and profiling workflow.
-- `native-app-performance/guide.md` -> CLI-only `xctrace` capture, sample export, hotspot analysis.
-- `instruments-profiling/guide.md` -> Instruments/xctrace launch, attach, export, and binary-selection gotchas.
-- `ios-debugger-agent/guide.md` -> XcodeBuildMCP build/run, UI inspection, logs, screenshots, simulator interaction.
-- `ios-simulator/guide.md` -> simulator lifecycle, UI automation, accessibility, build/test helpers, debugging snapshots.
-- `app-store-connect-cli/guide.md` -> App Store Connect routing, release, signing, metadata, pricing, screenshots, notarization.
+- `swift-ui/guide.md` → SwiftUI architecture, state/data flow, AppKit interop, toolbars, testing, logging
+- `swiftui-ui-patterns/guide.md` → SwiftUI UI patterns, navigation stacks, tabs, sheets, forms, async state, previews
+- `swift-concurrency-expert/guide.md` → Swift 6.2 actor isolation, `Sendable`, concurrency remediation
+- `ios-app-intents/guide.md` → App Intents, entities, Shortcuts/Siri/Spotlight/widgets
+- `swiftui-liquid-glass/guide.md` → iOS 26+ Liquid Glass adoption
+- `swiftui-view-refactor/guide.md` → SwiftUI file structure, MV patterns, Observation, DI, stable view trees
+- `swiftui-performance-audit/guide.md` → SwiftUI-specific perf audit
+- `native-app-performance/guide.md` → CLI-only `xctrace` capture, sample export, hotspot analysis
+- `instruments-profiling/guide.md` → Instruments/xctrace launch, attach, export, binary-selection gotchas
+- `ios-debugger-agent/guide.md` → XcodeBuildMCP build/run, UI inspection, logs, screenshots, simulator interaction
+- `ios-simulator/guide.md` → simulator lifecycle, UI automation, accessibility, build/test helpers
+- `app-store-connect-cli/guide.md` → App Store Connect routing, release, signing, metadata, pricing, screenshots, notarization
 
 ## Common Stacks
-- SwiftUI feature work: `swift-ui/guide.md` + `swiftui-ui-patterns/guide.md` + `swift-concurrency-expert/guide.md`
-- SwiftUI view cleanup: `swiftui-view-refactor/guide.md` + `swiftui-ui-patterns/guide.md`
-- Liquid Glass work: `swift-ui/guide.md` + `swiftui-liquid-glass/guide.md`
-- SwiftUI perf issue: `swiftui-performance-audit/guide.md` + `native-app-performance/guide.md`
-- App Intents work: `ios-app-intents/guide.md` + `swift-ui/guide.md`
-- Run/debug iOS app on Simulator: `ios-debugger-agent/guide.md` + `ios-simulator/guide.md`
-- Repeatable simulator automation: `ios-simulator/guide.md`
-- Screenshot/release flow: `ios-simulator/guide.md` + `app-store-connect-cli/asc-shots-pipeline/guide.md`
-- App Store/TestFlight release: `app-store-connect-cli/asc-xcode-build/guide.md` -> `app-store-connect-cli/asc-release-flow/guide.md` -> `app-store-connect-cli/asc-submission-health/guide.md`
-- macOS outside-App-Store distribution: `app-store-connect-cli/asc-signing-setup/guide.md` + `app-store-connect-cli/asc-notarization/guide.md`
+- SwiftUI feature: `swift-ui/` + `swiftui-ui-patterns/` + `swift-concurrency-expert/`
+- SwiftUI view cleanup: `swiftui-view-refactor/` + `swiftui-ui-patterns/`
+- Liquid Glass: `swift-ui/` + `swiftui-liquid-glass/`
+- SwiftUI perf: `swiftui-performance-audit/` + `native-app-performance/`
+- App Intents: `ios-app-intents/` + `swift-ui/`
+- Run/debug iOS Simulator: `ios-debugger-agent/` + `ios-simulator/`
+- Repeatable simulator automation: `ios-simulator/`
+- Screenshot/release: `ios-simulator/` + `app-store-connect-cli/asc-shots-pipeline/guide.md`
+- App Store/TestFlight: `app-store-connect-cli/asc-xcode-build/guide.md` → `app-store-connect-cli/asc-release-flow/guide.md` → `app-store-connect-cli/asc-submission-health/guide.md`
+- macOS outside-App-Store: `app-store-connect-cli/asc-signing-setup/guide.md` + `app-store-connect-cli/asc-notarization/guide.md`
 
-## macOS permissions / signing
+## macOS Permissions / Signing
 - Never re-sign, ad-hoc sign, or change bundle ID as debug fix without explicit OK.

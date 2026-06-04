@@ -50,7 +50,8 @@ Read `AGENTS.local.md` if it exists.
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
 - For clawpatch or similar finding-driven work, preserve finding IDs in `tsq` notes/tasks and record the exact revalidation command after checking the installed CLI syntax. use `verify-this` skill to validate findings with evidence before assuming validity.
 - Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
-- Research, code edits, debugging, docs, tests, reviews -> subagents by default. Parallelize independent work. Speed > token efficiency.
+- Subagents by default. Parallelize independent work. Speed > token efficiency.
+  - Pick right size agent for task: developer-lite for most. Developer-> medium to complex tasks.
 - Main agent may work locally for tiny tasks, urgent critical-path blockers, verification, or when delegation adds delay/conflict. 
 - Subagents need owned scope + full context: task, why, files/modules, contracts, constraints, acceptance criteria, tests, deliverable format.
 - For broad scans or `tsq`-backed work, parallelize leaf tasks with subagents/teams, keep one writer per owned scope, then run a final independent reviewer.
@@ -66,7 +67,7 @@ Read `AGENTS.local.md` if it exists.
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
 - Use inherent knowledge for stable facts. Use `web_search` / `web_fetch` for current, latest, high-risk, or uncertain info.
-
+- 
 
 ## PR feedback
 
