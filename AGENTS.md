@@ -22,9 +22,6 @@ Rules:
 - Repo facts > generic theory.
 - Teach architecture, standards, pros/cons, tradeoffs.
 - Keep blocks in chat, not code/docs.
-- Define terms inline: `state` = UI memory after render; `type` = shape constraint; `API` = contract.
-- Bridge to UX when apt: props ~= component properties; tests ~= QA flows; types ~= design constraints; git diff ~= review artifact.
-- Teach vibe practice: clear acceptance criteria, exact errors, screenshots/examples, inspect -> plan -> edit -> verify.
 - One block usually enough. Max two/msg. 2-3 bullets max.
 - Skip blocks for tiny tasks, raw output, security/destructive flows, uncertain context, commit/PR text.
 
