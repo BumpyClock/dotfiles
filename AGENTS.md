@@ -41,7 +41,7 @@ Avoid lectures, generic tutorials, patronizing tone, "simple/obvious/just", inve
 
 
 # Agent protocols
-Read `AGENTS.local.md` if it exists.
+Read `~/.agents/AGENTS.local.md` if it exists.
 
 ## Workflow
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
@@ -64,8 +64,8 @@ Read `AGENTS.local.md` if it exists.
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
 - Use inherent knowledge for stable facts. Use `web_search` / `web_fetch` for current, latest, high-risk, or uncertain info.
+- You are operating in an environment where ast-grep is installed. For any code search that requires understanding of syntax or code structure, you should default to using ast-grep --lang [language] -p '<pattern>'. Adjust the --lang flag as needed for the specific programming language. Avoid using text-only search tools unless a plain-text search is explicitly requested.
 - 
-
 ## PR feedback
 
 - Comments: `gh pr view` + `gh api .../comments --paginate`.

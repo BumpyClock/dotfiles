@@ -16,6 +16,7 @@ approvals_reviewer = "user"
 
 
 notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+service_tier = "default"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -158,6 +159,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/adityasharma/Projects/Digests"]
+trust_level = "trusted"
+
+[projects."/Users/adityasharma/.agents"]
 trust_level = "trusted"
 
 
@@ -330,8 +334,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-06T18:14:58Z"
-last_revision = "fc4b52db22f8257f26831e2a83ae743538ebb4de"
+last_updated = "2026-06-07T18:04:14Z"
+last_revision = "13bb2507180bd4c38078b2235d7c4985d2dc4355"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
