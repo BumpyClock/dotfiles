@@ -223,7 +223,7 @@ Every plan needs:
 - DRY, YAGNI, TDD where useful.
 - Commits only when requested by user.
 
-## Self-review
+## Independent review
 
 After writing plan, review against spec. Mandatory.
 
