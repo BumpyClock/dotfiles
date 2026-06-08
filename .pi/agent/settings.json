@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.78.1",
-  "defaultProvider": "github-copilot",
+  "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -51,12 +51,12 @@
     "npm:pi-markdown-preview",
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
-    "npm:pi-codex-goal",
     "npm:@bumpyclock/pi-statusbar",
     "npm:@ifi/oh-pi-themes",
     "npm:pi-teams",
     "npm:pi-intercom",
-    "npm:@bumpyclock/pi-tasque"
+    "npm:@bumpyclock/pi-tasque",
+    "npm:@narumitw/pi-goal"
   ],
   "terminal": {
     "showTerminalProgress": true
@@ -94,7 +94,7 @@
       "safeMode": true,
       "animation": "shimmer",
       "generated": {
-        "model": "openai-codex/gpt-5.4-mini",
+        "model": "openai-codex/gpt-5.3-codex-spark",
         "prompt": "Generate a 2-4 word \"{theme}\" themed loading message ending in \"...\".\n\nTask: {task}\n\nBe creative, funny, sarcastic, and unexpected. Avoid obvious/clichéd phrases for this theme.\nRelevant catchphrases, quotes, and themes should be incorporated into the message.\nThe message should hint at the task using theme vocabulary. modify catchphrase, quotes, and themes as needed.\n{exclude}\nOutput only the message, nothing else.",
         "refreshInterval": 30
       }
