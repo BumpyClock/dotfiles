@@ -18,7 +18,7 @@ description: "Package/sign/release WinUI 3 apps: Release builds, MSIX, cert gene
 ### End-to-End Workflow
 
 #### Step 1: Build for Release
-Build Release without launch using `BuildAndRun.ps1` from `winui-dev-workflow`:
+Build Release without launch using `BuildAndRun.ps1` from `references/winui-dev-workflow/guide.md`:
 
 ```powershell
 .\BuildAndRun.ps1 /p:Configuration=Release -SkipRun

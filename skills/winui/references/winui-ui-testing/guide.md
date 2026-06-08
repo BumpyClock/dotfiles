@@ -19,7 +19,7 @@ Verbs: `status`, `inspect`, `search`, `get-property`, `get-value`, `screenshot`,
 
 ### Step 1: Use the Running App
 
-If app already running, use captured PID. **Do NOT relaunch**. If not running, build/launch via `winui-dev-workflow`.
+If app already running, use captured PID. **Do NOT relaunch**. If not running, build/launch via `references/winui-dev-workflow/guide.md`.
 
 ### Step 2: Write the Test Script
 
@@ -162,7 +162,7 @@ Capture initial state + states after major interactions. Script template State S
 - [ ] Theming matches the user's ask (Light/Dark/HighContrast if relevant)
 - [ ] Focus/hover/error states render if tested
 
-Checklist failure = bug. Fix before done. Window too small → grow per `winui-design` Step 4.
+Checklist failure = bug. Fix before done. Window too small → grow per `references/winui-design/guide.md` Step 4.
 
 ### Step 4: Fix and Rerun (if the user asked for it)
 

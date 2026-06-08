@@ -83,7 +83,7 @@ Script does:
 | winapp CLI | 0.3 | latest | `winget install Microsoft.WinAppCLI` |
 | WinUI templates | any | latest | `dotnet new install Microsoft.WindowsAppSDK.WinUI.CSharp.Templates` |
 
-If missing (`winapp`/`dotnet` not recognized, templates missing, Developer Mode off), **do not install yourself or work around it**. Stop, tell user prerequisite missing, ask them to run `/winui-setup`. After user finishes, retry failed cmd.
+If missing (`winapp`/`dotnet` not recognized, templates missing, Developer Mode off), **do not install yourself or work around it**. Stop, tell user prerequisite missing, ask them to use `winui` setup guidance in `references/winui-setup/guide.md`. After user finishes, retry failed cmd.
 
 ### Critical Rules
 

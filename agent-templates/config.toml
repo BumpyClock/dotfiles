@@ -11,19 +11,19 @@ default = "opus"
 default = "claude-sonnet-4-6"
 
 [providers.copilot.balanced]
-default = "claude-opus-4-6"
+default = "claude-opus-4-8"
 economy = "claude-sonnet-4-6"
 
 [providers.copilot.strong]
 default = "gpt-5.5"
-economy = "claude-opus-4.6"
+economy = "claude-opus-4.8"
 
 [providers.codex.fast]
-default = "gpt-5.3-codex-spark"
+default = "gpt-5.4-mini"
 
 [providers.codex.balanced]
-default = "gpt-5.4"
-economy = "gpt-5.3-codex-spark"
+default = "gpt-5.5"
+economy = "gpt-5.4-mini"
 
 [providers.codex.strong]
 default = "gpt-5.5"
@@ -32,9 +32,9 @@ default = "gpt-5.5"
 default = "zai/glm-5.1"
 
 [providers.pi.balanced]
-default = "github-copilot/claude-opus-4.6"
+default = "github-copilot/claude-opus-4.8"
 economy = "github-copilot/claude-sonnet-4.6"
 
 [providers.pi.strong]
 default = "github-copilot/gpt-5.5"
-economy = "github-copilot/claude-opus-4.6"
+economy = "github-copilot/claude-opus-4.8"

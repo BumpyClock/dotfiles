@@ -11,7 +11,7 @@ Run **after app builds, before commit**. Goal: catch issues compiler/UI tests mi
 
 Read project XAML + C#. Check every section below.
 
-`Microsoft.WindowsAppSDK.Analyzers` ships with `winui-dev-workflow`. `BuildAndRun.ps1` injects it during build by writing temporary `Directory.Build.props` with analyzer DLL + `.targets`, then cleans up. Plain `dotnet build` or VS does **not** load it. For diagnostics outside script, add `<Analyzer Include="..." />` + `<Import Project="..." />` to project `Directory.Build.props` or wait for planned NuGet package.
+`Microsoft.WindowsAppSDK.Analyzers` ships with `references/winui-dev-workflow/guide.md`. `BuildAndRun.ps1` injects it during build by writing temporary `Directory.Build.props` with analyzer DLL + `.targets`, then cleans up. Plain `dotnet build` or VS does **not** load it. For diagnostics outside script, add `<Analyzer Include="..." />` + `<Import Project="..." />` to project `Directory.Build.props` or wait for planned NuGet package.
 
 Analyzer catches WinUI 3 / Windows App SDK issues by 4-digit ID:
 

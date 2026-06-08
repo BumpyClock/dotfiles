@@ -5,7 +5,7 @@ description: "Design/review WinUI 3 UI/XAML: layouts, controls, Fluent, Light/Da
 
 ### UI Planning
 
-> **Before controls, search catalogue.** `winui-search.exe` sits beside this `SKILL.md`. It indexes 100+ WinUI Gallery controls, Windows Community Toolkit scenarios, and platform patterns (`JumpList`, Share, file pickers, drag-drop). Ground control choices in shipping samples **before writing XAML**.
+> **Before controls, search catalogue.** `winui-search.exe` sits beside this `guide.md`. It indexes 100+ WinUI Gallery controls, Windows Community Toolkit scenarios, and platform patterns (`JumpList`, Share, file pickers, drag-drop). Ground control choices in shipping samples **before writing XAML**.
 >
 > ```powershell
 > .\winui-search.exe search "<feature 1>" "<feature 2>" ...   # batch one focused query per feature
@@ -79,7 +79,7 @@ public sealed partial class MainWindow : Window
 
 `XamlRoot.RasterizationScale` is null in ctor and stale after `AppWindow.Move`; `[DllImport]` cleanest. Root `Grid` `Width`/`Height` clips content, not window.
 
-UI validation → `winui-ui-testing` Step 3.5 visual checklist.
+UI validation → `references/winui-ui-testing/guide.md` Step 3.5 visual checklist.
 
 #### Step 5: Design Anti-Patterns
 | ❌ Don't | ✅ Do Instead |
