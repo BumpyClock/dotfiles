@@ -1,23 +1,23 @@
 ---
 name: winui-wpf-migration
-description: "Migrate WPF applications to WinUI 3 — namespace replacement (System.Windows → Microsoft.UI.Xaml), control mapping (DataGrid→ListView, WrapPanel→ItemsRepeater, TabControl→TabView), threading (Dispatcher→DispatcherQueue), imaging (System.Drawing→BitmapImage), MVVM conversion to CommunityToolkit.Mvvm, and DynamicResource→ThemeResource. Use when converting WPF code, replacing WPF namespaces, or fixing migration build errors."
+description: "Migrate WPF→WinUI 3: System.Windows→Microsoft.UI.Xaml, DataGrid→ListView, WrapPanel→ItemsRepeater, TabControl→TabView, Dispatcher→DispatcherQueue, System.Drawing→BitmapImage, MVVM Toolkit, DynamicResource→ThemeResource. Use for WPF conversion, namespace replacement, migration build errors."
 ---
 
 ### Migration Process
 
 #### Step 1: Audit the WPF Source
-Before writing code, inventory WPF-specific APIs:
+Before code, inventory WPF-specific APIs:
 ```powershell
 # Find all WPF namespace usage
 Select-String -Path (Get-ChildItem -Recurse -Filter "*.cs" | Where-Object { $_.FullName -notlike "*\obj\*" }) -Pattern "System\.Windows\." | Select-Object -Property Filename, LineNumber, Line
 ```
-List: WPF controls used, custom MVVM framework, imaging APIs, threading patterns, Win32 interop.
+List WPF controls, custom MVVM, imaging APIs, threading, Win32 interop.
 
 #### Step 2: Create WinUI 3 Project and Align Namespaces
 ```powershell
 dotnet new winui-mvvm -n <AppName>
 ```
-Immediately set `<RootNamespace>` in `.csproj` to match the WPF namespace. Update `x:Class` in `App.xaml`, `MainWindow.xaml` and their code-behind files. Build to verify before porting any code.
+Set `<RootNamespace>` in `.csproj` to match WPF namespace. Update `x:Class` in `App.xaml`, `MainWindow.xaml`, and code-behind. Build before porting code.
 
 #### Step 3: Replace Namespaces
 
@@ -51,14 +51,14 @@ Application.Current.Dispatcher.Invoke(() => { /* UI work */ });
 // WinUI 3
 dispatcherQueue.TryEnqueue(() => { /* UI work */ });
 ```
-Get via `DispatcherQueue.GetForCurrentThread()`. No `Application.Current.Dispatcher` in WinUI 3.
+Get queue via `DispatcherQueue.GetForCurrentThread()`. WinUI 3 has no `Application.Current.Dispatcher`.
 
 #### Step 6: Replace Imaging
-**Critical:** `PresentationCore.dll` and `System.Windows.Media.Imaging` crash the WinUI XAML compiler. This is an architectural incompatibility — no workaround exists.
-- Remove ALL `System.Windows.Media.Imaging` references at migration start
-- Replace with `Windows.Graphics.Imaging` (WinRT) or `Microsoft.UI.Xaml.Media.Imaging.BitmapImage`
-- Do NOT add `<UseWPF>true</UseWPF>` — it silently corrupts the build
-- If heavy imaging code exists, migrate it early (step 2, not step 7)
+**Critical:** `PresentationCore.dll` and `System.Windows.Media.Imaging` crash WinUI XAML compiler. Architectural incompatibility; no workaround.
+- Remove ALL `System.Windows.Media.Imaging` refs at migration start.
+- Replace with `Windows.Graphics.Imaging` (WinRT) or `Microsoft.UI.Xaml.Media.Imaging.BitmapImage`.
+- Do NOT add `<UseWPF>true</UseWPF>` — silently corrupts build.
+- Heavy imaging code: migrate early (step 2, not step 7).
 
 #### Step 7: Replace MVVM Framework
 Delete custom `ObservableObject`/`RelayCommand`/`DelegateCommand`. Use CommunityToolkit.Mvvm:

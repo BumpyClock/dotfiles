@@ -8,7 +8,7 @@ Consolidated detailed rules from performance, security, accessibility, globaliza
 
 ### x:Bind vs {Binding}
 
-Always prefer `x:Bind` (compiled bindings) over `{Binding}` (runtime reflection). `x:Bind` resolves at compile time, generates strongly typed code, and avoids the reflection overhead of `{Binding}`.
+Prefer `x:Bind` (compiled) over `{Binding}` (runtime reflection). `x:Bind` resolves at compile time, generates strongly typed code, avoids reflection overhead.
 
 | Feature | `x:Bind` | `{Binding}` |
 |---|---|---|
@@ -17,11 +17,11 @@ Always prefer `x:Bind` (compiled bindings) over `{Binding}` (runtime reflection)
 | Default mode | OneTime | OneWay |
 | Performance | Faster | Slower |
 
-Reserve `{Binding}` only where `x:Bind` cannot be used (e.g., `Style` setters).
+Use `{Binding}` only where `x:Bind` cannot work, e.g. `Style` setters.
 
 ### Deferred Loading with x:Load
 
-Use `x:Load` to defer creation of UI subtrees that aren't immediately visible (e.g., dialogs, secondary tabs, collapsed panels). The element is created only when `x:Load` evaluates to `true`.
+Use `x:Load` for UI subtrees not immediately visible: dialogs, secondary tabs, collapsed panels. Element creates only when `x:Load` is `true`.
 
 ```xml
 <StackPanel x:Name="SettingsPanel" x:Load="{x:Bind ViewModel.IsSettingsOpen, Mode=OneWay}">
@@ -31,7 +31,7 @@ Use `x:Load` to defer creation of UI subtrees that aren't immediately visible (e
 
 ### Incremental Rendering with x:Phase
 
-Use `x:Phase` inside `DataTemplate` to prioritize which parts of each list item render first. Phase 0 (default) renders immediately; higher phases render in subsequent passes.
+Use `x:Phase` inside `DataTemplate` to prioritize list-item rendering. Phase 0 renders immediately; higher phases render in later passes.
 
 ```xml
 <DataTemplate x:DataType="vm:ItemViewModel">
@@ -45,7 +45,7 @@ Use `x:Phase` inside `DataTemplate` to prioritize which parts of each list item 
 
 ### Collection Virtualization
 
-Use `ListView`, `GridView`, or `ItemsRepeater` for any list that may exceed ~20 items. These controls create UI elements only for visible items and recycle them on scroll.
+Use `ListView`, `GridView`, or `ItemsRepeater` for lists that may exceed ~20 items. They create visible item UI only and recycle on scroll.
 
 ```xml
 <ScrollViewer>
@@ -57,7 +57,7 @@ Use `ListView`, `GridView`, or `ItemsRepeater` for any list that may exceed ~20 
 </ScrollViewer>
 ```
 
-For large datasets, implement `ISupportIncrementalLoading` so the `ListView` fetches pages of data as the user scrolls.
+Large datasets: implement `ISupportIncrementalLoading` so `ListView` fetches pages during scroll.
 
 ### DispatcherQueue for UI-Thread Management
 
@@ -75,18 +75,18 @@ public async Task LoadDataAsync()
 }
 ```
 
-**Do not flood the queue.** Batch updates into a single `TryEnqueue` call rather than enqueuing per item.
+**Do not flood queue.** Batch updates into one `TryEnqueue`, not one enqueue per item.
 
 ### Async Patterns
 
-- Use `async/await` for I/O-bound work (file access, HTTP calls, database queries).
-- Use `Task.Run` for CPU-bound work (parsing, compression, image processing).
-- Never block the UI thread with `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`.
+- `async/await` for I/O: file, HTTP, DB.
+- `Task.Run` for CPU: parsing, compression, image processing.
+- Never block UI thread with `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`.
 
 ### Layout and Visual Tree
 
-- Minimize XAML visual tree depth — deep nesting compounds layout-pass cost.
-- Prefer `Grid` over nested `StackPanel` layouts when you need rows and columns.
+- Minimize XAML visual tree depth; deep nesting compounds layout-pass cost.
+- Prefer `Grid` over nested `StackPanel` when rows + columns needed.
 - Cache expensive computations and HTTP responses when appropriate.
 
 ---
@@ -95,7 +95,7 @@ public async Task LoadDataAsync()
 
 ### Secrets Management with PasswordVault
 
-Use the Windows Credential Locker (`PasswordVault`) to store secrets. Credentials are encrypted per-user, per-app.
+Use Windows Credential Locker (`PasswordVault`) for secrets. Credentials encrypted per-user, per-app.
 
 ```csharp
 using Windows.Security.Credentials;
@@ -112,7 +112,7 @@ vault.Remove(credential);
 
 ### DPAPI Encryption for Data at Rest
 
-For encrypting arbitrary data at rest (e.g., local cache files), use `DataProtectionProvider`:
+For arbitrary data at rest, e.g. local cache files, use `DataProtectionProvider`:
 
 ```csharp
 using Windows.Security.Cryptography.DataProtection;
@@ -129,7 +129,7 @@ IBuffer decrypted = await unprotectProvider.UnprotectAsync(encrypted);
 
 ### Input Validation
 
-Validate and sanitize all external input before processing. Use XAML input constraints and C# validation together:
+Validate + sanitize external input before processing. Pair XAML input constraints with C# validation:
 
 ```xml
 <TextBox x:Name="AgeInput"
@@ -146,7 +146,7 @@ private void AgeInput_BeforeTextChanging(TextBox sender,
 }
 ```
 
-For file paths and process execution, never pass unsanitized user input:
+For file paths/process execution, never pass unsanitized user input:
 
 ```csharp
 // BAD — command injection risk
@@ -184,15 +184,15 @@ async Task InitializeWebView()
 ### Network Security
 
 - Always use HTTPS. Never disable TLS certificate validation.
-- Use `HttpClient` with default certificate validation — do not override `ServerCertificateCustomValidationCallback` to return `true`.
-- Pin certificates for high-security scenarios using a custom `HttpClientHandler`.
+- Use `HttpClient` default certificate validation; do not override `ServerCertificateCustomValidationCallback` to return `true`.
+- Pin certificates for high-security scenarios via custom `HttpClientHandler`.
 
 ### Package Identity and Secure Storage
 
-- Packaged apps run inside an MSIX container with isolated `ApplicationData` storage.
-- Follow the principle of least privilege in `Package.appxmanifest`.
-- Keep NuGet packages up to date — run `dotnet list package --outdated` regularly.
-- Never log sensitive data (PII, tokens, passwords).
+- Packaged apps run inside MSIX container with isolated `ApplicationData`.
+- Use least privilege in `Package.appxmanifest`.
+- Keep NuGet packages current; run `dotnet list package --outdated` regularly.
+- Never log sensitive data: PII, tokens, passwords.
 
 ---
 
@@ -200,27 +200,27 @@ async Task InitializeWebView()
 
 ### AutomationProperties
 
-- **Every interactive control** must have an `AutomationProperties.Name` or `AutomationProperties.LabeledBy`.
-- Add a stable, unique `AutomationProperties.AutomationId` for controls targeted by UI automation tests.
-- Use semantic XAML controls — prefer `Button`, `HyperlinkButton`, `ListView` over styled `Border`/`Grid` with click handlers.
-- Images must have `AutomationProperties.Name` describing the image purpose (or `AutomationProperties.AccessibilityView="Raw"` for decorative images).
+- **Every interactive control** needs `AutomationProperties.Name` or `AutomationProperties.LabeledBy`.
+- Add stable, unique `AutomationProperties.AutomationId` for controls targeted by UI automation tests.
+- Use semantic XAML controls: `Button`, `HyperlinkButton`, `ListView`, not styled `Border`/`Grid` click handlers.
+- Images need `AutomationProperties.Name` for purpose, or `AutomationProperties.AccessibilityView="Raw"` when decorative.
 
 ### Keyboard Navigation
 
 - Logical tab order via `TabIndex`.
-- `AccessKey` bindings for frequently used actions.
-- `KeyboardAccelerator` for shortcut keys.
+- `AccessKey` for frequent actions.
+- `KeyboardAccelerator` for shortcuts.
 
 ### Screen Readers
 
-- Support Narrator / NVDA: test that all content is announced correctly.
-- Do not rely on colour alone to convey meaning — add icons, text, or patterns.
-- Do not use `Visibility.Collapsed` to "hide" content from screen readers (use `AccessibilityView` instead).
+- Support Narrator / NVDA; verify all content announced correctly.
+- Do not rely on colour alone; add icons, text, or patterns.
+- Do not use `Visibility.Collapsed` to "hide" content from screen readers; use `AccessibilityView`.
 
 ### Contrast
 
-- Maintain minimum contrast ratios: 4.5:1 for normal text, 3:1 for large text.
-- Test in High Contrast mode.
+- Maintain minimum contrast: 4.5:1 normal text, 3:1 large text.
+- Test High Contrast mode.
 
 ### Verification Checklist
 
@@ -255,11 +255,11 @@ async Task InitializeWebView()
 </PropertyGroup>
 ```
 
-Follow **all** CA* (quality) and IDE* (code style) analyzer rules at their configured severity.
+Follow **all** CA* quality + IDE* code style analyzer rules at configured severity.
 
 ### .editorconfig
 
-The project's `.editorconfig` is the source of truth for code style:
+Project `.editorconfig` is code-style source of truth:
 - Private fields use `_camelCase` prefix.
 - File-scoped namespaces are required.
 - `this.` qualification is not used.
@@ -290,7 +290,7 @@ The project's `.editorconfig` is the source of truth for code style:
 
 ### File Organization
 
-Each `.cs` file should follow this order:
+Each `.cs` file order:
 1. `using` directives (System first, then others, alphabetically)
 2. Namespace declaration (file-scoped)
 3. Class/struct/interface declaration
@@ -302,7 +302,7 @@ Each `.cs` file should follow this order:
 
 ### .resw File Structure
 
-Resource files live under `Strings/{language-tag}/` in the project:
+Resource files live under project `Strings/{language-tag}/`:
 
 ```
 MyApp/
@@ -315,7 +315,7 @@ MyApp/
 │       └── Resources.resw
 ```
 
-Each `.resw` file is an XML table of name–value pairs with dot notation for property targeting:
+Each `.resw` is XML name/value table with dot notation for property targeting:
 
 | Name | Value |
 |---|---|
@@ -362,7 +362,7 @@ public class MainViewModel
 }
 ```
 
-For strings with format placeholders, define the `.resw` value with `{0}`, `{1}`, etc.:
+For format placeholders, define `.resw` value with `{0}`, `{1}`, etc.:
 
 ```csharp
 string message = string.Format(_resourceLoader.GetString("ItemCount"), count);
@@ -391,7 +391,7 @@ string price = $"${cost:F2}";
 </Grid>
 ```
 
-Use `Start`/`End` alignment, not `Left`/`Right`. Avoid hard-coding `Margin` or `Padding` that assumes LTR layout.
+Use `Start`/`End`, not `Left`/`Right`. Avoid hardcoded `Margin`/`Padding` that assumes LTR.
 
 ### Pluralization Handling
 

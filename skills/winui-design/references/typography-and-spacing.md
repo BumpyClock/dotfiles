@@ -2,7 +2,7 @@
 
 ## Typography — Type Ramp
 
-Use the **built-in TextBlock styles** — never set `FontSize` or `FontWeight` manually. The type ramp uses **Segoe UI Variable** and scales correctly across displays.
+Use **built-in TextBlock styles**; never set `FontSize` or `FontWeight` manually. Type ramp uses **Segoe UI Variable** and scales across displays.
 
 | Style | Use for |
 |-------|---------|
@@ -15,7 +15,7 @@ Use the **built-in TextBlock styles** — never set `FontSize` or `FontWeight` m
 | `TitleLargeTextBlockStyle` | Hero headings |
 | `DisplayTextBlockStyle` | Splash / display only |
 
-Always reference these `StaticResource` styles — never hardcode font sizes, weights, or line heights.
+Reference these `StaticResource` styles. Never hardcode font sizes, weights, or line heights.
 
 ```xml
 <!-- GOOD — use built-in styles -->
@@ -27,13 +27,13 @@ Always reference these `StaticResource` styles — never hardcode font sizes, we
 <TextBlock Text="Settings" FontSize="20" FontWeight="SemiBold" />
 ```
 
-**Minimum readable sizes:** 12px Regular for labels, 14px SemiBold for smallest bold text. Never go below 12px.
+**Minimum sizes:** 12px Regular labels, 14px SemiBold smallest bold text. Never below 12px.
 
 ---
 
 ## Spacing — 4px Grid
 
-All spacing and sizing values must be **multiples of 4px**. This ensures consistent alignment and scaling across DPI settings.
+Spacing and sizing values must be **multiples of 4px** for alignment + DPI scaling.
 
 **Standard spacing scale (effective pixels):**
 

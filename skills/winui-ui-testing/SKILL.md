@@ -1,37 +1,37 @@
 ---
 name: winui-ui-testing
-description: "Automated UI testing for WinUI 3 apps — generate a batch test script, run all tests in one pass, read results. Covers element assertions, interactions, value checking (TextBox, ComboBox, ToggleSwitch), file pickers, flyouts, dialogs, persistence, and accessibility audits."
+description: "Automate WinUI 3 UI tests: batch script, one-pass run, result readback. Covers element assertions, interactions, TextBox/ComboBox/ToggleSwitch values, pickers, flyouts, dialogs, persistence, accessibility."
 ---
 
 ### Approach
 
-The goal of this skill is to validate UI and app functionality automatically, without manual interaction, by exercising the app's UI elements, verifying their state, and asserting that the app behaves as expected under test conditions.
+Goal: validate UI + app behavior automatically. Exercise UI elements, verify state, assert expected behavior.
 
-There are two main approaches:
-1. Interactive exploration — manually run the app, use `winapp ui <command>` to explore the UI tree, find AutomationIds, verify element properties, and test functionality interactively. This is useful for discovery, but slow and expensive if repeated for every test iteration.
-2. Scripted batch testing — generate a `ui-tests.ps1` script that exercises all UI elements and asserts expected behavior in one pass. This allows you to run the tests automatically, capture results, and iterate quickly without manually interacting with the app each time.
+Two modes:
+1. Interactive exploration — run app, use `winapp ui <command>` to inspect UI tree, find AutomationIds, verify props, test behavior. Good for discovery; slow when repeated.
+2. Scripted batch testing — generate `ui-tests.ps1` that exercises UI + assertions in one pass. Repeatable, captures pass/fail, cheaper to iterate.
 
-Unless the user asked for interactive exploration, or you are unfamiliar with the code/app or need to explore the UI tree to discover AutomationIds for hidden or dynamically generated elements (flyouts, dialogs, lazy-loaded content), **prefer scripted batch testing** — it is faster, repeatable, and produces a record of pass/fail results that can be reviewed and acted on.
+Prefer scripted batch testing unless user asked for interactive exploration, code/app is unfamiliar, or hidden/dynamic AutomationIds need discovery (flyouts, dialogs, lazy-loaded content).
 
 ### `winapp ui` Verbs
 
-`status`, `inspect`, `search`, `get-property`, `get-value`, `screenshot`, `invoke`, `click`, `set-value`, `focus`, `scroll`, `scroll-into-view`, `wait-for`, `list-windows`, `get-focused`. Run `winapp ui --cli-schema` for the complete command structure as JSON, or `winapp ui <verb> --help` for any single verb.
+Verbs: `status`, `inspect`, `search`, `get-property`, `get-value`, `screenshot`, `invoke`, `click`, `set-value`, `focus`, `scroll`, `scroll-into-view`, `wait-for`, `list-windows`, `get-focused`. Run `winapp ui --cli-schema` for full JSON command shape, or `winapp ui <verb> --help` for one verb.
 
 ### Step 1: Use the Running App
 
-If the app is already running, use its PID. **Do NOT relaunch** — use the PID already captured from the build step. If the app is not running, build and launch it using the guidance in the winui-dev-workflow skill.
+If app already running, use captured PID. **Do NOT relaunch**. If not running, build/launch via `winui-dev-workflow`.
 
 ### Step 2: Write the Test Script
 
-**If you wrote the code:** Skip inspect — you already know all the AutomationIds and control structure from the XAML and code-behind. Write tests directly from that knowledge. Inspect misses popups, flyouts, dialogs, and lazy-loaded content anyway.
+**If you wrote code:** Skip inspect. You know AutomationIds + control structure from XAML/code-behind. Inspect misses popups, flyouts, dialogs, lazy-loaded content.
 
-**If you're verifying code you didn't write:** Run inspect first to discover the UI:
+**If verifying code you didn't write:** inspect first:
 ```powershell
 winapp ui inspect -a <PID> --interactive
 ```
-Then read the XAML files to find AutomationIds that aren't currently visible (flyout items, dialog buttons, secondary pages).
+Then read XAML for AutomationIds not currently visible: flyouts, dialog buttons, secondary pages.
 
-Create a `ui-tests.ps1` file that tests all the app's requirements in one pass:
+Create `ui-tests.ps1` covering all app requirements in one pass:
 
 ```powershell
 # ui-tests.ps1
@@ -120,7 +120,7 @@ if ($fail -gt 0) { exit 1 } else { exit 0 }
 
 ### What to Test
 
-Write tests for **every requirement** from the user's prompt:
+Test **every requirement** from user prompt:
 
 | Requirement type | Test approach |
 |---|---|
@@ -143,13 +143,13 @@ Write tests for **every requirement** from the user's prompt:
 .\ui-tests.ps1 -AppPid <PID>
 ```
 
-Read `test-results.json` for structured pass/fail. Only fix code if tests fail.
+Read `test-results.json` for structured pass/fail. Fix code only when tests fail.
 
 ### Step 3.5: Look at the Screenshots
 
-UIA assertions don't see clipping, overlap, wrong theming, or controls bleeding past their container — UIA returns `PASS` while the app is visually broken. **Capture screenshots with `winapp ui screenshot` and view each PNG.**
+UIA cannot see clipping, overlap, wrong theming, or controls bleeding past container. UIA returns `PASS` while UI looks broken. **Capture screenshots with `winapp ui screenshot` and view each PNG.**
 
-Capture the initial state and any state after a major interaction (the State Screenshots block in the script template above handles this).
+Capture initial state + states after major interactions. Script template State Screenshots block handles this.
 
 **Visual checklist — fail the run if any item is `no`:**
 - [ ] No unintended scrollbars
@@ -162,7 +162,7 @@ Capture the initial state and any state after a major interaction (the State Scr
 - [ ] Theming matches the user's ask (Light/Dark/HighContrast if relevant)
 - [ ] Focus/hover/error states render if tested
 
-If the checklist fails, it's a bug — fix before declaring done. Window too small → grow per `winui-design` Step 4.
+Checklist failure = bug. Fix before done. Window too small → grow per `winui-design` Step 4.
 
 ### Step 4: Fix and Rerun (if the user asked for it)
 
@@ -172,11 +172,11 @@ If tests fail:
 3. Rebuild with `.\BuildAndRun.ps1` (blocking mode — shows crash info if the fix broke something)
 4. Rerun `.\ui-tests.ps1 -AppPid <PID>` (parse PID from the `launched (PID: XXXXX)` output)
 
-**Maximum 2 fix-and-rerun cycles.** If the same tests keep failing after 2 cycles, report them as known issues and move on — do not keep iterating.
+**Maximum 2 fix-and-rerun cycles.** If same tests fail after 2 cycles, report known issues and stop iterating.
 
 ### Assertion Reference
 
-Use `wait-for --value` as the primary assertion — it uses a smart fallback chain that reads the right value for any control type:
+Use `wait-for --value` as primary assertion. It reads right value via fallback chain per control type:
 
 | Control type | `--value` reads from | Example |
 |---|---|---|
@@ -208,7 +208,7 @@ Use `wait-for --value` as the primary assertion — it uses a smart fallback cha
 
 ### Testing File Pickers
 
-File/folder pickers (FileOpenPicker, FileSavePicker, FolderPicker) run in a separate `PickerHost` process but are fully interactable. The picker appears as an owned dialog window.
+File/folder pickers (FileOpenPicker, FileSavePicker, FolderPicker) run in separate `PickerHost` process but remain interactable. Picker appears as owned dialog window.
 
 ```powershell
 # 1. Trigger the picker
@@ -232,11 +232,11 @@ winapp ui invoke "Cancel" -w $pickerHwnd
 winapp ui wait-for "StatusBar" -a $AppPid -p Name --value "opened" -t 3000
 ```
 
-**Tip:** Use `winapp ui inspect -w <pickerHwnd> --interactive` to discover the picker's controls — they include the folder tree, file list, filename textbox, and Open/Cancel buttons.
+**Tip:** Use `winapp ui inspect -w <pickerHwnd> --interactive` to discover picker controls: folder tree, file list, filename textbox, Open/Cancel buttons.
 
 ### Testing Context Menus and Flyouts
 
-MenuFlyouts and ContextFlyouts are fully testable. They appear in the UI automation tree when open.
+MenuFlyouts + ContextFlyouts are testable. They appear in UI automation tree when open.
 
 ```powershell
 # 1. Right-click to open a ContextFlyout
@@ -265,7 +265,7 @@ winapp ui invoke "MenuSaveAs" -a $AppPid
 
 ### Testing ContentDialogs
 
-ContentDialogs are in-app controls (same window) — they appear directly in the UI tree when shown.
+ContentDialogs are in-app controls in same window; they appear directly in UI tree when shown.
 
 ```powershell
 # 1. Trigger the dialog
@@ -284,14 +284,13 @@ winapp ui invoke "Close" -a $AppPid             # click "Cancel"
 winapp ui wait-for "Primary" -a $AppPid --gone -t 3000
 ```
 
-**Tip:** ContentDialog buttons often don't have custom AutomationIds — use `inspect` to find the actual selector (slug or text match).
+**Tip:** ContentDialog buttons often lack custom AutomationIds. Use `inspect` for actual selector: slug or text match.
 
 ### Key Gotchas
 
-- **`set-value` does NOT commit default TextBox bindings** — WinUI 3 `x:Bind TwoWay` on TextBox.Text updates the ViewModel on `LostFocus` by default. UIA `set-value` changes the text but doesn't trigger focus events. **Fix:** apps should use `UpdateSourceTrigger=PropertyChanged` on TextBox bindings (see design skill). If the app doesn't, `invoke` a button or `click` another element after `set-value` to trigger `LostFocus`.
-- **Verify persistence via the data file, not UI relaunch** — killing and relaunching a packaged app from a test script is fragile (MSIX registration timing, PID issues). Instead, check the data file on disk: `Get-Content $dataFile | ConvertFrom-Json` and verify expected values.
+- **`set-value` does NOT commit default TextBox bindings** — WinUI 3 `x:Bind TwoWay` on TextBox.Text updates ViewModel on `LostFocus` by default. UIA `set-value` changes text but does not trigger focus events. **Fix:** apps should use `UpdateSourceTrigger=PropertyChanged` on TextBox bindings (see design skill). If app does not, `invoke` a button or `click` another element after `set-value` to trigger `LostFocus`.
+- **Verify persistence via data file, not UI relaunch** — killing/relaunching packaged app from test script is fragile (MSIX registration timing, PID issues). Instead, check data file on disk: `Get-Content $dataFile | ConvertFrom-Json` and verify expected values.
 - **Use `$AppPid` not `$Pid`** — `$Pid` is a read-only automatic variable in PowerShell
-- **Use `--value` without `-p`** — it auto-detects the right UIA pattern (TextPattern → ValuePattern → TogglePattern → SelectionPattern → Name). Only use `-p PropertyName --value` when you need a specific property like `IsEnabled`
-- **File pickers need `-w <HWND>`** — they run in a separate PickerHost process, so `-a PID` won't find them. Use `list-windows` to discover the picker HWND first
-- **Flyouts need a short `Start-Sleep`** after triggering — the menu items appear in the tree asynchronously
-
+- **Use `--value` without `-p`** — it auto-detects UIA pattern (TextPattern → ValuePattern → TogglePattern → SelectionPattern → Name). Use `-p PropertyName --value` only for specific property like `IsEnabled`
+- **File pickers need `-w <HWND>`** — they run in separate PickerHost process, so `-a PID` will not find them. Use `list-windows` to discover picker HWND first
+- **Flyouts need short `Start-Sleep`** after triggering — menu items appear in tree asynchronously

@@ -1,18 +1,18 @@
 ---
 name: winui-dev-workflow
-description: "Build and run workflow for WinUI 3 apps — project creation, BuildAndRun.ps1 script, winapp run, error diagnosis, and prerequisites. Use when building, running, or fixing build errors in a WinUI 3 project."
+description: "Build/run/fix WinUI 3 apps: project creation, BuildAndRun.ps1, winapp run, errors, prerequisites."
 ---
 
 ### Create or Open a Project
 
-**New app** — scaffold with a template:
+**New app** — scaffold:
 ```powershell
 dotnet new winui-mvvm -n <AppName>
 cd <AppName>
 ```
-Creates an MVVM project with CommunityToolkit.Mvvm, TitleBar, MicaBackdrop, and Frame navigation. Do NOT `mkdir` first — `-n` creates the folder.
+Creates MVVM app with CommunityToolkit.Mvvm, TitleBar, MicaBackdrop, Frame navigation. Do NOT `mkdir` first; `-n` creates folder.
 
-**Existing app** — read the `.csproj` to understand:
+**Existing app** — read `.csproj` for:
 - `<TargetFramework>` (e.g., `net10.0-windows10.0.26100.0`)
 - `<PackageReference>` versions (WindowsAppSDK, CommunityToolkit)
 - Project structure and established patterns
@@ -22,22 +22,22 @@ Creates an MVVM project with CommunityToolkit.Mvvm, TitleBar, MicaBackdrop, and 
 ```powershell
 dotnet add package <Name>
 ```
-Never specify `--version` — omitting it gets the latest stable and avoids outdated API mismatches.
+Never specify `--version`; omitted version gets latest stable and avoids stale API mismatch.
 
 ### Build & Run
 
-Use the `BuildAndRun.ps1` script (included with this skill) — it handles everything:
+Use included `BuildAndRun.ps1`; it handles build + run:
 
 ```powershell
 .\BuildAndRun.ps1
 ```
 
-**Invoke the script with `mode: "async"`.** The script stays attached to the running app so a `mode: "sync"` call blocks your turn for the entire lifetime of the app. The output contains the PID of the running app once the app starts, which looks like this:
+Invoke with `mode: "async"`. Script stays attached to running app; `mode: "sync"` blocks turn until app exits. Output includes running PID:
 ```
 ✅ <pkg> launched (PID: 12345)
 ```
 
-What the script does automatically:
+Script does:
 1. Checks Developer Mode is enabled (fails fast if not)
 2. Finds the `.csproj` in the current directory
 3. Auto-detects platform (x64 or ARM64)
@@ -54,9 +54,9 @@ What the script does automatically:
 .\BuildAndRun.ps1 /p:Configuration=Release # override defaults
 ```
 
-**If build fails:** Read ALL errors, batch-fix them in one pass, then run `BuildAndRun.ps1` again.
+**If build fails:** Read ALL errors, batch-fix once, rerun `BuildAndRun.ps1`.
 
-**If the app crashes on launch:** `read_powershell` the shell — first-chance exceptions appear in the output.
+**If app crashes on launch:** `read_powershell` shell; first-chance exceptions appear in output.
 
 ### Common Errors
 
@@ -83,7 +83,7 @@ What the script does automatically:
 | winapp CLI | 0.3 | latest | `winget install Microsoft.WinAppCLI` |
 | WinUI templates | any | latest | `dotnet new install Microsoft.WindowsAppSDK.WinUI.CSharp.Templates` |
 
-If any of these are missing when you try to access them — `winapp` or `dotnet` not recognized, the WinUI templates aren't installed, Developer Mode is off — **do not try to install them yourself and do not try to work around it**. Stop and tell the user the prerequisite is missing and ask them to run `/winui-setup` (a user-invoked skill that installs and verifies everything). Once they've finished, retry the failed command.
+If missing (`winapp`/`dotnet` not recognized, templates missing, Developer Mode off), **do not install yourself or work around it**. Stop, tell user prerequisite missing, ask them to run `/winui-setup`. After user finishes, retry failed cmd.
 
 ### Critical Rules
 
@@ -94,4 +94,4 @@ If any of these are missing when you try to access them — `winapp` or `dotnet`
 
 ### References
 
-- `BuildAndRun.ps1` — included with this skill, handles build + run automatically
+- `BuildAndRun.ps1` — included, handles build + run

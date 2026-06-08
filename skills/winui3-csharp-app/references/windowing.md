@@ -1,12 +1,12 @@
 # Windowing
 
-Use when handling multi-window behavior, dialogs, or file pickers.
+Use for multi-window behavior, dialogs, file pickers.
 
 ## AppWindow basics
-- Use `Window.AppWindow` (Windows App SDK 1.3+) to manage size, position, title bar, and presenters.
-- For other windows, use `AppWindow.GetFromWindowId` after obtaining a `WindowId` from the HWND.
-- Use `AppWindow.SetPresenter` to switch between `FullScreen`, `CompactOverlay`, and the default overlapped presenter.
-- Use `AppWindow.Changed` to respond to size, position, or presenter changes.
+- Use `Window.AppWindow` (Windows App SDK 1.3+) for size, position, title bar, presenters.
+- Other windows: get `WindowId` from HWND, then `AppWindow.GetFromWindowId`.
+- Use `AppWindow.SetPresenter` for `FullScreen`, `CompactOverlay`, default overlapped presenter.
+- Use `AppWindow.Changed` for size, position, presenter changes.
 
 ## AppWindow APIs (1.7+)
 - `SetTaskBarIcon` and `SetTitleBarIcon` set independent icons.
@@ -15,22 +15,22 @@ Use when handling multi-window behavior, dialogs, or file pickers.
 - `EnablePlacementPersistence` remembers size and position across sessions.
 
 ## Multi-window patterns
-- Create secondary windows with `new Window()`, set `Content` (often a `Frame`), then call `Activate()`.
-- Track window instances and release content on `Closed` to avoid leaks.
-- Avoid holding direct references between windows; use a messenger or DI service for cross-window state.
+- Create secondary windows with `new Window()`, set `Content` (often `Frame`), call `Activate()`.
+- Track window instances; release content on `Closed` to avoid leaks.
+- Avoid direct refs between windows; use messenger or DI service for cross-window state.
 
 ## Dialogs
 - Use `ContentDialog` for modal dialogs.
-- Always provide a `CloseButtonText`; `PrimaryButtonText` and `SecondaryButtonText` are optional.
-- Built-in buttons provide consistent keyboard behavior and layout.
-- Set `ContentDialog.XamlRoot` when using AppWindow or XAML Islands.
+- Always provide `CloseButtonText`; `PrimaryButtonText` and `SecondaryButtonText` optional.
+- Built-in buttons provide consistent keyboard behavior/layout.
+- Set `ContentDialog.XamlRoot` with AppWindow or XAML Islands.
 
 ## File and folder pickers
 - Use Windows App SDK pickers (`FileOpenPicker`, `FileSavePicker`, `FolderPicker`).
-- Initialize pickers with the current window via the `AppWindow.Id` constructor.
-- Configure `SuggestedStartLocation`, `FileTypeFilter`, `CommitButtonText`, and `ViewMode` for the task.
-- Always handle a `null` result when the user cancels.
-- Add chosen files/folders to the Future Access List or MRU if you need ongoing access.
+- Initialize pickers with current window via `AppWindow.Id` constructor.
+- Configure `SuggestedStartLocation`, `FileTypeFilter`, `CommitButtonText`, `ViewMode` for task.
+- Always handle `null` result on cancel.
+- Need ongoing access: add chosen files/folders to Future Access List or MRU.
 
 Source pointers:
 - https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/windowing/manage-app-windows

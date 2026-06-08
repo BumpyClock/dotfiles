@@ -1,10 +1,10 @@
 # Review Guidance Patterns
 
-Concrete guidance patterns for WinUI 3 XAML reviews. Use these as a checklist for common pitfalls and fixes.
+WinUI 3 XAML review patterns. Use as pitfall/fix checklist.
 
 ## 1. Brush References Must Target Brush Resources
 
-`ResourceKey` must reference the `SolidColorBrush` resource (suffix `Brush`), not the `Color` resource.
+`ResourceKey` must reference `SolidColorBrush` resource (suffix `Brush`), not `Color`.
 
 ```xml
 <!-- Wrong -->
@@ -26,7 +26,7 @@ Applies to High Contrast as well:
 
 ## 2. Prefer StaticResource Redirects Over Inline SolidColorBrush
 
-Inline brushes allocate new objects. Redirect to existing WinUI brushes instead:
+Inline brushes allocate new objects. Redirect to existing WinUI brushes:
 
 ```xml
 <!-- Wrong -->
@@ -38,7 +38,7 @@ Inline brushes allocate new objects. Redirect to existing WinUI brushes instead:
 
 ## 3. High Contrast Rules (Strict)
 
-- Only use the 8 system color brushes in HighContrast dictionaries.
+- Only 8 system color brushes in HighContrast dictionaries.
 - No hardcoded colors, no opacity, no accent colors, no regular WinUI brushes in HC.
 - No gradient animations in HC. Use a single SystemColor brush.
 - Use `{ThemeResource}` only for `SystemColor*` in HC; use `{StaticResource}` elsewhere.
@@ -48,7 +48,7 @@ Inline brushes allocate new objects. Redirect to existing WinUI brushes instead:
 
 ## 4. Remove Defaults and Redundant Properties
 
-Avoid setting WinUI default values; it blocks future updates.
+Avoid setting WinUI defaults; blocks future updates.
 
 ```xml
 <!-- Wrong: defaults -->
@@ -58,7 +58,7 @@ Avoid setting WinUI default values; it blocks future updates.
 <Button MinHeight="40" Content="Action" />
 ```
 
-Defaults you should not set explicitly:
+Do not set defaults explicitly:
 - `BodyTextBlockStyle` on TextBlock
 - `TextFillColorPrimaryBrush` on TextBlock
 - `TextWrapping="NoWrap"`
@@ -77,7 +77,7 @@ Never hardcode `CornerRadius="3"` or `CornerRadius="7"`.
 
 ## 6. Typography Must Use Styles
 
-Use system text styles instead of raw font properties:
+Use system text styles, not raw font props:
 
 ```xml
 <!-- Wrong -->
@@ -95,7 +95,7 @@ Additional rules:
 
 ## 7. Text Scaling and Localization
 
-Always validate large text scale and long strings:
+Validate large text scale + long strings:
 - Use `MinHeight` instead of `Height`.
 - Avoid fixed widths on buttons and text containers.
 - Prefer `VerticalAlignment="Center"` over fixed positioning.
@@ -103,14 +103,14 @@ Always validate large text scale and long strings:
 
 ## 8. Container Simplification
 
-Remove wrappers that do not add layout or styling:
+Remove wrappers with no layout/styling value:
 - If a Button contains only a SymbolIcon, put it directly in `Content`.
 - Use `Border` for single-child background containers, not `Grid`.
 - Remove StackPanel/Grid wrappers around single elements.
 
 ## 9. TextTrimming Requires Grid Constraints
 
-`StackPanel` and `ColumnDefinition Width="Auto"` prevent trimming:
+`StackPanel` and `ColumnDefinition Width="Auto"` block trimming:
 
 ```xml
 <!-- Wrong -->
@@ -127,11 +127,11 @@ Remove wrappers that do not add layout or styling:
 
 ## 10. 4px Grid for Layout
 
-All margins, padding, and sizes should be multiples of 4 (4, 8, 12, 16...). Avoid odd values like 3, 5, 7, 11, 15.
+Margins, padding, sizes = multiples of 4 (4, 8, 12, 16...). Avoid 3, 5, 7, 11, 15.
 
 ## 11. Flyout and Acrylic Surfaces
 
-Flyout surfaces should use:
+Flyout surfaces:
 
 ```xml
 Background="{ThemeResource FlyoutPresenterBackground}"
@@ -144,7 +144,7 @@ Acrylic pairings:
 - Flyouts/tooltips: `AcrylicBackgroundFillColorDefaultBrush` + `SurfaceStrokeColorFlyoutBrush`
 - UI surfaces: `AcrylicBackgroundFillColorBaseBrush` + `SurfaceStrokeColorDefaultBrush`
 
-Use `BackgroundSizing="InnerBorderEdge"` on bordered acrylic.
+Bordered acrylic: `BackgroundSizing="InnerBorderEdge"`.
 
 ## 12. ThemeShadow and Elevation
 
@@ -154,11 +154,11 @@ ThemeShadow requires elevation:
 Translation="0,0,32"
 ```
 
-Add 12px padding on parent to prevent shadow clipping. Prefer ThemeShadow over composition drop shadows.
+Add 12px parent padding to prevent shadow clipping. Prefer ThemeShadow over composition drop shadows.
 
 ## 13. Reused Values Should Be Named Resources
 
-If the same margin/padding/thickness value appears multiple times, extract it into a named resource.
+Repeated margin/padding/thickness value → named resource.
 
 ## 14. Icon Sizing and Spacing
 
@@ -169,7 +169,7 @@ If the same margin/padding/thickness value appears multiple times, extract it in
 
 ## 15. BasedOn Style Inheritance
 
-When using `BasedOn`, remove all setters that duplicate the base style. Only keep differences.
+With `BasedOn`, remove setters duplicating base style. Keep differences only.
 
 ## 17. ScrollViewer Configuration
 
@@ -179,8 +179,8 @@ When using `BasedOn`, remove all setters that duplicate the base style. Only kee
 
 ## 18. ProgressBar / ProgressRing Defaults
 
-Keep default templates. Custom overrides (CornerRadius, Foreground) have caused contrast and accessibility bugs.
+Keep default templates. Custom overrides (CornerRadius, Foreground) caused contrast/accessibility bugs.
 
 ## 19. Button.Resources for Single-Use Visual States
 
-When customizing a single button's hover/pressed visuals, use `Button.Resources` with theme dictionaries instead of a new style or template.
+Single button hover/pressed visuals: use `Button.Resources` + theme dictionaries, not new style/template.

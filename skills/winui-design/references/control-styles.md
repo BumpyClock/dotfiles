@@ -1,6 +1,6 @@
 # Control Styles
 
-Built-in WinUI 3 styles and patterns. Use `{StaticResource}` to reference, `BasedOn` to extend.
+Built-in WinUI 3 styles/patterns. Reference with `{StaticResource}`; extend with `BasedOn`.
 
 ## Button Styles
 
@@ -18,7 +18,7 @@ Built-in WinUI 3 styles and patterns. Use `{StaticResource}` to reference, `Base
 
 ## Subtle Button Pattern
 
-Override `Button.Resources` with StaticResource redirects. This preserves the WinUI template and all visual states:
+Override `Button.Resources` with StaticResource redirects. Preserves WinUI template + visual states:
 
 ```xml
 <Button Content="Action">
@@ -48,7 +48,7 @@ Override `Button.Resources` with StaticResource redirects. This preserves the Wi
 </Button>
 ```
 
-Empty HC dictionary lets WinUI defaults apply. Light and Dark usually have identical redirects. Border brush states should match background states.
+Empty HC dict → WinUI defaults. Light/Dark usually identical. Border brush states should match background states.
 
 ## Typography Styles
 
@@ -65,17 +65,17 @@ Empty HC dictionary lets WinUI defaults apply. Light and Dark usually have ident
 | `DisplayTextBlockStyle` | 68px | Semibold | Hero text |
 
 **Rules:**
-- `BodyTextBlockStyle` is the default — do not explicitly apply it.
-- `TextWrapping="NoWrap"` is the default — do not set it.
+- `BodyTextBlockStyle` default — do not explicitly apply.
+- `TextWrapping="NoWrap"` default — do not set.
 - Use `SemiBold`, never `Bold`.
 - Minimum 12px for CJK legibility.
-- `BasedOn` styles must not re-declare inherited properties (FontSize, FontFamily, FontWeight, LineHeight).
+- `BasedOn` styles must not re-declare inherited props (FontSize, FontFamily, FontWeight, LineHeight).
 
 ## Style Hygiene
 
-- Reference styles with `{StaticResource}` (not `{ThemeResource}` — unnecessary overhead).
-- Check for existing WinUI styles before creating custom ones.
-- Single-use styles: inline the properties, delete the named style.
+- Reference styles with `{StaticResource}` (not `{ThemeResource}` — overhead).
+- Check existing WinUI styles before custom ones.
+- Single-use styles: inline props, delete named style.
 - Keep one-off values inline; promote to shared dictionary only when reused.
 - Prefer setters/resource overrides for minor visual tweaks; avoid replacing `ControlTemplate` unless structurally required.
 - Use `ThemeResource` inside style setters for theme-dependent values.

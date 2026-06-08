@@ -4,11 +4,11 @@ description: "WinUI 3 / Windows App SDK desktop apps in C#/XAML. MVVM, bindings,
 ---
 
 # WinUI 3 C# App
-
+read other relevant `winui*` skills also as needed. 
 ## Workflow
 1. Classify: new app, existing app, or specific issue.
 2. New app → Quick Start (New). Existing app → Quick Start (Existing).
-3. Use Reference Index for topic files.
+3. Route via Reference Index.
 
 ## Core Rules
 - Prefer Windows App SDK / WinUI APIs over custom interop.

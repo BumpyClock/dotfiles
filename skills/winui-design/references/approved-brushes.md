@@ -1,10 +1,10 @@
 # Approved Brushes
 
-When reviewing XAML, verify that every brush is either:
+Every XAML brush must be either:
 1. A custom brush with explicit `Light`, `Dark`, and `HighContrast` theme dictionaries, OR
 2. One of the approved brushes listed below.
 
-If neither, request the author to switch to an approved brush or provide the complete theme-aware resource set.
+Neither → request approved brush or complete theme-aware resource set.
 
 ## Usage
 
@@ -13,7 +13,7 @@ If neither, request the author to switch to an approved brush or provide the com
 - Names ending in `Brush` are `SolidColorBrush` resources; names without are `Color` resources
 - Prefer the `Brush` key when assigning to Foreground/Background
 
-## Common System Brushes (Quick Reference)
+## Common System Brushes
 
 | Resource | Purpose |
 |----------|---------|

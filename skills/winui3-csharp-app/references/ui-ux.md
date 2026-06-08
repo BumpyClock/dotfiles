@@ -1,47 +1,47 @@
 # UI and UX
 
-Use when building navigation, layout, visual polish, or accessibility.
+Use for navigation, layout, visual polish, accessibility.
 
 ## Navigation
-- `NavigationView` is the standard top-level navigation control and adapts to different window sizes.
-- Use `PaneDisplayMode=Top` for small top-level sets (about 5 or fewer items).
-- Use `PaneDisplayMode=Left` for larger sets (roughly 5-10 items).
+- `NavigationView` = standard top-level nav; adapts to window sizes.
+- `PaneDisplayMode=Top`: small top-level sets (about 5 or fewer items).
+- `PaneDisplayMode=Left`: larger sets (roughly 5-10 items).
 - `PaneDisplayMode=Auto` switches based on width; adjust `CompactModeThresholdWidth` and `ExpandedModeThresholdWidth` for custom breakpoints.
-- The back button does not manage navigation for you; wire it to `Frame.GoBack()` and update `IsBackEnabled` based on `Frame.CanGoBack` on every navigation.
-- Use `Frame.Navigate(typeof(Page), parameter)` to move between pages and pass data.
-- Override `OnNavigatedTo` to read navigation parameters and set up page state.
-- Use `NavigationCacheMode` if you need to preserve page state between navigations.
+- Back button does not manage nav; wire to `Frame.GoBack()` and update `IsBackEnabled` from `Frame.CanGoBack` on every nav.
+- Use `Frame.Navigate(typeof(Page), parameter)` to move pages + pass data.
+- Override `OnNavigatedTo` for navigation params + page state.
+- Use `NavigationCacheMode` to preserve page state between navs.
 
 ## Title bar
-- Prefer the Windows App SDK `TitleBar` control (1.7+) for custom title bars.
-- Set `ExtendsContentIntoTitleBar=true` and call `SetTitleBar(...)` with your title bar element.
-- The `TitleBar` includes built-in Back and Pane toggle buttons; integrate with `NavigationView` by hiding the nav back/toggle buttons and handling `BackRequested`.
+- Prefer Windows App SDK `TitleBar` (1.7+) for custom title bars.
+- Set `ExtendsContentIntoTitleBar=true`; call `SetTitleBar(...)` with title bar element.
+- `TitleBar` has built-in Back + Pane toggle buttons; integrate with `NavigationView` by hiding nav back/toggle buttons and handling `BackRequested`.
 
 ## Layout and interaction
-- Test layouts across window sizes and DPI. WinUI handles per-monitor DPI scaling, but layouts still need validation.
-- Use responsive layouts and ensure small windows can scroll or pan content.
+- Test layouts across window sizes + DPI. WinUI handles per-monitor DPI; layout still needs validation.
+- Use responsive layouts; small windows must scroll/pan content.
 - Prefer on-object commands (context menus, swipe, keyboard shortcuts) where appropriate.
-- Ensure text content supports selection and copy/paste where it makes sense.
+- Text content should support selection/copy/paste where useful.
 
 ## System backdrop and materials
-- Apply backdrops via `Window.SystemBackdrop`. Use Mica for long-lived app windows; use `DesktopAcrylicBackdrop` for transient surfaces.
-- Check Mica/Acrylic support at runtime and provide a fallback for unsupported environments.
-- For Mica, keep root backgrounds `Transparent` so the material shows through, and use `LayerFillColorDefaultBrush` for content layers.
-- Mica falls back to solid colors when transparency is off, battery saver is on, hardware is low-end, or the window is inactive.
-- Acrylic is GPU-intensive and is disabled in battery saver and when transparency is off. Avoid stacking multiple acrylic surfaces.
-- Use in-app acrylic via `AcrylicBrush`; use background acrylic via `DesktopAcrylicBackdrop`. Avoid accent-colored text on acrylic and ensure contrast.
+- Apply backdrops via `Window.SystemBackdrop`. Mica for long-lived windows; `DesktopAcrylicBackdrop` for transient surfaces.
+- Check Mica/Acrylic support at runtime; provide fallback.
+- Mica: root backgrounds `Transparent`; content layers use `LayerFillColorDefaultBrush`.
+- Mica falls back to solid colors when transparency off, battery saver on, hardware low-end, or window inactive.
+- Acrylic is GPU-intensive; disabled in battery saver and when transparency off. Avoid stacking acrylic.
+- In-app acrylic: `AcrylicBrush`; background acrylic: `DesktopAcrylicBackdrop`. Avoid accent-colored text on acrylic; ensure contrast.
 
 ## Accessibility (baseline)
-- Standard WinUI controls provide keyboard and UI Automation support; use them where possible.
-- Provide accessible names for non-text elements via `AutomationProperties.Name` and related properties.
-- Ensure every interactive element is reachable by Tab and has a visible focus indicator.
-- Use `TabIndex` to match visual order and `IsTabStop=false` to remove elements from the tab sequence.
-- Implement F6 navigation between major panes; it is not automatic.
-- Provide access keys and keyboard accelerators, and expose them with the appropriate automation properties.
+- Standard WinUI controls provide keyboard + UI Automation; use them where possible.
+- Non-text elements need accessible names via `AutomationProperties.Name` and related properties.
+- Every interactive element: Tab reachable + visible focus indicator.
+- Use `TabIndex` for visual order; `IsTabStop=false` removes from tab sequence.
+- Implement F6 navigation between major panes; not automatic.
+- Provide access keys + keyboard accelerators; expose with appropriate automation properties.
 
 ## Typography and iconography
-- Prefer Segoe UI Variable and Segoe Fluent Icons to match Windows 11 styling.
-- Use `AnimatedIcon` where it improves comprehension or feedback.
+- Prefer Segoe UI Variable + Segoe Fluent Icons for Windows 11 styling.
+- Use `AnimatedIcon` where it improves comprehension/feedback.
 
 Source pointers:
 - https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/navigationview

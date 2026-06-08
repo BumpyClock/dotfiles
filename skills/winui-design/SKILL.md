@@ -1,11 +1,11 @@
 ---
 name: winui-design
-description: "WinUI 3 UI design and XAML correctness — layout planning, control selection, Fluent Design, theming (Light/Dark/HighContrast), typography styles, spacing, brushes, accessibility, data binding review. Use when designing new pages, converting from WPF/Electron/web, reviewing XAML, fixing theme issues, or applying Fluent Design."
+description: "Design/review WinUI 3 UI/XAML: layouts, controls, Fluent, Light/Dark/HighContrast, typography, spacing, brushes, accessibility, bindings. Use for pages, WPF/Electron/web conversion, XAML review, theme fixes."
 ---
 
 ### UI Planning
 
-> **Before picking controls, search the catalogue.** This skill ships `winui-search.exe` alongside this `SKILL.md`. It indexes 100+ WinUI Gallery controls, every Windows Community Toolkit scenario, and a curated set of platform integration patterns (JumpList, Share, file pickers, drag-drop). Use it to ground every control choice in a real shipping sample **before writing any XAML** — this is the difference between guessing property names and copying canonical code.
+> **Before controls, search catalogue.** `winui-search.exe` sits beside this `SKILL.md`. It indexes 100+ WinUI Gallery controls, Windows Community Toolkit scenarios, and platform patterns (`JumpList`, Share, file pickers, drag-drop). Ground control choices in shipping samples **before writing XAML**.
 >
 > ```powershell
 > .\winui-search.exe search "<feature 1>" "<feature 2>" ...   # batch one focused query per feature
@@ -14,7 +14,7 @@ description: "WinUI 3 UI design and XAML correctness — layout planning, contro
 > .\winui-search.exe update                                     # force refresh now
 > ```
 >
-> **Workflow:** in **one** `search` call, list every feature you need for the current page (one focused query per feature, not a bag of keywords) → from each shortlist pick the best ID → grab full code with `get` (batch up to 3 IDs per call) → then write XAML using those samples as reference. **Do NOT interleave searching with coding** — front-load all lookups, then code. BM25 rewards focused per-query phrasing, so keep each query about one control or pattern.
+> **Workflow:** one `search` call with every page feature (one focused query per feature, not keyword bag) → pick best ID from each shortlist → `get` full code (up to 3 IDs/call) → write XAML from samples. **Do NOT interleave searching with coding**. BM25 favors one-control/pattern queries.
 
 #### Step 1: Identify App Type and Anchor Control
 | App Type | Anchor Control | Reference App |
@@ -35,24 +35,24 @@ description: "WinUI 3 UI design and XAML correctness — layout planning, contro
 **Feedback:** Blocking decision → `ContentDialog`; contextual action → `Flyout`/`MenuFlyout`; onboarding → `TeachingTip`; inline status → `InfoBar`; system notification → `AppNotification`.
 
 #### Step 3: Plan Layout
-- **Content fills the window** — no floating cards on empty backgrounds
-- `Grid` for structure, `StackPanel` only for simple stacking of few items
-- Sidebar: fixed 300-360px width; main content: `Width="*"` with 24px padding
-- Status bar: `Grid` row at bottom; toolbar: `CommandBar` or title bar buttons
+- **Content fills window** — no floating cards on empty backgrounds
+- Structure: `Grid`; small linear groups: `StackPanel`
+- Sidebar: fixed 300-360px; main: `Width="*"` + 24px padding
+- Status bar: bottom `Grid` row; toolbar: `CommandBar` or title bar buttons
 
 #### Step 4: Size the Window to the App
 
-> **WinUI 3 has no `SizeToContent`.** Without an explicit size, Windows defaults the main window to ~1024×768 — oversized for most utilities. **Size the window in `MainWindow`'s constructor; derive from the layout, not a generic.**
+> **WinUI 3 has no `SizeToContent`.** No explicit size → ~1024×768. **Size in `MainWindow` ctor; derive from layout, not generic.**
 
-**Rubric.** Width = widest row + 48 padding (24 each side), rounded **up** to nearest 20. Height = 32 (titlebar) + Σ(row heights) + Σ(spacing) + 48 padding, rounded up to 20. Round up — clipped content is a worse failure than a slightly-wide window.
+**Rubric.** Width = widest row + 48 padding (24 each side), round **up** to nearest 20. Height = 32 titlebar + Σ(row heights) + Σ(spacing) + 48 padding, round up to 20. Round up; clipped content worse than slightly-wide window.
 
-**Sanity check** (ranges, not targets — derive yours from the rubric):
+**Sanity ranges** (not targets; derive from rubric):
 - Single-purpose utility → ~440–560 wide
 - Form / single-page tool → ~600–800 wide, ~640–800 tall
 - Multi-pane (nav + content) → ~1100–1300 wide, ~720–840 tall
 - Document / canvas / media editor → 1280+ wide
 
-If your derived number is well below its range, you missed a row — re-check.
+Derived size far below range → likely missed row.
 
 `AppWindow.Resize` takes **physical pixels**, not DIPs — multiply by the monitor's DPI scale:
 
@@ -77,9 +77,9 @@ public sealed partial class MainWindow : Window
 }
 ```
 
-`XamlRoot.RasterizationScale` is null in the ctor and stale after `AppWindow.Move`, so `[DllImport]` is the cleanest path. Don't try to size the window by setting `Width`/`Height` on the root `Grid` — that clips content, not the window.
+`XamlRoot.RasterizationScale` is null in ctor and stale after `AppWindow.Move`; `[DllImport]` cleanest. Root `Grid` `Width`/`Height` clips content, not window.
 
-If the user asks for UI validation, see `winui-ui-testing` Step 3.5 to verify the rubric against the visual checklist.
+UI validation → `winui-ui-testing` Step 3.5 visual checklist.
 
 #### Step 5: Design Anti-Patterns
 | ❌ Don't | ✅ Do Instead |
@@ -95,8 +95,8 @@ If the user asks for UI validation, see `winui-ui-testing` Step 3.5 to verify th
 
 #### Theming Rules
 - **`{ThemeResource BrushName}`** at usage sites — updates on theme change
-- **`{StaticResource}`** with `ResourceKey` redirects inside theme dictionaries — zero allocation
-- **`ResourceKey` must end in `Brush`** (target the `SolidColorBrush`, not the `Color`)
+- **`{StaticResource}`** + `ResourceKey` redirect inside theme dictionaries — zero allocation
+- **`ResourceKey` must end in `Brush`** — target `SolidColorBrush`, not `Color`
 - Always define all three variants: `x:Key="Light"`, `x:Key="Dark"`, `x:Key="HighContrast"` — never use `x:Key="Default"`
 - Verify runtime theme switching: `{ThemeResource}` updates; `{StaticResource}` does not
 
@@ -109,7 +109,7 @@ If the user asks for UI validation, see `winui-ui-testing` Step 3.5 to verify th
 ```
 
 #### High Contrast
-Only 8 system color brushes allowed in HC dictionaries:
+Only 8 system color brushes in HC dictionaries:
 
 | Background | Foreground | Use Case |
 |------------|------------|----------|
@@ -119,7 +119,7 @@ Only 8 system color brushes allowed in HC dictionaries:
 | `SystemColorWindowColorBrush` | `SystemColorHotlightColorBrush` | Hyperlinks |
 | `SystemColorWindowColorBrush` | `SystemColorGrayTextColorBrush` | Disabled content |
 
-**HC prohibitions:** No hardcoded colors, no opacity, no accent colors, no regular WinUI brushes, no `SystemColor*` in Light/Dark dicts. Use empty HC dict when WinUI defaults suffice. Set `HighContrastAdjustment = None` at app level.
+**HC prohibitions:** no hardcoded colors, opacity, accent colors, regular WinUI brushes, or `SystemColor*` in Light/Dark dicts. Empty HC dict OK when WinUI defaults suffice. Set `HighContrastAdjustment = None` at app level.
 
 #### Typography — Use Styles, Not Raw FontSize
 | Style | Size | Weight | Use For |
@@ -132,17 +132,17 @@ Only 8 system color brushes allowed in HC dictionaries:
 | `TitleLargeTextBlockStyle` | 40px | Semibold | Large feature titles |
 | `DisplayTextBlockStyle` | 68px | Semibold | Hero text |
 
-Use `SemiBold`, never `Bold`. Minimum 12px. `BasedOn` styles must not re-declare inherited properties.
+Use `SemiBold`, never `Bold`. Minimum 12px. `BasedOn` styles must not re-declare inherited props.
 
 #### Spacing and Layout
-- **4px grid:** margins, padding, sizes must be multiples of 4 (4, 8, 12, 16, 24, 32, 48)
+- **4px grid:** margins, padding, sizes = multiples of 4 (4, 8, 12, 16, 24, 32, 48)
 - `ControlCornerRadius` (4px) for controls, `OverlayCornerRadius` (8px) for overlays — never hardcode
-- `RowSpacing`/`ColumnSpacing` instead of spacer elements
+- `RowSpacing`/`ColumnSpacing`; no spacer elements
 - `MinHeight`/`MinWidth` instead of fixed sizing
 - No negative margins
 
 #### Remove Defaults
-Don't set WinUI default values — blocks future updates:
+Don't set WinUI defaults; blocks future updates:
 - `BodyTextBlockStyle` on TextBlock, `TextFillColorPrimaryBrush` foreground, `TextWrapping="NoWrap"`, `Padding="0"`, `Margin="0"`
 
 #### Acrylic Pairings
@@ -151,11 +151,11 @@ Don't set WinUI default values — blocks future updates:
 | Flyouts, tooltips | `AcrylicBackgroundFillColorDefaultBrush` | `SurfaceStrokeColorFlyoutBrush` |
 | UI surfaces | `AcrylicBackgroundFillColorBaseBrush` | `SurfaceStrokeColorDefaultBrush` |
 
-Use `BackgroundSizing="InnerBorderEdge"` on bordered acrylic. `ThemeShadow` requires `Translation="0,0,32"` and 12px parent padding.
+Bordered acrylic: `BackgroundSizing="InnerBorderEdge"`. `ThemeShadow` requires `Translation="0,0,32"` and 12px parent padding.
 
 #### Data Binding
 - `{x:Bind}` over `{Binding}`, explicit `Mode=OneWay`/`TwoWay`, `x:DataType` on `DataTemplate`
-- **TextBox `x:Bind TwoWay` — always add `UpdateSourceTrigger=PropertyChanged`** so the ViewModel updates on each keystroke instead of waiting for `LostFocus`. Without it, UIA automation (`set-value`) and programmatic changes won't commit to the ViewModel.
+- **TextBox `x:Bind TwoWay` — always add `UpdateSourceTrigger=PropertyChanged`** so ViewModel updates per keystroke, not `LostFocus`. Without it, UIA automation (`set-value`) and programmatic changes won't commit to ViewModel.
   ```xml
   <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
   ```
@@ -163,7 +163,7 @@ Use `BackgroundSizing="InnerBorderEdge"` on bordered acrylic. `ThemeShadow` requ
 - `VisualStateManager` for visual property changes, not code-behind
 - No `IValueConverter` — prefer `x:Bind` with functions
 
-**Bool negation and Visibility functions** — define static methods in code-behind:
+**Bool negation and Visibility functions** — static methods in code-behind:
 ```csharp
 // In code-behind (e.g., MainPage.xaml.cs)
 public static Visibility BoolToVisibility(bool value) =>
@@ -182,10 +182,10 @@ IsEnabled="{x:Bind local:MainPage.IsNotBusy(ViewModel.IsLoading), Mode=OneWay}"
 #### Accessibility
 - `AutomationProperties.Name` on icon-only controls
 - `AutomationProperties.AutomationId` on all interactive controls
-- Semantic controls (`Button`, `HyperlinkButton`) — not clickable `Border`/`TextBlock`
+- Semantic controls (`Button`, `HyperlinkButton`); no clickable `Border`/`TextBlock`
 - `DividerStrokeColorDefaultBrush` for dividers
 
-**Setting attached properties in code-behind** — WinUI attached properties use static methods, NOT object initializer syntax:
+**Attached properties in code-behind** — WinUI uses static methods, NOT object initializer syntax:
 ```csharp
 using Microsoft.UI.Xaml.Automation; // required for AutomationProperties
 
@@ -205,7 +205,7 @@ ToolTipService.SetToolTip(btn, "Save the current document");
 - Self-closing tags for childless elements
 - Styles referenced with `{StaticResource}` not `{ThemeResource}`
 - No `px` suffix on numeric values, no commented-out XAML
-- Consistent attribute order: x:Name, AutomationProperties, layout, content, style
+- Attribute order: x:Name, AutomationProperties, layout, content, style
 
 ### References
 

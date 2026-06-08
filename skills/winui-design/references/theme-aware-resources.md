@@ -9,11 +9,11 @@
 
 ### Runtime Theme Switching
 
-Verify runtime theme switching. `{ThemeResource}` updates when the system theme changes; `{StaticResource}` does not.
+Verify runtime theme switching. `{ThemeResource}` updates on system theme change; `{StaticResource}` does not.
 
 ## StaticResource Redirects (Preferred Pattern)
 
-Use `<StaticResource>` with `ResourceKey` to redirect to an existing WinUI brush. This reuses the existing brush object (zero allocation) instead of creating a new `SolidColorBrush` inline.
+Use `<StaticResource>` with `ResourceKey` to redirect to existing WinUI brush. Reuses existing brush object (zero allocation); avoids inline `SolidColorBrush`.
 
 ```xml
 <!-- Correct: redirect -->
@@ -50,7 +50,7 @@ Always define all three variants. Never use `x:Key="Default"`.
 
 ## Accent Colors
 
-Use the system accent color resources:
+Use system accent color resources:
 
 ```xml
 <!-- User accent color -->
@@ -76,7 +76,7 @@ Use the system accent color resources:
 | `SystemColorGrayTextColorBrush` | Disabled/inactive text |
 | `SystemColorHotlightColorBrush` | Hyperlinks |
 
-For color animations, use the matching Color resource (without "Brush" suffix).
+Color animations: use matching Color resource (without "Brush" suffix).
 
 ### HC Color Pairings
 
@@ -117,7 +117,7 @@ Use 2px border in HC (vs 1px in Light/Dark) for flyouts, dialogs, cards:
 
 ### HighContrastAdjustment
 
-Set at app level to prevent system from doubling HC overrides:
+Set at app level to prevent doubled HC overrides:
 
 ```csharp
 Application.Current.HighContrastAdjustment = ApplicationHighContrastAdjustment.None;
@@ -125,7 +125,7 @@ Application.Current.HighContrastAdjustment = ApplicationHighContrastAdjustment.N
 
 ## ARGB Encoding for Opacity
 
-Encode opacity in alpha channel rather than using `Opacity` property:
+Encode opacity in alpha channel, not `Opacity` property:
 
 ```xml
 <!-- 25% opacity via alpha channel -->
@@ -152,11 +152,11 @@ Encode opacity in alpha channel rather than using `Opacity` property:
 </Border>
 ```
 
-Overlays on acrylic use `LayerOnAcrylicFillColorDefaultBrush`. Dividers use `DividerStrokeColorDefaultBrush`.
+Overlays on acrylic: `LayerOnAcrylicFillColorDefaultBrush`. Dividers: `DividerStrokeColorDefaultBrush`.
 
 ## Dialog Overlays (Smoke)
 
-For dim overlays behind dialogs or modals, use:
+Dim overlays behind dialogs/modals:
 
 ```xml
 <Border Background="{ThemeResource ContentDialogSmokeFill}" />

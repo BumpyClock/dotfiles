@@ -2,9 +2,9 @@
 
 ## Iconography
 
-Use **Segoe Fluent Icons** (Windows 11) via the `SymbolThemeFontFamily` resource, which falls back to **Segoe MDL2 Assets** on Windows 10 automatically.
+Use **Segoe Fluent Icons** (Windows 11) via `SymbolThemeFontFamily`; auto-falls back to **Segoe MDL2 Assets** on Windows 10.
 
-### Icon types in order of preference
+### Icon Types, Preference Order
 
 | Type | When to use | Example |
 |------|-------------|---------|
@@ -15,7 +15,7 @@ Use **Segoe Fluent Icons** (Windows 11) via the `SymbolThemeFontFamily` resource
 | `PathIcon` | Custom vector shapes | `<PathIcon Data="M 0,0 L 10,10" />` |
 | `BitmapIcon` | Legacy bitmap icons | Avoid — prefer `ImageIcon` |
 
-**Standard icon sizes:** 16px (inline/compact), 20px (default control size), 24px (emphasis), 32px (large), 48px (hero/feature).
+**Standard icon sizes:** 16px inline/compact, 20px default control, 24px emphasis, 32px large, 48px hero/feature.
 
 ### Icon code examples
 
@@ -36,13 +36,13 @@ Use **Segoe Fluent Icons** (Windows 11) via the `SymbolThemeFontFamily` resource
           FontSize="16" />
 ```
 
-Browse available icons in the **WinUI Gallery** app → Design guidance → Iconography, or search [Segoe Fluent Icons](https://learn.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font).
+Browse icons: **WinUI Gallery** → Design guidance → Iconography, or [Segoe Fluent Icons](https://learn.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font).
 
 ---
 
 ## Corner Radius
 
-Use the **built-in theme resources** — never hardcode `CornerRadius` values:
+Use **built-in theme resources**; never hardcode `CornerRadius`:
 
 | Resource | Value | Use for |
 |----------|-------|---------|
@@ -66,7 +66,7 @@ Use the **built-in theme resources** — never hardcode `CornerRadius` values:
 
 ## Motion & Transitions
 
-**Prefer built-in theme transitions** — they animate automatically and respect user "reduce motion" settings.
+Prefer built-in theme transitions; they animate automatically and respect user "reduce motion" settings.
 
 ```xml
 <!-- Implicit transitions — animate property changes automatically -->
@@ -88,7 +88,7 @@ Use the **built-in theme resources** — never hardcode `CornerRadius` values:
 
 ### Connected animations
 
-Animate elements between pages (e.g., list item → detail page):
+Animate elements between pages, e.g. list item → detail page:
 
 ```csharp
 // Source page — prepare animation

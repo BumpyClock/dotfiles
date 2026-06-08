@@ -105,10 +105,10 @@
 - [ ] Attribute order consistent across related files
 - [ ] No checkpoint files checked in (use `_CP` locally and remove before commit)
 
-## Testing Reminders
+## Testing
 
-**If changing brushes:** Test in NightSky HC theme, hover on all interactive elements. Include Light/Dark/HC screenshot evidence.
+**Brush changes:** Test NightSky HC theme; hover all interactive elements. Include Light/Dark/HC screenshots.
 
-**If changing text/containers:** Test with text scaling at max and with long/localized strings.
+**Text/container changes:** Test max text scaling + long/localized strings.
 
-**If changing layout:** Test at 100%, 150%, 200%, 250% display scaling. Validate Figma at 100% scale.
+**Layout changes:** Test 100%, 150%, 200%, 250% display scaling. Validate Figma at 100% scale.

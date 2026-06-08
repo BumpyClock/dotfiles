@@ -1,6 +1,6 @@
-# Source Generator Patterns — Detailed Reference
+# Source Generator Patterns
 
-Detailed code patterns for AOT compilation and source generators. See [SKILL.md](../SKILL.md) for rules summary.
+AOT/source-generator patterns. See [SKILL.md](../SKILL.md) for rules summary.
 
 ---
 
@@ -14,7 +14,7 @@ Detailed code patterns for AOT compilation and source generators. See [SKILL.md]
 </PropertyGroup>
 ```
 
-For reflection-heavy code, annotate to preserve members:
+Reflection-heavy code: annotate to preserve members.
 
 ```csharp
 public void LoadService([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType)
@@ -32,7 +32,7 @@ Keep warnings enabled during development:
 <TrimmerSingleWarn>false</TrimmerSingleWarn>
 ```
 
-Patterns to eliminate:
+Eliminate:
 
 - `Type.GetType("MyNamespace.MyClass")` — use `typeof(T)` or `[DynamicDependency]`
 - `Activator.CreateInstance(someType)` without `[DynamicallyAccessedMembers]`
@@ -82,9 +82,9 @@ Set `x:DataType` on pages: `<Page x:DataType="viewmodels:MainViewModel">`
 
 ---
 
-## CsWin32 Setup
+## CsWin32
 
-Generates P/Invoke wrappers at compile time. Add `Microsoft.Windows.CsWin32` NuGet package. List needed APIs in `NativeMethods.txt`:
+Compile-time P/Invoke wrappers. Add `Microsoft.Windows.CsWin32`; list APIs in `NativeMethods.txt`:
 
 ```
 GetDpiForWindow
@@ -96,7 +96,7 @@ ShowWindow
 
 ## CommunityToolkit.Mvvm Source Generators
 
-Use partial properties (CommunityToolkit.Mvvm 8.4+). The legacy field form emits **MVVMTK0045** in WinRT/WinUI projects.
+Use partial properties (CommunityToolkit.Mvvm 8.4+). Legacy field form emits **MVVMTK0045** in WinRT/WinUI projects.
 
 ```csharp
 public partial class SettingsViewModel : ObservableObject
@@ -118,4 +118,4 @@ public partial class SettingsViewModel : ObservableObject
 </PropertyGroup>
 ```
 
-Primarily for unpackaged apps. Combine with `<PublishTrimmed>true</PublishTrimmed>`.
+Primarily unpackaged apps. Combine with `<PublishTrimmed>true</PublishTrimmed>`.

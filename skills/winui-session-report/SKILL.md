@@ -1,29 +1,29 @@
 ---
 name: winui-session-report
-description: "Analyze the current or a recent agent session (GitHub Copilot CLI or Claude Code) and generate a diagnostic report. Use when asking for session feedback, debugging agent behavior, or reviewing what happened during a build session."
+description: "Analyze agent sessions (GitHub Copilot CLI, Claude Code) and produce diagnostic report. Use for session feedback, agent-behavior debug, build-session review."
 disable-model-invocation: true
 ---
 
 ### Session Analysis Report
 
-Generate a diagnostic report for an agent session by running the `Analyze-Session.ps1` script included with this skill. The script auto-detects whether the current session was produced by GitHub Copilot CLI or Claude Code from environment variables and on-disk file format, and dispatches to the appropriate parser. If neither harness can be detected, the script exits with a clear error.
+Generate agent-session diagnostic report with `Analyze-Session.ps1`. Script detects GitHub Copilot CLI vs Claude Code from env vars + on-disk format, then dispatches parser. If neither harness detected, exits with clear error.
 
-### Privacy and sensitivity — surface this guidance to the user
+### Privacy and Sensitivity
 
 `Analyze-Session.ps1` always:
 
 1. **Embeds a "Privacy and sensitivity" section at the top of the generated `session-report.md`** (right above the Overview table), and
 2. **Prints a yellow PRIVACY NOTICE banner to the console** when it finishes writing the file.
 
-**You (the agent) must surface this guidance to the user in your response — do not let it stay buried in script output the user might not have read.** When you finish running the script and reporting the findings, include a short privacy reminder in your reply to the user, in plain second-person language. Use this template, adapting wording as needed:
+Agent must surface this guidance in reply, not bury it in script output. After findings, include short second-person privacy reminder. Template, adapt if needed:
 
 > ⚠️ **Heads-up before you share `session-report.md`** — this file contains your unredacted session transcript: file contents and paths the agent read or edited, your prompts verbatim (including any secrets you may have pasted), tool output, environment values, and local paths under `C:\Users\<you>\…`. You're responsible for what you share — please open the file in your editor and read it end-to-end before attaching it to a public issue, posting it in chat, or sending it outside your organization. Redact anything sensitive. If you only need to share the high-level metrics, ask me to summarize the file instead of attaching it.
 
-If the user only wants the high-level metrics (turn counts, skill usage, build success rate) without the per-turn detail, summarize the report and share the summary instead of the file — and tell the user that's what you're doing so they don't have to read it themselves to confirm.
+If user wants high-level metrics only (turn counts, skill usage, build success rate), summarize report instead of sharing file. Tell user summary-only path.
 
 ### Steps
 
-1. **Run the analysis script** to generate the report:
+1. **Run script**:
 
 ```powershell
 # Analyze the most recent session (auto-detects harness) and save report
@@ -42,25 +42,25 @@ If the user only wants the high-level metrics (turn counts, skill usage, build s
 .\Analyze-Session.ps1 -SkipSubagents -OutputFile session-report.md
 ```
 
-Detection rules:
-- The current session is preferred when an explicit ID is available: `COPILOT_AGENT_SESSION_ID` (Copilot CLI) or `CLAUDE_SESSION_ID` (Claude Code) take priority over "most recently modified" so a parallel session in another terminal can't shadow the one the skill was invoked from.
-- Environment first: `CLAUDECODE=1` or `CLAUDE_CODE_ENTRYPOINT` -> Claude Code; `COPILOT_*` env vars -> Copilot.
-- For Claude Code, the most-recent JSONL whose `cwd` matches the current working directory is preferred.
-- For an explicit `-EventsFile`, the format is sniffed from the first events.
-- If neither harness is detected, the script exits with a non-zero status and a message naming both supported locations.
+Detection:
+- Current session wins when explicit ID exists: `COPILOT_AGENT_SESSION_ID` or `CLAUDE_SESSION_ID` beats "most recently modified", so parallel terminal cannot shadow invoked session.
+- Env first: `CLAUDECODE=1` or `CLAUDE_CODE_ENTRYPOINT` -> Claude Code; `COPILOT_*` env vars -> Copilot.
+- Claude Code: prefer most-recent JSONL whose `cwd` matches current working dir.
+- Explicit `-EventsFile`: sniff format from first events.
+- Neither harness: non-zero exit + message naming both supported locations.
 
-2. **Review the generated report** — read `session-report.md` and summarize key findings for the user:
+2. **Review `session-report.md`** — summarize:
    - How many turns, how long, token usage
    - What skills were loaded and when
    - Build success/failure pattern
    - Any stuck patterns or tooling issues detected
 
-3. **Add your own observations** — append a section to the report with any additional context:
+3. **Append observations**:
    - Was the final app working? What's missing?
    - Quality assessment of the generated code
    - Suggestions specific to what went wrong
 
-4. Include any tooling improvements or recommendations based on the analysis.
+4. **Recommend tooling improvements**:
    - Are there rules that need to be added to the Roslyn analyzer to prevent common mistakes detected during the session?
    - Were there bugs or issues with winapp run or the BuildAndRun.ps1 script?
    - Are there features that could be added to lower the number of turns required to complete a task?
@@ -81,4 +81,4 @@ Detection rules:
 
 ### When to Use
 
-- When the user asks for a session report to understand what happened during an agent session.
+- User asks for session report, session feedback, build-session review, or agent-behavior diagnosis.

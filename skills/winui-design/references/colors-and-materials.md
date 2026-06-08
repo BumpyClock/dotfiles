@@ -2,7 +2,7 @@
 
 ## Colors — Theme Resources
 
-**Never hardcode colors.** Always use `{ThemeResource}` brushes so your app works in Light, Dark, and High Contrast modes.
+**Never hardcode colors.** Use `{ThemeResource}` brushes for Light, Dark, High Contrast.
 
 ### Text brushes
 
@@ -53,7 +53,7 @@
 | `ControlStrokeColorDefaultBrush` | Control borders |
 | `DividerStrokeColorDefaultBrush` | Separators and dividers |
 
-### Color code examples
+### Examples
 
 ```xml
 <!-- GOOD -->
@@ -76,9 +76,9 @@
 
 ## Materials — Mica & Acrylic
 
-**Mica** — use for the app's main window background. It samples the desktop wallpaper for a subtle tinted translucency.
+**Mica** — main window background; samples desktop wallpaper for subtle tint.
 
-**Acrylic** — use for transient surfaces (flyouts, menus, sidebars) layered on top of the main window.
+**Acrylic** — transient surfaces (flyouts, menus, sidebars) above main window.
 
 ```xml
 <!-- Window-level Mica (set in MainWindow.xaml) -->
@@ -103,4 +103,4 @@
 | **Mica Base Alt** | Long-lived (alternate tint) | Secondary window background |
 | **Acrylic** | Transient (overlays) | Flyouts, sidebars, command bars |
 
-Materials fall back to solid color on unsupported systems — no code needed.
+Unsupported systems fall back to solid color; no code needed.
