@@ -66,7 +66,10 @@ clawpatch fix --finding <id> --dry-run --json
 ```bash
 clawpatch revalidate --finding <id> --reasoning-effort high --json
 clawpatch revalidate --status open --limit 10 --reasoning-effort high --json
+python skills/clawpatch/scripts/revalidate_findings.py --repo-root <repo> --throttle 8
 ```
+
+For parallel ID-by-ID revalidation, use `scripts/revalidate_findings.py`. It reads `.clawpatch/findings/*.json`, defaults to `status=open`, writes JSONL to temp, and prints the exact `RESULT_FILE`. Add `--finding <id>` one or more times to skip discovery. Keep the JSONL path in notes/reports when triaging many IDs.
 
 6. Triage only with evidence:
 
