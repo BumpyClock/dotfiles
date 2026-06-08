@@ -1,4 +1,4 @@
-model = "gpt-5.5"
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
@@ -162,6 +162,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/adityasharma/.agents"]
+trust_level = "trusted"
+
+[projects.'c:\users\adityasharma\projects\nova-shell']
 trust_level = "trusted"
 
 
@@ -334,8 +337,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-07T18:04:14Z"
-last_revision = "13bb2507180bd4c38078b2235d7c4985d2dc4355"
+last_updated = "2026-06-08T01:31:38Z"
+last_revision = "1b46aa6d4a11b7f781a0aa8a0ba976d9cbf7eb74"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
