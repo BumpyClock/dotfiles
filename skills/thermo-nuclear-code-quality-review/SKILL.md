@@ -6,154 +6,108 @@ disable-model-invocation: true
 
 # Thermo-Nuclear Code Quality Review
 
-Unusually strict review focused on implementation quality, maintainability, abstraction quality, codebase health.
+Strict maintainability review. Behavior working is not enough. Push for structure that makes code smaller, clearer, more direct, and easier to reason about without changing behavior.
 
-Be **ambitious** about structure. Don't stop at local cleanup. Search for "code judo" moves: restructurings preserving behavior while making implementation dramatically simpler, smaller, more direct, more elegant.
+## Scope
 
-## Team Mode for Whole-Codebase Audits
+Review implementation quality, abstraction quality, modularity, file health, type/boundary clarity, orchestration, and codebase direction. Output backlog/review findings first. Do not edit code unless user asks.
 
-Use team/parallel mode for whole-codebase thermo-nuclear review, deep audit across subsystems, or explicit request for agents/parallel subagents.
+For whole-codebase audits: inventory subsystems/entry points/generated dirs/tests/docs; shard by subsystem/concern, not file count; avoid overlapping write/review scopes; keep sub-reviewers read-only; synthesize, dedupe, reject weak findings, rank by future leverage; separate architectural debt from feature breadth; verify branch-dependent findings against current branch.
 
-1. Inventory subsystems, entry points, generated folders, tests, docs before dispatch.
-2. Shard by subsystem/concern, not file count. Avoid overlapping write/review scopes.
-3. Sub-reviewers read-only. Return high-conviction structural findings with evidence paths, why it matters, smallest cleanup path.
-4. Synthesizer pass: dedupe, reject weak findings, rank by future leverage, separate genuine architectural debt from feature breadth.
-5. Don't edit code unless user asks for implementation. Output backlog first.
-6. Verify branch-dependent findings against current branch before including as actionable.
+## Standards
 
-## Core Prompt
+- Be ambitious about structural simplification. Look for code-judo moves where existing architecture makes branches/helpers/modes/layers disappear.
+- Prefer deleting complexity over rearranging it. Deletion beats extraction when both preserve behavior and clarity.
+- No PR should push a file from <1k to >1k lines without strong reason. Ask for decomposition unless structure clearly justifies size.
+- No spaghetti growth: ad-hoc conditionals, scattered special cases, flags, nullable modes, and one-off branches in busy flows are design smells.
+- Cleaner design beats "it works." Do not approve refactors that move complexity without deleting concepts.
+- Direct/boring/maintainable beats hacky/magical/generic. Thin wrappers, identity abstractions, pass-through helpers, and generic magic must earn keep.
+- Type/boundary clarity matters. Question unnecessary optionality, `unknown`, `any`, casts, ad-hoc object shapes, and silent fallbacks hiding invariants.
+- Logic belongs in canonical owner. Flag feature logic leaking into shared paths, implementation details leaking through APIs, wrong layer/package, or duplicate helper where canonical utility exists.
+- Orchestration should be simple and atomic. Flag unnecessary sequential async and partial-update flows when parallel/transactional shape is clearer.
+- New/existing abstraction is okay only when it removes more complexity than it adds or moves logic to canonical owner.
+- Do not flatten into one file/function; ownership boundaries and file health still matter.
 
-> Perform a deep code quality audit of the current branch's changes.
-> Rethink how to structure / implement the changes to meaningfully improve code quality without impacting behavior.
-> Work to improve abstractions, modularity, reduce Spaghetti code, improve succinctness and legibility.
-> Be ambitious, if there is a clear path to improving the implementation that involves restructuring some of the codebase, go for it.
-> Be extremely thorough and rigorous. Measure twice, cut once.
+## Review Questions
 
-## Non-Negotiable Standards
+- Is there a reframing that deletes whole categories of complexity?
+- Did diff improve or worsen local architecture?
+- Did cohesive module become more coupled/stateful/harder to scan?
+- Is logic in right file/layer/package?
+- Did file/component cross healthy size boundary?
+- Are repeated conditionals signaling missing model/helper?
+- Is abstraction earning its keep?
+- Are casts/optionality/ad-hoc shapes obscuring invariant?
+- Is orchestration more sequential or less atomic than needed?
 
-Apply core prompt plus these rules:
+## Tags
 
-0. **Be ambitious about structural simplification.** Look for reframings where whole branches/helpers/modes/conditionals/layers disappear. Prefer solutions making code feel inevitable. Assume a "code judo" move exists: re-organization using existing architecture more effectively. Prefer deleting complexity over rearranging it.
+Use tags for narrow over-engineering findings:
 
-1. **File size: no PR pushes a file from <1k to >1k lines without strong reason.** Strong code-quality smell by default. Prefer extracting helpers/subcomponents/modules/abstractions. If diff crosses threshold, explicitly ask whether decomposition needed first. Waive only with compelling structural reason + clearly organized result.
+- `delete:` dead code, unused flexibility, speculative feature. Replacement: nothing.
+- `stdlib:` hand-rolled logic stdlib covers. Name API.
+- `native:` dependency/custom code platform/framework/DB/browser/OS covers. Name feature.
+- `yagni:` abstraction/config/layer with one impl/caller or no proven need.
+- `shrink:` same behavior with fewer concepts/lines. Show smaller replacement when concise.
 
-2. **No random spaghetti growth.** Suspicious of ad-hoc conditionals, scattered special cases, one-off branches in unrelated flows. "Weird if statements in random places" = design problem. Push logic into dedicated abstraction/helper/state machine/policy/separate module. Call out changes making surrounding code harder to reason about.
+Complexity-only pass: one finding per line; include `net: -N lines possible` when meaningful and cheap. Nothing useful to cut → `Lean already. Ship.`
 
-3. **Bias toward cleaner design, not just working code.** Same behavior + cleaner structure → push for cleaner version. Don't rubber-stamp "it works" implementations leaving codebase messier. Prefer simplifications removing moving pieces over refactors spreading same complexity.
+## Flag Aggressively
 
-4. **Direct, boring, maintainable > hacky/magical.** Brittle/ad-hoc/"magic" behavior = code-quality problem. Skeptical of generic mechanisms hiding simple data-shape assumptions. Flag thin abstractions, identity wrappers, pass-through helpers adding indirection without clarity.
+- Cleaner reframing deletes branches/helpers/modes/layers.
+- Refactor moves code around without reducing concepts.
+- File crosses 1000 lines due to PR.
+- New conditionals bolt onto unrelated/busy paths.
+- One-off booleans, nullable modes, flags complicate flow.
+- Feature logic leaks into general-purpose modules.
+- Generic magic hides simple structure.
+- Thin wrappers/pass-through helpers add indirection without clarity.
+- Casts/`any`/`unknown`/optional params muddy contract.
+- Copy-paste replaces helper/canonical utility.
+- Narrow edge-case logic lands in busy function.
+- Tests pass but modularity/readability worsens.
+- Temporary branch likely becomes permanent debt.
+- Sequential async or partial updates add avoidable brittleness.
 
-5. **Type and boundary cleanliness.** Question unnecessary optionality, `unknown`, `any`, cast-heavy code where clearer boundary could exist. Prefer explicit typed models/shared contracts over loosely-shaped ad-hoc objects. Silent fallback papering over unclear invariant → ask whether boundary should be explicit.
+## Preferred Fixes
 
-6. **Logic in canonical layer, reuse existing helpers.** Call out feature logic leaking into shared paths or implementation details leaking through APIs. Prefer existing canonical utilities over bespoke one-offs. Push code toward right package/service/module.
-
-7. **Unnecessary sequential orchestration + non-atomic updates = smell.** Independent work serialized for no reason → ask about parallel. Related updates can leave state half-applied → push for atomic structure. Don't micro-optimize, but flag avoidable orchestration brittleness.
-
-## Review Questions (per meaningful change)
-
-- Is there a code-judo move making this dramatically simpler?
-- Can this be reframed so fewer concepts/branches/helper layers needed?
-- Does this improve or worsen local architecture?
-- Did diff add branching complexity where better abstraction should exist?
-- Did a previously cohesive module become more coupled/stateful/harder to scan?
-- Is logic in right file and layer?
-- Did change enlarge file/component past healthy size boundary?
-- Repeated conditionals signaling missing model or helper?
-- Implementation direct and legible, or relies on special cases + incidental control flow?
-- Abstraction earning its keep, or just a wrapper?
-- Casts/optionality/ad-hoc object shapes obscuring real invariant?
-- Logic in canonical layer, or leaked across boundary?
-- Orchestration more sequential/less atomic than needed?
-
-## What to Flag Aggressively
-
-- Complicated implementation where cleaner reframing deletes whole categories of complexity
-- Refactors moving code around without reducing concepts reader must hold
-- File crossing 1000 lines due to PR, especially if splittable
-- New conditionals bolted onto unrelated code paths
-- One-off booleans/nullable modes/flags complicating existing control flow
-- Feature-specific logic leaking into general-purpose modules
-- Generic "magic" handling hiding simple structure
-- Thin wrappers/identity abstractions adding indirection without simplification
-- Unnecessary casts/`any`/`unknown`/optional params muddying real contract
-- Copy-pasted logic instead of extracted helpers
-- Narrow edge-case handling in middle of already busy function
-- Refactors passing tests but making code less modular/readable
-- "Temporary" branching likely to become permanent debt
-- Bespoke helpers where canonical utility already exists
-- Logic in wrong layer/package when more central home exists
-- Sequential async where independent work could be parallel
-- Partial-update logic leaving state less atomic than necessary
-
-## Preferred Remedies
-
-- Delete whole layer of indirection rather than polishing it
-- Reframe state model so conditionals disappear instead of centralized
-- Change ownership boundary so feature becomes natural extension of existing abstraction
-- Turn special-case logic into simpler default flow with fewer exceptions
-- Extract helper or pure function
-- Split large file into smaller focused modules
-- Move feature-specific logic behind dedicated abstraction
-- Replace condition chains with typed model or explicit dispatcher
-- Separate orchestration from business logic
-- Collapse duplicate branches into single clearer flow
-- Delete wrappers not meaningfully clarifying API
-- Reuse existing canonical helper instead of near-duplicate
-- Make type boundaries more explicit so control flow gets simpler
-- Move logic to package/module/layer already owning the concept
-- Parallelize independent work when it simplifies orchestration
-- Restructure related updates into more atomic flow
-
-Don't stop at "maybe rename this" when real issue is structural.
-Don't accept cleaner version of same messy idea when simpler idea is plausible.
-
-## Review Tone
-
-Direct, serious, demanding. Not rude, but don't soften major issues into mild suggestions. Code making codebase messier → say so clearly. Missed dramatic simplification opportunity → say that clearly.
-
-Good phrases:
-- `this pushes the file past 1k lines. can we decompose this first?`
-- `this adds another special-case branch into an already busy flow. can we move this behind its own abstraction?`
-- `this works, but it makes the surrounding code more spaghetti. let's keep the behavior and restructure the implementation.`
-- `this feels like feature logic leaking into a shared path. can we isolate it?`
-- `this abstraction seems unnecessary. can we just keep the direct flow?`
-- `why does this need a cast / optional here? can we make the boundary more explicit instead?`
-- `this looks like a bespoke helper for something we already have elsewhere. can we reuse the canonical one?`
-- `i think there's a code-judo move here that makes this much simpler. can we reframe this so these branches disappear?`
-- `this refactor moves complexity around, but doesn't really delete it. is there a way to make the model itself simpler?`
+- Delete indirection instead of polishing it.
+- Reframe state model so conditionals disappear.
+- Move logic to canonical owner.
+- Turn special cases into default flow with fewer exceptions.
+- Extract focused helper/pure function when it reduces complexity.
+- Split large file into focused modules.
+- Put feature-specific logic behind dedicated boundary.
+- Replace condition chains with typed model/dispatcher.
+- Separate orchestration from business logic.
+- Collapse duplicate branches.
+- Reuse canonical helper.
+- Make boundary types explicit.
+- Parallelize independent work when it simplifies orchestration.
+- Make related updates atomic.
 
 ## Output Priority
 
-1. Structural code-quality regressions
-2. Missed dramatic simplification / code-judo opportunities
-3. Spaghetti / branching complexity increases
-4. Boundary / abstraction / type-contract problems
-5. File-size and decomposition concerns
-6. Modularity and abstraction issues
-7. Legibility and maintainability concerns
+1. Structural regressions.
+2. Missed dramatic simplification.
+3. Spaghetti/branching growth.
+4. Boundary/abstraction/type-contract issues.
+5. File-size/decomposition concerns.
+6. Modularity/ownership problems.
+7. Legibility/maintainability issues.
 
-Don't flood with low-value nits when larger structural issues exist. Fewer high-conviction comments > long cosmetic list.
+Fewer high-conviction findings beat long nit lists. Findings should state location, problem, why it matters, and smallest safer fix.
 
 ## Approval Bar
 
-Don't approve merely because behavior seems correct. Bar:
+Do not approve while these remain unjustified:
 
-- No structural regression
-- No missed opportunity to make implementation dramatically simpler
-- No unjustified file-size explosion
-- No spaghetti-growth from special-case branching
-- No hacky/magical abstraction making code harder to reason about
-- No unnecessary wrapper/cast/optionality churn obscuring real design
-- No architecture-boundary leak or canonical-helper duplication
-- No missed obvious decomposition improving maintainability
+- Incidental complexity preserved when clear simplification exists.
+- File grows from <1k to >1k lines.
+- Ad-hoc branching tangles existing flow.
+- Feature checks scatter across shared code.
+- Wrapper/cast/optionality churn makes design more indirect.
+- Logic duplicates helper or sits in wrong layer.
+- Obvious decomposition would improve maintainability.
 
-Presumptive blockers unless author justifies clearly:
-
-- PR preserves incidental complexity when code-judo move would delete it
-- PR pushes file from <1000 to >1000 lines
-- PR adds ad-hoc branching tangling existing flow
-- PR scatters feature checks across shared code
-- PR adds unnecessary abstraction/wrapper/cast-heavy contract making design more indirect
-- PR duplicates existing helper or puts logic in wrong layer when canonical home exists
-
-If conditions not met, leave explicit actionable feedback, push for cleaner decomposition.
+Tone: direct, serious, demanding. Do not soften major issues. Say when code makes codebase messier.

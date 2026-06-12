@@ -1,12 +1,12 @@
 model = "gpt-5.5"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
 tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
 tui.notifications = true
 tui.notification_method = "auto"
-tui.notification.condition = "always"
+tui.notification_condition = "always"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 model_context_window = 750000
@@ -16,9 +16,11 @@ plan_mode_reasoning_effort = "high"
 approvals_reviewer = "user"
 
 
+
 service_tier = "default"
 
-notify = [ "C:\\Users\\adityasharma\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.602.40724\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended", "--previous-notify", "[\"/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient\",\"turn-ended\"]" ]
+notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
@@ -181,6 +183,25 @@ url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
 http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
 
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
+CODEX_HOME = "/Users/adityasharma/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "a3f3ca79fe2bff56076b895f1f13a8f673168160bd79d880cc34b4500e08a71c"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.609.30741"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+
 # [mcp_servers.node_repl]
 # args = []
 # command = "/Applications/Codex.app/Contents/Resources/node_repl"
@@ -328,7 +349,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-06T07:00:53Z"
+last_updated = "2026-06-12T13:03:56Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -338,8 +359,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-08T01:31:38Z"
-last_revision = "1b46aa6d4a11b7f781a0aa8a0ba976d9cbf7eb74"
+last_updated = "2026-06-12T13:03:54Z"
+last_revision = "df202fe49d81404902cf785b64c1c5f9cc0b0315"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
