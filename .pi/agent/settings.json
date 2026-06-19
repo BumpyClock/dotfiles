@@ -104,13 +104,16 @@
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": [
-        "explanatory"
-      ]
+      "styles": ["explanatory"]
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",
       "updateAfterTurns": 10
     }
-  }
+  },
+  "enabledModels": [
+    "zai/glm-5.1",
+    "openai-codex/gpt-5.5",
+    "github-copilot/claude-opus-4.8"
+  ]
 }

@@ -19,8 +19,9 @@ approvals_reviewer = "user"
 
 service_tier = "default"
 
-notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
 
+
+notify = [ "C:\\Users\\adity\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a89897d3d9baa117\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended" ]
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
@@ -170,6 +171,15 @@ trust_level = "trusted"
 [projects.'c:\users\adityasharma\projects\nova-shell']
 trust_level = "trusted"
 
+[projects.'c:\users\adity\dotfiles']
+trust_level = "trusted"
+
+[projects.'c:\users\adity\projects\digests-windows']
+trust_level = "trusted"
+
+[projects.'c:\users\adity']
+trust_level = "trusted"
+
 
 
 #Agents configuration
@@ -183,52 +193,29 @@ url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
 http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
 
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
 [mcp_servers.node_repl]
 args = []
-command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+command = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node_repl.exe'
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
-NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
-CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "4cfaeb70b54d114e1cd56bc0f85d04e1b344a5049cddb729e2b1161b9ff3008a"
+NODE_REPL_NODE_MODULE_DIRS = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node_modules'
+NODE_REPL_NODE_PATH = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node.exe'
+NODE_REPL_TRUSTED_CODE_PATHS = 'C:\Users\adity\.codex'
+CODEX_HOME = 'C:\Users\adity\.codex'
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "566be6ef352eb3de899adc56a9cd7b5e46c8f65b00e56b5630dd7a580e10cbea,feca4d852d7d18eab5e217b18c8c80099fe667c330e836640fd7a48f362de525"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.41845"
-CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
-
-# [mcp_servers.node_repl]
-# args = []
-# command = "/Applications/Codex.app/Contents/Resources/node_repl"
-# startup_timeout_sec = 120
-
-# [mcp_servers.node_repl.env]
-# NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-# NODE_REPL_NODE_MODULE_DIRS = ""
-# NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
-# NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
-# CODEX_HOME = "/Users/adityasharma/.codex"
-# NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2297529e313"
-# BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-# NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-# NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-# BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-# BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
-# CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
-
-# [mcp_servers.code-tools]
-# command = "code-tools-mcp"
-# # args = [ "code-tools-mcp@latest" ]
-# startup_timeout_sec = 40
-# env = { CODE_TOOLS_MCP_ALLOW_ANY_PATHS="true"}
-
-# [mcp_servers.fla-ui-mcp]
-# command = "C:\\\\Users\\\\adityasharma\\\\Projects\\\\oss\\\\FlaUI-MCP\\\\src\\\\FlaUI.Mcp\\\\bin\\\\Debug\\\\net8.0-windows\\\\FlaUI.Mcp.exe"
+BROWSER_USE_CODEX_APP_VERSION = "26.616.32156"
+SKY_CUA_NATIVE_PIPE = "1"
+SKY_CUA_NATIVE_PIPE_DIRECTORY = '\\.\pipe\codex-computer-use-2a6ea144-2808-4c17-8442-eabbf2bf0f4b'
+CODEX_CLI_PATH = 'C:\Users\adity\AppData\Local\OpenAI\Codex\bin\5d35d2790d1d3d7b\codex.exe'
 
 # [mcp_servers."playwriter"]
 # command = "bunx"
@@ -276,96 +263,24 @@ enabled = true
 enabled = true
 
 [[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-bundled/browser-use/0.1.0-alpha1/skills/browser/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/documents/26.430.10722/skills/documents/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-code-connect/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-design-system-rules/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-new-file/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-design/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-library/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-implement-design/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-use/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/opentui/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/peeku-windows/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/playwriter/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/shadcn/SKILL.md"
-enabled = false
-
-[[skills.config]]
 path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.430.10722/skills/spreadsheets/SKILL.md"
 enabled = false
 
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/winui3-csharp-app/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/plugin-creator/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-creator/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKILL.md"
-enabled = false
-
-[marketplaces.openai-bundled]
-last_updated = "2026-06-20T12:21:10Z"
-source_type = "local"
-source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-06-20T04:40:47Z"
-source_type = "local"
-source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-20T09:34:06Z"
-last_revision = "73e22af437e0d09b6534854ac0f3d4884dd9d9a3"
+last_updated = "2026-06-19T13:09:10Z"
+last_revision = "94258c5913c482462e8c242ef3060a011a4e186d"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-06-19T12:53:55Z"
+source_type = "local"
+source = '\\?\C:\Users\adity\.codex\.tmp\bundled-marketplaces\openai-bundled'
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-15T12:51:54Z"
+source_type = "local"
+source = '\\?\C:\Users\adity\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime'
 
 [desktop]
 reviewDelivery = "detached"
@@ -390,6 +305,3 @@ surface = "#f9f9f7"
 diffAdded = "#00c853"
 diffRemoved = "#ff5f38"
 skill = "#cc7d5e"
-
-# [mcp_servers.openaiDeveloperDocs]
-# url = "https://developers.openai.com/mcp"
