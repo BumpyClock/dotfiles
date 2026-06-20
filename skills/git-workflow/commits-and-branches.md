@@ -1,6 +1,6 @@
 # Commits and Branches
 
-Purpose: make reviewable git changes without surprise pushes, branch moves, or hidden staging.
+Goal: reviewable git changes. No surprise pushes, branch moves, hidden staging.
 
 ## Before any git write
 
@@ -10,7 +10,7 @@ git diff
 git branch --show-current
 ```
 
-Stop if unexpected deleted/renamed files appear. Ask user.
+Unexpected delete/rename → stop, ask.
 
 ## Commit format
 
@@ -24,13 +24,7 @@ Stop if unexpected deleted/renamed files appear. Ask user.
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
 
-Rules:
-
-- Subject imperative: `add`, not `added`.
-- No period.
-- Keep short. Prefer <= 50 chars when natural.
-- Body explains what/why, not full code tour.
-- Breaking change: use `!` or `BREAKING CHANGE:` footer.
+Rules: imperative subject, no period, short when natural, body = what/why. Breaking change → `!` or `BREAKING CHANGE:`.
 
 Examples:
 
@@ -44,15 +38,13 @@ BREAKING CHANGE: clients must use /v2/session.
 
 ## Staging
 
-Use explicit paths only.
+Use explicit paths only. Prefer `committer`.
 
 ```bash
 git add path/to/file.ts
 git add src/components/Button.tsx
 git diff --staged
 ```
-
-Prefer `committer`:
 
 ```bash
 committer "fix(api): handle null response" path/to/file.ts
@@ -110,13 +102,7 @@ Format:
 
 Types: `feature/`, `fix/`, `hotfix/`, `docs/`, `refactor/`, `test/`, `chore/`.
 
-Rules:
-
-- Lowercase.
-- Hyphens, not underscores.
-- Short but clear.
-- Include issue number when useful.
-- No special chars.
+Rules: lowercase, hyphens, short/clear, issue number when useful, no special chars.
 
 Examples:
 
@@ -209,7 +195,7 @@ Prune stale refs ok when useful:
 git fetch --prune
 ```
 
-Avoid bulk deletion. Show candidates, ask, then delete exact names.
+Avoid bulk deletion. Show candidates, ask, delete exact names.
 
 ## Commit checklist
 

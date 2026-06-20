@@ -1,6 +1,6 @@
 # Merge and CI
 
-Purpose: merge safely, resolve conflicts deliberately, inspect CI failures with `gh` evidence.
+Goal: merge safely, resolve conflicts deliberately, inspect CI with `gh` evidence.
 
 ## Merge choice
 
@@ -42,7 +42,7 @@ gh pr merge <pr> --rebase
 gh pr merge <pr> --auto --merge
 ```
 
-After merge, branch deletes still need explicit ask.
+After merge, branch delete still needs explicit ask.
 
 ```bash
 git push origin --delete feature/123-done
@@ -52,7 +52,7 @@ git branch -d feature/123-done
 git fetch --prune
 ```
 
-Avoid one-shot cleanup. List, ask, then delete exact names.
+Avoid one-shot cleanup. List, ask, delete exact names.
 
 ## Conflict flow
 
@@ -84,16 +84,9 @@ theirs
 >>>>>>> origin/main
 ```
 
-Resolve by choosing one side, combining, or rewriting. If binary conflict, ask before choosing/replacing.
+Resolve by choosing one side, combining, or rewriting. Binary conflict → ask before choose/replace.
 
-Resolution rules:
-
-- Resolve with minimal, correctness-first edits.
-- Prefer preserving both sides when behavior and compileability are clear.
-- If neither side is clearly right, stop and ask instead of guessing.
-- Regenerate lockfiles and generated files with repo tools instead of hand-editing.
-- Do not leave conflict markers in any file.
-- Avoid broad refactors while resolving conflicts.
+Rules: minimal correctness-first edits; preserve both sides when clear; stop if neither side clearly right; regenerate lock/generated files; no conflict markers; no broad refactors.
 
 Mark resolved:
 
@@ -111,21 +104,16 @@ git merge --abort
 git rebase --abort
 ```
 
-Always test after conflict resolution:
+Test after conflict resolution:
 
 ```bash
 npm test
 npm run build
 ```
 
-Use repo docs/package manager; commands above are examples, not default mandate.
+Use repo docs/package manager. Examples are not mandate.
 
-Conflict summary should include:
-
-- files resolved,
-- notable resolution choices,
-- build/test outcome,
-- remaining risks or checks not run.
+Summary: files resolved, notable choices, test/build outcome, risks/checks not run.
 
 ## Common conflicts
 
@@ -149,11 +137,11 @@ npm run generate
 git add path/to/generated-file
 ```
 
-Binary file: ask user before choose/replace.
+Binary file: ask before choose/replace.
 
 ## CI failure workflow
 
-Use for failing PR checks. Implement CI fixes only when user already asked for fixing CI or explicitly approves plan.
+Use for failing PR checks. Fix CI only when user asked or approves plan.
 
 Auth:
 
@@ -169,14 +157,7 @@ python3 skills/git-workflow/scripts/inspect_pr_checks.py --repo . --pr <number-o
 python3 skills/git-workflow/scripts/inspect_pr_checks.py --repo . --pr <number-or-url> --json
 ```
 
-Script behavior to preserve:
-
-- Handles `gh pr checks` field drift.
-- Fetches GitHub Actions logs and failure snippets.
-- Marks external checks as external with URL only.
-- Reports pending/missing logs explicitly.
-- Exits non-zero while failures remain.
-- Treats these as failure: `failure`, `error`, `cancelled`, `timed_out`, `action_required`, `bucket=fail`.
+Script preserves: `gh pr checks` field drift, Actions log snippets, external URL-only checks, pending/missing logs, non-zero exit while failures remain. Fail states: `failure`, `error`, `cancelled`, `timed_out`, `action_required`, `bucket=fail`.
 
 Manual fallback:
 
@@ -194,7 +175,7 @@ If run log pending and job id exists:
 gh api "/repos/<owner>/<repo>/actions/jobs/<job_id>/logs" > /tmp/job.log
 ```
 
-External checks: report name + URL. Do not chase Buildkite/other providers unless user asks.
+External checks: report name + URL. Do not chase other providers unless user asks.
 
 Fix loop:
 

@@ -1,6 +1,6 @@
 # Worktree Management
 
-Purpose: isolated workspace for branch work without disturbing current checkout.
+Goal: isolated branch workspace without disturbing current checkout.
 
 Announce when used:
 
@@ -10,14 +10,9 @@ Using git-workflow worktree-management to set up an isolated workspace.
 
 ## When to use
 
-Use worktree for:
+Use for parallel branch work, risky experiments, isolated verification, avoiding manual `git stash`.
 
-- parallel branch work
-- risky experiments
-- isolated verification
-- avoiding manual `git stash`
-
-Need user consent before creating branch/worktree.
+Need consent before creating branch/worktree.
 
 ## Pick location
 
@@ -41,21 +36,16 @@ No worktree directory found. Where should I create worktrees?
 
 ## Safety check for project-local dirs
 
-Before creating project-local worktree, verify chosen dir is ignored:
+Before project-local worktree, verify chosen dir is ignored:
 
 ```bash
 # LOCATION is exact chosen project-local dir: .worktrees or worktrees
 git check-ignore -q -- "$LOCATION"
 ```
 
-Do not check a different dir than the one you will use.
+Check exact dir you will use.
 
-If not ignored:
-
-- Report it.
-- Ask before editing `.gitignore`.
-- Ask before committing `.gitignore`.
-- Prefer global dir if no consent.
+If not ignored: report, ask before `.gitignore` edit/commit, prefer global dir if no consent.
 
 Global `~/Projects/.worktrees/<project-name>/` needs no repo ignore check.
 
@@ -116,11 +106,7 @@ if [ -f go.mod ]; then go mod download; fi
 
 Run normal project check before implementation.
 
-If baseline fails:
-
-- Report command + short failure.
-- Do not mix pre-existing failure with new work.
-- Ask whether to proceed.
+If baseline fails: report command + short failure, keep separate from new work, ask proceed/stop.
 
 ## Report
 

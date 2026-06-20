@@ -16,6 +16,7 @@ Usage from repo root:
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from typing import Any
@@ -123,11 +124,18 @@ def gh_pr_view_json(fields: str) -> dict[str, Any]:
 def get_current_pr_ref() -> tuple[str, str, int]:
     """
     Resolve the PR for the current branch (whatever gh considers associated).
-    Works for cross-repo PRs too, by reading head repository owner/name.
+    Works for cross-repo PRs by reading the base-repo PR URL.
     """
-    pr = gh_pr_view_json("number,headRepositoryOwner,headRepository")
-    owner = pr["headRepositoryOwner"]["login"]
-    repo = pr["headRepository"]["name"]
+    pr = gh_pr_view_json("number,url")
+    url = str(pr.get("url") or "")
+    match = re.match(r"^https://github\.com/([^/]+)/([^/]+)/pull/(\d+)", url)
+    if match:
+        owner, repo, number_text = match.groups()
+        return owner, repo, int(number_text)
+
+    repo_info = _run_json(["gh", "repo", "view", "--json", "nameWithOwner"])
+    name_with_owner = str(repo_info.get("nameWithOwner") or "")
+    owner, repo = name_with_owner.split("/", 1)
     number = int(pr["number"])
     return owner, repo, number
 
@@ -177,8 +185,13 @@ def fetch_all(owner: str, repo: str, number: int) -> dict[str, Any]:
     threads_cursor: str | None = None
 
     pr_meta: dict[str, Any] | None = None
+    is_first_page = True
 
     while True:
+        should_append_comments = is_first_page or comments_cursor is not None
+        should_append_reviews = is_first_page or reviews_cursor is not None
+        should_append_threads = is_first_page or threads_cursor is not None
+
         payload = gh_api_graphql(
             owner=owner,
             repo=repo,
@@ -206,13 +219,23 @@ def fetch_all(owner: str, repo: str, number: int) -> dict[str, Any]:
         r = pr["reviews"]
         t = pr["reviewThreads"]
 
-        conversation_comments.extend(c.get("nodes") or [])
-        reviews.extend(r.get("nodes") or [])
-        review_threads.extend(t.get("nodes") or [])
+        if should_append_comments:
+            conversation_comments.extend(c.get("nodes") or [])
+            comments_cursor = (
+                c["pageInfo"]["endCursor"] if c["pageInfo"]["hasNextPage"] else None
+            )
+        if should_append_reviews:
+            reviews.extend(r.get("nodes") or [])
+            reviews_cursor = (
+                r["pageInfo"]["endCursor"] if r["pageInfo"]["hasNextPage"] else None
+            )
+        if should_append_threads:
+            review_threads.extend(t.get("nodes") or [])
+            threads_cursor = (
+                t["pageInfo"]["endCursor"] if t["pageInfo"]["hasNextPage"] else None
+            )
 
-        comments_cursor = c["pageInfo"]["endCursor"] if c["pageInfo"]["hasNextPage"] else None
-        reviews_cursor = r["pageInfo"]["endCursor"] if r["pageInfo"]["hasNextPage"] else None
-        threads_cursor = t["pageInfo"]["endCursor"] if t["pageInfo"]["hasNextPage"] else None
+        is_first_page = False
 
         if not (comments_cursor or reviews_cursor or threads_cursor):
             break

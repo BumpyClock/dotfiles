@@ -66,6 +66,42 @@ docs-list --dotfiles-dir ~/Projects/dotfiles
 
 ---
 
+## pr-comments
+Fetch open and unresolved GitHub PR feedback in one command.
+
+**Install path**: `~/.local/bin/pr-comments`
+**Source**: `tools/pr-comments.ts`
+
+**Usage**:
+```bash
+pr-comments
+pr-comments 123
+pr-comments 123 --repo BumpyClock/dotfiles
+pr-comments https://github.com/owner/repo/pull/123 --json
+pr-comments 123 --all
+```
+
+**Options**:
+- `--repo <owner/repo>` repository for numeric PR input
+- `--json` normalized machine-readable output
+- `--all` include resolved review threads
+
+**Output**:
+```text
+PR #123: ...
+https://github.com/owner/repo/pull/123
+State: OPEN
+Counts: 2 unresolved threads, 5 resolved threads, 1 PR comments, 1 review bodies
+
+Unresolved review threads
+  1. reviewer src/file.ts:42
+     Please handle this edge case.
+```
+
+**Requires**: `gh` installed and authenticated.
+
+---
+
 ## nanobanana
 Gemini-powered image editing CLI.
 

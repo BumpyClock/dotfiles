@@ -1,6 +1,6 @@
 # Add Changelog
 
-Purpose: create/update `CHANGELOG.md` with user-facing release notes.
+Goal: create/update `CHANGELOG.md` with user-facing release notes.
 
 ## Use format
 
@@ -61,12 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Entry rules
 
-- User-facing changes only unless repo uses dev-facing changelog.
-- Group by category.
-- Plain language. No commit hashes unless repo style wants them.
-- Mention breaking changes clearly.
-- Keep unreleased at top.
-- Update before release and mirror into GitHub release notes when asked.
+User-facing unless repo uses dev-facing changelog. Group by category. Plain language. No commit hashes unless repo wants them. Call out breaking changes. Keep Unreleased at top. Mirror into GitHub release notes when asked.
 
 ## From commits
 
@@ -82,7 +77,7 @@ npm install -D auto-changelog
 npx auto-changelog
 ```
 
-Need dependency health/approval before adding new packages.
+Need dependency health + approval before new packages.
 
 ## Commit convention support
 

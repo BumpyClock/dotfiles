@@ -7,20 +7,20 @@ model: claude-sonnet-4-6
 
 # Git Workflow
 
-Git/GitHub actions. Safety first. Small explicit ops. No surprise state changes.
+Git/GitHub ops. Safety first. Small explicit commands. No surprise state moves.
 
 ## Global rules
 
-- Inspect first: `git status --short`, then relevant `git diff` / `git log`
-- Use `gh` for GitHub. Prefer API/JSON for PR comments/checks
+- Inspect first: `git status --short`, then relevant `git diff` / `git log`.
+- Use `gh` for GitHub. Prefer API/JSON for PR comments/checks.
 - Use `committer` for commits. Stages explicit paths, rejects `.`
-- Never `git add .` or `git add -A`
-- Push only when user asks
-- Branch changes need consent: create, switch, rebase, merge, delete
-- Destructive ops forbidden unless explicit: `reset --hard`, `clean`, force-delete, force-push, overwrite
-- No manual `git stash`. Auto-stash from pull/rebase ok when command owns it
-- Ask before resolving binary conflicts or choosing one side blindly
-- Auth fails → ask user to run `gh auth login`; don't invent tokens
+- Never `git add .` or `git add -A`.
+- Push only when user asks.
+- Branch changes need consent: create, switch, rebase, merge, delete.
+- Destructive ops forbidden unless explicit: `reset --hard`, `clean`, force-delete, force-push, overwrite.
+- No manual `git stash`. Auto-stash from pull/rebase ok when command owns it.
+- Ask before resolving binary conflicts or choosing one side blindly.
+- Auth fails → ask user to run `gh auth login`; don't invent tokens.
 
 ## Read needed guide
 
@@ -47,7 +47,9 @@ committer "fix(scope): concise change" path/to/file.ts
 gh pr view --json number,title,url,headRefName,baseRefName
 
 # Comments
-python3 skills/git-workflow/scripts/fetch_comments.py > pr_comments.json
+pr-comments
+pr-comments <pr> --repo <owner/repo> --json
+pr-comments <pr> --all
 
 # Checks
 gh pr checks <pr>
