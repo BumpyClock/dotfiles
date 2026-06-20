@@ -18,10 +18,12 @@ Tasque (`tsq`) = durable local task graph for agent work.
 tsq find ready --lane planning
 tsq find ready --lane coding
 tsq find blocked
-tsq show <id>
+tsq show <id> [--deps] [--notes] [--history] [--spec]
+tsq root
+tsq --root <path> <cmd> ...
 ```
 
-Pick one task. Inspect before edit.
+Pick one task. Inspect before edit. `tsq` does not walk parent dirs; use `tsq root` to verify current store and `--root` from subdirs.
 
 ## Create
 
@@ -74,7 +76,15 @@ tsq create --parent <parent-id> --ensure \
 tsq create --parent <parent-id> --from-file tasks.md
 ```
 
-## Plan -> Code
+Plan markdown preview/apply. Headings, bullets, and checkboxes become child tasks; inline `#labels` attach in same batch.
+
+```bash
+tsq plan <parent-id> --from plan.md
+tsq plan <parent-id> --from plan.md --apply --planned
+tsq plan <parent-id> --from - --apply --ensure
+```
+
+## Spec / Plan State -> Code
 
 ```bash
 tsq spec <id> --text "## Plan\n...\n## Acceptance\n..."
@@ -84,6 +94,7 @@ tsq spec <id> --update --stdin
 tsq spec <id> --patch --stdin
 tsq planned <id>
 tsq claim <id> --assignee <name> --start
+tsq workon <id> --assignee <name>
 ```
 
 Use `tsq spec <id> --show` when spec markdown lives in sync worktree.
@@ -147,7 +158,7 @@ tsq history <id> --limit 20
 tsq find open --tree
 ```
 
-Use `--format json` for scripts/parsers. Human output fine for inspection.
+Use `--format json` for scripts/parsers. Use `--plain` / `--format plain` for tab-delimited grep/awk parsing. Human output fine for inspection.
 
 ## Habits
 

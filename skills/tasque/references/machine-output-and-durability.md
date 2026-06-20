@@ -4,8 +4,8 @@ Read when: automating `tsq` or reasoning about storage/recovery behavior.
 
 ## Stable machine output
 
-Use `--format json` only when scripting/parsing. Human output is fine for inspection.
-`--json` remains shorthand for `--format json`.
+Use `--format json` for structured scripts/parsers. `--json` remains shorthand for `--format json`.
+Use `--plain` / `--format plain` for tab-separated, one-record-per-line output in grep/awk-style automation. Plain output is available for show, find, plan, root, history, notes, and task lists. Human output is fine for inspection.
 
 Success envelope:
 

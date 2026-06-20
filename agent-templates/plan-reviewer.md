@@ -85,6 +85,9 @@ Only flag issues that would cause real problems during implementation:
 - task ownership or integration ownership is unclear enough that subagents may collide or leave cross-task drift unresolved
 - verification stops at unit/focused tests when implemented behavior requires smoke/live validation
 - placeholders hide required design or code
+- over-engineering, unnecessary complexity, or suboptimal solutions. 
+- Performance issues or suboptimal data structures
+- time complexity or inefficient algorithms
 - plan contradicts the spec or repo rules
 - SDD-backed or durable plans cannot be tracked or resumed because Tasque parent/child/dependency state is missing or contradictory
 

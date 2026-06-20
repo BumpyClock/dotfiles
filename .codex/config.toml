@@ -194,12 +194,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
 CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "a3f3ca79fe2bff56076b895f1f13a8f673168160bd79d880cc34b4500e08a71c"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "4cfaeb70b54d114e1cd56bc0f85d04e1b344a5049cddb729e2b1161b9ff3008a"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.609.30741"
+BROWSER_USE_CODEX_APP_VERSION = "26.616.41845"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.node_repl]
@@ -270,6 +270,9 @@ enabled = true
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
 enabled = true
 
 [[skills.config]]
@@ -349,18 +352,18 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-12T13:03:56Z"
+last_updated = "2026-06-20T12:21:10Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-01T18:40:26Z"
+last_updated = "2026-06-20T04:40:47Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-12T13:03:54Z"
-last_revision = "df202fe49d81404902cf785b64c1c5f9cc0b0315"
+last_updated = "2026-06-20T09:34:06Z"
+last_revision = "73e22af437e0d09b6534854ac0f3d4884dd9d9a3"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 

@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.79.1",
+  "lastChangelogVersion": "0.79.8",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "xhigh",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -56,7 +56,8 @@
     "npm:pi-teams",
     "npm:pi-intercom",
     "npm:@bumpyclock/pi-tasque",
-    "npm:@narumitw/pi-goal"
+    "npm:@narumitw/pi-goal",
+    "npm:@quintinshaw/pi-dynamic-workflows"
   ],
   "terminal": {
     "showTerminalProgress": true
