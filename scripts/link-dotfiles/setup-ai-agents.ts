@@ -546,7 +546,11 @@ export async function ensureLocalAgentsDefault(
 
 	const sourcePath = path.join(dotfilesDir, "secrets", "AGENTS.local.md");
 	if (!(await pathExists(sourcePath))) {
-		throw new Error(`Missing local agent instructions default: ${sourcePath}`);
+		// Optional private seed. Absence must not abort the rest of agent setup
+		// (template compile + provider linking). Local-instructions targets fall
+		// back to the loop's "[WARN] Missing source path" handling.
+		console.log(`[SKIP] No local agent instructions default: ${sourcePath}`);
+		return;
 	}
 
 	await cp(sourcePath, targetPath);

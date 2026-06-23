@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.79.8",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5-turbo",
   "defaultThinkingLevel": "xhigh",
   "subagents": {
     "agentOverrides": {
@@ -30,7 +30,7 @@
         "disabled": true
       },
       "scout": {
-        "model": "openai-codex/gpt-5.3-codex-spark",
+        "model": "zai/glm-5-turbo",
         "thinking": "medium"
       },
       "worker": {
@@ -63,7 +63,7 @@
     "showTerminalProgress": true
   },
   "quietStartup": true,
-  "theme": "catppuccin-mocha",
+  "theme": "catppuccin-macchiato",
   "hideThinkingBlock": false,
   "statusbar": {
     "preset": "default-no-cost",
@@ -95,7 +95,7 @@
       "safeMode": true,
       "animation": "shimmer",
       "generated": {
-        "model": "openai-codex/gpt-5.3-codex-spark",
+        "model": "zai/glm-5-turbo",
         "prompt": "Generate a 2-4 word \"{theme}\" themed loading message ending in \"...\".\n\nTask: {task}\n\nBe creative, funny, sarcastic, and unexpected. Avoid obvious/clichéd phrases for this theme.\nRelevant catchphrases, quotes, and themes should be incorporated into the message.\nThe message should hint at the task using theme vocabulary. modify catchphrase, quotes, and themes as needed.\n{exclude}\nOutput only the message, nothing else.",
         "refreshInterval": 30
       }
@@ -104,12 +104,10 @@
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": [
-        "explanatory"
-      ]
+      "styles": ["explanatory"]
     },
     "dynamicTitle": {
-      "model": "openai-codex/gpt-5.3-codex-spark",
+      "model": "zai/glm-5-turbo",
       "updateAfterTurns": 10
     }
   }

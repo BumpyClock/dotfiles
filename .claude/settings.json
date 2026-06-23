@@ -168,7 +168,6 @@
       "Bash(git push:*)"
     ]
   },
-  "model": "opus[1m]",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -178,11 +177,12 @@
     "security-guidance@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": true
+    "explanatory-output-style@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "teammateMode": "in-process",

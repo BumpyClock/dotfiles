@@ -4,7 +4,7 @@
  * top-level `dynamicTitle: false` as a hard kill switch.
  */
 const SETTINGS_KEY = "dynamicTitle";
-const DEFAULT_MODEL = "openai-codex/gpt-5.3-codex-spark";
+const DEFAULT_MODEL = "zai/glm-5-turbo";
 const DEFAULT_UPDATE_AFTER_TURNS = 10;
 const DEFAULT_MAX_CONTEXT_CHARS = 6_000;
 const MAX_TITLE_LENGTH = 60;

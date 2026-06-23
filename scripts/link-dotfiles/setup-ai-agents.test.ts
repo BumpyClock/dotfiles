@@ -270,12 +270,11 @@ describe("ai-agent-links config", () => {
 		);
 	});
 
-	test("fails AGENTS.local.md creation when secrets default is missing", async () => {
+	test("skips AGENTS.local.md creation when secrets default is missing", async () => {
 		const root = await createTemporaryDirectory();
 
-		expect(ensureLocalAgentsDefault(root)).rejects.toThrow(
-			"Missing local agent instructions default",
-		);
+		await ensureLocalAgentsDefault(root);
+
 		expect(await pathExists(path.join(root, "AGENTS.local.md"))).toBe(false);
 	});
 

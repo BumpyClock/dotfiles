@@ -170,6 +170,8 @@ trust_level = "trusted"
 [projects.'c:\users\adityasharma\projects\nova-shell']
 trust_level = "trusted"
 
+[projects."/Volumes/Portkey/Projects/gaussian-splats/proto"]
+trust_level = "trusted"
 
 
 #Agents configuration
@@ -207,19 +209,19 @@ CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 # command = "/Applications/Codex.app/Contents/Resources/node_repl"
 # startup_timeout_sec = 120
 
-[mcp_servers.node_repl.env]
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = ""
-NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
-CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2297529e313"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
-CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+# [mcp_servers.node_repl.env]
+# NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+# NODE_REPL_NODE_MODULE_DIRS = ""
+# NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
+# NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
+# CODEX_HOME = "/Users/adityasharma/.codex"
+# NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2267529e313"
+# BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+# NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+# NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+# BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+# BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
+# CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.code-tools]
 # command = "code-tools-mcp"
@@ -378,7 +380,7 @@ sansFontSize = 14
 codeFontSize = 13
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "absolutely"
-selected-avatar-id = "bsod"
+selected-avatar-id = "null-signal"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#cc7d5e"
@@ -394,5 +396,18 @@ diffAdded = "#00c853"
 diffRemoved = "#ff5f38"
 skill = "#cc7d5e"
 
+[desktop.open-in-target-preferences]
+global = "zed"
+
+[desktop.open-in-target-preferences.perPath]
+"/Users/adityasharma/Projects/gpui" = "zed"
+
 # [mcp_servers.openaiDeveloperDocs]
 # url = "https://developers.openai.com/mcp"
+#
+
+[model_providers.proxy]
+name = "Zai"
+base_url = "https://api.z.ai/api/coding/paas/v4"
+env_key = "ZAI_API_KEY"
+wire_api = "responses"
