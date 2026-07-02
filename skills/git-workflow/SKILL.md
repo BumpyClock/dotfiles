@@ -27,7 +27,7 @@ Git/GitHub ops. Safety first. Small explicit commands. No surprise state moves.
 | Task | Read |
 | --- | --- |
 | Commit, amend, branch, rebase, cleanup | `commits-and-branches.md` |
-| Create PR, write PR body, improve reviewability, handle review comments | `pr-and-comments.md` |
+| Create PR, write PR body, improve reviewability, handle review comments, or when user say resolve pr comments or some variation of it. | `pr-and-comments.md` |
 | Merge PR, resolve conflicts, fix CI | `merge-and-ci.md` |
 | Parallel/isolated branch work | `worktree-management.md` |
 | Changelog setup/update | `add-changelog.md` |

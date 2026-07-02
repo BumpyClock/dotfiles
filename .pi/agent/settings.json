@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.80.3",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-5-turbo",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "xhigh",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -44,7 +44,7 @@
     }
   },
   "packages": [
-    "npm:@tintinweb/pi-subagents",
+    "npm:pi-subagents",
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
     "npm:pi-lens",
@@ -105,9 +105,7 @@
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": [
-        "explanatory"
-      ]
+      "styles": []
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",
