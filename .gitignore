@@ -25,3 +25,6 @@ node_modules/
 .tasque/
 .pi-lens/
 AGENTS.local.md
+
+# Editor backup files
+*.save
