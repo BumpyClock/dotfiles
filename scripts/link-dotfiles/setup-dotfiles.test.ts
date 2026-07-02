@@ -122,21 +122,26 @@ describe("managed zshrc", () => {
 		return homeDir;
 	}
 
-	test("renders a managed zshrc entrypoint", () => {
+	test("renders a managed zshrc block", () => {
 		const content = renderManagedZshrc("/opt/dotfiles");
 
-		expect(content.startsWith(ZSHRC_MANAGED_MARKER)).toBe(true);
+		expect(content).toStartWith("# >>> dotfiles zsh start\n");
+		expect(content).toContain(ZSHRC_MANAGED_MARKER);
 		expect(content).toContain("source '/opt/dotfiles/shell/zsh/shared.zsh'");
 		expect(content).toContain('if [ -f "$HOME/.zshrc.local" ]; then');
 		expect(content).toContain('source "$HOME/.zshrc.local"');
+		expect(content).toContain("# <<< dotfiles zsh end");
 	});
 
 	test("detects managed zshrc content", () => {
 		expect(isManagedZshrc(renderManagedZshrc("/x"))).toBe(true);
+		expect(isManagedZshrc(`${ZSHRC_MANAGED_MARKER}\nsource /old/path\n`)).toBe(
+			true,
+		);
 		expect(isManagedZshrc("# my custom zshrc\nexport FOO=bar\n")).toBe(false);
 	});
 
-	test("creates managed zshrc and local override file", async () => {
+	test("creates managed zshrc block and local override file", async () => {
 		const homeDir = await createHomeFixture();
 
 		await setupZshrc({ dotfilesDir, homeDir, now: fixedDate });
@@ -161,7 +166,7 @@ describe("managed zshrc", () => {
 		);
 	});
 
-	test("backs up unmanaged zshrc before installing managed entrypoint", async () => {
+	test("backs up unmanaged zshrc and preserves it after managed block", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 		const oldContent = "# my old config\nexport PATH=/usr/bin\n";
@@ -173,7 +178,7 @@ describe("managed zshrc", () => {
 			readFile(path.join(homeDir, ".zshrc.backup.20250315_103045"), "utf8"),
 		).resolves.toBe(oldContent);
 		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
-			renderManagedZshrc(dotfilesDir),
+			`${renderManagedZshrc(dotfilesDir)}${oldContent}`,
 		);
 	});
 
@@ -198,7 +203,7 @@ describe("managed zshrc", () => {
 			currentContent,
 		);
 		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
-			renderManagedZshrc(dotfilesDir),
+			`${renderManagedZshrc(dotfilesDir)}${currentContent}`,
 		);
 	});
 
@@ -218,11 +223,16 @@ describe("managed zshrc", () => {
 		expect(backups).toHaveLength(0);
 	});
 
-	test("updates stale managed zshrc in place", async () => {
+	test("updates stale managed zshrc block in place", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 
 		await setupZshrc({ dotfilesDir: "/old/dotfiles", homeDir, now: fixedDate });
+		await writeFile(
+			zshrcPath,
+			`${await readFile(zshrcPath, "utf8")}\n# pnpm\nexport PNPM_HOME=/x\n`,
+			"utf8",
+		);
 		await setupZshrc({ dotfilesDir: "/new/dotfiles", homeDir, now: fixedDate });
 
 		const backups = await Array.fromAsync(
@@ -232,5 +242,44 @@ describe("managed zshrc", () => {
 		await expect(readFile(zshrcPath, "utf8")).resolves.toContain(
 			"/new/dotfiles/shell/zsh/shared.zsh",
 		);
+		await expect(readFile(zshrcPath, "utf8")).resolves.toContain(
+			"export PNPM_HOME=/x",
+		);
+	});
+
+	test("migrates legacy managed zshrc without losing appended tool config", async () => {
+		const homeDir = await createHomeFixture();
+		const zshrcPath = path.join(homeDir, ".zshrc");
+		const legacyContent = [
+			ZSHRC_MANAGED_MARKER,
+			"# Edits go in ~/.zshrc.local (sourced below).",
+			"",
+			"source '/old/dotfiles/shell/zsh/shared.zsh'",
+			"",
+			"# Source local overrides if present.",
+			'if [ -f "$HOME/.zshrc.local" ]; then',
+			'  source "$HOME/.zshrc.local"',
+			"fi",
+			"",
+			"# pnpm",
+			"export PNPM_HOME=/Users/test/Library/pnpm",
+			"",
+		].join("\n");
+		await writeFile(zshrcPath, legacyContent, "utf8");
+
+		await setupZshrc({ dotfilesDir, homeDir, now: fixedDate });
+
+		const updatedContent = await readFile(zshrcPath, "utf8");
+		expect(updatedContent).toStartWith("# >>> dotfiles zsh start\n");
+		expect(updatedContent).toContain(
+			"source '/fake/dotfiles/shell/zsh/shared.zsh'",
+		);
+		expect(updatedContent).toContain(
+			"# pnpm\nexport PNPM_HOME=/Users/test/Library/pnpm",
+		);
+		const backups = await Array.fromAsync(
+			new Bun.Glob(".zshrc.backup.*").scan({ cwd: homeDir }),
+		);
+		expect(backups).toHaveLength(0);
 	});
 });

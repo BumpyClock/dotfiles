@@ -4,7 +4,7 @@ description: Survey any codebase as a senior advisor and produce prioritized, se
 license: MIT
 metadata:
   author: shadcn
-  version: "1.0.0"
+  version: "1.2.0"
 ---
 
 # Improve
@@ -30,19 +30,24 @@ Map the territory before judging it:
 - Read `README`, `CLAUDE.md`/`AGENTS.md`, `CONTRIBUTING`, root config files (`package.json`, `pyproject.toml`, `go.mod`, etc.), CI config, and the directory structure.
 - Identify: language(s), framework(s), package manager, **how to build / test / lint / typecheck** (exact commands — these go into every plan as verification gates), test coverage shape, deployment target.
 - Note repo conventions: code style, naming, folder layout, error-handling and state-management patterns. Plans must tell the executor to *match* these, with examples.
-- Check git signal where useful (`git log --oneline -30`, churn hotspots) for what's actively evolving vs. frozen.
+- Tag key directories with the trust boundaries they touch (user-input, network, filesystem, secrets, process-exec, database, auth, permissions, concurrency, external-api, serialization). Subagent prompts point at boundaries, not at "the codebase" — "`src/webhooks/` handles unauthenticated network input" beats "look for security issues".
+- Check git signal where useful (`git log --oneline -30`; churn hotspots via `git log --format= --name-only | sort | uniq -c | sort -rn | head -30`, crossed with file size/complexity — high churn × high complexity is where audits pay off) for what's actively evolving vs. frozen.
+- Snapshot cheap quality metrics into the scoreboard table in `plans/README.md` (format in [references/plan-template.md](references/plan-template.md)): LOC, dependency count, test count, coverage (only if cheap to run), typecheck/lint error count, build time. Every future audit and `reconcile` re-snapshots — the trajectory is the proof the codebase is actually improving.
 
 If the repo has no working verification command (no tests, broken build), record that — "establish a verification baseline" is often finding #1, and it must precede risky plans in the dependency order.
 
 ### Phase 2 — Audit (parallel)
 
-Audit the codebase across the categories in [references/audit-playbook.md](references/audit-playbook.md) — read it now. Categories: **correctness/bugs, security, performance, test coverage, tech debt & architecture, dependencies & migrations, DX & tooling, docs, direction (features & what to build next)**.
+Audit the codebase across the categories in [references/audit-playbook.md](references/audit-playbook.md) — read it now. Categories: **correctness/bugs, security, performance, test coverage, tech debt & architecture, AI slop & generated-code debt, dependencies & migrations, DX & tooling, docs, direction (features & what to build next)**.
 
-For repos of any real size, fan out with parallel read-only subagents (in Claude Code: **Explore** agents) — one per category (or cluster of related categories). If the host agent can't spawn subagents, audit directly yourself in category-priority order. **Subagents do not inherit this skill's context**, so each subagent prompt must include:
+**Run the mechanical sweep first** — the playbook's "Run the tools first" table (dead-code detectors, duplication, `ast-grep` bug patterns, strict typecheck, coverage). Static tools have near-perfect recall on mechanical patterns; spend model attention on judging their output and on what tools can't find. Tool hits are leads, not findings — each still needs the evidence/impact/confidence treatment.
+
+For repos of any real size, fan out with parallel read-only subagents (in Claude Code: **general-purpose** agents explicitly instructed to make no edits — *not* Explore agents, which locate code by skimming excerpts rather than reviewing it; that under-delivers for audits) — one per category (or cluster of related categories). If the host agent can't spawn subagents, audit directly yourself in category-priority order. **Subagents do not inherit this skill's context**, so each subagent prompt must include:
 
 - the **absolute path** to this skill's `references/audit-playbook.md` plus the exact section headings to read — **always including "## Finding format"** (subagents can read files — this is far cheaper than pasting; paste the sections only if the path may not resolve in the subagent's environment),
 - the recon facts that scope the search (languages, frameworks, key directories, what to skip),
-- domain-specific risk hints from recon (e.g. for a CLI that writes user files: "pay attention to path traversal and command injection"),
+- domain-specific risk hints from recon (e.g. for a CLI that writes user files: "pay attention to path traversal and command injection"), including the trust-boundary tags for the directories in scope,
+- the evidence contract: every evidence ref needs `path`, a 1-based line range, **and a verbatim quote (≤3 lines) copied exactly from those lines** — quotes are mechanically checked against the repo after the audit, and a finding whose quote doesn't match is dropped,
 - an explicit instruction to return findings only — no fixes, no file dumps — and to confirm it could read the playbook file.
 
 Audit depth follows the **effort level** (default `standard`; the user sets it with a `quick` / `deep` keyword anywhere in the invocation):
@@ -52,7 +57,7 @@ Audit depth follows the **effort level** (default `standard`; the user sets it w
 | Coverage | Recon hotspots only — highest-churn, highest-criticality code | Hotspot-weighted, key packages | Whole repo, every package |
 | Subagents | 0–1 (sweep directly when feasible) | ≤4 concurrent | ≤8 concurrent, one per category |
 | Breadth | "medium" | "very thorough" for correctness + security, "medium" rest | "very thorough" everywhere |
-| Categories | correctness, security, tests | all nine | all nine |
+| Categories | correctness, security, performance, AI slop, tests | all ten | all ten |
 | Findings | top ~6, HIGH-confidence only | full table | full table incl. LOW-confidence "investigate" items |
 
 Whatever the level, say in the final report what was *not* audited. On a large monorepo even `deep` scopes subagents to packages, not the root.
@@ -61,7 +66,21 @@ Every finding needs: evidence (`file:line` references), impact, effort estimate 
 
 ### Phase 3 — Vet, prioritize, confirm
 
+**Mechanically validate evidence first.** Collect every candidate finding into a JSON file in a scratch location *outside the repo* — shape: `{"findings": [{"id", "title", "evidence": [{"path", "startLine", "endLine", "quote"}]}]}` — then run:
+
+```
+node <this skill's directory>/scripts/validate-evidence.mjs --repo <repo-root> --findings <file.json>
+```
+
+The script drops any finding whose cited file, line range, or quote doesn't match the repo's actual bytes (exit 1 when anything drops; per-drop reasons on stderr). A dropped finding gets **one re-cite attempt** — subagent line numbers drift more often than they fabricate — then goes to "considered and rejected" with the script's reason. **No finding enters the table without a kept row in the script's report.** This is the cheap deterministic gate; the judgment gates below run only on what survives it.
+
 **Vet before presenting — subagents over-report.** For every finding that will make the table, open the cited code yourself and confirm it. Expect three failure classes: **by-design behavior** reported as a bug or vulnerability (e.g. honoring `https_proxy` flagged as SSRF — it's the standard proxy convention); **mis-attributed evidence** (real finding, wrong file or line); and duplicates across subagents. Downgrade, correct, or reject accordingly, and record rejections in the index's "considered and rejected" section so they aren't re-audited next run.
+
+**Then try to kill what survives.** Self-vetting misses the findings you *want* to be true; a refuter with no stake catches them. For each HIGH-impact finding headed for a plan, dispatch a fresh-context read-only subagent given only the finding text and cited files, prompted to **refute** it — "argue this is by-design, mis-read, or unreachable; default to refuted if uncertain." At `deep`, use three refuters and majority vote. Only survivors become plans; refuted findings go to "considered and rejected" with the refuter's reasoning.
+
+**Check ground-truth claims against ground truth.** A finding asserting something "does not exist" or "is unpublished" — package versions, APIs, config options — gets verified against the live source (`npm view <pkg>@<ver>`, official docs via web) before it survives; knowledge-cutoff hallucinations dress up as facts. Fail open: only a confirmed contradiction drops the finding — 404s, timeouts, and offline keep it.
+
+**Reproduce HIGH-impact correctness bugs.** Before planning one, attempt a minimal repro: run an existing test with the triggering input, or a small script in a temp dir outside the repo (the read-only rule permits both). A repro upgrades confidence to HIGH and becomes the plan's regression test case verbatim. A bug that resists a repro attempt gets an "investigate" plan, not a "fix" plan.
 
 Present the vetted findings table to the user, ordered by leverage (impact ÷ effort, weighted by confidence):
 
@@ -75,7 +94,7 @@ Wait for the selection. Do not write 30 plans nobody asked for. If running non-i
 
 ### Phase 4 — Write the plans
 
-For each selected finding, write one plan file using the template in [references/plan-template.md](references/plan-template.md) — read it before writing the first plan. Plans go in:
+For each selected finding, write one plan file using the template in [references/plan-template.md](references/plan-template.md) — read it before writing the first plan. Exception: **AI-slop findings batch into one plan per pattern class** (not per site) — mechanical steps, ideal for cheap executors, done criterion a `grep`/`ast-grep` query that must return zero matches. Plans go in:
 
 ```
 plans/

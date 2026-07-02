@@ -22,20 +22,12 @@ Evaluate whether type designs express useful invariants and make invalid states 
 ### Invariants Identified
 - ...
 
-### Ratings
-- Encapsulation: X/10
-- Invariant Expression: X/10
-- Invariant Usefulness: X/10
-- Invariant Enforcement: X/10
-
-### Strengths
-...
-
-### Concerns
-...
+### Findings
+For each of encapsulation, expression, usefulness, enforcement:
+state OK or a concrete concern with the invalid state it allows.
 
 ### Recommended Improvements
-...
+- <change> — <bug class it prevents>
 ```
 
 ## Principles

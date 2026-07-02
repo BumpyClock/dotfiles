@@ -1,3 +1,5 @@
 Source: https://github.com/shadcn/improve/tree/main/skills/improve
 License: MIT
 Author: shadcn
+Modified locally 2026-07-02: audit hardening — AI-slop category, adversarial refute vet, repro rule, tool-first sweep, perf quantification, baseline scoreboard, failure-scenario field. (v1.1.0)
+Modified locally 2026-07-02 (v1.2.0): clawpatch-inspired hardening — scripts/validate-evidence.mjs mechanical evidence gate, verbatim-quote evidence contract, why-tests-miss-it field, stable finding IDs, trust-boundary tagging, ground-truth claim checks, deslopify patterns + negative list, missing-line-is-not-fixed rule.

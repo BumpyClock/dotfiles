@@ -1,5 +1,5 @@
 model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 web_search = "live"
 personality = "pragmatic"
 suppress_unstable_features_warning = true
@@ -196,12 +196,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
 CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "4cfaeb70b54d114e1cd56bc0f85d04e1b344a5049cddb729e2b1161b9ff3008a"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "cb79053fda6deb0f3b5d6f0d90d4257305ebdbd1e378a12e8fbc5bde782eb59b"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.41845"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.81905"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.node_repl]
@@ -278,6 +278,12 @@ enabled = true
 enabled = true
 
 [plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."warp@codex-warp"]
 enabled = true
 
 [[skills.config]]
@@ -357,20 +363,26 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-20T12:21:10Z"
+last_updated = "2026-07-02T16:52:17Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-20T04:40:47Z"
+last_updated = "2026-07-01T07:14:21Z"
 source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-20T09:34:06Z"
-last_revision = "73e22af437e0d09b6534854ac0f3d4884dd9d9a3"
+last_updated = "2026-07-02T16:53:26Z"
+last_revision = "aae862b7b79e7abaa1594842f343a84f7b5dafb0"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
+
+[marketplaces.codex-warp]
+last_updated = "2026-07-02T16:53:28Z"
+last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
+source_type = "git"
+source = "https://github.com/warpdotdev/codex-warp.git"
 
 [desktop]
 reviewDelivery = "detached"
@@ -381,6 +393,7 @@ codeFontSize = 13
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "absolutely"
 selected-avatar-id = "null-signal"
+followUpQueueMode = "queue"
 
 [desktop.appearanceLightChromeTheme]
 accent = "#cc7d5e"
@@ -411,3 +424,20 @@ name = "Zai"
 base_url = "https://api.z.ai/api/coding/paas/v4"
 env_key = "ZAI_API_KEY"
 wire_api = "responses"
+
+[hooks.state]
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
+trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"

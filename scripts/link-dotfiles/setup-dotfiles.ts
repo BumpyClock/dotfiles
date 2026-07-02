@@ -5,7 +5,6 @@ import {
 	mkdir,
 	readFile,
 	readlink,
-	rename,
 	rm,
 	writeFile,
 } from "node:fs/promises";
@@ -396,7 +395,17 @@ export async function loadManagedEnvironment(
 	}
 
 	const content = await readFile(configPath, "utf8");
-	return flattenEnvironmentConfig(JSON.parse(content));
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(content);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		throw new Error(
+			`Invalid environment config JSON at ${configPath}: ${message}`,
+		);
+	}
+
+	return flattenEnvironmentConfig(parsed);
 }
 
 async function promptUser(question: string): Promise<string> {
@@ -725,12 +734,16 @@ async function showStatus(dotfilesDir: string): Promise<void> {
 
 export const ZSHRC_MANAGED_MARKER =
 	"# MANAGED BY dotfiles/scripts/link-dotfiles - DO NOT EDIT";
+export const ZSHRC_MANAGED_START = "# >>> dotfiles zsh start";
+export const ZSHRC_MANAGED_END = "# <<< dotfiles zsh end";
 
 export function renderManagedZshrc(dotfilesDir: string): string {
 	const sharedZshPath = path.join(dotfilesDir, "shell", "zsh", "shared.zsh");
 	const lines = [
+		ZSHRC_MANAGED_START,
 		ZSHRC_MANAGED_MARKER,
-		"# Edits go in ~/.zshrc.local (sourced below).",
+		"# Stable baseline lives in shell/zsh/shared.zsh.",
+		"# Machine-specific edits go in ~/.zshrc.local or outside this block.",
 		"",
 		`source ${escapeShellValue(sharedZshPath)}`,
 		"",
@@ -738,6 +751,7 @@ export function renderManagedZshrc(dotfilesDir: string): string {
 		'if [ -f "$HOME/.zshrc.local" ]; then',
 		'  source "$HOME/.zshrc.local"',
 		"fi",
+		ZSHRC_MANAGED_END,
 		"",
 	];
 
@@ -757,7 +771,72 @@ export function renderZshrcLocal(): string {
 }
 
 export function isManagedZshrc(content: string): boolean {
-	return content.startsWith(ZSHRC_MANAGED_MARKER);
+	return (
+		content.includes(ZSHRC_MANAGED_START) ||
+		content.startsWith(ZSHRC_MANAGED_MARKER)
+	);
+}
+
+function replaceManagedZshrcBlock(
+	content: string,
+	managedBlock: string,
+): { content: string; replaced: boolean } {
+	const startIndex = content.indexOf(ZSHRC_MANAGED_START);
+	if (startIndex === -1) {
+		return { content, replaced: false };
+	}
+
+	const endIndex = content.indexOf(ZSHRC_MANAGED_END, startIndex);
+	if (endIndex === -1) {
+		return { content, replaced: false };
+	}
+
+	let tailStart = endIndex + ZSHRC_MANAGED_END.length;
+	if (content[tailStart] === "\r" && content[tailStart + 1] === "\n") {
+		tailStart += 2;
+	} else if (content[tailStart] === "\n") {
+		tailStart += 1;
+	}
+
+	const nextContent = `${content.slice(0, startIndex)}${managedBlock}${content.slice(tailStart)}`;
+	return { content: nextContent, replaced: true };
+}
+
+function stripLegacyManagedZshrc(content: string): string | null {
+	if (!content.startsWith(ZSHRC_MANAGED_MARKER)) {
+		return null;
+	}
+
+	const localSourceLine = '  source "$HOME/.zshrc.local"';
+	const localSourceIndex = content.indexOf(localSourceLine);
+	if (localSourceIndex === -1) {
+		return content;
+	}
+
+	const fiIndex = content.indexOf("\nfi", localSourceIndex);
+	if (fiIndex === -1) {
+		return content;
+	}
+
+	let tailStart = fiIndex + "\nfi".length;
+	while (content[tailStart] === "\n") {
+		tailStart += 1;
+	}
+
+	return content.slice(tailStart);
+}
+
+function prependManagedZshrcBlock(
+	content: string,
+	managedBlock: string,
+): string {
+	if (!content.trim()) {
+		return managedBlock;
+	}
+
+	const separator =
+		managedBlock.endsWith("\n") || content.startsWith("\n") ? "" : "\n";
+	return `${managedBlock}${separator}${content}`;
 }
 
 function formatTimestamp(date: Date): string {
@@ -793,29 +872,46 @@ export async function setupZshrc(options: SetupZshrcOptions): Promise<void> {
 	const homeDir = options.homeDir ?? os.homedir();
 	const zshrcPath = path.join(homeDir, ".zshrc");
 	const zshrcLocalPath = path.join(homeDir, ".zshrc.local");
-	const desiredContent = renderManagedZshrc(options.dotfilesDir);
+	const desiredBlock = renderManagedZshrc(options.dotfilesDir);
 
 	if (await pathExists(zshrcPath)) {
 		const existingContent = await readFile(zshrcPath, "utf8");
+		const replacement = replaceManagedZshrcBlock(existingContent, desiredBlock);
 
-		if (existingContent === desiredContent) {
-			info(".zshrc already managed and current");
-		} else if (isManagedZshrc(existingContent)) {
-			await writeFile(zshrcPath, desiredContent, "utf8");
-			action("Updated managed .zshrc");
+		if (replacement.replaced) {
+			if (replacement.content === existingContent) {
+				info(".zshrc managed block already current");
+			} else {
+				await writeFile(zshrcPath, replacement.content, "utf8");
+				action("Updated managed .zshrc block");
+			}
 		} else {
-			const timestamp = formatTimestamp(options.now ?? new Date());
-			const backupPath = await uniqueBackupPath(
-				`${zshrcPath}.backup.${timestamp}`,
-			);
-			await rename(zshrcPath, backupPath);
-			action(`Backed up .zshrc to ${path.basename(backupPath)}`);
-			await writeFile(zshrcPath, desiredContent, "utf8");
-			action("Installed managed .zshrc");
+			const legacyTail = stripLegacyManagedZshrc(existingContent);
+			if (legacyTail !== null) {
+				await writeFile(
+					zshrcPath,
+					prependManagedZshrcBlock(legacyTail, desiredBlock),
+					"utf8",
+				);
+				action("Migrated legacy managed .zshrc to managed block");
+			} else {
+				const timestamp = formatTimestamp(options.now ?? new Date());
+				const backupPath = await uniqueBackupPath(
+					`${zshrcPath}.backup.${timestamp}`,
+				);
+				await copyFile(zshrcPath, backupPath);
+				action(`Backed up .zshrc to ${path.basename(backupPath)}`);
+				await writeFile(
+					zshrcPath,
+					prependManagedZshrcBlock(existingContent, desiredBlock),
+					"utf8",
+				);
+				action("Installed managed .zshrc block and preserved existing content");
+			}
 		}
 	} else {
-		await writeFile(zshrcPath, desiredContent, "utf8");
-		action("Created managed .zshrc");
+		await writeFile(zshrcPath, desiredBlock, "utf8");
+		action("Created managed .zshrc block");
 	}
 
 	if (!(await pathExists(zshrcLocalPath))) {

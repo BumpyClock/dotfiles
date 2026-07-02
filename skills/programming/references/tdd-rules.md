@@ -64,7 +64,7 @@ Can't check all boxes? If you intended to follow TDD, you didn't. Either restart
 
 | Problem | Solution |
 |---------|----------|
-| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
+| Don't know how to test | Write wished-for API. Write assertion first. Ask the user. |
 | Test too complicated | Design too complicated. Simplify interface. |
 | Must mock everything | Code too coupled. Use dependency injection. |
 | Test setup huge | Extract helpers. Still complex? Simplify design. |
@@ -75,5 +75,5 @@ Bug found? Default to a failing test that reproduces it when feasible and apt, t
 
 ## References
 
-- [references/tdd-examples.md](tdd-examples.md) - examples and rationale
-- [../test-driven-development/test-anti-patterns.md](../test-driven-development/test-anti-patterns.md) - testing anti-patterns
+- [tdd-examples.md](tdd-examples.md) - examples and rationale
+- [test-anti-patterns.md](test-anti-patterns.md) - testing anti-patterns

@@ -1,5 +1,7 @@
 # Sprint Planner Mode
 
+**Load when:** decomposing a feature into parallel subagent workstreams. For executing an already-saved plan, prefer the `subagent-driven-development` skill.
+
 Plan complex features into parallel workstreams with clear dependencies, ownership, and integration points.
 
 ## Core principles

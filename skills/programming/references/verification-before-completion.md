@@ -54,6 +54,10 @@ For bug fixes, prefer proof that the test catches the bug:
 
 If red-green proof is infeasible or disproportionate, state why and use the strongest practical check.
 
+## Interactive Checks
+
+When automated tests are infeasible, verify interactively (e.g. tmux pane driving the app). Show the attach command so the user can watch; close panes when done.
+
 ## Delegated Work
 
 Subagent status is a signal, not evidence.

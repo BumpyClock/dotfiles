@@ -35,7 +35,7 @@ File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
 - **Effort**: S | M | L
 - **Risk**: LOW | MED | HIGH
 - **Depends on**: plans/NNN-*.md (or "none")
-- **Category**: bug | security | perf | tests | tech-debt | migration | dx | docs | direction
+- **Category**: bug | security | perf | tests | tech-debt | slop | migration | dx | docs | direction
 - **Planned at**: commit `<short SHA>`, <YYYY-MM-DD>
 - **Issue**: <GitHub issue URL — only when published via `--issues`; omit otherwise>
 
@@ -130,6 +130,17 @@ Machine-checkable. ALL must hold:
 - [ ] No files outside the in-scope list are modified (`git status`)
 - [ ] `plans/README.md` status row updated
 
+Category-specific requirements:
+
+- **Performance plans** must include a measurement criterion with a stated
+  baseline and expected direction — a benchmark command, a query-count
+  assertion in a test, or a bundle-size diff ("`node bench/orders.js` →
+  p95 under 120ms; baseline was 900ms"). Typecheck+tests passing proves
+  nothing about a perf fix.
+- **Slop-cleanup plans** use a `grep`/`ast-grep` query returning zero matches
+  as the primary criterion, plus the full test suite to prove behavior is
+  unchanged.
+
 ## STOP conditions
 
 Stop and report back (do not improvise) if:
@@ -178,7 +189,21 @@ Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJE
 
 ## Findings considered and rejected
 
-- <finding>: not worth doing because <one line>. (So nobody re-audits it.)
+- `<stable finding ID>` — <title>: not worth doing because <one line>. (So nobody re-audits it.)
+
+Key every entry by the finding's stable ID (`<category>-<file>-<slug>` from the
+finding format) so re-audits match mechanically — a triage decision recorded
+here is permanent until the code it cites changes.
+
+## Baseline metrics
+
+Snapshotted at each audit and `reconcile` — the scoreboard for whether this
+codebase is actually improving. Only include columns that are cheap to
+measure in this repo; N/A the rest.
+
+| Date | Commit | LOC | Deps | Tests | Coverage | Typecheck errs | Build time |
+|------|--------|-----|------|-------|----------|----------------|------------|
+| <YYYY-MM-DD> | `<sha>` | ... | ... | ... | ... | ... | ... |
 ```
 
 ## Quality bar — check before finishing each plan
