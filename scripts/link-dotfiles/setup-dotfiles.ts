@@ -810,12 +810,14 @@ function stripLegacyManagedZshrc(content: string): string | null {
 	const localSourceLine = '  source "$HOME/.zshrc.local"';
 	const localSourceIndex = content.indexOf(localSourceLine);
 	if (localSourceIndex === -1) {
-		return content;
+		// Marker present but unexpected layout: signal "cannot strip" so the
+		// caller backs up and prepends rather than silently duplicating the block.
+		return null;
 	}
 
 	const fiIndex = content.indexOf("\nfi", localSourceIndex);
 	if (fiIndex === -1) {
-		return content;
+		return null;
 	}
 
 	let tailStart = fiIndex + "\nfi".length;

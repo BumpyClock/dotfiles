@@ -113,6 +113,7 @@ Auth fails → ask user to run `gh auth login`.
 11. When done, use the `speak` skill to summarize and notify the user.
 
 ## Second opinions
+
 - use `claude -p`, `copilot -p`, and `codex exec` to get second opinions on architecture smells and deeper causes. Run these in parallel.
 
 Push only when user asks.

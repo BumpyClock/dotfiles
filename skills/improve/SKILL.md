@@ -68,7 +68,7 @@ Every finding needs: evidence (`file:line` references), impact, effort estimate 
 
 **Mechanically validate evidence first.** Collect every candidate finding into a JSON file in a scratch location *outside the repo* — shape: `{"findings": [{"id", "title", "evidence": [{"path", "startLine", "endLine", "quote"}]}]}` — then run:
 
-```
+```bash
 node <this skill's directory>/scripts/validate-evidence.mjs --repo <repo-root> --findings <file.json>
 ```
 

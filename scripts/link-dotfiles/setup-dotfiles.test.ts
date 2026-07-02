@@ -282,4 +282,29 @@ describe("managed zshrc", () => {
 		);
 		expect(backups).toHaveLength(0);
 	});
+
+	test("backs up a marked but unparseable legacy zshrc instead of migrating it", async () => {
+		const homeDir = await createHomeFixture();
+		const zshrcPath = path.join(homeDir, ".zshrc");
+		// Starts with the managed marker but omits the local-source/fi structure
+		// stripLegacyManagedZshrc looks for, so it cannot be confidently stripped.
+		const legacyContent = [
+			ZSHRC_MANAGED_MARKER,
+			"source '/old/dotfiles/shell/zsh/shared.zsh'",
+			"export PATH=/custom/bin:$PATH",
+			"",
+		].join("\n");
+		await writeFile(zshrcPath, legacyContent, "utf8");
+
+		await setupZshrc({ dotfilesDir, homeDir, now: fixedDate });
+
+		// The unparseable legacy file is backed up (safety net), not silently migrated.
+		await expect(
+			readFile(path.join(homeDir, ".zshrc.backup.20250315_103045"), "utf8"),
+		).resolves.toBe(legacyContent);
+		// New block is prepended in front of the preserved original content.
+		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
+			`${renderManagedZshrc(dotfilesDir)}${legacyContent}`,
+		);
+	});
 });

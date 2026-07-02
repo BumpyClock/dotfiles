@@ -116,7 +116,9 @@ async function readInsideRepo(root, realRoot, normalized) {
   if (realFull === null || !isInside(realRoot, realFull)) {
     return null;
   }
-  return readFile(full, "utf8").catch(() => null);
+  // Read the resolved path we validated, not the original symlink, so a swap
+  // between realpath() and readFile() cannot redirect the read outside the repo.
+  return readFile(realFull, "utf8").catch(() => null);
 }
 
 function findingId(finding) {
