@@ -5,8 +5,10 @@
 # =============================================================================
 
 # Resolve repo root from this sourced file instead of assuming ~/Projects/dotfiles.
-DOTFILES_ZSH_DIR="$(cd "$(dirname "$0")" && pwd -P)"
-DOTFILES_ROOT="$(cd "$DOTFILES_ZSH_DIR/../.." && pwd -P)"
+# ${(%):-%x} is the path of the file being sourced (robust in zsh regardless of
+# FUNCTION_ARGZERO, unlike $0); :A absolutizes and resolves symlinks, :h takes the dir.
+DOTFILES_ZSH_DIR="${${(%):-%x}:A:h}"
+DOTFILES_ROOT="${DOTFILES_ZSH_DIR:h:h}"
 
 # Oh My Zsh Setup (minimal)
 export ZSH="$HOME/.oh-my-zsh"

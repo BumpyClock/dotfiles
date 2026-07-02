@@ -102,18 +102,18 @@ Auth fails → ask user to run `gh auth login`.
 2. Read all relevant comments before editing.
 3. Validate each against current code. Skip stale/invalid with evidence.
 4. Triage: blocking, suggestion, question, nit, praise.
-5. Architecture smell (missing boundary/owner/contract) → investigate if arch smell is real:
-  1. If valid, then stop normal fix loop, tell user.
-  2. continue with normal fix loop
+5. Architecture smell (missing boundary/owner/contract) → investigate whether the smell is real:
+   1. If real, stop the normal fix loop and tell the user before proceeding.
+   2. If not real, continue the normal fix loop.
 6. Ambiguous scope → ask which numbered items to address.
 7. Fix valid blocking items first.
 8. Reply with exact fix/file/commit.
 9. Resolve only safe conversations after reply/fix; let reviewer resolve significant threads unless repo expects agent resolution.
-10. re-fetch and repeat until no actionable unresolved comments or blocker needs decision. If repeated minor nits persist, take a step back and think about the architecture smell and deeper causes. hand off to sub-agents to investigate. 
-11. when done use `speak` skill to summarize and notify user that you're done.
+10. Re-fetch and repeat until no actionable unresolved comments remain or a blocker needs a decision. If minor nits keep recurring, step back and look for the architecture smell or deeper cause; hand off to sub-agents to investigate.
+11. When done, use the `speak` skill to summarize and notify the user.
 
 ## Second opinions
-- use `claude -p` , `copilot -p`, and `codex exec` to get second opinions on architecture smells and deeper causes. Run these in parallel. 
+- use `claude -p`, `copilot -p`, and `codex exec` to get second opinions on architecture smells and deeper causes. Run these in parallel.
 
 Push only when user asks.
 

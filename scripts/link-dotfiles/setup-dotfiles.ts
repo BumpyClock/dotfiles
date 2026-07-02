@@ -819,7 +819,7 @@ function stripLegacyManagedZshrc(content: string): string | null {
 	}
 
 	let tailStart = fiIndex + "\nfi".length;
-	while (content[tailStart] === "\n") {
+	while (content[tailStart] === "\n" || content[tailStart] === "\r") {
 		tailStart += 1;
 	}
 
