@@ -1,8 +1,14 @@
-# ABOUTME: Shared zsh configuration appended into ~/.zshrc via sync-zshrc.sh.
+# ABOUTME: Shared zsh baseline sourced by the managed dotfiles block in ~/.zshrc.
 # ABOUTME: Contains cross-platform plugins, paths, aliases, and helper functions.
 # =============================================================================
 # OPTIMIZED ZSH CONFIGURATION - Fast & Lean
 # =============================================================================
+
+# Resolve repo root from this sourced file instead of assuming ~/Projects/dotfiles.
+# ${(%):-%x} is the path of the file being sourced (robust in zsh regardless of
+# FUNCTION_ARGZERO, unlike $0); :A absolutizes and resolves symlinks, :h takes the dir.
+DOTFILES_ZSH_DIR="${${(%):-%x}:A:h}"
+DOTFILES_ROOT="${DOTFILES_ZSH_DIR:h:h}"
 
 # Oh My Zsh Setup (minimal)
 export ZSH="$HOME/.oh-my-zsh"
@@ -21,21 +27,40 @@ plugins=(
     fast-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  source "$ZSH/oh-my-zsh.sh"
+fi
 
 # =============================================================================
 # PATH CONFIGURATION (optimized - no subshells)
 # =============================================================================
 
+path_prepend() {
+  [ -n "$1" ] || return
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) export PATH="$1:$PATH" ;;
+  esac
+}
+
 # Static PATH additions before dynamic tool initialization.
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/share/fnm:$PATH"
-export PATH="/usr/local/go/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"  # Static instead of $(go env GOPATH)
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.bun/bin:$PATH"
-export PATH="$HOME/.lmstudio/bin:$PATH"
-export PATH="$HOME/.opencode/bin:$PATH"
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/.local/share/fnm"
+path_prepend "/opt/homebrew/bin"
+path_prepend "/usr/local/go/bin"
+path_prepend "$HOME/go/bin"  # Static instead of $(go env GOPATH)
+path_prepend "$HOME/.cargo/bin"
+path_prepend "$HOME/.bun/bin"
+path_prepend "$HOME/.lmstudio/bin"
+path_prepend "$HOME/.opencode/bin"
+
+if [ -z "${PNPM_HOME:-}" ]; then
+  case "$(uname -s)" in
+    Darwin) export PNPM_HOME="$HOME/Library/pnpm" ;;
+    *) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
+  esac
+fi
+path_prepend "$PNPM_HOME"
 
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"
@@ -47,7 +72,7 @@ if [ -f "$DOTFILES_ENV_SCRIPT" ]; then
 fi
 
 # Z.AI API key from glm secrets
-GLM_PS1_FILE="$HOME/Projects/dotfiles/secrets/claude-code/glm/glm.ps1"
+GLM_PS1_FILE="$DOTFILES_ROOT/secrets/claude-code/glm/glm.ps1"
 if [ -f "$GLM_PS1_FILE" ]; then
   extracted_zai_api_key=$(awk -F '"' '/ANTHROPIC_AUTH_TOKEN/ { print $2; exit }' "$GLM_PS1_FILE")
   if [ -n "$extracted_zai_api_key" ]; then
@@ -55,7 +80,7 @@ if [ -f "$GLM_PS1_FILE" ]; then
   fi
   unset extracted_zai_api_key
 fi
-unset GLM_PS1_FILE
+unset GLM_PS1_FILE DOTFILES_ENV_SCRIPT
 # =============================================================================
 # LAZY LOADING FOR HEAVY TOOLS
 # =============================================================================
@@ -76,10 +101,12 @@ conda() {
 # =============================================================================
 
 # Fast eza aliases (without heavy icons initially)
-alias ls='eza --group-directories-first'
-alias ll='eza -l --all --group-directories-first'
-alias la='eza -la --group-directories-first'
-alias lt='eza --tree --git-ignore'
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --group-directories-first'
+  alias ll='eza -l --all --group-directories-first'
+  alias la='eza -la --group-directories-first'
+  alias lt='eza --tree --git-ignore'
+fi
 
 # Git shortcuts (basic, fast)
 # alias gs='git status'
@@ -108,7 +135,9 @@ alias cmon='claude-monitor'
 # DEVELOPMENT SHORTCUTS (essentials only)
 # =============================================================================
 
-eval "$(starship init zsh)"
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 # =============================================================================
 # FZF (fuzzy finder) SETUP
@@ -118,3 +147,6 @@ eval "$(starship init zsh)"
 if [[ -o zle ]] && command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh) 2>/dev/null
 fi
+
+unset -f path_prepend
+unset DOTFILES_ZSH_DIR DOTFILES_ROOT

@@ -1,5 +1,7 @@
 # Software Architect Mode
 
+**Load when:** designing new systems/services or making cross-cutting structural decisions. For ADRs and contract sequencing use `../architecture/architecture-planning.md`.
+
 Design robust, scalable, maintainable system architectures with clear boundaries and minimal complexity.
 
 ## Core principles

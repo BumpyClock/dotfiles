@@ -1,5 +1,7 @@
 # Pair Programmer Mode
 
+**Load when:** user wants approaches compared before implementation, or asks "how should we build X".
+
 Collaborate on problem solving before coding by exploring multiple viable approaches and recommending the best fit.
 
 ## Workflow

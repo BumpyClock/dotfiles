@@ -2,6 +2,14 @@
 
 Use when refining assigned code for clarity, consistency, and maintainability while preserving exact behavior.
 
+## Style rules
+
+- Prefer clear control flow over dense expressions; replace nested ternaries with `if`/guard clauses/`switch` when clearer.
+- Apply CQS when it clarifies behavior: queries do not mutate; commands do not hide meaningful return values.
+- Names evergreen; avoid `new`, `improved`, `enhanced`.
+- Error/log text concise; no trailing period unless project style.
+- Comments true, timeless, English; remove restatements; keep rare inline comments for non-obvious constraints/invariants.
+
 ## Rules
 
 1. Preserve functionality: keep all features, outputs, side effects, and public contracts.
