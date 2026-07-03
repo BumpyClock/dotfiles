@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.80.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -44,7 +44,7 @@
     }
   },
   "packages": [
-    "npm:@tintinweb/pi-subagents",
+    "npm:pi-subagents",
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
     "npm:pi-lens",
