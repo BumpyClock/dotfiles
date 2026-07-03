@@ -17,7 +17,7 @@ approvals_reviewer = "user"
 
 
 
-service_tier = "default"
+service_tier = "priority"
 
 notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
 
@@ -196,12 +196,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
 CODEX_HOME = "/Users/adityasharma/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "cb79053fda6deb0f3b5d6f0d90d4257305ebdbd1e378a12e8fbc5bde782eb59b"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "60e4902788f207f88fd09344dfeafe07769488bdb2924bbb12b322c3b9d2b999"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.623.81905"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 # [mcp_servers.node_repl]
@@ -363,7 +363,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-03T01:08:01Z"
+last_updated = "2026-07-03T04:17:11Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -373,8 +373,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-07-03T01:07:45Z"
-last_revision = "358ee646f45b39424320d47abbb15554d4eb31e3"
+last_updated = "2026-07-03T14:23:42Z"
+last_revision = "29589d2ac6b7c795ee2db0a28435ef8fa2c7cc17"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
