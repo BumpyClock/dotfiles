@@ -168,6 +168,7 @@
       "Bash(git push:*)"
     ]
   },
+  "model": "claude-fable-5[1m]",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -182,7 +183,7 @@
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "teammateMode": "in-process",

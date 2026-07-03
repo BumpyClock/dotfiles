@@ -18,7 +18,7 @@ codex:
     - session-id
     - memory-progress
 pi:
-  model: github-copilot/claude-opus-4.6
+  model: github-copilot/claude-opus-4.8
   thinking: high
   tools: read, grep, find, ls, bash, edit, write, contact_supervisor
   defaultContext: fresh

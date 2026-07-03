@@ -1,5 +1,5 @@
 ---
-name: ast-grep
+name: ast-grep-cli
 description: Write ast-grep rules for structural code search/analysis with AST patterns. Use when user asks to find code patterns, language constructs, or structural characteristics beyond text search.
 ---
 

@@ -18,7 +18,7 @@ codex:
     - session-id
     - memory-progress
 pi:
-  model: zai/glm-5.1
+  model: zai/glm-5.2
   thinking: high
   tools: read, grep, find, ls, bash, edit, write, contact_supervisor
   defaultContext: fresh

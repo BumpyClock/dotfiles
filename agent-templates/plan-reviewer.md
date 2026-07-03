@@ -16,6 +16,12 @@ codex:
     - codex-version
     - session-id
     - memory-progress
+pi:
+  model: openai-codex/gpt-5.5
+  thinking: xhigh
+  tools: read, grep, find, ls, bash, edit, write, contact_supervisor
+  defaultContext: fresh
+  defaultProgress: true
 ---
 
 Plan reviewer. Verify implementation plans are complete, aligned with the spec, decomposed well, and buildable by an engineer or agent with limited context.
