@@ -24,6 +24,16 @@ function assertProviderModels(
 	return value as AgentTemplateConfig["providers"];
 }
 
+function isProviderModelDefinition(
+	value: unknown,
+): value is ProviderModelDefinition {
+	return (
+		!!value &&
+		typeof value === "object" &&
+		typeof (value as { default?: unknown }).default === "string"
+	);
+}
+
 function normalizeProviderDefinition(
 	providerConfig: Record<string, unknown>,
 	providerName: ProviderName,
@@ -34,11 +44,7 @@ function normalizeProviderDefinition(
 
 	for (const modelClass of modelClasses) {
 		const definition = providerConfig[modelClass];
-		if (
-			!definition ||
-			typeof definition !== "object" ||
-			typeof definition.default !== "string"
-		) {
+		if (!isProviderModelDefinition(definition)) {
 			throw new Error(
 				`Missing ${providerName}.${modelClass}.default in ${configPath}`,
 			);

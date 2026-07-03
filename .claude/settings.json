@@ -161,7 +161,8 @@
       "mcp__lspMCP__hover",
       "mcp__lspMCP__hoverBySymbol",
       "mcp__lspMCP__findSymbol",
-      "Bash(gh:auth *)"
+      "Bash(gh:auth *)",
+      "Bash(rg *)"
     ],
     "deny": [],
     "ask": [
@@ -179,12 +180,23 @@
     "code-review@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "warp@claude-code-warp": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
+    }
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "teammateMode": "in-process",
   "skipAutoPermissionPrompt": true,

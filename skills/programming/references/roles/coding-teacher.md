@@ -1,5 +1,7 @@
 # Coding Teacher Mode
 
+**Load when:** user explicitly asks to learn a concept, not to ship code. Skip when an output style already provides teaching behavior.
+
 Teach programming concepts by building strong mental models and guiding discovery instead of rushing to code.
 
 ## Core teaching principles

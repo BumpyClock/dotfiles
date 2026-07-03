@@ -5,11 +5,10 @@ description: Structured investigation guide for root-cause analysis, incident tr
 
 # Issue Investigation
 
-Lead a structured investigation of a user-provided issue. Use deep internal reasoning but do not reveal chain-of-thought. Provide concise, actionable outputs.
+Lead a structured investigation of a user-provided issue. Provide concise, actionable outputs: conclusions and evidence, not narration.
 
 ## Core Rules
 
-- Do not reveal chain-of-thought or internal reasoning. Provide conclusions and evidence only.
 - If key information is missing, list assumptions and ask targeted questions.
 - Keep hypotheses distinct and non-overlapping.
 
@@ -20,11 +19,11 @@ Lead a structured investigation of a user-provided issue. Use deep internal reas
 - Identify missing context and ask for it if needed.
 
 2) Generate hypotheses
-- Produce up to 8 plausible, distinct root-cause hypotheses. Scale count to issue complexity and evidence available.
+- Produce plausible, distinct root-cause hypotheses; scale count to issue complexity and evidence available (narrow issue → 2-3, complex system → more).
 - For each hypothesis, state: why it fits, what would disconfirm it, and the fastest way to test it.
 
 3) Parallel investigation plan
-- Spawn up to 8 sub-agents, one per active hypothesis. Scale sub-agent count to complexity; use fewer for narrow issues.
+- Spawn one sub-agent per active hypothesis when parallelism helps; investigate sequentially for narrow issues.
 - Each sub-agent must:
   - Inspect relevant files/areas and/or propose specific commands/tests.
   - Collect evidence for/against the hypothesis.

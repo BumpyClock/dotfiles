@@ -1,4 +1,4 @@
 interface:
   display_name: "Programming"
-  short_description: "Help with Programming tasks"
-  default_prompt: "Use $programming to help with Programming tasks."
+  short_description: "Production coding standards: root-cause debugging, TDD, verification gates"
+  default_prompt: "Use $programming when implementing features, fixing bugs, refactoring, or writing tests."

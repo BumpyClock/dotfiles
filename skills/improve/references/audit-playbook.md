@@ -6,6 +6,25 @@ A finding is only a finding with evidence. "Probably has N+1 queries somewhere" 
 
 ---
 
+## Run the tools first
+
+Before any reading pass, run whatever applies from this table (all read-only; skip tools that aren't installed rather than installing them). Machines have near-perfect recall on mechanical patterns; the model's job is judging their output — is this dead code load-bearing? is this duplication harmful? — and finding what tools can't.
+
+| Purpose | Commands (pick per ecosystem) |
+|---|---|
+| Churn hotspots | `git log --format= --name-only \| sort \| uniq -c \| sort -rn \| head -30` — cross with file size/complexity; high churn × high complexity = audit here first |
+| Dead code / unused exports | `knip`, `ts-prune`, `vulture` (Python), `deadcode` (Go); unused deps: `depcheck`, `cargo udeps` |
+| Duplication | `jscpd --min-tokens 50 <src>` (works across languages) |
+| Structural bug patterns | `ast-grep --lang <lang> -p '<pattern>'` — empty catch blocks, floating promises, non-null assertions, `as any` casts, `@ts-ignore` |
+| Latent strictness | `tsc --noEmit --strict` on a non-strict repo — each new error is a candidate finding |
+| Lint at max signal | repo's linter in check mode; if config is lax, one pass with recommended rules for the delta |
+| Vulnerable deps | `npm audit` / `pip-audit` / `cargo audit` — critical/high only |
+| Coverage | test suite with `--coverage` if cheap — measure the coverage shape, don't guess it |
+
+Tool output is leads, not findings — every hit still gets the evidence/impact/confidence treatment below.
+
+---
+
 ## 1. Correctness / Bugs
 
 The highest-trust category — real bugs found by reading, not speculation.
@@ -18,6 +37,13 @@ The highest-trust category — real bugs found by reading, not speculation.
 - Concurrency: check-then-act on shared resources, missing transactions around multi-write operations, idempotency of retried operations (webhooks, queues).
 - Type escape hatches: `any` / `as` casts / `@ts-ignore` clusters — each one is a place the compiler was overruled.
 - Resource leaks: unclosed handles, connections, subscriptions; missing `finally`.
+- Missing timeouts: network calls, subprocess spawns, and lock acquisitions with no deadline — one slow dependency hangs the caller forever.
+- Unbounded memory: whole-file/whole-table loads where streaming or pagination belongs, caches and maps that only grow, accumulating listeners/buffers.
+- Retry hazards: retries without backoff/jitter (thundering herd), retrying non-idempotent operations, no retry cap.
+- Money/precision: float arithmetic on currency, rounding at the wrong step, sum-of-rounded vs. rounded-sum drift.
+- Cache invalidation: mutation paths that skip invalidating the cache their read path populates.
+
+Anti-rule: don't report behavior as a bug solely because a helper's *name* implies a broader contract than its callers need — check the call sites before claiming the contract is violated.
 
 ## 2. Security
 
@@ -38,6 +64,8 @@ Report only what's evidenced in the code. Do not generate exploit code in plans 
 ## 3. Performance
 
 Look for the algorithmic and architectural wins, not micro-optimizations.
+
+**Quantify or downgrade.** A perf finding without a number is LOW confidence and gets an "investigate" plan, not a "fix" plan. Pull the multiplier from what the repo gives you: row counts implied by the data model or seed data, payload bytes, calls-per-render, pagination defaults, loop bounds ("order list issues 1+N queries; fixtures seed ~200 orders → ~201 queries per page load"). Fix plans for perf findings must include a before/after measurement step in their done criteria — a fix that can't be measured can't be verified.
 
 - N+1 patterns: query/fetch per item inside loops or per list-row rendering; missing batching or dataloader.
 - Wrong complexity: nested scans over the same collection, repeated `find`/`filter` inside hot loops where a Map keyed lookup belongs.
@@ -66,7 +94,27 @@ The goal is not a percentage — it's *which untested code is dangerous*.
 - Inconsistent patterns: three ways of doing data fetching / error handling / styling in the same repo — pick the winner (the one the team converged on most recently) and plan the consolidation.
 - Abstraction mismatches: premature abstractions with a single implementation, or missing abstractions where the same change always requires touching N files in lockstep.
 
-## 6. Dependencies & Migrations
+## 6. AI Slop & Generated-Code Debt
+
+LLM-generated code that landed without cleanup. Studies find 52–78% of generated code carries at least one smell, skewed toward long methods and globally-complex control flow (models optimize local token plausibility; individually-reasonable segments compound into complex functions). Each pattern is usually widespread once present — report the **pattern class** with 2–5 exemplar locations plus an estimated site count, not one finding per site.
+
+- Comment slop: comments narrating the next line (`// increment counter`), changelog comments (`// updated to fix bug`), docstrings restating the signature, section-banner comments in short files.
+- Defensive slop: try/catch around code that can't throw, null checks on values the types guarantee, validation of internally-produced data, redundant type guards after narrowing.
+- Abstraction slop: single-use helpers and pass-through wrappers, shadow modules (thin layers that forward to another path without hiding real complexity), interfaces/base classes with exactly one implementation, config options nothing reads, "manager"/"handler"/"utils" layers with one caller.
+- Naming slop: `enhanced`, `improved`, `V2`, `Final`, `comprehensive`, `Advanced` in identifiers; near-duplicate parallel functions from separate generation sessions that never got merged.
+- Compat slop: backwards-compat shims, re-exports, and fallback branches for callers or states that never existed — check git history; if the "legacy" path never had users, it's slop. Watch for **dead legacy paths kept alive only by their own tests**: obsolete validators, schemas, adapters, and feature flags whose sole caller is the test suite.
+- Silencing band-aids: broad lint/type disables, `any`/type-ignore casts, sleeps and arbitrary timeouts, path mutation hacks, fake success returns, checks removed to make the build pass — report when simplification (not restoration) is the honest fix.
+- Manual registries: hand-maintained lists (exports, routes, plugin tables, switch dispatchers) that duplicate a source of truth the code could derive — every addition now requires a lockstep edit someone will forget.
+- Test slop: tests that assert mock behavior, snapshot dumps nobody reviews, tests that cannot fail (asserting the value they just set), tests that mirror implementation internals or pin accidental private structure instead of behavior. Doc slop: README bloat, emoji-header docs, generated docs restating the code.
+- Structural: methods far above repo-median length, deep nesting, cognitive complexity outliers — corroborate with the duplication/complexity tools from "Run the tools first".
+
+**Every slop finding must name a concrete maintenance or runtime cost** in the cited files, and the preferred fix is deletion, consolidation, or reuse of an existing local pattern — never a new abstraction.
+
+**Do not report**: file size alone, explicitly generated files, normal framework boilerplate, domain modules that merely look large, style taste, naming preference, broad architecture opinions, or speculative cleanup. Slop-hunting without these guardrails produces slop findings.
+
+Planning rule: slop batches into **one plan per pattern class**, mechanical steps, done criterion a `grep`/`ast-grep` query returning zero matches. Ideal work for cheap executors.
+
+## 7. Dependencies & Migrations
 
 - Major-version lag on core framework/runtime (not every minor bump — the ones with real cost to staying behind: EOL, security-fix cutoffs, ecosystem incompatibility).
 - Deprecated APIs in use that have announced removal timelines.
@@ -75,7 +123,7 @@ The goal is not a percentage — it's *which untested code is dangerous*.
 - Lockfile/manifest drift, version pinning inconsistencies across a monorepo.
 - For each migration candidate, estimate blast radius (files touched) — that drives effort and whether to recommend it at all.
 
-## 7. DX & Tooling
+## 8. DX & Tooling
 
 - Missing or broken: typecheck script, lint config, formatter, pre-commit hooks, editorconfig.
 - Slow feedback loops: dev-server or test startup measured in minutes, no watch mode, CI without caching.
@@ -83,7 +131,7 @@ The goal is not a percentage — it's *which untested code is dangerous*.
 - Missing `CLAUDE.md`/`AGENTS.md` — for repos where agents will execute the plans, this is high-leverage: recommend one and include its outline as a plan.
 - Error messages/logging: unstructured logs on services, missing request IDs/correlation, debugging requiring code changes.
 
-## 8. Docs
+## 9. Docs
 
 Lowest default priority — only flag where absence has a concrete cost:
 
@@ -91,7 +139,7 @@ Lowest default priority — only flag where absence has a concrete cost:
 - Architectural decisions nobody can reconstruct (why X over Y) for actively-contested areas.
 - Stale docs that are actively wrong (worse than missing) — setup instructions, API examples that no longer compile.
 
-## 9. Direction — features & where to take this next
+## 10. Direction — features & where to take this next
 
 Forward-looking: not what's broken, but what this codebase wants to become. **Grounding rule:** every suggestion must cite evidence from the repo itself — a suggestion that could apply to any project in the category ("add dark mode", "add AI") is noise, not a finding. Sources of grounded direction signal:
 
@@ -112,13 +160,18 @@ Every finding, from every category and every subagent, comes back in this shape:
 ```markdown
 ### [CATEGORY-NN] Short imperative title
 
-- **Evidence**: `path/file.ts:123` — one-sentence description of what's there. (Repeat per location; 2–5 strongest locations, note "and ~N similar sites" if widespread.)
+- **ID**: stable slug `<category>-<primary-file-basename>-<short-slug>` (e.g. `bug-api-unawaited-retry`). Reused verbatim across runs so triage decisions and rejections stick to it.
+- **Evidence**: `path/file.ts:123-127` — one-sentence description, plus a **verbatim quote (≤3 lines) copied exactly from those lines**. (Repeat per location; 2–5 strongest locations, note "and ~N similar sites" if widespread.) Quotes are mechanically validated against the repo after the audit — a finding whose quote doesn't match the file at the cited lines is dropped.
 - **Impact**: What goes wrong / what's being paid because of this. Concrete: "every order-list render issues 1+N queries", not "suboptimal".
+- **Failure scenario**: the concrete input/state → wrong output/crash, stated so it could be turned into a test. If you can't write one, the finding is LOW confidence at best. (Non-bug categories: the concrete situation where the cost is paid — "any new endpoint author copies this pattern", "page load on a 200-order account".)
+- **Why tests miss it**: the nearest existing test(s) and why they don't catch this. Included tests are first-class evidence of intended behavior — if a test contradicts the suspected bug, skip the finding or downgrade to LOW and explain the conflict.
 - **Effort**: S (hours) / M (a day-ish) / L (multi-day) — for the *fix*, including tests.
 - **Risk**: What the fix could break; LOW/MED/HIGH plus one line why.
 - **Confidence**: HIGH (read the code, certain) / MED (strong signal, needs verification) / LOW (smell, needs investigation). LOW-confidence findings may be reported but get an "investigate" plan, not a "fix" plan.
 - **Fix sketch**: 1–3 sentences. Not the plan — just enough to judge effort honestly.
 ```
+
+When the same root-cause pattern appears in multiple files, emit **one finding with multiple evidence refs**, not N copies — sibling duplicates inflate the table and fragment the fix.
 
 ## Prioritization rubric
 

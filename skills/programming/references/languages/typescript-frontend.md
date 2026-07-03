@@ -1,55 +1,34 @@
 # TypeScript and Frontend (React/Next.js)
 
-Use TypeScript-first frontend development with modern React and Next.js patterns, strong typing, and accessibility by default.
+**Load when:** repo contains TypeScript or React/Next.js code. Match the framework and library versions in `package.json`; check installed versions before reaching for newer APIs (Server Components, Actions, etc.).
 
-## TypeScript focus
-- Use strict compiler settings and type inference where clear.
-- Apply advanced types (generics, conditional, mapped types).
-- Prefer interfaces and type-safe boundaries.
-- Optimize build times with incremental compilation.
-- Maintain compatible typings and TSDoc for public APIs.
+## TypeScript
 
-## React and Next.js
-- Use React 19 features (Actions, Server Components, Suspense).
-- Apply Next.js 15 App Router patterns and Server Actions.
-- Design component architectures with clear boundaries and composition.
-- Use performance tools (memoization, code splitting, streaming).
-- Build accessible UI with semantic HTML and ARIA patterns.
-
-## State and data
-- Use TanStack Query or SWR for server state.
-- Use lightweight state tools (Zustand, Jotai) when appropriate.
-- Handle optimistic updates and conflict resolution.
-
-## Styling and design systems
-- Use Tailwind, CSS Modules, or CSS-in-JS consistently.
-- Apply design tokens, theming, and responsive patterns.
-- Optimize Core Web Vitals with font and image strategies.
-
-## Testing and quality
-- Use React Testing Library for components.
-- Use Playwright or Cypress for E2E tests.
-- Add accessibility checks with axe-core.
-
-## Additional TypeScript rules
-- Prefer interfaces or type aliases at boundaries before concrete classes when class-based design is warranted.
-- Prefer composition over implementation inheritance; classes are optional, modules and functions come first.
+- Strict compiler settings; rely on inference where the type is clear.
+- Type-safe boundaries: explicit types at module/API edges, inference inside.
+- Prefer explicit unions, `undefined`, or result-like types over ambient `null`; pass `null` only when the contract requires it.
+- Prefer interfaces or type aliases at boundaries; composition over implementation inheritance; modules and functions before classes.
 - Favor immutable data and explicit state transitions; avoid getter/setter-heavy anemic models.
-- Prefer explicit unions, `undefined`, or result-like types over ambient `null`; do not pass `null` unless the contract requires it.
-- Document public interfaces, exported types, hooks, and components with TSDoc when behavior is not obvious.
-- Avoid runtime introspection into object internals when explicit discriminants, schemas, or type guards are clearer.
 - Avoid utility classes and hidden static state; prefer pure module functions or factories.
+- Avoid runtime introspection of object internals when discriminants, schemas, or type guards are clearer.
+- Document public interfaces, exported types, hooks, and components with TSDoc when behavior is not obvious.
 
-## Frontend security
-- Avoid unsafe DOM APIs (prefer textContent over innerHTML).
-- Sanitize untrusted HTML with vetted libraries.
-- Configure CSP, SRI, and Trusted Types when needed.
+## React / Next.js
+
+- Component architecture: clear boundaries, composition, colocation.
+- Server state via TanStack Query or SWR; local/global state via lightweight tools (Zustand, Jotai) when component state is not enough.
+- Accessible by default: semantic HTML first, ARIA only where semantics fall short; check with axe-core.
+- Performance: measure first, then memoization, code splitting, streaming; optimize Core Web Vitals with font/image strategies.
+- Styling: follow the repo's existing approach (Tailwind, CSS Modules, CSS-in-JS) consistently; use design tokens and responsive patterns.
+
+## Testing
+
+- React Testing Library for components; Playwright or Cypress for E2E.
+- Test user-visible behavior, not implementation details.
+
+## Security
+
+- Prefer `textContent` over `innerHTML`; sanitize untrusted HTML with vetted libraries.
 - Validate URLs, redirects, and user inputs.
-- Lock down auth flows and token storage.
-- Add clickjacking protection and safe iframe usage.
-
-## Example requests
-- Build a server component with streaming and Suspense boundaries.
-- Implement a secure, accessible form with Server Actions.
-- Optimize a React component for render performance.
-- Configure CSP for a Next.js application.
+- Configure CSP, SRI, and Trusted Types when the threat model warrants.
+- Lock down auth flows and token storage; add clickjacking protection and safe iframe usage.

@@ -14,7 +14,8 @@
       },
       "oracle": {
         "model": "github-copilot/gpt-5.5",
-        "context": "fresh"
+        "thinking": "xhigh",
+        "context": "fork"
       },
       "planner": {
         "model": "github-copilot/gpt-5.5",
@@ -30,15 +31,15 @@
         "disabled": true
       },
       "scout": {
-        "model": "zai/glm-5-turbo",
+        "model": "zai/glm-5.2",
         "thinking": "medium"
       },
       "worker": {
-        "model": "github-copilot/claude-opus-4.6",
+        "model": "github-copilot/claude-opus-4.8",
         "disabled": true
       },
       "technical-writer": {
-        "model": "zai/glm-5.1"
+        "model": "zai/glm-5.2"
       }
     }
   },
@@ -95,7 +96,7 @@
       "safeMode": true,
       "animation": "shimmer",
       "generated": {
-        "model": "zai/glm-5-turbo",
+        "model": "openai-codex/gpt-5.3-codex-spark",
         "prompt": "Generate a 2-4 word \"{theme}\" themed loading message ending in \"...\".\n\nTask: {task}\n\nBe creative, funny, sarcastic, and unexpected. Avoid obvious/clichéd phrases for this theme.\nRelevant catchphrases, quotes, and themes should be incorporated into the message.\nThe message should hint at the task using theme vocabulary. modify catchphrase, quotes, and themes as needed.\n{exclude}\nOutput only the message, nothing else.",
         "refreshInterval": 30
       }
@@ -104,7 +105,7 @@
   "extensionSettings": {
     "personalitySwitcher": {
       "personality": "caveman",
-      "styles": ["explanatory"]
+      "styles": []
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",

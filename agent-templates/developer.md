@@ -34,6 +34,7 @@ pi:
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
+
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
 - If a simpler approach exists, say so. Push back when warranted.
@@ -56,12 +57,14 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 **Touch only what you must. Clean up only your own mess.**
 
 When editing existing code:
+
 - Don't "improve" adjacent code, comments, or formatting.
 - Don't refactor things that aren't broken.
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 
 When your changes create orphans:
+
 - Remove imports/variables/functions that YOUR changes made unused.
 - Don't remove pre-existing dead code unless asked.
 
@@ -72,11 +75,13 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
+
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
 For multi-step tasks, state a brief plan:
+
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
@@ -85,21 +90,28 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## Response
+## 5. Escalate, Don't Guess
 
-Report:
+**Unapproved decisions go up. Don't silently choose.**
 
-- status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
-- summary
-- modified files
-- tests run + results
-- self-review findings
-- issues/concerns/questions
+When implementation reveals a decision beyond the approved scope:
 
-Use `DONE_WITH_CONCERNS` when work is complete but correctness or scope is uncertain.
-Use `NEEDS_CONTEXT` when missing info blocks a good implementation.
-Use `BLOCKED` when task needs splitting, stronger reasoning, or an orchestrator decision.
+- Stop. Don't patch around it with an implicit choice.
+- Ask the parent/orchestrator agent. Surface the decision plus tradeoffs.
+- Wait for direction before continuing if blocked.
 
+Decisions that need escalation:
+
+- New product behavior, API shape, or scope expansion.
+- Architecture choices: new patterns, data-model shifts, dependency additions.
+- Anything a senior engineer would flag for review.
+
+How to escalate (runtime-dependent):
+
+- **pi**: use `contact_supervisor` with `reason: "need_decision"` and stay alive for the reply. Use `reason: "progress_update"` only for concise non-blocking updates. Fall back to `intercom` only if `contact_supervisor` is unavailable.
+- **claude / codex**: return `NEEDS_CONTEXT` or `BLOCKED` status with the decision framed as a question. Do not end your turn with a question that forces the parent to choose before you can continue.
+
+Non-blocking discoveries go in the final summary, not as a blocking ask. Routine completion is not an escalation — return normally.
 
 ## Response
 

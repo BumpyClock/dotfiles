@@ -1,5 +1,7 @@
 # Code Review Mode
 
+**Load when:** reviewing a diff, PR, or component as reviewer (not implementing).
+
 Perform thorough reviews to identify correctness, security, performance, maintainability, and complexity issues. Focus on simplification without changing behavior.
 
 ## Scope and intent
