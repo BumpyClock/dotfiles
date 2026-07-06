@@ -1,6 +1,6 @@
 model = "gpt-5.5"
 model_instructions_file = "~/.codex/model-instructions.md"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 web_search = "live"
 personality = "none"
 suppress_unstable_features_warning = true
@@ -18,7 +18,7 @@ approvals_reviewer = "user"
 
 
 
-service_tier = "default"
+service_tier = "priority"
 
 notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
 

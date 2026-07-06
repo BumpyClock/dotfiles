@@ -48,3 +48,10 @@ Using gpt-5.5 inside workflows and subagents (the model parameter only takes Cla
 so use a wrapper):
 - Spawn a thin Claude wrapper agent with `model: 'sonnet', effort: 'low'` whose prompt
 instructs it to write a self-contained codex prompt, run `codex exec` via Bash, and return
+
+## Oracle CLI
+- Oracle bundles a prompt plus the right files so a Pro model (GPT-5.5 Pro,
+  Gemini 3 Pro) can answer with real repo context. Use when stuck,
+  debugging hard bugs, doing architecture review, or cross-validating a plan.
+- Run `oracle --help` once per session before first use.
+- use `--engine browser` to use the browser engine instead of the API.

@@ -2,7 +2,7 @@
 name: git-workflow
 description: "Git/GitHub: PRs, commits, branches, worktrees, conflicts, comments, CI."
 context: fork
-model: claude-sonnet-4-6
+model: claude-sonnet-5
 ---
 
 # Git Workflow
@@ -62,4 +62,5 @@ Conventional Commits: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`
 
 ## PR title prefixes
 
-When repo has no stricter convention: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
+- When repo has no stricter convention: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
+- Write Pr and commit messages like mitchellh would write them.

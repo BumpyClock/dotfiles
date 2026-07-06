@@ -4,10 +4,11 @@ Read when: you need guidance for controls, typography scales, data presentation,
 
 ## Isolated Controls
 - Treat pickers, filters, and dropdowns as crafted objects, not plain text.
-- Avoid native form controls for styled UI (select, date input). Use custom triggers and popovers instead.
+- Prefer custom triggers and popovers over native form controls (select, date input) when visual consistency matters and the implementation can match native accessibility and keyboard behavior. Native controls remain the right call for simple forms, mobile web, and low-budget accessibility work.
 - For custom select triggers, use inline-flex and no-wrap text to keep label and chevron on one line.
 
 ## Typography Hierarchy
+Good starting values — adjust to product and platform:
 - Headlines: 600 weight, tight tracking (-0.02em).
 - Body: 400 to 500 weight, normal tracking.
 - Labels: 500 weight, slight positive tracking for uppercase.
@@ -30,7 +31,8 @@ Read when: you need guidance for controls, typography scales, data presentation,
 - Avoid tabular numbers for phone numbers, zip codes, version strings, and decorative numerals unless alignment is the task.
 
 ## Iconography
-- Use Phosphor Icons when an icon adds meaning.
+- Use the project's existing icon set if one exists; otherwise pick one coherent family (Phosphor is a good default; Lucide, platform sets also fine) and stick to it.
+- Add icons only when they carry meaning.
 - Remove decorative icons that add no semantic value.
 - Give standalone icons subtle containers so they feel intentional.
 - Align icons optically when geometric centering looks wrong.

@@ -1,6 +1,6 @@
 ---
 name: ux-designer
-description: "UX docs: layout specs, interaction flows, style guides, wireframes, design systems, accessibility plans. No implementation code."
+description: "UX docs: layout specs, interaction flows, style guides, HTML design mockups, design systems, accessibility plans. No production code."
 context: fork
 ---
 
@@ -20,9 +20,20 @@ Different products want different things. Developer tool → precision and densi
 
 **Goal:** intricate minimalism with appropriate personality. Same quality bar, context-driven execution.
 
+## Defaults, Not Dogma
+
+Reference files encode strong defaults, not law. Deviate when product context, platform conventions, or user requirements justify it — and state the reason in the design doc. Existing project conventions (tokens, fonts, icon set, motion style, component library) beat skill defaults: extend them, don't replace them.
+
+## Scale to Scope
+
+Match documentation depth to task size:
+- New product, page, or feature: full workflow and template below.
+- Small change (one component, one flow tweak): short spec — affected components, states, measurements, accessibility notes. Skip unaffected template sections and the HTML mockup.
+- The direction, craft, and micro-polish passes apply proportionally: a button tweak needs a micro-polish note, not a full visual system.
+
 ## Design Direction (Required)
 
-**Before writing any code, commit to a design direction.** Don't default. Think about what this specific product needs to feel like.
+**Before specifying anything, commit to a design direction.** Don't default. Think about what this specific product needs to feel like.
 Use `references/design-direction.md` to select personality, color foundation, layout approach, and typography direction.
 
 ## Reference Index
@@ -42,7 +53,7 @@ After main visual system defined, specify small interface details: concentric ra
 
 ## Output
 
-Produce implementation-ready UX design documentation covering layout, components, interactions, accessibility. Do not write implementation code.
+Produce implementation-ready UX design documentation covering layout, components, interactions, accessibility, plus self-contained HTML mockup(s) for layout-level work. Do not write implementation code — HTML mockups are throwaway design artifacts, not production code.
 
 ## Workflow
 
@@ -79,22 +90,33 @@ Follow in order.
 - Keyboard navigation, focus order, contrast guidance.
 
 **Produce design doc**
-- Markdown design document with ASCII layout diagram(s).
+- Markdown design document, plus self-contained HTML mockup(s) for layout-level work.
 
 ## Design Rules
 
-- Typography: pick a real font. Avoid Inter/Roboto/Arial/system defaults.
-- Theme: commit to palette. Use CSS vars. Bold accents > timid gradients.
-- Motion: 1-2 high-impact moments; no random micro-animations.
-- Background: depth with gradients/patterns/shapes, not flat default.
-  Avoid: purple-on-white clichés, generic grids, predictable layouts.
-- Prefer concrete measurements, labels, states over vague descriptions.
+- Typography: choose deliberately, don't inherit by inertia. A distinctive font when brand personality matters; system fonts or Inter are legitimate for native apps, utility tools, or projects that already use them (see `references/design-direction.md`).
+- Theme: commit to a palette. Use design tokens/CSS vars. One accent color with meaning.
+- Motion: a few high-impact moments beat scattered micro-animations.
+- Prefer concrete measurements, labels, and states over vague descriptions.
+- Avoid AI-slop clichés: purple-on-white defaults, decorative gradients, layouts chosen by habit rather than by content.
+
+## HTML Design Mockups
+
+For layout-level work, output design option(s) as a self-contained HTML file alongside the Markdown doc — richer than any text diagram and directly reviewable in a browser:
+
+- One file, zero dependencies: inline CSS, no build step, no CDN links, opens via double-click.
+- When exploring direction, render 2-3 labeled options in one file for side-by-side comparison.
+- Use the spec's real values (spacing, type scale, color tokens, radii) so the mockup proves the visual system, not just the layout.
+- Show key states where practical (hover, empty, error) — static renderings side by side are fine.
+- Cover each target breakpoint via responsive CSS or fixed-width frames per breakpoint.
+- Placeholder content is fine but must be realistic: real-length labels, plausible numbers.
+- Design artifact, not production code: no frameworks, no JS beyond trivial toggles (e.g. theme switch).
 
 ## Design Doc Output (Markdown)
 
-Always output single Markdown design document. Include ASCII layout representation in fenced code block.
+Output a single Markdown design document that references the HTML mockup file(s).
 
-Use this default structure, adapt as needed:
+Default structure below — adapt sections to the task; drop what doesn't apply:
 
 ````markdown
 # [Feature or Page Name] Design Doc
@@ -127,34 +149,11 @@ Use this default structure, adapt as needed:
 - Tablet
 - Mobile
 
-## ASCII Layout
-```text
-Desktop
-+--------------------------------------------------+
-| Header: Logo | Nav | Actions                    |
-+--------------------------------------------------+
-| Sidebar      | Main content                     |
-| - Item       | [Card][Card][Card]               |
-| - Item       | [Chart.......................]   |
-+--------------------------------------------------+
-
-Tablet
-+----------------------------------------------+
-| Header                                      |
-+----------------------------------------------+
-| Main content                                |
-| [Card][Card]                                |
-+----------------------------------------------+
-
-Mobile
-+------------------------------+
-| Header                       |
-+------------------------------+
-| Main content                 |
-| [Card]                       |
-| [Card]                       |
-+------------------------------+
-```
+## Design Mockups
+- Path to self-contained HTML mockup file(s)
+- Options rendered (e.g. Option A: dense grid, Option B: split panel) and what differs
+- Breakpoints covered and how (responsive CSS vs fixed-width frames)
+- States shown (default, hover, empty, error)
 
 ## Component Inventory
 - Component name
@@ -196,10 +195,10 @@ Mobile
 
 ## Quality Checklist
 - Requirements and constraints captured.
-- Clear layout hierarchy for each breakpoint.
-- ASCII layout diagram included.
+- Clear layout hierarchy for each breakpoint (layout-level work).
+- Self-contained HTML mockup included and referenced from the doc (layout-level work).
 - Components and states listed.
 - Existing tokens/components reused or new ones defined.
-- Micro-polish specs cover radius, wrapping, numeric alignment, hit areas, motion, optical alignment.
+- Micro-polish specs cover the details the task actually touches: radius, wrapping, numeric alignment, hit areas, motion, optical alignment.
 - Accessibility guidance documented.
-- Rationale provided for key decisions.
+- Rationale provided for key decisions — especially where you deviated from reference defaults.

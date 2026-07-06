@@ -115,6 +115,15 @@ Auth fails → ask user to run `gh auth login`.
 ## Second opinions
 
 - use `claude -p`, `copilot -p`, and `codex exec` to get second opinions on architecture smells and deeper causes. Run these in parallel.
+- use `oracle cli` to get second opinions on architecture smells and deeper causes from gpt-5.5-pro
+
+
+## Oracle CLI
+- Oracle bundles a prompt plus the right files so a Pro model (GPT-5.5 Pro,
+  Gemini 3 Pro) can answer with real repo context. Use when stuck,
+  debugging hard bugs, doing architecture review, or cross-validating a plan.
+- Run `oracle --help` once per session before first use.
+- use `--engine browser` to use the browser engine instead of the API.
 
 Push only when user asks.
 

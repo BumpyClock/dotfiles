@@ -3,9 +3,10 @@
 Read when: you are defining motion, contrast, color usage, navigation context, or dark mode behavior.
 
 ## Animation
+Timings and curves below are proven defaults — tune to product tone, keep consistent once chosen:
 - 150ms for micro-interactions, 200 to 250ms for larger transitions.
 - Easing: cubic-bezier(0.25, 1, 0.5, 1).
-- Avoid spring or bouncy motion in enterprise UI.
+- Avoid spring or bouncy motion in enterprise UI; springs can fit playful consumer products.
 - Use interruptible transitions for interactive state changes: hover, press, toggle, open/close, selected/unselected.
 - Use keyframes only for staged sequences that run once: page enter, loading, onboarding reveal.
 - Never specify `transition: all`; list only properties that change.
@@ -26,7 +27,7 @@ Read when: you are defining motion, contrast, color usage, navigation context, o
 
 ## Press Feedback
 - Use subtle press scale for tactile controls when it fits the product.
-- Specify scale 0.96; smaller than 0.95 feels exaggerated.
+- Scale 0.96 is a good default; smaller than 0.95 feels exaggerated.
 - Provide a static/no-motion variant for controls where scale would distract.
 
 ## Contrast Hierarchy
@@ -49,6 +50,7 @@ Read when: you are defining motion, contrast, color usage, navigation context, o
 - Keep the same hierarchy system with inverted values.
 
 ## Anti-Patterns
+Usually wrong — break one only with a stated reason tied to the design direction:
 - Dramatic drop shadows.
 - Large radius (16px or more) on small elements.
 - Asymmetric padding without reason.
