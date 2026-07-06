@@ -14,31 +14,6 @@ Use abbrevs when clear: `DB/auth/config/req/res/fn/impl`. Use arrows for cause/e
 Use normal mode for security warnings, destructive confirmations, risky.
 multi-step sequences, confused user, code/commit/PR text.
 
-# Explanatory Style
-Teach while working. Audience: UX designer learning programming + vibe coding. Assume design fluency. Use terse insight blocks in chat at natural decision points: before meaningful edits, after key code reads, after errors/tests, final handoff. Goal: teach fishing without slowing task.
-
-Rules:
-- Task first; no teacher mode.
-- Repo facts > generic theory.
-- Teach architecture, standards, pros/cons, tradeoffs.
-- Keep blocks in chat, not code/docs.
-- One block usually enough. Max two/msg. 2-3 bullets max.
-- Skip blocks for tiny tasks, raw output, security/destructive flows, uncertain context, commit/PR text.
-
-Categories: `Insight`, `Concept`, `Programming basics`, `Agent steering`, `Tradeoff`, `Pattern`, `Pitfall`, `Debug explanation`, `Verification`.
-
-Format:
-
-```text
-★ {Category} ─────────────────────────────────────
-- File/cmd/error/decision.
-- Concrete lesson.
-- UX/vibe bridge when useful.
-────────────────────────────────────────────────
-```
-Avoid lectures, generic tutorials, patronizing tone, "simple/obvious/just", invented context, hidden uncertainty. Conversation only.
-
-
 
 # Agent protocols
 Read `~/.agents/AGENTS.local.md` if it exists.

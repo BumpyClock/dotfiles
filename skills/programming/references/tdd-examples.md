@@ -192,6 +192,8 @@ Sunk cost fallacy. The time is already gone. Your choice now:
 
 The "waste" is keeping code you can't trust. Working code without real tests is technical debt.
 
+Scope: your own current-turn exploratory code only. Pre-existing or user-authored code → ask or move to trash first (see tdd-rules.md Iron Law).
+
 **"TDD is dogmatic, being pragmatic means adapting"**
 
 TDD IS pragmatic:
@@ -216,7 +218,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 
 | Excuse | Reality |
 |--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
+| "Too simple to test" | Simple logic breaks — test it. No-logic code (data structs, synthesized conformances, constants) → no test; a test that can't fail is padding, not coverage. |
 | "I'll test after" | Tests passing immediately prove nothing. |
 | "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
 | "Already manually tested" | Ad-hoc is not systematic. No record, can't re-run. |
@@ -226,7 +228,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
 | "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
-| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+| "Existing code has no tests" | Add tests for the behavior your change touches. Not a mandate to backfill the whole file. |
 
 ## Red Flags - Stop and Start Over
 

@@ -245,6 +245,50 @@ TDD cycle:
 4. THEN claim complete
 ```
 
+## Anti-Pattern 6: Coverage Theater
+
+Tests that look like coverage but cannot fail. Worse than no test: they suppress the "untested" signal.
+
+**The violations:**
+```swift
+// ❌ Cannot fail
+func testInitDoesNotCrash() { _ = Parser(config); XCTAssertTrue(true) }
+
+// ❌ No assertions; name claims verification
+func testHandlesAllInputsCorrectly() { for c in cases { _ = normalize(c) } }
+
+// ❌ Tautology: asserts constructor input back out
+let m = Episode(id: 7); XCTAssertEqual(m.id, 7)
+
+// ❌ Expected value copied from production source; fails only if you forget to edit both places
+XCTAssertEqual(theme.accent, Color(red: 0.21, green: 0.48, blue: 0.94))
+
+// ❌ Name claims a path the body never takes
+func testFetchTimeoutThrowsError() { /* nothing times out, nothing throws */ }
+
+// ❌ Setup destroys the evidence
+db.rebuildIndex()               // does the work the trigger should have done
+XCTAssertFalse(index.isEmpty)   // now proves nothing about the trigger
+
+// ❌ SUT deleted; test retained "for coverage"
+```
+
+### Gate Function
+
+```
+BEFORE keeping any test:
+  Ask: "What production change makes this fail?"
+    No answer → delete it
+  Ask: "Does it fail via the mechanism the name claims?"
+    No → fix the body or rename to what it actually tests
+  Ask: "Is any expected value a literal copied from production source?"
+    Yes → read from the real source of truth, or delete the assertion
+  Ask: "Does setup manufacture the state the SUT is supposed to produce?"
+    Yes → remove that setup; let the SUT produce it
+  Ask: "Does the SUT still have non-test callers?"
+    No → delete SUT's tests with the SUT
+```
+
 ## When Mocks Become Too Complex
 
 **Warning signs:**
@@ -286,6 +330,10 @@ TDD cycle:
 - Test fails when you remove mock
 - Can't explain why mock is needed
 - Mocking "just to be safe"
+- `assertTrue(true)` or assertion-free test bodies
+- Test name contains error/timeout/cancel/retry with no throw/clock/cancellation in body
+- Expected literal identical to a literal in production source
+- Tests whose SUT has no non-test callers
 
 ## The Bottom Line
 

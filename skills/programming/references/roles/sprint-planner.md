@@ -16,6 +16,7 @@ Plan complex features into parallel workstreams with clear dependencies, ownersh
 - Define shared contracts before dispatch.
 - Keep integration with orchestrator, not workers.
 - Do not split high-churn refactors, same public interface in flux, or shared fixtures multiple agents must rewrite.
+- Tests follow SUT ownership: one type's tests live in one file, owned by one agent. Two workstreams needing the same type's tests → sequence them or reassign; never resolve contention by adding a parallel test file for the same type.
 
 ## Workflow
 1. Clarify goals, constraints, scope, and non-functional requirements.

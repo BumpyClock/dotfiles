@@ -1,7 +1,8 @@
 model = "gpt-5.5"
+model_instructions_file = "~/.codex/model-instructions.md"
 model_reasoning_effort = "high"
 web_search = "live"
-personality = "pragmatic"
+personality = "none"
 suppress_unstable_features_warning = true
 tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
 tui.notifications = true
@@ -204,34 +205,6 @@ BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.623.101652"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
-# [mcp_servers.node_repl]
-# args = []
-# command = "/Applications/Codex.app/Contents/Resources/node_repl"
-# startup_timeout_sec = 120
-
-# [mcp_servers.node_repl.env]
-# NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-# NODE_REPL_NODE_MODULE_DIRS = ""
-# NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
-# NODE_REPL_TRUSTED_CODE_PATHS = "/Users/adityasharma/.codex"
-# CODEX_HOME = "/Users/adityasharma/.codex"
-# NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2267529e313"
-# BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-# NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-# NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-# BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-# BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
-# CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
-
-# [mcp_servers.code-tools]
-# command = "code-tools-mcp"
-# # args = [ "code-tools-mcp@latest" ]
-# startup_timeout_sec = 40
-# env = { CODE_TOOLS_MCP_ALLOW_ANY_PATHS="true"}
-
-# [mcp_servers.fla-ui-mcp]
-# command = "C:\\\\Users\\\\adityasharma\\\\Projects\\\\oss\\\\FlaUI-MCP\\\\src\\\\FlaUI.Mcp\\\\bin\\\\Debug\\\\net8.0-windows\\\\FlaUI.Mcp.exe"
-
 # [mcp_servers."playwriter"]
 # command = "bunx"
 # args = [ "playwriter@latest" ]
@@ -242,10 +215,10 @@ CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 sandbox = "elevated"
 
 [plugins."google-calendar@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."gmail@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."github@openai-curated"]
 enabled = true
@@ -363,7 +336,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-06T04:21:15Z"
+last_updated = "2026-07-06T16:03:40Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -373,8 +346,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-07-06T04:21:16Z"
-last_revision = "06b291803d65afb86b6264e03d5968926afddc90"
+last_updated = "2026-07-06T15:50:52Z"
+last_revision = "00e75affab44cb16e46800dfe166525dd41d9c0e"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
@@ -394,6 +367,7 @@ ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "absolutely"
 selected-avatar-id = "null-signal"
 followUpQueueMode = "queue"
+preventSleepWhileRunning = false
 
 [desktop.appearanceLightChromeTheme]
 accent = "#cc7d5e"
@@ -418,26 +392,3 @@ global = "zed"
 # [mcp_servers.openaiDeveloperDocs]
 # url = "https://developers.openai.com/mcp"
 #
-
-[model_providers.proxy]
-name = "Zai"
-base_url = "https://api.z.ai/api/coding/paas/v4"
-env_key = "ZAI_API_KEY"
-wire_api = "responses"
-
-[hooks.state]
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
-trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
-trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"

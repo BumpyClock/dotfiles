@@ -119,4 +119,4 @@ All four layers were necessary. During testing, each layer caught bugs others mi
 - Edge cases on different platforms needed environment guards
 - Debug logging identified structural misuse
 
-**Don't stop at one validation point.** Add checks at every layer.
+**Don't stop at one validation point.** Add checks at each layer on the traced data path of THIS bug. Speculative validation elsewhere is the impossible-case handling SKILL.md pushes back on.
