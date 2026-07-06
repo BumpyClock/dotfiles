@@ -17,7 +17,7 @@ approvals_reviewer = "user"
 
 
 
-service_tier = "priority"
+service_tier = "default"
 
 notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
 
@@ -363,7 +363,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-03T04:17:11Z"
+last_updated = "2026-07-06T04:21:15Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -373,13 +373,13 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-07-03T14:23:42Z"
-last_revision = "29589d2ac6b7c795ee2db0a28435ef8fa2c7cc17"
+last_updated = "2026-07-06T04:21:16Z"
+last_revision = "06b291803d65afb86b6264e03d5968926afddc90"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
 [marketplaces.codex-warp]
-last_updated = "2026-07-02T16:53:28Z"
+last_updated = "2026-07-06T04:21:17Z"
 last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
 source_type = "git"
 source = "https://github.com/warpdotdev/codex-warp.git"

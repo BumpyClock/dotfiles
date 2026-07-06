@@ -2,9 +2,9 @@
 
 ## Overview
 
-Write the test first. Watch it fail. Write minimal code to pass.
+Prefer writing the test first for behavior changes. Watch it fail when feasible. Write minimal code to pass.
 
-Core principle: If you didn't watch the test fail, you don't know if it tests the right thing.
+Core principle: if you never saw the test fail, you have weaker evidence that it tests the right thing.
 
 This reference applies when TDD is required or explicitly chosen. For mechanical edits (renames, formatting, file moves), docs/config-only changes, or copy/paste operations that do not affect behavior, you can skip TDD and use lighter verification.
 
@@ -21,19 +21,13 @@ Skip or simplify (unless user explicitly requests TDD or project policy requires
 - Docs/config-only updates
 - Copy/paste changes that do not alter behavior
 
-## The Iron Law
+## Strict TDD Mode
 
-When doing TDD: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+When strict TDD is chosen or required: no production change for that behavior before a failing test.
 
-Write code before the test? If it was exploratory code generated in this current turn, delete it and start over if you are committed to TDD. For pre-existing or user-authored code, ask or move it to trash before removing it.
+If exploratory code came first, do not pretend it was TDD. Either keep going with explicit test-after verification, or restart the behavior slice from a failing test when the risk warrants it.
 
-If you are following TDD, no exceptions:
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete only for your own current-turn exploratory implementation
-
-Implement fresh from tests.
+Never delete pre-existing or user-authored code only to satisfy process.
 
 ## Red-Green-Refactor
 
@@ -49,16 +43,17 @@ Do not add features beyond the test.
 
 Before marking work complete:
 
-- [ ] Every new function/method has a test
-- [ ] Watched each test fail before implementing
+- [ ] New or changed behavior has coverage at the practical public surface
+- [ ] Watched new/regression tests fail when feasible
 - [ ] Each test failed for expected reason (feature missing, not typo)
 - [ ] Wrote minimal code to pass each test
-- [ ] All tests pass
-- [ ] Output pristine (no errors, warnings)
-- [ ] Tests use real code (mocks only if unavoidable)
-- [ ] Edge cases and errors covered
+- [ ] Focused tests pass
+- [ ] Relevant full gate passes before handoff
+- [ ] Output and exit code read
+- [ ] Tests use real code or mocks at seams
+- [ ] Edge cases and errors covered where the contract branches
 
-Can't check all boxes? If you intended to follow TDD, you didn't. Either restart with TDD or explicitly decide to skip and state why.
+Can't check applicable boxes? State what proof is missing and why.
 
 ## When Stuck
 
@@ -66,7 +61,7 @@ Can't check all boxes? If you intended to follow TDD, you didn't. Either restart
 |---------|----------|
 | Don't know how to test | Write wished-for API. Write assertion first. Ask the user. |
 | Test too complicated | Design too complicated. Simplify interface. |
-| Must mock everything | Code too coupled. Use dependency injection. |
+| Must mock everything | Test one layer up, or move dependency behind a seam. |
 | Test setup huge | Extract helpers. Still complex? Simplify design. |
 
 ## Debugging Integration

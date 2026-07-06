@@ -8,14 +8,12 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 
 **Core principle:** Test what the code does, not what the mocks do.
 
-**Following strict TDD prevents these anti-patterns.**
-
-## The Iron Laws
+## Guardrails
 
 ```
-1. NEVER test mock behavior
-2. NEVER add test-only methods to production classes
-3. NEVER mock without understanding dependencies
+1. Do not test mock behavior
+2. Do not add test-only methods to production classes
+3. Do not mock without understanding dependencies
 ```
 
 ## Anti-Pattern 1: Testing Mock Behavior
@@ -194,16 +192,15 @@ const mockResponse = {
 - **Tests pass but integration fails** - Mock incomplete, real API complete
 - **False confidence** - Test proves nothing about real behavior
 
-**The Iron Rule:** Mock the COMPLETE data structure as it exists in reality, not just fields your immediate test uses.
+**Rule:** Mock data should be schema-valid and include fields required by the contract or downstream code under test.
 
 **The fix:**
 ```typescript
-// ✅ GOOD: Mirror real API completeness
+// ✅ GOOD: Preserve contract fields the system consumes
 const mockResponse = {
   status: 'success',
   data: { userId: '123', name: 'Alice' },
   metadata: { requestId: 'req-789', timestamp: 1234567890 }
-  // All fields real API returns
 };
 ```
 
@@ -211,18 +208,18 @@ const mockResponse = {
 
 ```
 BEFORE creating mock responses:
-  Check: "What fields does the real API response contain?"
+  Check: "What contract fields can this path consume?"
 
   Actions:
-    1. Examine actual API response from docs/examples
-    2. Include ALL fields system might consume downstream
-    3. Verify mock matches real response schema completely
+    1. Examine schema/docs/examples when available
+    2. Include fields this path or downstream code consumes
+    3. Keep fixture small enough that the behavior under test stays visible
 
   Critical:
-    If you're creating a mock, you must understand the ENTIRE structure
+    If you're creating a mock, understand the contract surface it represents
     Partial mocks fail silently when code depends on omitted fields
 
-  If uncertain: Include all documented fields
+  If uncertain: use a real fixture, schema builder, or test one layer up
 ```
 
 ## Anti-Pattern 5: Integration Tests as Afterthought

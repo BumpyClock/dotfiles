@@ -147,11 +147,12 @@ npm test path/to/test.test.ts
 Confirm:
 - Test passes
 - Other tests still pass
-- Output pristine (no errors, warnings)
+- Output and exit code read
+- Any warnings are understood and relevant to the change
 
-**Test fails?** Fix code, not test.
+**Test fails?** First check whether the test states the contract correctly. If yes, fix code.
 
-**Other tests fail?** Fix now.
+**Other tests fail?** Trace whether they share the same cause before changing either test or code.
 
 ## Good Tests
 

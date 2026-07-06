@@ -36,10 +36,11 @@ Push back when req implies needless complexity: speculative features, single-use
 3. Nontrivial task → plan scope, success criteria, test strategy.
 4. Bugs/failures → reproduce, find root cause, fix at source (`systematic-debugging/guide.md`).
 5. Behavior change → TDD when feasible (`references/tdd-rules.md`). Skipping TDD → say why.
-6. Understand existing code purpose/structure before editing. Edit surgically: every changed line traces to req. Mention unrelated issues; leave them.
-7. After AI-assisted edits, run deslop pass when diff shows odd comments, needless defensive code, type escapes, or single-use abstractions (`references/refactoring/deslop.md`).
-8. Run formatter/lint/tests/docs gate relevant to change. Read output + exit code.
-9. Conflicting instructions/reqs/code → call out. Order: safety rules → existing code patterns → language refs. Ask when user judgment needed.
+6. Before adding a new mechanism, search for existing owner/consumer patterns. Reuse, consolidate, or create new deliberately (`references/refactoring/clean-refactoring.md`).
+7. Understand existing code purpose/structure before editing. Edit surgically: every changed line traces to req. Mention unrelated issues; leave them.
+8. After AI-assisted edits, run deslop pass when diff shows odd comments, needless defensive code, type escapes, or single-use abstractions (`references/refactoring/deslop.md`).
+9. Run formatter/lint/tests/docs gate relevant to change. Read output + exit code.
+10. Conflicting instructions/reqs/code → call out. Order: safety rules → existing code patterns → language refs. Ask when user judgment needed.
 
 ## Delegation
 
@@ -55,17 +56,20 @@ Delegate when runtime permits and work parallelizes; work local for tiny tasks, 
 - Match surrounding style/format/patterns; file consistency beats outside guide.
 - Preserve behavior unless req/test/doc calls for change. Breaking change allowed when it is the right fix; call it out.
 - Refactor only task area; broader cleanup needs approval. Remove only imports/vars/fns your change made unused.
-- Fix forward. Keep existing impl unless user approves replacement; remove transitional code only after replacement works.
+- Clean refactor means one concept with one clear owner. Do not layer wrappers, aliases, pass-local constants, duplicate structs, or parallel abstractions unless they are external boundaries or named short-lived compatibility seams with removal conditions.
+- Fix forward. Keep existing impl unless req, root cause, or approved refactor calls for replacement; remove transitional code only after replacement works.
 - Fail fast with concrete errors unless spec defines safe recovery.
 - Prefer clear control flow, immutable data, explicit state transitions. Style detail: `references/refactoring/code-simplification.md`.
 - Comments/docs true, timeless, concise; update user-facing docs when behavior/API changes (`references/documentation/code-documentation.md`).
 
 ## Tests
 
-- Automated tests when feasible. Bug fix → reproducing test, or stated rationale + lightest viable proof.
-- Test public behavior, one behavior per test, meaningful assertions; cover edge inputs behavior depends on.
-- Prefer real implementations over mocks. Keep tests deterministic: explicit inputs, temp dirs/ports, no Internet, condition-based waits, close resources.
-- Details: `references/tdd-rules.md`, `references/test-anti-patterns.md`.
+- Tests pin real behavior. Good test fails only when product behavior/contract breaks.
+- Behavior change or bug fix → one focused test at a time. See it fail when feasible, make it pass, then choose next test from what you learned.
+- Assert observable behavior through outermost practical entry point: return values, exit codes, persisted rows, HTTP responses, rendered output. Avoid internal-call assertions, compiler-guaranteed shapes, current config values, and count-only checks where actual values matter.
+- Prefer real implementations. Mock seams only: network, clock, filesystem, process/env/config lookup, third-party SDK. If many internals need mocks, test one layer up.
+- Keep tests deterministic: explicit inputs, controlled variables, seeded randomness, temp dirs/ports, no Internet, condition-based waits, close resources.
+- Details: `references/write-tests.md`, `references/tdd-rules.md`, `references/test-anti-patterns.md`.
 
 ## Verification
 
@@ -87,12 +91,14 @@ Debugging:
 
 Tests:
 
+- `references/write-tests.md` - behavior-first test writing rules and review checklist.
 - `references/tdd-rules.md` + `references/tdd-examples.md` - TDD rules and examples.
 - `references/test-anti-patterns.md` - mock misuse, test-only prod code.
 
 Quality:
 
 - `references/verification-before-completion.md` - evidence gate details.
+- `references/refactoring/clean-refactoring.md` - source-of-truth refactors, ownership, compatibility seams.
 - `references/refactoring/deslop.md` - AI slop cleanup.
 - `references/refactoring/code-simplification.md` - local clarity refactors, style rules.
 - `references/refactoring/code-flow-analysis.md` - simplification across files/async/side effects.

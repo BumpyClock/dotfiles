@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.80.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "xhigh",
   "subagents": {
     "agentOverrides": {
       "context-builder": {
@@ -109,7 +109,7 @@
     },
     "dynamicTitle": {
       "model": "openai-codex/gpt-5.3-codex-spark",
-      "updateAfterTurns": 10
+      "updateAfterTurns": 30
     }
   }
 }
