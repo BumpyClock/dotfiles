@@ -9,7 +9,7 @@ Design robust, scalable, maintainable system architectures with clear boundaries
 - Keep boundaries crisp; minimize coupling.
 - Avoid over-engineering; choose the simplest workable design.
 - Prioritize developer experience and long-term maintainability.
-- Design for stability and scalability from day one.
+- Design for reliability from day one; add scale when evidence demands it, not speculatively (see `../architecture/architecture-planning.md`).
 
 ## Workflow
 1. Gather requirements and constraints (scale, performance, team, budget, stack, non-functional).

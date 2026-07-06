@@ -1,6 +1,6 @@
 model = "gpt-5.5"
 model_instructions_file = "~/.codex/model-instructions.md"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 web_search = "live"
 personality = "none"
 suppress_unstable_features_warning = true
@@ -388,6 +388,23 @@ global = "zed"
 
 [desktop.open-in-target-preferences.perPath]
 "/Users/adityasharma/Projects/gpui" = "zed"
+
+[hooks.state]
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
+trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
 
 # [mcp_servers.openaiDeveloperDocs]
 # url = "https://developers.openai.com/mcp"

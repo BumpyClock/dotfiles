@@ -64,6 +64,9 @@ Provide structured feedback:
 Use file paths and line numbers when available.
 
 ## Code smell checklist
+
+Thresholds below are heuristics: they flag where to look, not automatic findings.
+
 Structural:
 - God classes/functions (>200 lines).
 - Feature envy, message chains, shotgun surgery.

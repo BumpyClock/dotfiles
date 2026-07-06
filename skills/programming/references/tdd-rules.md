@@ -51,6 +51,7 @@ Before marking work complete:
 - [ ] Relevant full gate passes before handoff
 - [ ] Output and exit code read
 - [ ] Tests use real code or mocks at seams
+- [ ] No test named for a path its body doesn't exercise
 - [ ] Edge cases and errors covered where the contract branches
 
 Can't check applicable boxes? State what proof is missing and why.

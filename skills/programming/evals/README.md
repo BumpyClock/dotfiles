@@ -25,4 +25,10 @@ When an agent violates a rule this skill should have prevented:
 
 ## How to run
 
-Replay each case's trigger against a fresh agent session with the skill loaded. Pass = expected behavior; fail = rule ignored. Before adding a new rule to SKILL.md, confirm at least one case here demonstrates the failure it prevents — otherwise the rule is speculative weight.
+Replay each case's trigger against a fresh agent session with the skill loaded. Pass = expected behavior; fail = rule ignored. Before adding a new rule or absolute (NEVER/ALWAYS/mandatory) to SKILL.md or any reference, confirm at least one case here demonstrates the failure it prevents — otherwise the rule is speculative weight.
+
+The standard runs both directions. Periodic prescriptiveness audit:
+
+1. Absolutes without a backing case → demote to default + "state the deviation and reason".
+2. Cases whose quoted rule has drifted out of the skill → restore the rule; the evidence already exists.
+3. Contradictions between files → the file with the rationale wins; fix the other.

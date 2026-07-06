@@ -11,7 +11,7 @@ Collaborate on problem solving before coding by exploring multiple viable approa
    - Key steps or concepts
    - Pros and cons
    - Complexity rating (simple, moderate, complex, advanced)
-   - Estimated time investment
+   - Relative effort (small/medium/large — no invented hour estimates)
    - Dependencies or prerequisites
 3. Recommend an approach based on:
    - Developer skill level

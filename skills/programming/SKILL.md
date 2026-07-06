@@ -29,6 +29,8 @@ Tie-breaks:
 
 Push back when req implies needless complexity: speculative features, single-use interfaces, unused config, impossible-case handling, scaffolding "for later".
 
+Rules in this skill are strong defaults, not ceremony. Hard gates stay absolute: fresh verification evidence before success claims, named root cause before fixes, no coverage-theater tests, no bypassing merge checks. Everything else bends to judgment — deviate when the situation warrants, and state the deviation plus reason so it's reviewable.
+
 ## Workflow
 
 1. Read relevant repo docs/instructions. Load refs from References only when task needs them.
@@ -69,6 +71,9 @@ Delegate when runtime permits and work parallelizes; work local for tiny tasks, 
 - Assert observable behavior through outermost practical entry point: return values, exit codes, persisted rows, HTTP responses, rendered output. Avoid internal-call assertions, compiler-guaranteed shapes, current config values, and count-only checks where actual values matter.
 - Prefer real implementations. Mock seams only: network, clock, filesystem, process/env/config lookup, third-party SDK. If many internals need mocks, test one layer up.
 - Keep tests deterministic: explicit inputs, controlled variables, seeded randomness, temp dirs/ports, no Internet, condition-based waits, close resources.
+- Expected values come from the real source of truth (config, asset catalog, schema), never literals copied from production source.
+- New tests for an existing type go in that type's existing test file; split only past ~500 lines or for genuinely distinct fixtures.
+- Code removed → its tests removed in the same change. "Kept for coverage" is not a reason.
 - Details: `references/write-tests.md`, `references/tdd-rules.md`, `references/test-anti-patterns.md`.
 
 ## Verification
@@ -91,7 +96,7 @@ Debugging:
 
 Tests:
 
-- `references/write-tests.md` - behavior-first test writing rules and review checklist.
+- `references/write-tests.md` - behavior-first test writing: what to assert, seams/mocks, probes, falsification proof, red-test triage, review checklist.
 - `references/tdd-rules.md` + `references/tdd-examples.md` - TDD rules and examples.
 - `references/test-anti-patterns.md` - mock misuse, test-only prod code.
 

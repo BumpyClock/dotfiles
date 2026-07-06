@@ -9,17 +9,15 @@ description: Root-cause debugging workflow for bugs, test failures, build failur
 
 Random fixes waste time and create bugs. Quick patches hide underlying issues.
 
-**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
-
-**Violating the letter of this process is violating the spirit of debugging.**
+**Core principle:** Name the root cause before fixing. Patching a symptom without a named cause is failure.
 
 ## The Iron Law
 
 ```
-NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+NO FIX WITHOUT A NAMED ROOT CAUSE
 ```
 
-If you have not completed Phase 1, you cannot propose fixes.
+The requirement is fixed; investigation depth scales with uncertainty. When the error message plus a read of the code reveals the cause directly, the phases collapse to: confirm cause, fix, verify. When the cause is unclear, work the phases in order. Either way, before proposing a fix you must be able to state the mechanism — "X produces bad value Y, which breaks Z" — not just name a suspect.
 
 ## When to Use
 
@@ -45,7 +43,7 @@ Use for ANY technical issue:
 
 ## The Four Phases
 
-Complete each phase before next.
+Work phases in order; spend effort proportional to how unclear the cause still is.
 
 ### Phase 1: Root Cause Investigation
 
@@ -135,9 +133,8 @@ Complete each phase before next.
    - What works that's similar to what's broken?
 
 2. **Compare Against References**
-   - If implementing pattern, read reference implementation COMPLETELY
-   - Don't skim - read every line
-   - Understand pattern fully before applying
+   - If implementing a pattern, read the reference until you can explain the mechanism you are copying — its invariants, not just its shape
+   - Skimming for shape while missing invariants is what breaks ports
 
 3. **Identify Differences**
    - What's different between working and broken?
@@ -197,13 +194,11 @@ Complete each phase before next.
    - Issue actually resolved?
 
 4. **If Fix Doesn't Work**
-   - STOP
-   - Count: How many fixes have you tried?
-   - If < 3: Return to Phase 1, re-analyze with new information
-   - **If ≥ 3: STOP and question the architecture (step 5 below)**
-   - DON'T attempt Fix #4 without architectural discussion
+   - STOP; do not stack another fix on top
+   - Return to Phase 1 and re-analyze with the new information
+   - Repeated failures (~3 is a signal, not a quota) → question the architecture (step 5) before attempting another fix
 
-5. **If 3+ Fixes Failed: Question Architecture**
+5. **If Repeated Fixes Failed: Question Architecture**
 
    **Pattern indicating architectural problem:**
    - Each fix reveals new shared state/coupling/problem in different place
@@ -215,7 +210,7 @@ Complete each phase before next.
    - Are we "sticking with it through sheer inertia"?
    - Should we refactor architecture vs. continue fixing symptoms?
 
-   **Discuss with the user before attempting more fixes**
+   Surface this to the user before sinking more effort into fixes. Working autonomously → write down the architectural question and your reasoning before continuing, and lead with it in your report.
 
    This is NOT a failed hypothesis - this is a wrong architecture.
 
@@ -236,7 +231,7 @@ If you catch yourself thinking:
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+**Repeated failed fixes:** question the architecture (see Phase 4, step 5)
 
 ## User Signals You're Doing It Wrong
 
@@ -258,9 +253,9 @@ If you catch yourself thinking:
 | "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
 | "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
 | "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
-| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
+| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Understand the mechanism before adapting. |
 | "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
-| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+| "One more fix attempt" (after 2+ failures) | Repeated failures signal an architectural problem. Question the pattern, don't fix again. |
 
 ## Quick Reference
 
@@ -280,7 +275,7 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 3. Implement appropriate handling (retry, timeout, error message)
 4. Add monitoring/logging for future investigation
 
-**But:** 95% of "no root cause" cases are incomplete investigation.
+**But:** most "no root cause" conclusions are incomplete investigation. Reach this only after the phases, not instead of them.
 
 ## Supporting Techniques
 

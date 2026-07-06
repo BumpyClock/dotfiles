@@ -4,7 +4,7 @@
 
 When bug comes from invalid data, one validation check feels enough. But one check can be bypassed by different code paths, refactoring, or mocks.
 
-**Core principle:** Validate at EVERY layer data passes through. Make bug structurally impossible.
+**Core principle:** Validate at each layer on the traced data path of the bug you just fixed. Make that bug structurally impossible. (Speculative validation elsewhere is the impossible-case handling SKILL.md pushes back on.)
 
 ## Why Multiple Layers
 

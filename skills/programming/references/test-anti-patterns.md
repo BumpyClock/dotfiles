@@ -16,6 +16,8 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 3. Do not mock without understanding dependencies
 ```
 
+Anti-Patterns 1-4 are strong defaults: deviate only with a stated reason (e.g. a framework-sanctioned test hook). Anti-Pattern 6 (coverage theater) is a hard gate — every rule in it is backed by an observed failure in `../evals/cases/`.
+
 ## Anti-Pattern 1: Testing Mock Behavior
 
 **The violation:**
@@ -233,17 +235,9 @@ BEFORE creating mock responses:
 
 **Why this is wrong:**
 - Testing is part of implementation, not optional follow-up
-- TDD would have caught this
-- Can't claim complete without tests
+- Changed behavior without coverage is an incomplete change
 
-**The fix:**
-```
-TDD cycle:
-1. Write failing test
-2. Implement to pass
-3. Refactor
-4. THEN claim complete
-```
+**The fix:** cover the changed behavior before claiming complete. TDD preferred; explicit test-after is acceptable when declared (see `tdd-rules.md`). What's not acceptable: handing off behavior changes with no tests and no stated rationale.
 
 ## Anti-Pattern 6: Coverage Theater
 
@@ -318,8 +312,8 @@ BEFORE keeping any test:
 | Assert on mock elements | Test real component or unmock it |
 | Test-only methods in production | Move to test utilities |
 | Mock without understanding | Understand dependencies first, mock minimally |
-| Incomplete mocks | Mirror real API completely |
-| Tests as afterthought | TDD - tests first |
+| Incomplete mocks | Include contract fields the code under test consumes |
+| Tests as afterthought | Cover changed behavior before claiming complete |
 | Over-complex mocks | Consider integration tests |
 
 ## Red Flags

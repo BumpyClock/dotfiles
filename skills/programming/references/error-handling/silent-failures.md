@@ -4,10 +4,10 @@ Use when reviewing error handling, fallback behavior, retries, optional/null han
 
 ## Core principles
 
-1. Silent failures are unacceptable.
+1. Failures must surface: fail fast with concrete errors unless the spec defines safe recovery (SKILL.md).
 2. Users need actionable feedback.
 3. Fallbacks must be explicit and justified.
-4. Catch blocks must be specific.
+4. Catch blocks must be specific enough that unexpected failures still surface.
 5. Mock or fake implementations belong only in tests.
 
 ## Review process
@@ -45,4 +45,4 @@ Red flags:
 
 ## Output
 
-For each issue, provide location, severity, issue description, hidden error that could be masked, user impact, recommendation, and example fix.
+For each issue: location, severity, the hidden error it can mask, user impact, and recommended fix. Scale detail (example fixes, repro steps) to severity.
