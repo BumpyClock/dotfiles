@@ -18,6 +18,19 @@ Read when: you need to choose or revise the overall aesthetic direction for a pr
 
 Pick one or blend two, but commit to a direction that fits the product.
 
+For marketing/landing surfaces, also state a one-line design read and set the three dials — see `marketing-and-landing.md`.
+
+## Named Aesthetic Recipes
+Fuller starting points when the direction calls for them (vibe archetypes for marketing pages live in `marketing-and-landing.md`):
+
+**Editorial minimalism** (workspace/document tools, calm SaaS — Notion-adjacent):
+- Canvas: white or warm bone (`#F7F6F3`); surfaces white/near-white; structural borders ultra-light (`#EAEAEA` / `rgba(0,0,0,0.06)`).
+- Text: off-black (`#111` or `#2F3437`), secondary muted gray (`#787774`); body line-height 1.6.
+- Type: characterful sans for UI/body; an editorial serif reserved for hero headings and quotes with tight tracking and line-height ~1.1; monospace for code, keys, metadata.
+- Accents: washed-out pastels only, for tags/inline-code/icon chips — pale red `#FDEBEC`/`#9F2F2D`, blue `#E1F3FE`/`#1F6C9F`, green `#EDF3EC`/`#346538`, yellow `#FBF3DB`/`#956400`.
+- Components: flat 1px-bordered cards, crisp 8-12px radius, generous internal padding; solid near-black CTAs with 4-6px radius and no shadow; pill tags in pastels; accordions as border-bottom rows with `+`/`−` toggles; `<kbd>`-style keystroke chips.
+- No gradients, no heavy shadows (< 0.05 opacity if any), no pill-shaped large containers. Depth comes from subtle low-opacity ambient imagery or faint radial warmth, not elevation.
+
 ## Color Foundation
 **Don't default to warm neutrals.** Consider the product:
 
@@ -50,4 +63,8 @@ Typography sets tone. Don't always default:
 - **System fonts** — fast, native, invisible (good for native apps, existing design systems, and utility-focused products)
 - **Geometric sans** (Geist, Inter) — modern, clean, technical
 - **Humanist sans** (SF Pro, Satoshi) — warmer, more approachable
+- **Characterful display sans** (Cabinet Grotesk, Clash Display, PP Neue Montreal, GT Walsheim, Söhne) — brand-forward marketing and premium consumer surfaces
+- **Editorial serif** (Tiempos, Canela, GT Sectra, Domaine, Reckless) — only when genuinely editorial/luxury/publication and you can say why this serif fits this brand; not the reflex for "creative/premium" (see `anti-slop-tells.md`)
 - **Monospace influence** — technical, developer-focused, data-heavy
+
+Pairings that work: Geist + Geist Mono, Satoshi + JetBrains Mono, Cabinet Grotesk + Inter Tight. Emphasize within a headline using italic/bold of the same family, never a second family.

@@ -11,6 +11,10 @@ Timings and curves below are proven defaults — tune to product tone, keep cons
 - Use keyframes only for staged sequences that run once: page enter, loading, onboarding reveal.
 - Never specify `transition: all`; list only properties that change.
 - Use `will-change` sparingly, only after first-frame stutter is observed, and only for compositor-friendly properties like transform, opacity, or filter.
+- Animate transform and opacity only; never layout properties (top, left, width, height).
+- Honor `prefers-reduced-motion`: loops, parallax, and scroll-driven motion collapse to static/instant. Spec the reduced variant, don't leave it implied.
+- Backdrop blur belongs on fixed/sticky elements (navbars, overlays) only — never on scrolling containers or large content areas.
+- Marketing-page motion (scroll reveals, staggered entrances, hover physics) has its own rules in `marketing-and-landing.md`.
 
 ## Enter and Exit Motion
 - Split enter animations into semantic chunks: title, description, controls, data rows, or cards.
