@@ -1,22 +1,23 @@
 ---
 name: code-review
-description: "Code quality review + repo audit: maintainability, correctness, abstraction quality, tests, docs, deps, perf. Modes: audit (default, ranked improvement plan) | nuclear (strict maintainability review with approval bar)."
+description: "Code quality review + repo audit: maintainability, correctness, abstraction quality, tests, docs, deps, perf. Modes: audit (default, ranked improvement plan) | nuclear (strict maintainability review with approval bar) | simplify (diff-scoped cleanup pass that applies fixes)."
 ---
 
 # Code Review
 
-Read-only review. Do not edit code unless user asks.
+Read-only review. Do not edit code unless user asks — exception: `simplify` mode applies fixes.
 
-Two modes:
+Three modes:
 
 - `audit` (default): balanced audit of repo/scope. Output ranked improvement plan.
 - `nuclear`: strict maintainability review. Behavior working is not enough; push for structure that makes code smaller, clearer, more direct, easier to reason about without changing behavior. Trigger on "nuclear", "thermo", "strict", "brutal", or diff/PR review where user wants high bar.
+- `simplify`: diff-scoped quality cleanup, then apply fixes. Not a bug hunt; correctness stays with audit/nuclear. Trigger on "simplify", "clean up the diff/changes", "second catch".
 
 ## Inputs
 
 - Scope: paths/globs/dirs, diff, or PR. Default: whole repo.
 - Focus: `architecture`, `complexity`, `time-complexity`, `duplication`, `dead-code`, `legacy-code`, `tests`, `errors`, `types`, `comments`, `docs`, `deps`, `simplify`, `all`. Default: `all`.
-- Mode: `audit` | `nuclear`. Default: `audit`.
+- Mode: `audit` | `nuclear` | `simplify`. Default: `audit`. Simplify default scope: diff, not repo.
 
 ## Workflow
 
@@ -55,7 +56,7 @@ Complexity-only pass: one finding per line; include `net: -N lines possible` whe
 
 ## Rules
 
-- Analysis only; no code edits.
+- Analysis only; no code edits. Exception: simplify mode applies its fixes (Phase 2).
 - Prefer high-leverage findings over exhaustive nitpicks. Fewer high-conviction findings beat long nit lists.
 - Favor deletion/simplification over new abstraction. Deletion beats extraction when both preserve behavior and clarity.
 - Prefer stdlib, native features, and existing deps over custom code/new deps.
@@ -66,6 +67,31 @@ Complexity-only pass: one finding per line; include `net: -N lines possible` whe
 - Separate quick wins from strategic refactors.
 - Report uncertainty when confidence low.
 - Do not force optimization when asymptotic win/trade-off is poor.
+
+## Simplify Mode
+
+`simplify → 4 cleanup angles in parallel → apply the fixes`
+
+Improve quality of changed code, not hunt bugs. Do not flag correctness bugs; route them to audit/nuclear.
+
+### Phase 0 — Gather diff
+
+`git diff @{upstream}...HEAD` (fallback `git diff main...HEAD` / `git diff HEAD~1`). Uncommitted changes or empty range → also `git diff HEAD`. Argument (PR, branch, path) → review that target instead.
+
+### Phase 1 — Review (4 angles in parallel)
+
+Launch 4 independent review subagents in one message, each with the diff + one angle. No subagents available → run angles sequentially yourself. Each finding: `file`, `line`, one-line summary, concrete cost (what is duplicated, wasted, or harder to maintain) — not a crash scenario.
+
+- Reuse: new code re-implementing something the codebase already has. Grep shared/utility modules and files adjacent to the change; name the existing helper to call instead.
+- Simplification: unnecessary complexity the diff adds — redundant or derivable state, copy-paste with slight variation, deep nesting, dead code left behind. Name the simpler form that does the same job.
+- Efficiency: wasted work the diff introduces — redundant computation or repeated I/O, independent operations run sequentially, blocking work added to startup or hot paths, long-lived objects built from closures that pin the enclosing scope (prefer struct copying only needed fields). Name the cheaper alternative.
+- Altitude: change implemented at right depth, not fragile bandaid. Special cases layered on shared infrastructure → generalize the underlying mechanism instead.
+
+Tag findings with deletion-first tags above.
+
+### Phase 2 — Apply fixes
+
+Wait for all angles, dedup findings on same line/mechanism, fix each remaining one directly. Skip when fix would change intended behavior, require changes well outside the diff, or is a false positive — note the skip, don't argue. Finish with brief summary: fixed vs skipped (or confirm already clean).
 
 ## Nuclear Mode
 
