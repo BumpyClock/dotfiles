@@ -12,11 +12,12 @@ Build prod code. Smallest safe change. Preserve behavior unless req/test/doc say
 Simplicity ladder, always on:
 
 1. No code if need is speculative or already covered.
-2. Standard library.
-3. Native platform/framework feature.
-4. Already-installed dependency.
-5. Tiny local helper or direct line.
-6. Minimum new code.
+2. Existing code in this repo: helper, util, type, or pattern already here. Look before writing; re-implementing what lives a few files over is the most common slop.
+3. Standard library.
+4. Native platform/framework feature.
+5. Already-installed dependency.
+6. Tiny local helper or direct line.
+7. Minimum new code.
 
 First rung that holds wins.
 
@@ -61,6 +62,7 @@ Delegate when runtime permits and work parallelizes; work local for tiny tasks, 
 - Clean refactor means one concept with one clear owner. Do not layer wrappers, aliases, pass-local constants, duplicate structs, or parallel abstractions unless they are external boundaries or named short-lived compatibility seams with removal conditions.
 - Fix forward. Keep existing impl unless req, root cause, or approved refactor calls for replacement; remove transitional code only after replacement works.
 - Fail fast with concrete errors unless spec defines safe recovery.
+- Deliberate shortcut with known ceiling → mark with grep-able `ponytail:` comment naming ceiling + upgrade trigger: `# ponytail: global lock, per-account locks if throughput matters`. No trigger named = rot. Harvest ledger anytime: `grep -rnE '(#|//) ?ponytail:' .`
 - Prefer clear control flow, immutable data, explicit state transitions. Style detail: `references/refactoring/code-simplification.md`.
 - Comments/docs true, timeless, concise; update user-facing docs when behavior/API changes (`references/documentation/code-documentation.md`).
 

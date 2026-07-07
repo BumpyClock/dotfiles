@@ -53,6 +53,15 @@ Simplification options:
 - Remove unused flexibility.
 - Replace patterns with simple functions.
 
+For a complexity-only pass, report one line per finding — `<file>:L<line>: <tag> <what>. <replacement>.` — with these tags:
+- `delete:` dead code, unused flexibility, speculative feature. Replacement: nothing.
+- `stdlib:` hand-rolled thing the standard library ships. Name the function.
+- `native:` dependency or code doing what the platform already does. Name the feature.
+- `yagni:` abstraction with one implementation, config nobody sets, layer with one caller.
+- `shrink:` same logic, fewer lines. Show the shorter form.
+
+End with `net: -<N> lines possible.` Nothing to cut: `Lean already. Ship.`
+
 ## Output format
 Provide structured feedback:
 - Summary: overall quality, complexity, and key risks.
