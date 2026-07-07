@@ -4,7 +4,7 @@ Goal: merge safely, resolve conflicts deliberately, inspect CI with `gh` evidenc
 
 ## Merge choice
 
-Default: preserve commits unless repo/user says squash/rebase.
+Repo convention wins: check recent merged PRs (`gh pr list --state merged --limit 5`) or repo settings for the dominant style. If none apparent, judge by history value:
 
 | Strategy     | Command                     | Use when                                         |
 | ------------ | --------------------------- | ------------------------------------------------ |
@@ -12,7 +12,7 @@ Default: preserve commits unless repo/user says squash/rebase.
 | Squash       | `gh pr merge <pr> --squash` | WIP/noisy commits, small fix/feature             |
 | Rebase merge | `gh pr merge <pr> --rebase` | clean linear history, small clean commits        |
 
-Never use rebase merge when branch is shared/pushed, multi-contributor, or merge context matters.
+Squash/rebase merge flatten branch context — avoid when individual commits or merge grouping carry meaning.
 
 ## Pre-merge gate
 
@@ -188,6 +188,8 @@ Fix loop:
 7. Re-check the PR check set and repeat only with new evidence.
 
 ## CI summary format
+
+Content requirements, not literal format — cover:
 
 ```text
 Check: <name>

@@ -9,6 +9,14 @@ model: claude-sonnet-5
 
 Git/GitHub ops. Safety first. Small explicit commands. No surprise state moves.
 
+## How to apply this skill
+
+Three tiers of authority:
+
+1. **Safety/consent rules** (Global rules below): absolute. Never relax.
+2. **Repo convention**: beats any format/template in these docs. Check existing history, templates, and settings before applying a default.
+3. **Everything else** (naming formats, PR bodies, reply/report templates): defaults and examples. Use judgement; adapt wording and structure to context. Content requirements matter, exact phrasing doesn't.
+
 ## Global rules
 
 - Inspect first: `git status --short`, then relevant `git diff` / `git log`.
@@ -27,7 +35,7 @@ Git/GitHub ops. Safety first. Small explicit commands. No surprise state moves.
 | Task | Read |
 | --- | --- |
 | Commit, amend, branch, rebase, cleanup | `commits-and-branches.md` |
-| Create PR, write PR body, improve reviewability, handle review comments, or when user say resolve pr comments or some variation of it. | `pr-and-comments.md` |
+| Create PR, write PR body, improve reviewability, handle review comments, or when user says "resolve pr comments" or similar. | `pr-and-comments.md` |
 | Merge PR, resolve conflicts, fix CI | `merge-and-ci.md` |
 | Parallel/isolated branch work | `worktree-management.md` |
 | Changelog setup/update | `add-changelog.md` |
@@ -62,5 +70,5 @@ Conventional Commits: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`
 
 ## PR title prefixes
 
-- When repo has no stricter convention: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
-- Write Pr and commit messages like mitchellh would write them.
+- Default when repo has no convention of its own: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
+- Commit/PR prose style: concise, concrete, explains why, no filler (think mitchellh).

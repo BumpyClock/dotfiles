@@ -70,6 +70,14 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 - Avoid manual `git stash`. Auto-stash from git pull/rebase OK. If user types command like `pull and push`, that counts as consent.
 - Multi-agent work -> check `git status` / `git diff` before edits.
 
+
+## Oracle CLI
+- Oracle bundles a prompt plus the right files so a Pro model (GPT-5.5 Pro,
+  Gemini 3 Pro) can answer with real repo context. Use when stuck,
+  debugging hard bugs, doing architecture review, or cross-validating a plan.
+- Run `oracle --help` once per session before first use.
+- use `--engine browser` to use the browser engine instead of the API. Do not use API key. only use browser engine. if browser engine not working skip and inform user.
+
 <frontend_aesthetics>
 Avoid AI-slop UI. Be opinionated, distinctive. use `ux-designer` skill.
 </frontend_aesthetics>

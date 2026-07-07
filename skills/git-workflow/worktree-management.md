@@ -2,11 +2,7 @@
 
 Goal: isolated branch workspace without disturbing current checkout.
 
-Announce when used:
-
-```text
-Using git-workflow worktree-management to set up an isolated workspace.
-```
+Tell user, in your own words, when setting up an isolated workspace.
 
 ## When to use
 
@@ -109,6 +105,8 @@ Run normal project check before implementation.
 If baseline fails: report command + short failure, keep separate from new work, ask proceed/stop.
 
 ## Report
+
+Cover path, baseline result, and next step — wording is yours. Examples:
 
 Success:
 

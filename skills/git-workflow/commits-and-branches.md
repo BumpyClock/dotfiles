@@ -14,6 +14,8 @@ Unexpected delete/rename → stop, ask.
 
 ## Commit format
 
+Check repo style first: `git log --oneline -20`. Established repo convention wins. Default:
+
 ```text
 <type>[optional scope]: <description>
 
@@ -94,7 +96,7 @@ Never amend when:
 
 ## Branch naming
 
-Format:
+Match existing repo pattern first (`git branch -a` shows it). Default when none:
 
 ```text
 <type>/<issue>-<short-description>

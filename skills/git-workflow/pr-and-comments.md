@@ -13,7 +13,7 @@ git diff --stat origin/main...HEAD
 gh pr view --json number,url,title 2>/dev/null || true
 ```
 
-If why unclear, ask. PR body:
+If why unclear, ask. Use repo PR template when one exists (`.github/PULL_REQUEST_TEMPLATE.md` or variants). Default body when none:
 
 ```markdown
 ## Summary
@@ -31,7 +31,7 @@ Why + what changed.
 - Reviewer focus
 ```
 
-Prefixes when repo lacks rule: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
+Title prefixes, default when repo lacks its own rule: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
 
 Breaking change needs `[BREAKING]`, `**BREAKING CHANGE:**`, migration steps, affected API.
 
@@ -114,16 +114,13 @@ Auth fails → ask user to run `gh auth login`.
 
 ## Second opinions
 
-- use `claude -p`, `copilot -p`, and `codex exec` to get second opinions on architecture smells and deeper causes. Run these in parallel.
-- use `oracle cli` to get second opinions on architecture smells and deeper causes from gpt-5.5-pro
+Optional — reach for these when stuck on architecture smells or deeper causes, not for routine comment fixes:
+
+- `claude -p`, `copilot -p`, `codex exec` — run in parallel for independent takes.
+- `oracle cli` — second opinion from a Pro-tier model.
 
 
-## Oracle CLI
-- Oracle bundles a prompt plus the right files so a Pro model (GPT-5.5 Pro,
-  Gemini 3 Pro) can answer with real repo context. Use when stuck,
-  debugging hard bugs, doing architecture review, or cross-validating a plan.
-- Run `oracle --help` once per session before first use.
-- use `--engine browser` to use the browser engine instead of the API.
+
 
 Push only when user asks.
 
@@ -140,6 +137,8 @@ Push only when user asks.
 Conflicting reviewers: summarize both, tag reviewers, propose middle path only if clear.
 
 ## Replies
+
+Example shapes — adapt wording; the requirement is citing exact fix/file/commit or the reason for no change:
 
 ```text
 Fixed in latest commit: added null guard in `src/api/client.ts` and regression test in `src/api/client.test.ts`.

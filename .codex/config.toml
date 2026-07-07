@@ -1,6 +1,6 @@
 model = "gpt-5.5"
 model_instructions_file = "~/.codex/model-instructions.md"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 web_search = "live"
 personality = "none"
 suppress_unstable_features_warning = true
@@ -336,7 +336,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-06T16:03:40Z"
+last_updated = "2026-07-07T00:52:01Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -346,8 +346,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-07-06T16:13:59Z"
-last_revision = "01c4d1bc1138666989d4b8a581b3ead249dcf6d7"
+last_updated = "2026-07-07T00:51:28Z"
+last_revision = "6d5f79446b996d64c87f1bedf0e13eb4dda542d2"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
