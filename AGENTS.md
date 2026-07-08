@@ -5,8 +5,6 @@
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
 
 
-
-
 # Agent protocols
 Read `~/.agents/AGENTS.local.md` if it exists.
 
