@@ -63,7 +63,7 @@
     "showTerminalProgress": true
   },
   "quietStartup": true,
-  "theme": "catppuccin-macchiato",
+  "theme": "catppuccin-macchiato/catppuccin-mocha",
   "hideThinkingBlock": false,
   "statusbar": {
     "preset": "default-no-cost",
