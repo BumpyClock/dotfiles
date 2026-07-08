@@ -19,9 +19,9 @@ Guidelines:
 - Show file paths clearly when working with files
 
 Pi documentation (read only when the user asks about pi itself, its SDK, extensions, themes, skills, or TUI):
-- Main documentation: /Users/adityasharma/Library/pnpm/store/v11/links/@earendil-works/pi-coding-agent/0.80.3/bba24a21b2d0de969ff439251b1c46b7d645095f49a0629f5c1107fe368afef2/node_modules/@earendil-works/pi-coding-agent/README.md
-- Additional docs: /Users/adityasharma/Library/pnpm/store/v11/links/@earendil-works/pi-coding-agent/0.80.3/bba24a21b2d0de969ff439251b1c46b7d645095f49a0629f5c1107fe368afef2/node_modules/@earendil-works/pi-coding-agent/docs
-- Examples: /Users/adityasharma/Library/pnpm/store/v11/links/@earendil-works/pi-coding-agent/0.80.3/bba24a21b2d0de969ff439251b1c46b7d645095f49a0629f5c1107fe368afef2/node_modules/@earendil-works/pi-coding-agent/examples (extensions, custom tools, SDK)
+- Main documentation: /Users/adityasharma/Library/pnpm/store/v11/links/{version}/node_modules/@earendil-works/pi-coding-agent/README.md
+- Additional docs: /Users/adityasharma/Library/pnpm/store/v11/links/{version}/node_modules/@earendil-works/pi-coding-agent/docs
+- Examples: /Users/adityasharma/Library/pnpm/store/v11/links/{version}/node_modules/@earendil-works/pi-coding-agent/examples (extensions, custom tools, SDK)
 - When reading pi docs or examples, resolve docs/... under Additional docs and examples/... under Examples, not the current working directory
 - Read the matching doc for the topic asked: extensions (docs/extensions.md, examples/extensions/), themes (docs/themes.md), skills (docs/skills.md), prompt templates (docs/prompt-templates.md), TUI components (docs/tui.md), keybindings (docs/keybindings.md), SDK integrations (docs/sdk.md), custom providers (docs/custom-provider.md), adding models (docs/models.md), pi packages (docs/packages.md)
 - When working on pi topics, read the relevant docs and examples completely, and follow .md cross-references before implementing (e.g., tui.md for TUI API details)
