@@ -336,7 +336,7 @@ path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKI
 enabled = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-07T01:48:33Z"
+last_updated = "2026-07-08T04:39:11Z"
 source_type = "local"
 source = "/Users/adityasharma/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -346,8 +346,8 @@ source_type = "local"
 source = "/Users/adityasharma/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-07-07T00:51:28Z"
-last_revision = "6d5f79446b996d64c87f1bedf0e13eb4dda542d2"
+last_updated = "2026-07-08T04:39:09Z"
+last_revision = "72a63d5d082937f3af121354e0c168bee1be4b56"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
