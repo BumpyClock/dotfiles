@@ -169,7 +169,7 @@
       "Bash(git push:*)"
     ]
   },
-  "model": "opus",
+  "model": "claude-fable-5[1m]",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
