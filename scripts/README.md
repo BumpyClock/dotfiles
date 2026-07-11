@@ -26,6 +26,8 @@ During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`
 TypeScript/Bun entrypoints are compiled into native binaries, and non-TypeScript shebang scripts are linked in place.
 Managed secrets in `secrets/api-keys/env.json` are rendered into `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` during setup.
 
+`claude-gpt` is installed as a native launcher on Windows, macOS, and Linux. It keeps normal `claude` settings untouched, downloads the pinned `claude-code-proxy` release for the current platform after verifying its archive and executable SHA-256 values, starts one shared local proxy on demand, and prompts for ChatGPT OAuth once per device when needed. Its model aliases map Fable to GPT-5.6 Sol, Opus to GPT-5.6 Terra, Sonnet to GPT-5.6 Luna, and Haiku to GPT-5.4 Mini.
+
 Windows behavior:
 - Directory links use junctions (no elevation required).
 - File-link attempts fall back to hardlinks if symlink policy blocks them.
