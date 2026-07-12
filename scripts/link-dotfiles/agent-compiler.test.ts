@@ -226,10 +226,10 @@ describe("readMarkdownAgentTemplates", () => {
 			},
 			codex: {
 				description:
-					"Lite developer agent for coding and debugging simpler tasks",
+					"Lite coding agent for writing and debugging for simple focused tasks",
 			},
 			pi: {
-				model: "zai/glm-5.1",
+				model: "zai/glm-5.2",
 			},
 			modelClass: "balanced",
 			modelProfile: "economy",
@@ -398,7 +398,7 @@ describe("compileAgents", () => {
 		const developerLite = parseMarkdownAgent(
 			await readFile(path.join(outputDir, "pi", "developer-lite.md"), "utf8"),
 		);
-		expect(developerLite.frontmatter.model).toBe("zai/glm-5.1");
+		expect(developerLite.frontmatter.model).toBe("zai/glm-5.2");
 	});
 
 	test("emits codex files from template metadata and shared markdown prompt bodies", async () => {
