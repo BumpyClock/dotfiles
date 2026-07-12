@@ -5,6 +5,7 @@ import {
 	mkdir,
 	readFile,
 	readlink,
+	rename,
 	rm,
 	writeFile,
 } from "node:fs/promises";
@@ -13,6 +14,12 @@ import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import { installTools, showToolStatus } from "./install-tools";
+import {
+	type ManagedBlockMarkers,
+	formatTimestamp,
+	prependManagedBlock,
+	reconcileManagedBlock,
+} from "./managed-block";
 import {
 	ensureLinked,
 	linkAiAgents,
@@ -248,27 +255,6 @@ async function linkWindowsExtras(dotfilesDir: string): Promise<void> {
 					path.join(terminalRoot, "settings.json"),
 				);
 			}
-		}
-	}
-
-	const profileSource = path.join(
-		dotfilesDir,
-		"shell/powershell/Microsoft.PowerShell_profile.ps1",
-	);
-	if (await pathExists(profileSource)) {
-		const profileTargets = [
-			path.join(
-				os.homedir(),
-				"Documents/PowerShell/Microsoft.PowerShell_profile.ps1",
-			),
-			path.join(
-				os.homedir(),
-				"Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1",
-			),
-		];
-
-		for (const profileTarget of profileTargets) {
-			await ensureLinked(profileSource, profileTarget);
 		}
 	}
 }
@@ -777,30 +763,10 @@ export function isManagedZshrc(content: string): boolean {
 	);
 }
 
-function replaceManagedZshrcBlock(
-	content: string,
-	managedBlock: string,
-): { content: string; replaced: boolean } {
-	const startIndex = content.indexOf(ZSHRC_MANAGED_START);
-	if (startIndex === -1) {
-		return { content, replaced: false };
-	}
-
-	const endIndex = content.indexOf(ZSHRC_MANAGED_END, startIndex);
-	if (endIndex === -1) {
-		return { content, replaced: false };
-	}
-
-	let tailStart = endIndex + ZSHRC_MANAGED_END.length;
-	if (content[tailStart] === "\r" && content[tailStart + 1] === "\n") {
-		tailStart += 2;
-	} else if (content[tailStart] === "\n") {
-		tailStart += 1;
-	}
-
-	const nextContent = `${content.slice(0, startIndex)}${managedBlock}${content.slice(tailStart)}`;
-	return { content: nextContent, replaced: true };
-}
+const ZSHRC_MARKERS: ManagedBlockMarkers = {
+	start: ZSHRC_MANAGED_START,
+	end: ZSHRC_MANAGED_END,
+};
 
 function stripLegacyManagedZshrc(content: string): string | null {
 	if (!content.startsWith(ZSHRC_MANAGED_MARKER)) {
@@ -826,25 +792,6 @@ function stripLegacyManagedZshrc(content: string): string | null {
 	}
 
 	return content.slice(tailStart);
-}
-
-function prependManagedZshrcBlock(
-	content: string,
-	managedBlock: string,
-): string {
-	if (!content.trim()) {
-		return managedBlock;
-	}
-
-	const separator =
-		managedBlock.endsWith("\n") || content.startsWith("\n") ? "" : "\n";
-	return `${managedBlock}${separator}${content}`;
-}
-
-function formatTimestamp(date: Date): string {
-	const pad = (value: number): string => String(value).padStart(2, "0");
-
-	return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
 }
 
 async function uniqueBackupPath(basePath: string): Promise<string> {
@@ -878,21 +825,27 @@ export async function setupZshrc(options: SetupZshrcOptions): Promise<void> {
 
 	if (await pathExists(zshrcPath)) {
 		const existingContent = await readFile(zshrcPath, "utf8");
-		const replacement = replaceManagedZshrcBlock(existingContent, desiredBlock);
+		const result = reconcileManagedBlock(
+			existingContent,
+			desiredBlock,
+			ZSHRC_MARKERS,
+		);
 
-		if (replacement.replaced) {
-			if (replacement.content === existingContent) {
-				info(".zshrc managed block already current");
-			} else {
-				await writeFile(zshrcPath, replacement.content, "utf8");
-				action("Updated managed .zshrc block");
-			}
+		if (result.outcome === "conflict") {
+			warn(
+				`[CONFLICT] ${zshrcPath} has malformed dotfiles markers; fix them manually. Leaving the file untouched.`,
+			);
+		} else if (result.outcome === "unchanged") {
+			info(".zshrc managed block already current");
+		} else if (result.outcome === "replaced") {
+			await writeFile(zshrcPath, result.content, "utf8");
+			action("Updated managed .zshrc block");
 		} else {
 			const legacyTail = stripLegacyManagedZshrc(existingContent);
 			if (legacyTail !== null) {
 				await writeFile(
 					zshrcPath,
-					prependManagedZshrcBlock(legacyTail, desiredBlock),
+					prependManagedBlock(legacyTail, desiredBlock),
 					"utf8",
 				);
 				action("Migrated legacy managed .zshrc to managed block");
@@ -903,11 +856,7 @@ export async function setupZshrc(options: SetupZshrcOptions): Promise<void> {
 				);
 				await copyFile(zshrcPath, backupPath);
 				action(`Backed up .zshrc to ${path.basename(backupPath)}`);
-				await writeFile(
-					zshrcPath,
-					prependManagedZshrcBlock(existingContent, desiredBlock),
-					"utf8",
-				);
+				await writeFile(zshrcPath, result.content, "utf8");
 				action("Installed managed .zshrc block and preserved existing content");
 			}
 		}
@@ -919,6 +868,214 @@ export async function setupZshrc(options: SetupZshrcOptions): Promise<void> {
 	if (!(await pathExists(zshrcLocalPath))) {
 		await writeFile(zshrcLocalPath, renderZshrcLocal(), "utf8");
 		action("Created ~/.zshrc.local (add local overrides here)");
+	}
+}
+
+// =============================================================================
+// Managed PowerShell profile helpers
+// =============================================================================
+
+export const POWERSHELL_MANAGED_MARKER =
+	"# MANAGED BY dotfiles/scripts/link-dotfiles - DO NOT EDIT";
+export const POWERSHELL_MANAGED_START = "# >>> dotfiles powershell start";
+export const POWERSHELL_MANAGED_END = "# <<< dotfiles powershell end";
+
+const POWERSHELL_MARKERS: ManagedBlockMarkers = {
+	start: POWERSHELL_MANAGED_START,
+	end: POWERSHELL_MANAGED_END,
+};
+
+const POWERSHELL_PROFILE_NAME = "Microsoft.PowerShell_profile.ps1";
+const POWERSHELL_PROFILE_LOCAL_NAME = "profile.local.ps1";
+
+export function renderManagedPowerShell(dotfilesDir: string): string {
+	const sharedPath = path.join(dotfilesDir, "shell", "powershell", "shared.ps1");
+	const lines = [
+		POWERSHELL_MANAGED_START,
+		POWERSHELL_MANAGED_MARKER,
+		"# Stable baseline lives in shell/powershell/shared.ps1.",
+		"# Machine-specific edits go in profile.local.ps1 or outside this block.",
+		"",
+		`$dotfilesShared = '${escapePowerShellValue(sharedPath)}'`,
+		"if (Test-Path $dotfilesShared) {",
+		"    . $dotfilesShared",
+		"}",
+		"",
+		"# Source machine-local overrides if present.",
+		`$dotfilesProfileLocal = Join-Path (Split-Path -Parent $PROFILE) '${POWERSHELL_PROFILE_LOCAL_NAME}'`,
+		"if (Test-Path $dotfilesProfileLocal) {",
+		"    . $dotfilesProfileLocal",
+		"}",
+		POWERSHELL_MANAGED_END,
+		"",
+	];
+
+	return lines.join("\n");
+}
+
+export function renderPowerShellProfileLocal(): string {
+	const lines = [
+		"# profile.local.ps1 - machine-specific PowerShell configuration",
+		"# This file is sourced by the managed profile after shared.ps1.",
+		"# Add local PATH tweaks, aliases, or env vars here.",
+		"# This file is NOT managed by dotfiles and will not be overwritten.",
+		"",
+	];
+
+	return lines.join("\n");
+}
+
+async function seedPowerShellProfileLocal(profileDir: string): Promise<void> {
+	const localPath = path.join(profileDir, POWERSHELL_PROFILE_LOCAL_NAME);
+	if (!(await pathExists(localPath))) {
+		await writeFile(localPath, renderPowerShellProfileLocal(), "utf8");
+		action(`Created ${localPath} (add local overrides here)`);
+	}
+}
+
+// Recognize a symlink that points at this repo's PowerShell profile (either the
+// current shared.ps1 or the pre-rename Microsoft.PowerShell_profile.ps1). Such a
+// link is just the managed baseline, so it can be dropped and rewritten as the
+// block-only native file. Any other target is user-owned and must be preserved.
+function isRepoProfileSymlinkTarget(
+	linkTarget: string,
+	linkPath: string,
+): boolean {
+	const resolved = path.isAbsolute(linkTarget)
+		? linkTarget
+		: path.resolve(path.dirname(linkPath), linkTarget);
+	const normalized = path.normalize(resolved);
+	const repoSuffixes = [
+		path.join("shell", "powershell", "shared.ps1"),
+		path.join("shell", "powershell", "Microsoft.PowerShell_profile.ps1"),
+	];
+	return repoSuffixes.some((suffix) => normalized.endsWith(suffix));
+}
+
+async function applyManagedPowerShellProfile(
+	profilePath: string,
+	desiredBlock: string,
+	now: Date | undefined,
+): Promise<void> {
+	let existingStat: Awaited<ReturnType<typeof lstat>> | null = null;
+	try {
+		existingStat = await lstat(profilePath);
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+			throw error;
+		}
+	}
+
+	if (existingStat?.isSymbolicLink()) {
+		const linkTarget = await readlink(profilePath);
+		if (isRepoProfileSymlinkTarget(linkTarget, profilePath)) {
+			// Link resolves to the repo profile: its content is the managed
+			// baseline, so drop it and write the block-only native file.
+			await rm(profilePath, { force: true });
+			await writeFile(profilePath, desiredBlock, "utf8");
+			action(
+				`Replaced repo-linked PowerShell profile with managed block: ${profilePath}`,
+			);
+		} else {
+			// Unknown symlink target: preserve the link as a timestamped backup
+			// (rename operates on the link itself) before taking over the path.
+			const timestamp = formatTimestamp(now ?? new Date());
+			const backupPath = await uniqueBackupPath(
+				`${profilePath}.backup.${timestamp}`,
+			);
+			await rename(profilePath, backupPath);
+			action(
+				`Backed up foreign PowerShell profile symlink to ${path.basename(backupPath)}`,
+			);
+			await writeFile(profilePath, desiredBlock, "utf8");
+			action(`Installed managed PowerShell profile block: ${profilePath}`);
+		}
+		await seedPowerShellProfileLocal(path.dirname(profilePath));
+		return;
+	}
+
+	if (existingStat) {
+		const existingContent = await readFile(profilePath, "utf8");
+		const result = reconcileManagedBlock(
+			existingContent,
+			desiredBlock,
+			POWERSHELL_MARKERS,
+		);
+
+		if (result.outcome === "conflict") {
+			warn(
+				`[CONFLICT] ${profilePath} has malformed dotfiles markers; fix them manually. Leaving the file untouched.`,
+			);
+			return;
+		}
+		if (result.outcome === "unchanged") {
+			info(`PowerShell profile managed block already current: ${profilePath}`);
+		} else if (result.outcome === "replaced") {
+			await writeFile(profilePath, result.content, "utf8");
+			action(`Updated managed PowerShell profile block: ${profilePath}`);
+		} else {
+			const timestamp = formatTimestamp(now ?? new Date());
+			const backupPath = await uniqueBackupPath(
+				`${profilePath}.backup.${timestamp}`,
+			);
+			await copyFile(profilePath, backupPath);
+			action(`Backed up PowerShell profile to ${path.basename(backupPath)}`);
+			await writeFile(profilePath, result.content, "utf8");
+			action(
+				`Installed managed PowerShell profile block and preserved existing content: ${profilePath}`,
+			);
+		}
+		await seedPowerShellProfileLocal(path.dirname(profilePath));
+		return;
+	}
+
+	await mkdir(path.dirname(profilePath), { recursive: true });
+	await writeFile(profilePath, desiredBlock, "utf8");
+	action(`Created managed PowerShell profile block: ${profilePath}`);
+	await seedPowerShellProfileLocal(path.dirname(profilePath));
+}
+
+export type SetupPowerShellProfileOptions = {
+	dotfilesDir: string;
+	homeDir?: string;
+	now?: Date;
+	platform?: NodeJS.Platform;
+};
+
+export async function setupPowerShellProfile(
+	options: SetupPowerShellProfileOptions,
+): Promise<void> {
+	const platform = options.platform ?? process.platform;
+	if (platform !== "win32") {
+		return;
+	}
+
+	const homeDir = options.homeDir ?? os.homedir();
+	const documentsDir = path.join(homeDir, "Documents");
+	const winPowerShellDir = path.join(documentsDir, "WindowsPowerShell");
+	// Gate the legacy WindowsPowerShell target on the existence of its own
+	// directory, which this tool never creates. Writing the modern
+	// Documents/PowerShell profile creates Documents as a side effect, so gating
+	// on Documents would fabricate the legacy profile on the next run.
+	const winPowerShellDirExists = await pathExists(winPowerShellDir);
+	const desiredBlock = renderManagedPowerShell(options.dotfilesDir);
+
+	const targets = [
+		{
+			path: path.join(documentsDir, "PowerShell", POWERSHELL_PROFILE_NAME),
+			skip: false,
+		},
+		{
+			path: path.join(winPowerShellDir, POWERSHELL_PROFILE_NAME),
+			skip: !winPowerShellDirExists,
+		},
+	];
+
+	for (const target of targets) {
+		if (target.skip) {
+			continue;
+		}
+		await applyManagedPowerShellProfile(target.path, desiredBlock, options.now);
 	}
 }
 
@@ -953,6 +1110,7 @@ async function main(): Promise<void> {
 	await linkConfigDirs(dotfilesDir);
 	await installManagedEnvironment(dotfilesDir);
 	await setupZshrc({ dotfilesDir });
+	await setupPowerShellProfile({ dotfilesDir });
 	await linkWindowsExtras(dotfilesDir);
 
 	if (process.platform === "win32") {

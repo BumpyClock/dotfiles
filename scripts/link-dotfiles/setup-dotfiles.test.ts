@@ -1,16 +1,30 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+	lstat,
+	mkdir,
+	mkdtemp,
+	readdir,
+	readFile,
+	readlink,
+	rm,
+	symlink,
+	writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import {
+	POWERSHELL_MANAGED_START,
 	ZSHRC_MANAGED_MARKER,
 	flattenEnvironmentConfig,
 	isManagedZshrc,
 	loadManagedEnvironment,
+	renderManagedPowerShell,
 	renderManagedZshrc,
 	renderPowerShellEnvironmentScript,
+	renderPowerShellProfileLocal,
 	renderShellEnvironmentScript,
 	renderZshrcLocal,
+	setupPowerShellProfile,
 	setupZshrc,
 } from "./setup-dotfiles";
 
@@ -305,6 +319,343 @@ describe("managed zshrc", () => {
 		// New block is prepended in front of the preserved original content.
 		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
 			`${renderManagedZshrc(dotfilesDir)}${legacyContent}`,
+		);
+	});
+});
+
+describe("managed PowerShell profile", () => {
+	afterEach(async () => {
+		await Promise.all(
+			temporaryDirectories.map((directory) =>
+				rm(directory, { force: true, recursive: true }),
+			),
+		);
+		temporaryDirectories = [];
+	});
+
+	const fixedDate = new Date("2025-03-15T10:30:45");
+	const dotfilesDir = "/fake/dotfiles";
+
+	async function createHomeFixture(): Promise<string> {
+		const homeDir = await mkdtemp(path.join(os.tmpdir(), "pwsh-test-home-"));
+		temporaryDirectories.push(homeDir);
+		return homeDir;
+	}
+
+	function pwshProfilePath(homeDir: string): string {
+		return path.join(
+			homeDir,
+			"Documents",
+			"PowerShell",
+			"Microsoft.PowerShell_profile.ps1",
+		);
+	}
+
+	function winPwshProfilePath(homeDir: string): string {
+		return path.join(
+			homeDir,
+			"Documents",
+			"WindowsPowerShell",
+			"Microsoft.PowerShell_profile.ps1",
+		);
+	}
+
+	async function listBackups(dir: string): Promise<string[]> {
+		return Array.fromAsync(
+			new Bun.Glob("Microsoft.PowerShell_profile.ps1.backup.*").scan({
+				cwd: dir,
+			}),
+		);
+	}
+
+	test("renders a managed PowerShell block with guarded sources", () => {
+		const content = renderManagedPowerShell("/opt/dotfiles");
+
+		expect(content).toStartWith("# >>> dotfiles powershell start\n");
+		expect(content).toContain(
+			"$dotfilesShared = '/opt/dotfiles/shell/powershell/shared.ps1'",
+		);
+		expect(content).toContain("if (Test-Path $dotfilesShared) {");
+		expect(content).toContain(
+			"$dotfilesProfileLocal = Join-Path (Split-Path -Parent $PROFILE) 'profile.local.ps1'",
+		);
+		expect(content).toContain("# <<< dotfiles powershell end");
+	});
+
+	test("is a no-op on non-win32 platforms", async () => {
+		const homeDir = await createHomeFixture();
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "darwin",
+		});
+
+		await expect(readFile(pwshProfilePath(homeDir), "utf8")).rejects.toThrow();
+	});
+
+	test("fresh install writes the block and seeds the local override", async () => {
+		const homeDir = await createHomeFixture();
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		const profilePath = pwshProfilePath(homeDir);
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(
+			renderManagedPowerShell(dotfilesDir),
+		);
+		await expect(
+			readFile(
+				path.join(path.dirname(profilePath), "profile.local.ps1"),
+				"utf8",
+			),
+		).resolves.toBe(renderPowerShellProfileLocal());
+		// WindowsPowerShell is not fabricated when Documents did not pre-exist.
+		await expect(
+			readFile(winPwshProfilePath(homeDir), "utf8"),
+		).rejects.toThrow();
+	});
+
+	test("writes the legacy target when its directory already exists", async () => {
+		const homeDir = await createHomeFixture();
+		// The legacy target is only written when its own directory pre-exists.
+		await mkdir(path.join(homeDir, "Documents", "WindowsPowerShell"), {
+			recursive: true,
+		});
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		await expect(readFile(pwshProfilePath(homeDir), "utf8")).resolves.toBe(
+			renderManagedPowerShell(dotfilesDir),
+		);
+		await expect(readFile(winPwshProfilePath(homeDir), "utf8")).resolves.toBe(
+			renderManagedPowerShell(dotfilesDir),
+		);
+	});
+
+	test("does not fabricate the legacy profile across repeated runs", async () => {
+		const homeDir = await createHomeFixture();
+		// No Documents tree exists; run 1 creates Documents/PowerShell as a side
+		// effect, which must NOT cause run 2 to fabricate WindowsPowerShell.
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+		const afterFirst = await readFile(pwshProfilePath(homeDir), "utf8");
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: new Date("2025-03-15T11:00:00"),
+			platform: "win32",
+		});
+
+		// Byte-identical modern profile, and the legacy profile never appears.
+		await expect(readFile(pwshProfilePath(homeDir), "utf8")).resolves.toBe(
+			afterFirst,
+		);
+		await expect(
+			readFile(winPwshProfilePath(homeDir), "utf8"),
+		).rejects.toThrow();
+
+		// Full Documents subtree: only PowerShell/, no WindowsPowerShell/, no backups.
+		const entries = (
+			await readdir(path.join(homeDir, "Documents"), { recursive: true })
+		).sort();
+		expect(entries).toEqual(
+			[
+				"PowerShell",
+				path.join("PowerShell", "Microsoft.PowerShell_profile.ps1"),
+				path.join("PowerShell", "profile.local.ps1"),
+			].sort(),
+		);
+	});
+
+	test("migrates a repo-linked profile to a native managed block", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		// Symlink resolves to this repo's profile, so it is dropped and rewritten.
+		const repoFile = path.join(
+			homeDir,
+			"dotfiles",
+			"shell",
+			"powershell",
+			"shared.ps1",
+		);
+		await mkdir(path.dirname(repoFile), { recursive: true });
+		await writeFile(repoFile, "# repo profile\n", "utf8");
+		await symlink(repoFile, profilePath);
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		// The repo file is untouched, the target is now a real managed file, and
+		// no backup is created for a recognized repo link.
+		await expect(readFile(repoFile, "utf8")).resolves.toBe("# repo profile\n");
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(
+			renderManagedPowerShell(dotfilesDir),
+		);
+		expect(await listBackups(path.dirname(profilePath))).toHaveLength(0);
+	});
+
+	test("backs up an unknown-target symlink before taking over", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		// Symlink points at a user file that is NOT the repo profile.
+		const foreignFile = path.join(homeDir, "my-custom-profile.ps1");
+		await writeFile(foreignFile, "# custom profile\n", "utf8");
+		await symlink(foreignFile, profilePath);
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		// The profile is now a regular managed file.
+		const stat = await lstat(profilePath);
+		expect(stat.isSymbolicLink()).toBe(false);
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(
+			renderManagedPowerShell(dotfilesDir),
+		);
+		// The original link is preserved as a backup symlink to its target.
+		const backupPath = `${profilePath}.backup.20250315_103045`;
+		expect((await lstat(backupPath)).isSymbolicLink()).toBe(true);
+		await expect(readlink(backupPath)).resolves.toBe(foreignFile);
+		await expect(readFile(foreignFile, "utf8")).resolves.toBe(
+			"# custom profile\n",
+		);
+	});
+
+	test("backs up an unmanaged profile and prepends the block", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		const oldContent = "# my old profile\nfunction gs { git status }\n";
+		await writeFile(profilePath, oldContent, "utf8");
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		await expect(
+			readFile(`${profilePath}.backup.20250315_103045`, "utf8"),
+		).resolves.toBe(oldContent);
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(
+			`${renderManagedPowerShell(dotfilesDir)}${oldContent}`,
+		);
+	});
+
+	test("second run is a byte-identical no-op with no new backups", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+		const first = await readFile(profilePath, "utf8");
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: new Date("2025-03-15T11:00:00"),
+			platform: "win32",
+		});
+		const second = await readFile(profilePath, "utf8");
+
+		expect(second).toBe(first);
+		expect(await listBackups(path.dirname(profilePath))).toHaveLength(0);
+	});
+
+	test("updates a stale block path while preserving appended content", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+
+		await setupPowerShellProfile({
+			dotfilesDir: "/old/dotfiles",
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+		await writeFile(
+			profilePath,
+			`${await readFile(profilePath, "utf8")}\n# pnpm\n$env:PNPM_HOME = 'C:\\pnpm'\n`,
+			"utf8",
+		);
+		await setupPowerShellProfile({
+			dotfilesDir: "/new/dotfiles",
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		const updated = await readFile(profilePath, "utf8");
+		expect(updated).toContain("/new/dotfiles/shell/powershell/shared.ps1");
+		expect(updated).toContain("$env:PNPM_HOME = 'C:\\pnpm'");
+		expect(await listBackups(path.dirname(profilePath))).toHaveLength(0);
+	});
+
+	test("leaves a profile with malformed markers untouched", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		// Start marker present but no matching end marker -> conflict.
+		const brokenContent = `${POWERSHELL_MANAGED_START}\n. /some/shared.ps1\n# missing end marker\n`;
+		await writeFile(profilePath, brokenContent, "utf8");
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(brokenContent);
+		expect(await listBackups(path.dirname(profilePath))).toHaveLength(0);
+	});
+
+	test("preserves an existing local override on re-run", async () => {
+		const homeDir = await createHomeFixture();
+		const profilePath = pwshProfilePath(homeDir);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		const localPath = path.join(path.dirname(profilePath), "profile.local.ps1");
+		await writeFile(localPath, "$env:MY_LOCAL = '1'\n", "utf8");
+
+		await setupPowerShellProfile({
+			dotfilesDir,
+			homeDir,
+			now: fixedDate,
+			platform: "win32",
+		});
+
+		await expect(readFile(localPath, "utf8")).resolves.toBe(
+			"$env:MY_LOCAL = '1'\n",
 		);
 	});
 });

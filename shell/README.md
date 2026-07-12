@@ -14,7 +14,7 @@ Shell configurations and shell-specific setup scripts.
 
 ### `powershell/`
 
-- `Microsoft.PowerShell_profile.ps1`
+- `shared.ps1`
 
 ## Usage
 

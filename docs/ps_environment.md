@@ -7,14 +7,26 @@ The PowerShell profile automatically installs these tools if missing:
 - **GitHub CLI** - GitHub command line tool (`winget install GitHub.cli -h`)
 - **Terminal-Icons** - PowerShell module for file icons
 
+## Profile Management
+- Profile content is owned by a marker-delimited managed block that the linker
+  writes into the native profile. Set it up with:
+  `bun scripts/link-dotfiles/link-dotfiles.ts --setup dotfiles`
+- The block sources `shell/powershell/shared.ps1` (the shared baseline) and a
+  machine-local `profile.local.ps1` next to the profile. Everything outside the
+  markers, including installer appends, is preserved on rerun.
+- Targets are `Documents\PowerShell\Microsoft.PowerShell_profile.ps1` and, when
+  its directory already exists, `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1`.
+- If the markers get corrupted the linker logs a `[CONFLICT]` and leaves the
+  file untouched for you to fix by hand.
+
 ## Installer Behavior
-- `shell/powershell/setup.ps1` contains the managed profile content and writes it into both current-user targets:
-  `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1` and
-  `Documents\PowerShell\Microsoft.PowerShell_profile.ps1`
+- `shell/powershell/setup.ps1` installs the tools the profile relies on (pwsh,
+  oh-my-posh, fnm/Node, pnpm, Bun, eza, GitHub CLI, VS Code, modules) and sets
+  up the oh-my-posh theme and Windows Terminal defaults. It no longer writes the
+  profile itself.
 - Documents resolution prefers the actual Windows Documents special folder, then OneDrive-backed `Documents` candidates, then `$HOME\Documents`
-- The installer also unblocks matching OneDrive-backed profile/theme paths when they exist
+- The installer unblocks existing profile/theme files so PowerShell execution policy does not reject them as downloaded scripts
 - The installer does not require symlinks or Developer Mode
-- The installer unblocks copied profile/theme files so PowerShell execution policy does not reject them as downloaded scripts
 - If execution policy is `AllSigned` from `MachinePolicy`, `UserPolicy`, or the effective policy, unblocking is not enough; the profile must be signed or policy must change
 
 ## Development Workflow Commands
