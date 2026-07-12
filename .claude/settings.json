@@ -169,7 +169,7 @@
       "Bash(git push:*)"
     ]
   },
-  "model": "haiku",
+  "model": "fable",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
@@ -214,7 +214,7 @@
   },
   "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
