@@ -8,11 +8,11 @@ default = "sonnet"
 default = "opus"
 
 [providers.copilot.fast]
-default = "claude-sonnet-4-6"
+default = "claude-sonnet-5"
 
 [providers.copilot.balanced]
 default = "claude-opus-4-8"
-economy = "claude-sonnet-4-6"
+economy = "claude-sonnet-5"
 
 [providers.copilot.strong]
 default = "gpt-5.5"
@@ -29,11 +29,11 @@ economy = "gpt-5.4-mini"
 default = "gpt-5.5"
 
 [providers.pi.fast]
-default = "zai/glm-5.1"
+default = "zai/glm-5.2"
 
 [providers.pi.balanced]
 default = "github-copilot/claude-opus-4.8"
-economy = "github-copilot/claude-sonnet-4.6"
+economy = "github-copilot/claude-sonnet-5"
 
 [providers.pi.strong]
 default = "github-copilot/gpt-5.5"

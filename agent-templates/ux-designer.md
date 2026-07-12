@@ -17,7 +17,7 @@ codex:
     - session-id
     - memory-progress
 pi:
-  model: github-copilot/claude-opus-4.7
+  model: github-copilot/claude-opus-4.8
   skills: ux-designer
   inheritSkills: false
   thinking: medium

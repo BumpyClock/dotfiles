@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "matcher": "Bash",
+        "bash": "/usr/bin/env python3 \"$HOME/Projects/dotfiles/agent-hooks/block_destructive_commands.py\"",
+        "timeoutSec": 5
+      }
+    ]
+  }
+}

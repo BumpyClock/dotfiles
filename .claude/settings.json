@@ -169,8 +169,22 @@
       "Bash(git push:*)"
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "haiku",
   "enableAllProjectMcpServers": true,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/adityasharma/Projects/dotfiles/.claude/hooks/block-destructive-commands.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "ccline"
@@ -181,13 +195,20 @@
     "figma@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "warp@claude-code-warp": true
+    "warp@claude-code-warp": true,
+    "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
       "source": {
         "source": "github",
         "repo": "warpdotdev/claude-code-warp"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
       }
     }
   },

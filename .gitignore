@@ -28,3 +28,4 @@ AGENTS.local.md
 
 # Editor backup files
 *.save
+.pi/.pi-subagents

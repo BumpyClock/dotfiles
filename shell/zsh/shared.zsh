@@ -123,6 +123,17 @@ fi
 
 # Claude
 alias claude-yolo='claude --dangerously-skip-permissions'
+claudex() {
+  ANTHROPIC_BASE_URL="http://127.0.0.1:8317" \
+  ANTHROPIC_AUTH_TOKEN="sk-dummy" \
+  ANTHROPIC_DEFAULT_OPUS_MODEL="gpt-5.6-sol(high)" \
+  ANTHROPIC_DEFAULT_SONNET_MODEL="gpt-5.6-terra(high)" \
+  ANTHROPIC_DEFAULT_HAIKU_MODEL="gpt-5.6-luna(minimal)" \
+  CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1 \
+  CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3 \
+  ENABLE_TOOL_SEARCH=false \
+  command claude --model opus "$@"
+}
 claude-monitor() {
   command claude-monitor --plan max20 "$@"
 }
