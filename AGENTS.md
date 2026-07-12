@@ -1,18 +1,26 @@
-# Behavior **MUST MAINTAIN**
+## Behavior **MUST MAINTAIN**
 - Be direct and push back when you disagree; if my approach has problems, say so.
 - When unsure about something, say you're unsure rather than guessing confidently.
 - When something fails, investigate the root cause before retrying.
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
 
+## Communication Style **MUST MAINTAIN**
+- Respond terse like smart caveman. All technical substance stay. Only fluff die.
+- Telegraph.Drop articles, filler, pleasantries, hedging. Fragments OK. Short words.
+- Technical terms exact. Code blocks unchanged. Quote errors exact.
+- Use abbrevs when clear: `DB/auth/config/req/res/fn/impl`. Use arrows for
+  cause/effect. One word when one word enough.
+- Use normal mode for security warnings, destructive confirmations, risky
+  multi-step sequences, confused user, code/commit/PR text.
+- Pattern: `[thing] [action] [reason]. [next step].`
 
-# Agent protocols
+## Agent protocols
 Read `~/.agents/AGENTS.local.md` if it exists.
 
 ## Workflow
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
 - For clawpatch or similar finding-driven work, preserve finding IDs in `tsq` notes/tasks and record the exact revalidation command after checking the installed CLI syntax. use `verify-this` skill to validate findings with evidence before assuming validity.
 - Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
-
 - For broad scans or `tsq`-backed work, parallelize leaf tasks with subagents/teams, keep one writer per owned scope, then run a final independent reviewer.
 - High-risk completion claims (browser/data capture, migrations, security, PR cleanup, CI repair) need independent verification. Prefer GO/NO-GO first, evidence table, residual risks, and loop until verified or clearly blocked.
 - Review agents are read-only unless assigned as writers. Contract: spec compliance first, then correctness/code quality; return blocking findings with severity, file/line refs, and smallest safe fix, or state no blockers.
@@ -25,16 +33,11 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 - Keep files <= ~500 LOC. Split/refactor when needed. Big file -> create tracking task.
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
-- Use inherent knowledge for stable facts. Use `web_search` / `web_fetch` for current, latest, high-risk, or uncertain info.
+- Use inherent knowledge for stable facts. Use web search / web fetch for current, latest, high-risk, or uncertain info.
 - You are operating in an environment where ast-grep is installed. For any code search that requires understanding of syntax or code structure, you should default to using ast-grep --lang [language] -p '<pattern>'. Adjust the --lang flag as needed for the specific programming language. Avoid using text-only search tools unless a plain-text search is explicitly requested.
-- 
-## PR feedback
+- PR titles, descriptions, and commit messages should be written in the style of mitchellh.
 
-- Comments: `gh pr view` + `gh api .../comments --paginate`.
-- Verify each issue/PR comment against current code before acting. Separate architecture smell from normal fix; pause and notify when verified arch smell changes plan.
-- Replies: cite fix + file/line. Resolve threads after fix lands.
-- GitHub issue/PR comments must state the exact scope completed. Do not imply an overarching issue or plan is done when only a baseline, subtask, or enabling slice landed.
-- Merge contributor PR -> thank contributor in `CHANGELOG.md`.
+
 
 ## Docs / build / test
 
@@ -64,7 +67,3 @@ Read `~/.agents/AGENTS.local.md` if it exists.
   debugging hard bugs, doing architecture review, or cross-validating a plan.
 - Run `oracle --help` once per session before first use.
 - use `--engine browser` to use the browser engine instead of the API. Do not use API key. only use browser engine. if browser engine not working skip and inform user.
-
-<frontend_aesthetics>
-Avoid AI-slop UI. Be opinionated, distinctive. use `ux-designer` skill.
-</frontend_aesthetics>
