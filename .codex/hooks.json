@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/adityasharma/Projects/dotfiles/.claude/hooks/block-destructive-commands.sh",
+            "command": "\"$HOME/Projects/dotfiles/.claude/hooks/block-destructive-commands.sh\"",
             "timeout": 5,
             "statusMessage": "Checking destructive command policy"
           }

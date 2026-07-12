@@ -53,6 +53,26 @@ describe("ai-agent-links config", () => {
 		).toBe(false);
 	});
 
+	test("links global destructive-command hooks for Codex and Copilot", async () => {
+		const config = await loadConfig(configPath);
+
+		expect(config.sources.codex_hooks).toBe(".codex/hooks.json");
+		expect(config.sources.copilot_hooks).toBe(".copilot/hooks");
+		expect(
+			config.targets
+				.filter((target) =>
+					["codex_hooks", "copilot_hooks"].includes(target.source),
+				)
+				.map((target) => ({ path: target.path, source: target.source })),
+		).toEqual([
+			{ path: "~/.codex/hooks.json", source: "codex_hooks" },
+			{
+				path: "~/.copilot/hooks",
+				source: "copilot_hooks",
+			},
+		]);
+	});
+
 	test("links tools.md into top-level agent home directories", async () => {
 		const config = await loadConfig(configPath);
 

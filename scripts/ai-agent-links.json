@@ -11,6 +11,8 @@
     "copilot_agents": "agent-templates/dist/copilot",
     "opencode_agents": "agent-templates/dist/opencode",
     "claude_settings": ".claude/settings.json",
+    "codex_hooks": ".codex/hooks.json",
+    "copilot_hooks": ".copilot/hooks",
     "codex_agents": "agent-templates/dist/codex",
     "pi_settings": ".pi/agent/settings.json",
     "pi_models": ".pi/agent/models.json",
@@ -78,6 +80,10 @@
       "path": "~/.codex/skills"
     },
     {
+      "source": "codex_hooks",
+      "path": "~/.codex/hooks.json"
+    },
+    {
       "source": "codex_agents",
       "path": "~/.codex/agents",
       "mode": "mirror"
@@ -122,6 +128,10 @@
     {
       "source": "skills",
       "path": "~/.copilot/skills"
+    },
+    {
+      "source": "copilot_hooks",
+      "path": "~/.copilot/hooks"
     },
     {
       "source": "copilot_agents",
