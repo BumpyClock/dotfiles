@@ -11,7 +11,6 @@
     "copilot_agents": "agent-templates/dist/copilot",
     "opencode_agents": "agent-templates/dist/opencode",
     "claude_settings": ".claude/settings.json",
-    "codex_config": ".codex/config.toml",
     "codex_agents": "agent-templates/dist/codex",
     "pi_settings": ".pi/agent/settings.json",
     "pi_models": ".pi/agent/models.json",
@@ -77,10 +76,6 @@
     {
       "source": "skills",
       "path": "~/.codex/skills"
-    },
-    {
-      "source": "codex_config",
-      "path": "~/.codex/config.toml"
     },
     {
       "source": "codex_agents",

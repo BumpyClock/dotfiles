@@ -40,6 +40,19 @@ describe("ai-agent-links config", () => {
 		temporaryDirectories = [];
 	});
 
+	test("does not manage the Codex config file", async () => {
+		const config = await loadConfig(configPath);
+
+		expect(config.sources).not.toHaveProperty("codex_config");
+		expect(
+			config.targets.some(
+				(target) =>
+					target.source === "codex_config" ||
+					target.path === "~/.codex/config.toml",
+			),
+		).toBe(false);
+	});
+
 	test("links tools.md into top-level agent home directories", async () => {
 		const config = await loadConfig(configPath);
 
