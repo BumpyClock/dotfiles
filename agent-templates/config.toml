@@ -1,40 +1,40 @@
-[providers.claude.fast]
-default = "haiku"
+# Single-axis model tiers. Each agent picks one model_class; every provider
+# maps that class to exactly one model (+ reasoning effort where supported).
+# Ladder: heavy > strong > balanced > fast.
 
-[providers.claude.balanced]
-default = "sonnet"
+[providers.claude]
+heavy = { model = "fable" }
+strong = { model = "opus" }
+balanced = { model = "sonnet" }
+fast = { model = "haiku" }
 
-[providers.claude.strong]
-default = "opus"
+[providers.copilot]
+heavy = { model = "gpt-5.6-sol", reasoning = "high" }
+strong = { model = "gpt-5.6-terra", reasoning = "high" }
+balanced = { model = "gpt-5.6-luna", reasoning = "xhigh" }
+fast = { model = "claude-sonnet-5" }
 
-[providers.copilot.fast]
-default = "claude-sonnet-5"
+[providers.codex]
+heavy = { model = "gpt-5.6-sol", reasoning = "high" }
+strong = { model = "gpt-5.6-terra", reasoning = "high" }
+balanced = { model = "gpt-5.6-luna", reasoning = "xhigh" }
+fast = { model = "gpt-5.6-luna", reasoning = "medium" }
 
-[providers.copilot.balanced]
-default = "claude-opus-4-8"
-economy = "claude-sonnet-5"
+[providers.pi]
+heavy = { model = "openai-codex/gpt-5.6-sol", reasoning = "high" }
+strong = { model = "openai-codex/gpt-5.6-terra", reasoning = "high" }
+balanced = { model = "openai-codex/gpt-5.6-luna", reasoning = "xhigh" }
+fast = { model = "zai/glm-5.2", reasoning = "low" }
 
-[providers.copilot.strong]
-default = "gpt-5.5"
-economy = "claude-opus-4.8"
-
-[providers.codex.fast]
-default = "gpt-5.4-mini"
-
-[providers.codex.balanced]
-default = "gpt-5.5"
-economy = "gpt-5.4-mini"
-
-[providers.codex.strong]
-default = "gpt-5.5"
-
-[providers.pi.fast]
-default = "zai/glm-5.2"
-
-[providers.pi.balanced]
-default = "github-copilot/claude-opus-4.8"
-economy = "github-copilot/claude-sonnet-5"
-
-[providers.pi.strong]
-default = "github-copilot/gpt-5.5"
-economy = "github-copilot/claude-opus-4.8"
+# Codex CLI settings shared by every compiled agent; templates override per key.
+[codex]
+web_search = "live"
+personality = "pragmatic"
+suppress_unstable_features_warning = true
+tui_status_line = [
+  "model-with-reasoning",
+  "context-remaining",
+  "codex-version",
+  "session-id",
+  "memory-progress",
+]

@@ -20,16 +20,14 @@ const templateConfigPath = path.join(
 );
 let temporaryDirectories: string[] = [];
 
+type Template = Awaited<ReturnType<typeof readMarkdownAgentTemplates>>[number];
+
 async function createOutputDirectory(): Promise<string> {
 	const outputDir = await mkdtemp(
 		path.join(os.tmpdir(), "compile-agents-test-"),
 	);
 	temporaryDirectories.push(outputDir);
 	return outputDir;
-}
-
-function stripFrontmatter(rawSource: string): string {
-	return rawSource.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
 }
 
 function parseMarkdownAgent(text: string): {
@@ -48,25 +46,25 @@ function parseMarkdownAgent(text: string): {
 }
 
 function normalizeNewlines(value: string): string {
-	return value.replace(/\r\n/g, "\n");
+	return value.replace(/\r\n/g, "\n").trim();
 }
 
 function resolveExpectedModel(
 	config: AgentTemplateConfig,
-	template: Awaited<ReturnType<typeof readMarkdownAgentTemplates>>[number],
+	template: Template,
 	provider: keyof AgentTemplateConfig["providers"],
 ): string {
-	const mapping = config.providers[provider][template.modelClass];
-	return (
-		(template.modelProfile
-			? mapping.profiles?.[template.modelProfile]
-			: undefined) ?? mapping.default
-	);
+	const definition = config.providers[provider][template.modelClass];
+	if (provider === "copilot" && definition.reasoning) {
+		return `${definition.model}(${definition.reasoning})`;
+	}
+
+	return definition.model;
 }
 
 function expectedMarkdownFrontmatter(
 	config: AgentTemplateConfig,
-	template: Awaited<ReturnType<typeof readMarkdownAgentTemplates>>[number],
+	template: Template,
 	provider: "claude" | "copilot" | "opencode",
 ): Record<string, unknown> {
 	const common = Object.fromEntries(
@@ -105,10 +103,16 @@ function expectedMarkdownFrontmatter(
 }
 
 function expectedPiThinking(
-	template: Awaited<ReturnType<typeof readMarkdownAgentTemplates>>[number],
+	config: AgentTemplateConfig,
+	template: Template,
 ): string {
 	if (template.pi.thinking) {
 		return template.pi.thinking;
+	}
+
+	const reasoning = config.providers.pi[template.modelClass].reasoning;
+	if (reasoning) {
+		return reasoning;
 	}
 
 	if (template.modelClass === "fast") {
@@ -128,13 +132,13 @@ function commaList(values: string[]): string {
 
 function expectedPiFrontmatter(
 	config: AgentTemplateConfig,
-	template: Awaited<ReturnType<typeof readMarkdownAgentTemplates>>[number],
+	template: Template,
 ): Record<string, unknown> {
 	const frontmatter: Record<string, unknown> = {
 		name: template.name,
 		description: template.description,
-		model: template.pi.model ?? resolveExpectedModel(config, template, "pi"),
-		thinking: expectedPiThinking(template),
+		model: template.pi.model ?? config.providers.pi[template.modelClass].model,
+		thinking: expectedPiThinking(config, template),
 		systemPromptMode: template.pi.systemPromptMode ?? "replace",
 		inheritProjectContext: template.pi.inheritProjectContext ?? true,
 		inheritSkills: template.pi.inheritSkills ?? false,
@@ -213,27 +217,56 @@ describe("readMarkdownAgentTemplates", () => {
 		const templates = await readMarkdownAgentTemplates(
 			path.join(repoRoot, "agent-templates"),
 		);
+		const names = templates.map((template) => template.name);
 
-		expect(templates.map((template) => template.name)).toContain(
-			"developer-lite",
+		expect(names).toContain("developer");
+		expect(names).toContain("developer-lite");
+		expect(names).toContain("developer-heavy");
+		expect(names).not.toContain("os2020");
+		expect(names).not.toContain("escalation");
+	});
+
+	test("resolves extends by inheriting body and merging frontmatter", async () => {
+		const templates = await readMarkdownAgentTemplates(
+			path.join(repoRoot, "agent-templates"),
 		);
-		expect(templates.map((template) => template.name)).not.toContain("os2020");
-		expect(
-			templates.find((template) => template.name === "developer-lite"),
-		).toMatchObject({
-			claude: {
-				color: "yellow",
-			},
-			codex: {
-				description:
-					"Lite coding agent for writing and debugging for simple focused tasks",
-			},
-			pi: {
-				model: "zai/glm-5.2",
-			},
-			modelClass: "balanced",
-			modelProfile: "economy",
-		});
+		const byName = new Map(templates.map((template) => [template.name, template]));
+		const developer = byName.get("developer");
+		const lite = byName.get("developer-lite");
+		const heavy = byName.get("developer-heavy");
+		if (!developer || !lite || !heavy) {
+			throw new Error("Missing developer family templates");
+		}
+
+		expect(lite.extendsName).toBe("developer");
+		expect(lite.modelClass).toBe("balanced");
+		expect(heavy.modelClass).toBe("heavy");
+		expect(developer.modelClass).toBe("strong");
+
+		// Child overrides win; unset keys inherit from the parent.
+		expect(lite.claude).toMatchObject({ color: "yellow", context: "fresh" });
+		expect(heavy.claude).toMatchObject({ color: "red", context: "fresh" });
+		expect(lite.pi.tools).toEqual(developer.pi.tools);
+		expect(lite.pi.model).toBeUndefined();
+
+		// Blank child bodies inherit the parent body verbatim.
+		expect(lite.body).toBe(developer.body);
+		expect(heavy.body).toBe(developer.body);
+
+		// Identity never inherits.
+		expect(lite.description).toContain("simple focused tasks");
+	});
+
+	test("expands partial includes into the body", async () => {
+		const templates = await readMarkdownAgentTemplates(
+			path.join(repoRoot, "agent-templates"),
+		);
+
+		for (const template of templates) {
+			expect(template.body).not.toContain("{{include:");
+			expect(template.body).toContain("Escalate, Don't Guess");
+			expect(template.body).toContain("## Status protocol");
+		}
 	});
 });
 
@@ -247,7 +280,7 @@ describe("compileAgents", () => {
 		temporaryDirectories = [];
 	});
 
-	test("reproduces archived claude markdown agents from template schema", async () => {
+	test("reproduces claude markdown agents from template schema", async () => {
 		const outputDir = await createOutputDirectory();
 		const templates = await compileAgents({
 			agentsDir: path.join(repoRoot, "agent-templates"),
@@ -268,12 +301,12 @@ describe("compileAgents", () => {
 				expectedMarkdownFrontmatter(config, template, "claude"),
 			);
 			expect(normalizeNewlines(compiled.body)).toBe(
-				normalizeNewlines(stripFrontmatter(template.rawSource)),
+				normalizeNewlines(template.body),
 			);
 		}
 	});
 
-	test("emits copilot agent markdown with provider-specific model ids", async () => {
+	test("emits copilot agent markdown with reasoning-suffixed model ids", async () => {
 		const outputDir = await createOutputDirectory();
 		const templates = await compileAgents({
 			agentsDir: path.join(repoRoot, "agent-templates"),
@@ -288,7 +321,7 @@ describe("compileAgents", () => {
 		const copilotEntries = await readdir(path.join(outputDir, "copilot"));
 		expect(copilotEntries).toContain("planner.md");
 		expect(copilotEntries).toContain("developer-lite.md");
-		expect(copilotEntries).not.toContain("architect.md");
+		expect(copilotEntries).toContain("developer-heavy.md");
 		expect(copilotEntries).not.toContain("os2020.md");
 
 		for (const entry of copilotEntries.filter((name) => name.endsWith(".md"))) {
@@ -305,9 +338,14 @@ describe("compileAgents", () => {
 				expectedMarkdownFrontmatter(config, template, "copilot"),
 			);
 			expect(normalizeNewlines(compiled.body)).toBe(
-				normalizeNewlines(stripFrontmatter(template.rawSource)),
+				normalizeNewlines(template.body),
 			);
 		}
+
+		const developer = parseMarkdownAgent(
+			await readFile(path.join(outputDir, "copilot", "developer.md"), "utf8"),
+		);
+		expect(developer.frontmatter.model).toBe("gpt-5.6-terra(high)");
 	});
 
 	test("emits opencode markdown with provider-prefixed models and subagent mode", async () => {
@@ -325,7 +363,6 @@ describe("compileAgents", () => {
 		const opencodeEntries = await readdir(path.join(outputDir, "opencode"));
 		expect(opencodeEntries).toContain("planner.md");
 		expect(opencodeEntries).toContain("developer-lite.md");
-		expect(opencodeEntries).not.toContain("architect.md");
 		expect(opencodeEntries).not.toContain("os2020.md");
 
 		for (const entry of opencodeEntries.filter((name) =>
@@ -345,13 +382,14 @@ describe("compileAgents", () => {
 			);
 			expect(typeof compiled.frontmatter.model).toBe("string");
 			expect(String(compiled.frontmatter.model)).toContain("/");
+			expect(String(compiled.frontmatter.model)).not.toContain("(");
 			expect(compiled.frontmatter.mode).toBe("subagent");
 			if (typeof compiled.frontmatter.tools !== "undefined") {
 				expect(typeof compiled.frontmatter.tools).toBe("object");
 				expect(Array.isArray(compiled.frontmatter.tools)).toBe(false);
 			}
 			expect(normalizeNewlines(compiled.body)).toBe(
-				normalizeNewlines(stripFrontmatter(template.rawSource)),
+				normalizeNewlines(template.body),
 			);
 		}
 	});
@@ -371,7 +409,6 @@ describe("compileAgents", () => {
 		const piEntries = await readdir(path.join(outputDir, "pi"));
 		expect(piEntries).toContain("developer-lite.md");
 		expect(piEntries).toContain("planner.md");
-		expect(piEntries).not.toContain("architect.md");
 		expect(piEntries).not.toContain("os2020.md");
 
 		for (const entry of piEntries.filter((name) => name.endsWith(".md"))) {
@@ -391,17 +428,18 @@ describe("compileAgents", () => {
 			);
 			expect(rawCompiled.split("---", 3)[1]).not.toContain("\n  ");
 			expect(normalizeNewlines(compiled.body)).toBe(
-				normalizeNewlines(stripFrontmatter(template.rawSource)),
+				normalizeNewlines(template.body),
 			);
 		}
 
 		const developerLite = parseMarkdownAgent(
 			await readFile(path.join(outputDir, "pi", "developer-lite.md"), "utf8"),
 		);
-		expect(developerLite.frontmatter.model).toBe("zai/glm-5.2");
+		expect(developerLite.frontmatter.model).toBe("openai-codex/gpt-5.6-luna");
+		expect(developerLite.frontmatter.thinking).toBe("xhigh");
 	});
 
-	test("emits codex files from template metadata and shared markdown prompt bodies", async () => {
+	test("emits codex toml for every agent using config defaults with template overrides", async () => {
 		const outputDir = await createOutputDirectory();
 		const templates = await compileAgents({
 			agentsDir: path.join(repoRoot, "agent-templates"),
@@ -416,10 +454,7 @@ describe("compileAgents", () => {
 			.filter((entry) => entry.endsWith(".toml"))
 			.map((entry) => path.basename(entry, ".toml"))
 			.sort();
-		const expectedNames = templates
-			.filter((template) => template.codex)
-			.map((template) => template.name)
-			.sort();
+		const expectedNames = templates.map((template) => template.name).sort();
 
 		expect(compiledNames).toEqual(expectedNames);
 
@@ -429,35 +464,49 @@ describe("compileAgents", () => {
 				"utf8",
 			);
 			const template = templateMap.get(name);
-			if (!template || !template.codex) {
+			if (!template) {
 				throw new Error(`Missing source template for ${name}`);
 			}
 
+			const codex = template.codex ?? {};
+			const definition = config.providers.codex[template.modelClass];
+
 			expect(parseTomlString(compiled, "name")).toBe(template.name);
 			expect(parseTomlString(compiled, "description")).toBe(
-				template.codex.description ?? template.description,
+				codex.description ?? template.description,
 			);
-			expect(parseTomlString(compiled, "model")).toBe(
-				resolveExpectedModel(config, template, "codex"),
-			);
+			expect(parseTomlString(compiled, "model")).toBe(definition.model);
 			expect(parseTomlString(compiled, "model_reasoning_effort")).toBe(
-				template.codex.model_reasoning_effort ?? null,
+				codex.model_reasoning_effort ?? definition.reasoning ?? null,
 			);
 			expect(parseTomlString(compiled, "web_search")).toBe(
-				template.codex.web_search ?? null,
+				codex.web_search ?? config.codexDefaults.web_search ?? null,
 			);
 			expect(parseTomlString(compiled, "personality")).toBe(
-				template.codex.personality ?? null,
+				codex.personality ?? config.codexDefaults.personality ?? null,
 			);
 			expect(
 				parseTomlBoolean(compiled, "suppress_unstable_features_warning"),
-			).toBe(template.codex.suppress_unstable_features_warning ?? null);
-			expect(parseTomlArray(compiled, "tui.status_line")).toEqual(
-				template.codex.tui_status_line ?? null,
+			).toBe(
+				codex.suppress_unstable_features_warning ??
+					config.codexDefaults.suppress_unstable_features_warning ??
+					null,
 			);
-			expect(parseTomlBody(compiled)).toBe(
-				stripFrontmatter(template.rawSource).trimEnd(),
+			expect(parseTomlArray(compiled, "tui.status_line")).toEqual(
+				codex.tui_status_line ?? config.codexDefaults.tui_status_line ?? null,
+			);
+			expect(normalizeNewlines(parseTomlBody(compiled))).toBe(
+				normalizeNewlines(template.body),
 			);
 		}
+
+		const plannerToml = await readFile(
+			path.join(outputDir, "codex", "planner.toml"),
+			"utf8",
+		);
+		expect(parseTomlString(plannerToml, "model_reasoning_effort")).toBe(
+			"xhigh",
+		);
+		expect(parseTomlString(plannerToml, "model")).toBe("gpt-5.6-terra");
 	});
 });

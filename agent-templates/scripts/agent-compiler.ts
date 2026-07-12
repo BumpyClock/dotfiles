@@ -5,7 +5,8 @@ import {
 	loadAgentTemplateConfig,
 	type AgentTemplateConfig,
 	type ModelClass,
-	type ModelProfile,
+	type ProviderModelDefinition,
+	type ReasoningEffort,
 } from "./agent-registry";
 
 export type CodexSettings = {
@@ -42,9 +43,9 @@ export type MarkdownAgentTemplate = {
 	commonFrontmatterKeys: string[];
 	copilot: Record<string, unknown>;
 	description: string;
+	extendsName?: string;
 	fileName: string;
 	modelClass: ModelClass;
-	modelProfile?: ModelProfile;
 	name: string;
 	opencode: Record<string, unknown>;
 	pi: PiSettings;
@@ -57,17 +58,27 @@ type ParsedFrontmatter = {
 	frontmatter: Record<string, unknown>;
 };
 
+type RawTemplate = ParsedFrontmatter & {
+	fileName: string;
+	name: string;
+	rawSource: string;
+	sourcePath: string;
+};
+
 const RESERVED_KEYS = new Set([
 	"name",
 	"description",
+	"extends",
 	"model_class",
-	"model_profile",
 	"claude",
 	"copilot",
 	"codex",
 	"opencode",
 	"pi",
 ]);
+
+const PARTIALS_DIR = "partials";
+const INCLUDE_PATTERN = /\{\{include:([a-z0-9-]+)\}\}/g;
 
 function parseFrontmatter(
 	rawSource: string,
@@ -98,6 +109,10 @@ function asRecord(value: unknown): Record<string, unknown> {
 	return { ...(value as Record<string, unknown>) };
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+	return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
 function assertString(
 	value: unknown,
 	fieldName: string,
@@ -111,28 +126,16 @@ function assertString(
 }
 
 function assertModelClass(value: unknown, sourcePath: string): ModelClass {
-	if (value === "fast" || value === "balanced" || value === "strong") {
+	if (
+		value === "fast" ||
+		value === "balanced" ||
+		value === "strong" ||
+		value === "heavy"
+	) {
 		return value;
 	}
 
 	throw new Error(`Unsupported or missing model_class in ${sourcePath}`);
-}
-
-function parseModelProfile(
-	value: unknown,
-	sourcePath: string,
-): ModelProfile | undefined {
-	if (typeof value === "undefined") {
-		return undefined;
-	}
-
-	if (value === "economy") {
-		return value;
-	}
-
-	throw new Error(
-		`Unsupported model_profile '${String(value)}' in ${sourcePath}`,
-	);
 }
 
 function parseCodexSettings(
@@ -145,7 +148,7 @@ function parseCodexSettings(
 
 	const raw = asRecord(value);
 	if (Object.keys(raw).length === 0) {
-		throw new Error(`codex block must be an object in ${sourcePath}`);
+		return undefined;
 	}
 
 	return {
@@ -211,6 +214,29 @@ function parsePiSettings(value: unknown, sourcePath: string): PiSettings {
 		return {};
 	}
 
+	const knownKeys = new Set([
+		"defaultContext",
+		"defaultProgress",
+		"defaultReads",
+		"extensions",
+		"fallbackModels",
+		"inheritProjectContext",
+		"inheritSkills",
+		"maxSubagentDepth",
+		"model",
+		"output",
+		"skill",
+		"skills",
+		"systemPromptMode",
+		"thinking",
+		"tools",
+	]);
+	for (const key of Object.keys(raw)) {
+		if (!knownKeys.has(key)) {
+			throw new Error(`Unknown pi.${key} in ${sourcePath}`);
+		}
+	}
+
 	return {
 		defaultContext:
 			raw.defaultContext === "fresh" || raw.defaultContext === "fork"
@@ -261,11 +287,103 @@ function renderYamlFrontmatter(frontmatter: Record<string, unknown>): string {
 	return `---\n${YAML.stringify(frontmatter, { lineWidth: 0 }).trimEnd()}\n---\n`;
 }
 
+function mergeFrontmatter(
+	parent: Record<string, unknown>,
+	child: Record<string, unknown>,
+): Record<string, unknown> {
+	const merged: Record<string, unknown> = { ...parent };
+	// Identity never inherits; each template declares its own.
+	delete merged.name;
+	delete merged.description;
+	delete merged.extends;
+
+	for (const [key, value] of Object.entries(child)) {
+		const parentValue = merged[key];
+		merged[key] =
+			isPlainObject(parentValue) && isPlainObject(value)
+				? { ...parentValue, ...value }
+				: value;
+	}
+
+	return merged;
+}
+
+function resolveExtends(
+	raw: RawTemplate,
+	rawByName: Map<string, RawTemplate>,
+	visiting: string[] = [],
+): ParsedFrontmatter {
+	const extendsName = raw.frontmatter.extends;
+	if (typeof extendsName === "undefined") {
+		return { body: raw.body, frontmatter: raw.frontmatter };
+	}
+
+	if (typeof extendsName !== "string" || extendsName.length === 0) {
+		throw new Error(`extends must be an agent name in ${raw.sourcePath}`);
+	}
+
+	if (visiting.includes(raw.name)) {
+		throw new Error(
+			`extends cycle detected: ${[...visiting, raw.name].join(" -> ")}`,
+		);
+	}
+
+	const parent = rawByName.get(extendsName);
+	if (!parent) {
+		throw new Error(
+			`Unknown extends target '${extendsName}' in ${raw.sourcePath}`,
+		);
+	}
+
+	const resolvedParent = resolveExtends(parent, rawByName, [
+		...visiting,
+		raw.name,
+	]);
+
+	return {
+		body: raw.body.trim().length > 0 ? raw.body : resolvedParent.body,
+		frontmatter: mergeFrontmatter(resolvedParent.frontmatter, raw.frontmatter),
+	};
+}
+
+async function applyIncludes(
+	body: string,
+	agentsDir: string,
+	sourcePath: string,
+	partialCache: Map<string, string>,
+): Promise<string> {
+	const includeNames = new Set(
+		Array.from(body.matchAll(INCLUDE_PATTERN), (match) => match[1]),
+	);
+
+	for (const includeName of includeNames) {
+		if (!partialCache.has(includeName)) {
+			const partialPath = path.join(
+				agentsDir,
+				PARTIALS_DIR,
+				`${includeName}.md`,
+			);
+			try {
+				partialCache.set(includeName, (await readFile(partialPath, "utf8")).trim());
+			} catch {
+				throw new Error(
+					`Missing partial '${includeName}' (${partialPath}) referenced from ${sourcePath}`,
+				);
+			}
+		}
+	}
+
+	return body.replace(
+		INCLUDE_PATTERN,
+		(_match, includeName: string) => partialCache.get(includeName) ?? "",
+	);
+}
+
 export async function readMarkdownAgentTemplates(
 	agentsDir: string,
 ): Promise<MarkdownAgentTemplate[]> {
 	const entries = await readdir(agentsDir, { withFileTypes: true });
-	const templates: MarkdownAgentTemplate[] = [];
+	const rawTemplates: RawTemplate[] = [];
 
 	for (const entry of entries.sort((left, right) =>
 		left.name.localeCompare(right.name),
@@ -289,52 +407,79 @@ export async function readMarkdownAgentTemplates(
 			);
 		}
 
-		const commonFrontmatterKeys = Object.keys(parsed.frontmatter).filter(
+		rawTemplates.push({ ...parsed, fileName, name, rawSource, sourcePath });
+	}
+
+	const rawByName = new Map(rawTemplates.map((raw) => [raw.name, raw]));
+	const partialCache = new Map<string, string>();
+	const templates: MarkdownAgentTemplate[] = [];
+
+	for (const raw of rawTemplates) {
+		const resolved = resolveExtends(raw, rawByName);
+		const frontmatter = resolved.frontmatter;
+
+		if ("model_profile" in frontmatter) {
+			throw new Error(
+				`model_profile was removed in ${raw.sourcePath}; pick a model_class (fast|balanced|strong|heavy) instead`,
+			);
+		}
+
+		const body = await applyIncludes(
+			resolved.body,
+			agentsDir,
+			raw.sourcePath,
+			partialCache,
+		);
+
+		const commonFrontmatterKeys = Object.keys(frontmatter).filter(
 			(key) => !RESERVED_KEYS.has(key),
 		);
 		const commonFrontmatter = Object.fromEntries(
-			commonFrontmatterKeys.map((key) => [key, parsed.frontmatter[key]]),
+			commonFrontmatterKeys.map((key) => [key, frontmatter[key]]),
 		);
 
 		templates.push({
-			body: parsed.body,
-			claude: asRecord(parsed.frontmatter.claude),
-			codex: parseCodexSettings(parsed.frontmatter.codex, sourcePath),
+			body,
+			claude: asRecord(frontmatter.claude),
+			codex: parseCodexSettings(frontmatter.codex, raw.sourcePath),
 			commonFrontmatter,
 			commonFrontmatterKeys,
-			copilot: asRecord(parsed.frontmatter.copilot),
+			copilot: asRecord(frontmatter.copilot),
 			description: assertString(
-				parsed.frontmatter.description,
+				raw.frontmatter.description,
 				"description",
-				sourcePath,
+				raw.sourcePath,
 			),
-			fileName,
-			modelClass: assertModelClass(parsed.frontmatter.model_class, sourcePath),
-			modelProfile: parseModelProfile(
-				parsed.frontmatter.model_profile,
-				sourcePath,
-			),
-			name,
-			opencode: asRecord(parsed.frontmatter.opencode),
-			pi: parsePiSettings(parsed.frontmatter.pi, sourcePath),
-			rawSource,
-			sourcePath,
+			extendsName:
+				typeof raw.frontmatter.extends === "string"
+					? raw.frontmatter.extends
+					: undefined,
+			fileName: raw.fileName,
+			modelClass: assertModelClass(frontmatter.model_class, raw.sourcePath),
+			name: raw.name,
+			opencode: asRecord(frontmatter.opencode),
+			pi: parsePiSettings(frontmatter.pi, raw.sourcePath),
+			rawSource: raw.rawSource,
+			sourcePath: raw.sourcePath,
 		});
 	}
 
 	return templates;
 }
 
-function resolveProviderModel(
+function resolveProviderDefinition(
 	agent: MarkdownAgentTemplate,
 	provider: keyof AgentTemplateConfig["providers"],
 	config: AgentTemplateConfig,
-): string {
-	const mapping = config.providers[provider][agent.modelClass];
-	return (
-		(agent.modelProfile ? mapping.profiles?.[agent.modelProfile] : undefined) ??
-		mapping.default
-	);
+): ProviderModelDefinition {
+	return config.providers[provider][agent.modelClass];
+}
+
+function copilotModelId(definition: ProviderModelDefinition): string {
+	// Copilot CLI encodes reasoning effort as a model suffix: "gpt-5.6-sol(high)".
+	return definition.reasoning
+		? `${definition.model}(${definition.reasoning})`
+		: definition.model;
 }
 
 function renderMarkdownAgent(
@@ -357,7 +502,9 @@ function renderMarkdownAgent(
 		frontmatter[key] = agent.commonFrontmatter[key];
 	}
 
-	frontmatter.model = resolveProviderModel(agent, provider, config);
+	const definition = resolveProviderDefinition(agent, provider, config);
+	frontmatter.model =
+		provider === "copilot" ? copilotModelId(definition) : definition.model;
 
 	const providerSettings =
 		provider === "claude"
@@ -417,11 +564,15 @@ function renderPiMarkdown(
 	agent: MarkdownAgentTemplate,
 	config: AgentTemplateConfig,
 ): string {
+	const definition = resolveProviderDefinition(agent, "pi", config);
 	const frontmatter = {
 		name: agent.name,
 		description: agent.description,
-		model: agent.pi.model ?? resolveProviderModel(agent, "pi", config),
-		thinking: agent.pi.thinking ?? defaultPiThinking(agent.modelClass),
+		model: agent.pi.model ?? definition.model,
+		thinking:
+			agent.pi.thinking ??
+			definition.reasoning ??
+			defaultPiThinking(agent.modelClass),
 		systemPromptMode: agent.pi.systemPromptMode ?? "replace",
 		inheritProjectContext: agent.pi.inheritProjectContext ?? true,
 		inheritSkills: agent.pi.inheritSkills ?? false,
@@ -496,34 +647,44 @@ function escapeTomlMultiline(value: string): string {
 function renderCodexToml(
 	agent: MarkdownAgentTemplate,
 	config: AgentTemplateConfig,
-): string | null {
-	if (!agent.codex) {
-		return null;
-	}
+): string {
+	const definition = resolveProviderDefinition(agent, "codex", config);
+	const codex = agent.codex ?? {};
+	const defaults = config.codexDefaults;
 
 	const lines: string[] = [
 		`name = "${agent.name}"`,
-		`description = "${agent.codex.description ?? agent.description}"`,
+		`description = "${codex.description ?? agent.description}"`,
 		"",
-		`model = "${resolveProviderModel(agent, "codex", config)}"`,
+		`model = "${definition.model}"`,
 	];
 
+	const reasoning = codex.model_reasoning_effort ?? definition.reasoning;
 	appendOptionalTomlLine(
 		lines,
 		"model_reasoning_effort",
-		agent.codex.model_reasoning_effort,
+		reasoning === "minimal" ? "low" : reasoning,
 	);
-	appendOptionalTomlLine(lines, "web_search", agent.codex.web_search);
-	appendOptionalTomlLine(lines, "personality", agent.codex.personality);
+	appendOptionalTomlLine(
+		lines,
+		"web_search",
+		codex.web_search ?? defaults.web_search,
+	);
+	appendOptionalTomlLine(
+		lines,
+		"personality",
+		codex.personality ?? defaults.personality,
+	);
 	appendOptionalTomlBoolean(
 		lines,
 		"suppress_unstable_features_warning",
-		agent.codex.suppress_unstable_features_warning,
+		codex.suppress_unstable_features_warning ??
+			defaults.suppress_unstable_features_warning,
 	);
 	appendOptionalTomlArray(
 		lines,
 		"tui.status_line",
-		agent.codex.tui_status_line,
+		codex.tui_status_line ?? defaults.tui_status_line,
 	);
 	lines.push("");
 	lines.push('developer_instructions = """');
@@ -579,11 +740,10 @@ export async function compileAgents(opts: {
 			path.join(piDir, `${agent.fileName}.md`),
 			renderPiMarkdown(agent, config),
 		);
-
-		const codexToml = renderCodexToml(agent, config);
-		if (codexToml) {
-			await writeFile(path.join(codexDir, `${agent.fileName}.toml`), codexToml);
-		}
+		await writeFile(
+			path.join(codexDir, `${agent.fileName}.toml`),
+			renderCodexToml(agent, config),
+		);
 	}
 
 	return templates;

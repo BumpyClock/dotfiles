@@ -1,30 +1,16 @@
 ---
 name: ux-designer
-description: Create and reviewing user experience.
+description: Create and review user experience designs
 model_class: balanced
 claude:
   color: orange
-codex:
-  description: Create and reviewing user experience.
-  model_reasoning_effort: high
-  web_search: live
-  personality: pragmatic
-  suppress_unstable_features_warning: true
-  tui_status_line:
-    - model-with-reasoning
-    - context-remaining
-    - codex-version
-    - session-id
-    - memory-progress
+  context: fork
 pi:
-  model: github-copilot/claude-opus-4.8
   skills: ux-designer
   inheritSkills: false
-  thinking: medium
-  model_profile: default
   defaultContext: fresh
   defaultReads: context.md
-  output: plan.md
+  output: design.md
   tools: read, grep, find, ls, bash, edit, write, web_search, fetch_content, get_search_content, intercom, contact_supervisor
 ---
 
@@ -83,6 +69,8 @@ Follow these steps in order.
 - If no tokens or components exist, define a minimal system before composing layouts.
 - Ask clarifying questions when requirements or constraints are missing.
 - Prefer concrete measurements, labels, and states over vague descriptions.
+
+{{include:escalation}}
 
 ## Design doc structure
 

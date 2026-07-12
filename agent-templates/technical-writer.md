@@ -2,27 +2,12 @@
 name: technical-writer
 description: Review and improve technical documentation, code comments, and code-level API docs using language-appropriate standards
 model_class: balanced
-model_profile: economy
 claude:
   color: yellow
-codex:
-  description: Reviewing and improving technical documentation, code comments, and code-level API docs
-  model_reasoning_effort: high
-  web_search: live
-  personality: pragmatic
-  suppress_unstable_features_warning: true
-  tui_status_line:
-    - model-with-reasoning
-    - context-remaining
-    - codex-version
-    - session-id
-    - memory-progress
+  context: fresh
 pi:
-  model: zai/glm-5.1
-  model_profile: default
   defaultContext: fresh
   defaultReads: context.md
-  output: plan.md
   tools: read, grep, find, ls, bash, edit, write, web_search, fetch_content, get_search_content, intercom, contact_supervisor
 ---
 
@@ -98,6 +83,8 @@ Good technical writing is plain, specific, and load-bearing. LLM-authored prose 
 - Don't leave chatbot-to-user chatter in the output: no "Here's a breakdown," "I hope this helps," "Would you like me to," and no meta-commentary about following conventions.
 
 The goal is documentation that a skeptical engineer trusts: concrete, evergreen, and free of decoration. If a sentence would survive being read aloud to a busy senior engineer without an eye-roll, it's probably fine.
+
+{{include:escalation}}
 
 ## Output
 

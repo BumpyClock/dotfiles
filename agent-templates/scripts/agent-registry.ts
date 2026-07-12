@@ -1,36 +1,94 @@
 import { readFile } from "node:fs/promises";
 
 export type ProviderName = "claude" | "copilot" | "codex" | "opencode" | "pi";
-export type ModelClass = "fast" | "balanced" | "strong";
-export type ModelProfile = "economy";
+export type ModelClass = "fast" | "balanced" | "strong" | "heavy";
+export type ReasoningEffort = "minimal" | "low" | "medium" | "high" | "xhigh";
 
 export type ProviderModelDefinition = {
-	default: string;
-	profiles?: Partial<Record<ModelProfile, string>>;
+	model: string;
+	reasoning?: ReasoningEffort;
+};
+
+export type CodexDefaults = {
+	web_search?: "live" | "off";
+	personality?: string;
+	suppress_unstable_features_warning?: boolean;
+	tui_status_line?: string[];
 };
 
 export type AgentTemplateConfig = {
 	providers: Record<ProviderName, Record<ModelClass, ProviderModelDefinition>>;
+	codexDefaults: CodexDefaults;
 };
+
+export const MODEL_CLASSES: ModelClass[] = [
+	"fast",
+	"balanced",
+	"strong",
+	"heavy",
+];
+
+const REASONING_EFFORTS = new Set<string>([
+	"minimal",
+	"low",
+	"medium",
+	"high",
+	"xhigh",
+]);
 
 function assertProviderModels(
 	value: unknown,
 	configPath: string,
-): AgentTemplateConfig["providers"] {
+): Record<string, unknown> {
 	if (!value || typeof value !== "object") {
 		throw new Error(`Missing providers config in ${configPath}`);
 	}
 
-	return value as AgentTemplateConfig["providers"];
+	return value as Record<string, unknown>;
 }
 
-function isProviderModelDefinition(
+function parseModelDefinition(
 	value: unknown,
-): value is ProviderModelDefinition {
-	return (
-		!!value &&
-		typeof value === "object" &&
-		typeof (value as { default?: unknown }).default === "string"
+	providerName: string,
+	modelClass: ModelClass,
+	configPath: string,
+): ProviderModelDefinition {
+	if (typeof value === "string" && value.length > 0) {
+		return { model: value };
+	}
+
+	if (value && typeof value === "object" && !Array.isArray(value)) {
+		const raw = value as Record<string, unknown>;
+		if (typeof raw.default === "string" || typeof raw.economy === "string") {
+			throw new Error(
+				`providers.${providerName}.${modelClass} uses the removed default/economy profile shape in ${configPath}; use model/reasoning keys`,
+			);
+		}
+
+		if (typeof raw.model !== "string" || raw.model.length === 0) {
+			throw new Error(
+				`Missing providers.${providerName}.${modelClass}.model in ${configPath}`,
+			);
+		}
+
+		if (
+			typeof raw.reasoning !== "undefined" &&
+			(typeof raw.reasoning !== "string" ||
+				!REASONING_EFFORTS.has(raw.reasoning))
+		) {
+			throw new Error(
+				`Invalid providers.${providerName}.${modelClass}.reasoning in ${configPath}`,
+			);
+		}
+
+		return {
+			model: raw.model,
+			reasoning: raw.reasoning as ReasoningEffort | undefined,
+		};
+	}
+
+	throw new Error(
+		`Missing providers.${providerName}.${modelClass} in ${configPath}`,
 	);
 }
 
@@ -39,34 +97,15 @@ function normalizeProviderDefinition(
 	providerName: ProviderName,
 	configPath: string,
 ): Record<ModelClass, ProviderModelDefinition> {
-	const modelClasses: ModelClass[] = ["fast", "balanced", "strong"];
 	const normalized = {} as Record<ModelClass, ProviderModelDefinition>;
 
-	for (const modelClass of modelClasses) {
-		const definition = providerConfig[modelClass];
-		if (!isProviderModelDefinition(definition)) {
-			throw new Error(
-				`Missing ${providerName}.${modelClass}.default in ${configPath}`,
-			);
-		}
-
-		const profiles = Object.entries(definition)
-			.filter(([key]) => key !== "default")
-			.reduce<Partial<Record<ModelProfile, string>>>(
-				(result, [key, rawValue]) => {
-					if (key === "economy" && typeof rawValue === "string") {
-						result[key as ModelProfile] = rawValue;
-					}
-
-					return result;
-				},
-				{},
-			);
-
-		normalized[modelClass] = {
-			default: definition.default,
-			profiles: Object.keys(profiles).length > 0 ? profiles : undefined,
-		};
+	for (const modelClass of MODEL_CLASSES) {
+		normalized[modelClass] = parseModelDefinition(
+			providerConfig[modelClass],
+			providerName,
+			modelClass,
+			configPath,
+		);
 	}
 
 	return normalized;
@@ -96,45 +135,18 @@ function toOpenCodeModel(modelId: string): string {
 function deriveOpenCodeProvider(
 	copilot: Record<ModelClass, ProviderModelDefinition>,
 ): Record<ModelClass, ProviderModelDefinition> {
-	return {
-		fast: {
-			default: toOpenCodeModel(copilot.fast.default),
-			profiles: copilot.fast.profiles
-				? Object.fromEntries(
-						Object.entries(copilot.fast.profiles).map(([key, value]) => [
-							key,
-							toOpenCodeModel(value),
-						]),
-					)
-				: undefined,
-		},
-		balanced: {
-			default: toOpenCodeModel(copilot.balanced.default),
-			profiles: copilot.balanced.profiles
-				? Object.fromEntries(
-						Object.entries(copilot.balanced.profiles).map(([key, value]) => [
-							key,
-							toOpenCodeModel(value),
-						]),
-					)
-				: undefined,
-		},
-		strong: {
-			default: toOpenCodeModel(copilot.strong.default),
-			profiles: copilot.strong.profiles
-				? Object.fromEntries(
-						Object.entries(copilot.strong.profiles).map(([key, value]) => [
-							key,
-							toOpenCodeModel(value),
-						]),
-					)
-				: undefined,
-		},
-	};
+	const derived = {} as Record<ModelClass, ProviderModelDefinition>;
+
+	for (const modelClass of MODEL_CLASSES) {
+		// OpenCode has no reasoning-suffix syntax, so only the model id carries over.
+		derived[modelClass] = { model: toOpenCodeModel(copilot[modelClass].model) };
+	}
+
+	return derived;
 }
 
 function normalizeProviderDefinitions(
-	providers: AgentTemplateConfig["providers"],
+	providers: Record<string, unknown>,
 	configPath: string,
 ): AgentTemplateConfig["providers"] {
 	const requiredProviderNames: Array<Exclude<ProviderName, "opencode">> = [
@@ -171,6 +183,31 @@ function normalizeProviderDefinitions(
 	return normalized;
 }
 
+function parseCodexDefaults(value: unknown): CodexDefaults {
+	if (!value || typeof value !== "object" || Array.isArray(value)) {
+		return {};
+	}
+
+	const raw = value as Record<string, unknown>;
+	return {
+		web_search:
+			raw.web_search === "live" || raw.web_search === "off"
+				? raw.web_search
+				: undefined,
+		personality:
+			typeof raw.personality === "string" ? raw.personality : undefined,
+		suppress_unstable_features_warning:
+			typeof raw.suppress_unstable_features_warning === "boolean"
+				? raw.suppress_unstable_features_warning
+				: undefined,
+		tui_status_line: Array.isArray(raw.tui_status_line)
+			? raw.tui_status_line.filter(
+					(item): item is string => typeof item === "string",
+				)
+			: undefined,
+	};
+}
+
 export async function loadAgentTemplateConfig(
 	configPath: string,
 ): Promise<AgentTemplateConfig> {
@@ -182,5 +219,6 @@ export async function loadAgentTemplateConfig(
 			assertProviderModels(parsed.providers, configPath),
 			configPath,
 		),
+		codexDefaults: parseCodexDefaults(parsed.codex),
 	};
 }
