@@ -571,6 +571,15 @@ async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
 		await chmod(ccyTarget, 0o755);
 		action(`Copied: ${ccyTarget}`);
 	}
+
+	const claudexSource = path.join(dotfilesDir, "shell/bin/zsh/claudex.sh");
+	const claudexTarget = path.join(binDir, "claudex");
+	if (await pathExists(claudexSource)) {
+		await ensureWritableTarget(claudexTarget);
+		await copyFile(claudexSource, claudexTarget);
+		await chmod(claudexTarget, 0o755);
+		action(`Copied: ${claudexTarget}`);
+	}
 }
 
 async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
@@ -653,6 +662,17 @@ async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
 		await ensureWritableTarget(ccyTarget);
 		await copyFile(ccySource, ccyTarget);
 		action(`Copied: ${ccyTarget}`);
+	}
+
+	const claudexSource = path.join(
+		dotfilesDir,
+		"shell/bin/powershell/claudex.ps1",
+	);
+	const claudexTarget = path.join(binDir, "claudex.ps1");
+	if (await pathExists(claudexSource)) {
+		await ensureWritableTarget(claudexTarget);
+		await copyFile(claudexSource, claudexTarget);
+		action(`Copied: ${claudexTarget}`);
 	}
 }
 

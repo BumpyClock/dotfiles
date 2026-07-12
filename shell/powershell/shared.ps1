@@ -256,3 +256,6 @@ if (Test-Path "$localBin\cz.ps1") {
 if (Test-Path "$localBin\ccy.ps1") {
     function ccy { & "$env:USERPROFILE\.local\bin\ccy.ps1" @args }
 }
+if (Test-Path "$localBin\claudex.ps1") {
+    function claudex { & "$env:USERPROFILE\.local\bin\claudex.ps1" @args }
+}
