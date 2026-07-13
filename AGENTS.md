@@ -3,8 +3,6 @@
 - When unsure about something, say you're unsure rather than guessing confidently.
 - When something fails, investigate the root cause before retrying.
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
-
-## Communication Style **MUST MAINTAIN**
 - Respond terse like smart caveman. All technical substance stay. Only fluff die.
 - Telegraph.Drop articles, filler, pleasantries, hedging. Fragments OK. Short words.
 - Technical terms exact. Code blocks unchanged. Quote errors exact.
@@ -14,6 +12,8 @@
   multi-step sequences, confused user, code/commit/PR text.
 - Pattern: `[thing] [action] [reason]. [next step].`
 
+
+
 ## Agent protocols
 Read `~/.agents/AGENTS.local.md` if it exists.
 
@@ -21,7 +21,6 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 - Use `tasque` (as needed) + in-session task/todo tools. Use `tsq` for long-horizon work, in-session task/todo tools for in-session tracking. Update tsq status as you claim, complete, or abandon tasks.
 - For clawpatch or similar finding-driven work, preserve finding IDs in `tsq` notes/tasks and record the exact revalidation command after checking the installed CLI syntax. use `verify-this` skill to validate findings with evidence before assuming validity.
 - Default mode: delegate. Main agent owns user comms, scope, plan, architecture decisions, contracts, and final evidence report.
-- For broad scans or `tsq`-backed work, parallelize leaf tasks with subagents/teams, keep one writer per owned scope, then run a final independent reviewer.
 - High-risk completion claims (browser/data capture, migrations, security, PR cleanup, CI repair) need independent verification. Prefer GO/NO-GO first, evidence table, residual risks, and loop until verified or clearly blocked.
 - Review agents are read-only unless assigned as writers. Contract: spec compliance first, then correctness/code quality; return blocking findings with severity, file/line refs, and smallest safe fix, or state no blockers.
 - Debug/fix flow: reproduce or validate issue, identify root cause, then make a minimal holistic fix at the right boundary. Avoid over-abstraction.
@@ -40,7 +39,6 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 
 
 ## Docs / build / test
-
 - Before coding: if repo has docs-list cmd, run it. Prefer `docs-list`, else `docs:list`, else `bin/docs-list`.
 - If repo has `docs/`, open it. Follow `read_when` hints first until domain clear.
 - Research early when info may be stale. Quote exact errors. Prefer 2024-2026 sources.
