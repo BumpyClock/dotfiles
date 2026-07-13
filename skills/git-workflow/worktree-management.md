@@ -1,148 +1,35 @@
-# Worktree Management
+# Worktrees
 
-Goal: isolated branch workspace without disturbing current checkout.
+Goal: isolated branch workspace without disturbing current checkout. Use for parallel branch work, risky experiments, isolated verification, avoiding manual stash. Consent before creating branch/worktree; tell user when setting one up.
 
-Tell user, in your own words, when setting up an isolated workspace.
+## Location
 
-## When to use
+Order: existing `.worktrees/` → existing `worktrees/` → local instructions (`AGENTS.md`, `CLAUDE.md`, repo docs) → ask user (offer `.worktrees/` project-local vs `~/Projects/.worktrees/<project>/` global). Both local dirs exist → `.worktrees/`.
 
-Use for parallel branch work, risky experiments, isolated verification, avoiding manual `git stash`.
+Project-local dir MUST pass ignore check before create: `git check-ignore -q -- "$LOCATION"` on the exact dir. Not ignored → report, ask before any `.gitignore` edit/commit, prefer global dir if no consent. Global dir needs no check.
 
-Need consent before creating branch/worktree.
+Paths: `.worktrees/$BRANCH_NAME` | `worktrees/$BRANCH_NAME` | `$HOME/Projects/.worktrees/$project/$BRANCH_NAME` (`project=$(basename "$(git rev-parse --show-toplevel)")`).
 
-## Pick location
-
-Order:
-
-1. Existing `.worktrees/`
-2. Existing `worktrees/`
-3. Local instructions: `AGENTS.md`, `CLAUDE.md`, repo docs
-4. Ask user
-
-If both local dirs exist, prefer `.worktrees/`.
-
-If none found, ask:
-
-```text
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/Projects/.worktrees/<project-name>/ (global)
-```
-
-## Safety check for project-local dirs
-
-Before project-local worktree, verify chosen dir is ignored:
+## Create + verify
 
 ```bash
-# LOCATION is exact chosen project-local dir: .worktrees or worktrees
-git check-ignore -q -- "$LOCATION"
-```
-
-Check exact dir you will use.
-
-If not ignored: report, ask before `.gitignore` edit/commit, prefer global dir if no consent.
-
-Global `~/Projects/.worktrees/<project-name>/` needs no repo ignore check.
-
-Never create project-local worktree before ignore check passes.
-
-## Target path
-
-```bash
-project=$(basename "$(git rev-parse --show-toplevel)")
-# BRANCH_NAME is actual branch name, e.g. feature/123-my-feature
-```
-
-Project-local:
-
-```bash
-path=".worktrees/$BRANCH_NAME"
-# or
-path="worktrees/$BRANCH_NAME"
-```
-
-Global:
-
-```bash
-path="$HOME/Projects/.worktrees/$project/$BRANCH_NAME"
-```
-
-## Create
-
-After user consent:
-
-```bash
-git worktree add "$path" -b "$BRANCH_NAME"
+git worktree add "$path" -b "$BRANCH_NAME"   # existing branch: omit -b
 cd "$path"
 ```
 
-Existing branch:
+Setup per repo docs first; only fall back to ecosystem-default install commands. Run normal project baseline check before implementing. Baseline fails → report command + exact failure, keep separate from new work, ask proceed/stop.
 
-```bash
-git worktree add "$path" "$BRANCH_NAME"
-cd "$path"
-```
-
-## Setup
-
-Use repo docs first. Do not hardcode over documented setup.
-
-Fallback examples:
-
-```bash
-if [ -f package.json ]; then npm install; fi
-if [ -f Cargo.toml ]; then cargo build; fi
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -f pyproject.toml ]; then poetry install; fi
-if [ -f go.mod ]; then go mod download; fi
-```
-
-## Baseline verify
-
-Run normal project check before implementation.
-
-If baseline fails: report command + short failure, keep separate from new work, ask proceed/stop.
-
-## Report
-
-Cover path, baseline result, and next step — wording is yours. Examples:
-
-Success:
-
-```text
-Worktree ready at <full-path>
-Baseline checks: passing
-Ready to implement <feature-name>
-```
-
-Failure:
-
-```text
-Worktree ready at <full-path>
-Baseline checks: failing
-Command: <cmd>
-Failure: <short exact summary>
-Need proceed/stop decision.
-```
+Report: path, baseline result, next step.
 
 ## Cleanup
 
-Only when user asks:
-
-```bash
-git worktree list
-git worktree remove <path>
-```
-
-If branch delete also requested, follow `commits-and-branches.md` cleanup rules.
+Only when asked: `git worktree list`, `git worktree remove <path>`. Branch delete → `commits-and-branches.md` rules.
 
 ## Never
 
-- Create project-local worktree without ignore verification.
+- Project-local worktree without ignore verification.
 - Assume location when local instructions define one.
-- Edit `.gitignore` without asking.
-- Commit `.gitignore` without asking.
+- Edit/commit `.gitignore` without asking.
 - Continue from failing baseline without telling user.
 - Hardcode setup commands over repo docs.
 - Delete worktree/branch without explicit ask.

@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: "Git/GitHub: PRs, commits, branches, worktrees, conflicts, comments, CI."
+description: "Git/GitHub: PRs, commits, branches, worktrees, conflicts, comments, CI, interactive PR review canvas."
 context: fork
 model: claude-sonnet-5
 ---
@@ -39,6 +39,7 @@ Three tiers of authority:
 | Merge PR, resolve conflicts, fix CI | `merge-and-ci.md` |
 | Parallel/isolated branch work | `worktree-management.md` |
 | Changelog setup/update | `add-changelog.md` |
+| Interactive HTML PR walkthrough ("review canvas") | `pr-review-canvas.md` |
 
 ## Quick commands
 
@@ -54,14 +55,13 @@ committer "fix(scope): concise change" path/to/file.ts
 # PR data
 gh pr view --json number,title,url,headRefName,baseRefName
 
-# Comments
-pr-comments
-pr-comments <pr> --repo <owner/repo> --json
-pr-comments <pr> --all
+# Comments (installed pr-comments binary)
+pr-comments [<pr>] [--repo <owner/repo>] [--json] [--all]
 
 # Checks
 gh pr checks <pr>
-python3 skills/git-workflow/scripts/inspect_pr_checks.py --repo . --pr <pr>
+python3 <skill-dir>/scripts/inspect_pr_checks.py --repo . --pr <pr>
+# <skill-dir> = this skill's install directory (bundled script), not repo-relative
 ```
 
 ## Commit types
@@ -71,4 +71,4 @@ Conventional Commits: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`
 ## PR title prefixes
 
 - Default when repo has no convention of its own: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
-- Commit/PR prose style: concise, concrete, explains why, no filler (think mitchellh).
+- Prefix sets category; wording stays plain. Commit/PR prose: concise, concrete, explains why, no filler (mitchellh style).

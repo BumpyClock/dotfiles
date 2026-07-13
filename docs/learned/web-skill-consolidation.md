@@ -1,32 +1,30 @@
 ---
-summary: "Why web-development is the one live web skill and former sibling skills now live as nested guides or archived skills."
+summary: "Why web-development guidance is a focused programming reference and former standalone web skills are archived."
 read_when:
-  - Consolidating overlapping web or frontend skills into one parent skill.
-  - Debugging why nested skill content still appears as separate live skills.
+  - Consolidating web or frontend guidance into programming.
+  - Deciding which web guidance should stay live or move to archive.
 ---
 
 # Web skill consolidation
 
 ## Decision
-- Keep one live parent skill: `skills/web-development/SKILL.md`.
-- Move former live web skills to `skills_archive/web-skills/`.
-- Vendor retained design-engineering content under the parent skill as nested guides and references.
-- Rename nested root guides from `SKILL.md` to `guide.md`.
-- Keep `react-doctor` as a React verification guide, not a standalone live skill.
+- Keep general coding workflow in live `skills/programming` skill.
+- Keep only durable web-specific guidance in `skills/programming/references/web-development.md`.
+- Link reference from `skills/programming/SKILL.md`; load it only for browser-rendered UI or web behavior.
+- Archive standalone `skills/web-development` tree intact under `skills_archive/web-development`.
 
 ## Why
-- Skill discovery treats any nested `**/SKILL.md` as a separate live skill.
-- `design-engineering`, `web-animation-design`, and `react-doctor` overlapped heavily in web-development tasks.
-- Motion guidance belongs with design-engineering guidance, while `react-doctor` is a verification step, not a broad routing trigger.
-- `skills/programming` stays focused on general coding workflow instead of absorbing web-specific UI guidance.
+- Web work follows same debugging, tests, code quality, and evidence gates as other production code.
+- Standalone web workflow duplicated `programming` and added too much default direction.
+- Small reference preserves novel browser concerns: semantics, input modes, layout stability, reduced motion, and rendered verification.
+- Framework and tool catalogs age quickly. Repo conventions and current project tooling are better sources of truth.
 
 ## Pattern
-- Parent `SKILL.md` stays lean: scope, routing, common stacks.
-- Nested guides keep framework-agnostic and React-specific details without becoming live triggers.
-- Archive old standalone skills intact before reusing content in the parent.
-- Update prompt templates that referenced old live skills.
+- Parent skill owns workflow and verification policy.
+- Domain reference adds only constraints not already covered by parent or language reference.
+- Archive old standalone skill intact before removing it from live discovery.
 
 ## Pitfalls
-- Leaving a nested `SKILL.md` under `skills/web-development/` reactivates it as a separate skill.
-- Keeping React-specific diagnostics inside the general design guide muddies routing.
-- Copying archived skill files verbatim can preserve stale frontmatter or trigger language meant only for standalone skills.
+- Copying whole archived guides back into live tree recreates duplication and stale tool advice.
+- Turning taste preferences or fixed animation timings into universal rules over-steers varied products.
+- Treating diagnostic scores as proof weakens rendered and behavioral verification.

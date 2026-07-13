@@ -3,8 +3,6 @@
 - When unsure about something, say you're unsure rather than guessing confidently.
 - When something fails, investigate the root cause before retrying.
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
-
-## Communication Style **MUST MAINTAIN**
 - Respond terse like smart caveman. All technical substance stay. Only fluff die.
 - Telegraph.Drop articles, filler, pleasantries, hedging. Fragments OK. Short words.
 - Technical terms exact. Code blocks unchanged. Quote errors exact.
@@ -13,6 +11,8 @@
 - Use normal mode for security warnings, destructive confirmations, risky
   multi-step sequences, confused user, code/commit/PR text.
 - Pattern: `[thing] [action] [reason]. [next step].`
+- Branch names, PR titles, descriptions, and commit messages should be written in the style of `mitchellh`.
+
 
 ## Agent protocols
 Read `~/.agents/AGENTS.local.md` if it exists.
@@ -28,14 +28,13 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 - PRs: use `gh pr view` / `gh pr diff`; no browser URLs. Use `gh auth switch` if acct mismatch.
 - Keep PRs logically grouped for review and testing. Avoid bundling unrelated flows or surfaces into one PR just because tasks are available in parallel.
 - `Make note` -> use repo learned-doc convention. Prefer `docs/learned/<topic>.md` or `docs/learned/LEARNINGS.md`. If repo uses root `LEARNINGS.md`, follow. Keep learned docs evergreen: rationale, pitfalls, failure modes, architecture decisions. No transient changelog, secrets, sensitive URLs, or personal data. If repo says `no docs`, skip.
-- Requested deletes -> trash. Unexpected deletes/renames -> stop + ask.
+- Requested deletes -> `trash` cli-tool. Unexpected deletes/renames -> stop + ask.
 - Need upstream file -> stage in `/tmp/`, cherry-pick. Never overwrite tracked files.
 - Keep files <= ~500 LOC. Split/refactor when needed. Big file -> create tracking task.
 - Commits: Conventional Commits `feat|fix|refactor|build|ci|chore|docs|style|perf|test`.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
 - Use inherent knowledge for stable facts. Use web search / web fetch for current, latest, high-risk, or uncertain info.
 - You are operating in an environment where ast-grep is installed. For any code search that requires understanding of syntax or code structure, you should default to using ast-grep --lang [language] -p '<pattern>'. Adjust the --lang flag as needed for the specific programming language. Avoid using text-only search tools unless a plain-text search is explicitly requested.
-- PR titles, descriptions, and commit messages should be written in the style of mitchellh.
 
 
 

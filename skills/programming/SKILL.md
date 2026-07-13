@@ -129,4 +129,8 @@ Languages (load when repo uses them):
 
 - `references/languages/go.md`, `references/languages/swift-ios.md`, `references/languages/typescript-frontend.md`.
 
+Web (load for browser-rendered UI or web behavior):
+
+- `references/web-development.md` - native semantics, forms, keyboard/focus/touch, reduced motion, layout stability, React state boundaries, and rendered verification.
+
 Explicit proof requests → `verify-this` skill.

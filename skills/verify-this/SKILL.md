@@ -7,69 +7,23 @@ license: MIT
 
 # Verify This
 
-Use when user asks to verify, prove, measure, confirm a fix, or show evidence for a concrete claim. Stricter than normal test run: goal is to prove or disprove one falsifiable statement.
+Use when user asks to verify, prove, measure, confirm a fix, or show evidence for a concrete claim. Goal: prove or disprove one falsifiable statement. Not for vague quality claims ("the code is cleaner") — ask for a measurable claim first.
 
-Use GO/NO-GO mode for acceptance verification, high-risk completion checks, browser/data capture validation, migration readiness, PR cleanup readiness, or independent verifier decision.
-
-Do not use for vague quality claims like "the code is cleaner". Ask for measurable claim first.
+Use GO/NO-GO mode for acceptance gates: high-risk completion checks, migration readiness, PR cleanup readiness, or independent verifier decisions.
 
 ## Workflow
 
 1. Restate claim in falsifiable form: condition, metric, threshold, expected direction.
-2. Choose smallest local surface that could disprove the claim.
-3. Capture baseline evidence when possible: merge base, parent commit, failing branch, current broken repro, or pre-change artifact.
-4. Capture treatment evidence with same command, data, warmup, environment.
-5. Compare raw artifacts: test output, terminal transcript, HTTP response, screenshot, trace, profile, timing, or heap snapshot.
-6. Return exactly one verdict: `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE`.
+2. Capture baseline evidence when possible (merge base, parent commit, current broken repro), then treatment evidence with the same command, data, and environment. Compare raw artifacts, not summaries.
+3. Return exactly one verdict.
 
-## GO/NO-GO Mode
-
-For acceptance gates where user needs a shipping decision rather than single claim verdict.
-
-1. Restate acceptance criteria as falsifiable checks.
-2. Verify against current local artifacts/code/live UI. Do not trust prior assistant reports.
-3. Check every saved/generated artifact exists, is non-empty when expected, matches manifest or source of truth.
-4. Check sensitive data handling when relevant: no secrets, credentials, private prompts, customer data, or unrelated personal data persisted.
-5. Return `GO` only when every required acceptance check passes with current evidence.
-6. Return `NO-GO` when any required check fails, is blocked, or cannot be verified.
-7. If `NO-GO`, list exact repair actions. If `GO`, list residual risks only when real.
-
-Output starts with `GO` or `NO-GO` before explanation.
-
-## Local Surfaces
-
-- Code behavior: focused unit/integration test or minimal repro script.
-- CLI/TUI behavior: terminal transcript, command output, or recording.
-- UI behavior: screenshots, browser traces, accessibility snapshot, or pixel/DOM checks.
-- API behavior: local HTTP/RPC request and response diff.
-- Performance: same-machine baseline/treatment timings or profiles.
-- Memory: heap snapshots before and after suspected operation.
-
-## Artifacts
-
-Prefer inline evidence unless files are useful and safe. If writing artifacts safe, use:
-
-```text
-/tmp/verify-this/<claim-slug>/
-|-- claim.md
-|-- timeline.md
-|-- baseline/
-|-- treatment/
-|-- diff/
-`-- verdict.md
-```
-
-Do not store sensitive prompts, screenshots, HTTP bodies, heap data, customer data, credentials, or private code extracts unless user explicitly agrees.
+Prefer inline evidence. Do not persist secrets, credentials, customer data, or private code extracts without explicit consent.
 
 ## Verdict Rules
 
 - `VERIFIED`: baseline and treatment differ in predicted direction by claimed threshold with no obvious confound.
 - `NOT VERIFIED`: behavior unchanged, moves wrong way, or misses threshold.
 - `INCONCLUSIVE`: no valid baseline, noisy signal, failed measurement, or environment difference invalidates comparison.
-
-## Output
-
-Claim verification:
 
 ```text
 VERIFIED | NOT VERIFIED | INCONCLUSIVE
@@ -82,7 +36,14 @@ Reasoning:
 <one tight paragraph naming evidence and confounds>
 ```
 
-GO/NO-GO verification:
+## GO/NO-GO Mode
+
+For shipping decisions rather than a single claim verdict.
+
+1. Restate acceptance criteria as falsifiable checks.
+2. Verify against current local artifacts/code/live UI. Do not trust prior assistant reports.
+3. Check every expected artifact exists, is non-empty, matches source of truth; check no secrets or sensitive data persisted when relevant.
+4. `GO` only when every required check passes with current evidence. `NO-GO` when any check fails, is blocked, or cannot be verified.
 
 ```text
 GO | NO-GO

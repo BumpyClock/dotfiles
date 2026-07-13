@@ -1,1 +1,2 @@
-searxng/uwsgi.ini
+.env
+logs/

@@ -9,17 +9,6 @@ license: MIT
 
 Use full flow before creative/behavior-changing work. Goal: approved design spec before implementation planning.
 
-Use micro-flow only for trivial mechanical/non-behavior changes with exact user instructions and no design choice.
-
-# Interactive brainstorming
-
-Purpose: show mockups, diagrams, comparisons, visual options in browser while terminal stays source of truth.
-Create self-contained interactive HTML file to show options at right fidelity. Enables creative show-not-tell ideation.
-
-When done, open HTML file. Unless user asks, keep updating same file.
-
-Save in `/tmp` or `/docs/ideation` folder if present in `.gitignore`. Do not commit unless explicit ask. Throwaway artifacts.
-
 <HARD-GATE>
 For full brainstorming flow, do NOT invoke implementation planning, write code, scaffold projects, or take implementation action until:
 1. design direction approved,
@@ -34,12 +23,12 @@ Micro-flow only for trivial mechanical/non-behavior changes with exact user inst
 
 - Follow stricter repo/user git policy.
 - In dotfiles, no commit of design docs unless user explicitly asks.
-- After design approval + saved spec + spec gate pass (when used) + user written-spec approval → invoke local `writing-plans`.
-- `writing-plans` unavailable → use repo normal implementation-planning workflow.
+- After HARD-GATE satisfied → hand off to `planner` agent for implementation planning.
+- `planner` agent unavailable → use repo normal implementation-planning workflow.
 
 ## Flow selection
 
-Match ceremony to risk.
+Match ceremony to risk. Gates are fixed; ceremony volume scales.
 
 **Micro-flow** — trivial mechanical/non-behavior changes only:
 
@@ -50,7 +39,17 @@ Match ceremony to risk.
 
 Examples: typo fix, narrow config rename, doc formatting, exact one-line requested change.
 
-**Full flow** — new features, UX/UI, behavior changes, architecture, ambiguous requirements, multi-file/cross-system work:
+**Standard flow** — behavior change with mostly-clear requirements, few files, no architecture decision. Full-flow gates, light ceremony:
+
+- Batch independent clarifying questions in one message.
+- 1-2 approaches; skip alternatives when one is obviously right — say so.
+- Present design as one short doc; single whole-doc approval.
+- Spec self-review inline; skip spec-gate subagent.
+- Both HARD-GATE approvals still required.
+
+Examples: new CLI flag, small feature behind existing pattern, contained UX tweak.
+
+**Complex flow** — architecture decisions, ambiguous requirements, UX/UI direction, multi-subsystem/cross-system work, SDD-backed/durable implementation. Full ceremony:
 
 1. Explore context.
 2. Ask focused questions.
@@ -61,15 +60,17 @@ Examples: typo fix, narrow config rename, doc formatting, exact one-line request
 7. Get user written-spec approval.
 8. Move to implementation planning.
 
+Unsure between tiers → pick higher.
+
 No governance/stakeholder/process/executive-workflow docs unless user explicitly asks.
 
 ## Required sequence
 
-Create/track tasks for each full-flow item. Complete in order.
+Create/track tasks for each full-flow item. Complete in order. Standard flow: same order, apply light-ceremony rules from Flow selection (skip step 9 subagent; step 6 = whole-doc approval).
 
 1. Explore project context — files, docs, recent commits.
 2. Create or reuse `tsq` parent task when planned implementation is SDD-backed or durable. `tsq` unavailable or downstream explicitly inline → carry spec in conversation/runtime artifacts, say why.
-3. Offer visual companion only if upcoming questions are visual. Offer is its own message, no other content.
+3. Offer interactive visuals only if upcoming questions are visual. Offer is its own message, no other content.
 4. Ask clarifying questions one at a time. Learn purpose, constraints, success criteria.
 5. Propose 2-3 approaches. Include tradeoffs + recommendation.
 6. Present design in sections. Get user approval after each section.
@@ -77,7 +78,7 @@ Create/track tasks for each full-flow item. Complete in order.
 8. Self-review spec. Fix inline.
 9. Run spec gate when available. Fix blockers before user review.
 10. Ask user to review written spec. Wait for approval.
-11. Transition to implementation planning with `writing-plans`.
+11. Transition to implementation planning per Local rules.
 
 Tiny flow:
 
@@ -99,7 +100,8 @@ Before questions:
 
 Ask questions:
 
-- One question per message.
+- Batch independent questions in one message (use `AskUserQuestion` when available).
+- Serialize only when a question depends on a prior answer.
 - Multiple choice preferred when useful.
 - Focus purpose, constraints, success criteria.
 - Stop when those clear enough to write tradeoffs.
@@ -107,16 +109,17 @@ Ask questions:
 
 ## Approaches
 
-Before final design, present 2-3 viable approaches:
+Before final design, present 1-3 viable approaches:
 
 - Start with recommendation.
 - Explain why.
 - Name tradeoffs.
 - Keep unchosen options visible enough for user to redirect.
+- Do not invent alternatives to fill a quota. One clearly right approach → present it alone, state why no real alternative.
 
 ## Design presentation
 
-Present design section by section. Scale detail to complexity.
+Scale detail and approval granularity to complexity. Design fits ~1 page → present whole, single approval. Larger → section by section.
 
 Cover when relevant:
 
@@ -128,7 +131,7 @@ Cover when relevant:
 - User-visible behavior
 - Non-goals
 
-Ask after each section whether it looks right. User rejects → revise. Do not advance on unresolved disagreement.
+Ask whether it looks right (per section when sectioned). User rejects → revise. Do not advance on unresolved disagreement.
 
 ## Spec storage
 
@@ -203,26 +206,27 @@ Proceed only after user approves.
 
 ## Spec reviewer prompt
 
-Use `skills/brainstorming/spec-document-reviewer-prompt.md` after spec written. Reviewer cannot run → apply same checklist inline, say why.
+Complex flow only; standard flow uses inline self-review. Use `skills/brainstorming/spec-document-reviewer-prompt.md` after spec written. Reviewer cannot run → apply same checklist inline, say why.
 
 Reviewer is advisory — catch serious planning blockers only.
 
-## Visual companion gate
+## Interactive visuals
 
-Use only when upcoming questions involve visual content.
+Purpose: show mockups, diagrams, comparisons, visual options in browser while terminal stays source of truth. Create self-contained interactive HTML file at right fidelity. Enables show-not-tell ideation.
 
-Offer must be its own message, no other content:
+Use only when upcoming questions involve visual content. Offer must be its own message, no other content:
 
-> "Some of what we're working on might be easier to explain if I can show it to you in a web browser. I can put together mockups, diagrams, comparisons, and other visuals as we go. This feature is still new and can be token-intensive. Want to try it? (Requires opening a local URL)"
+> "Some of what we're working on might be easier to explain if I can show it to you in a web browser. I can put together mockups, diagrams, comparisons, and other visuals as we go — self-contained HTML files opened locally. This can be token-intensive. Want to try it?"
 
 Wait for response.
 
 - Declined → text-only.
-- Accepted → read `visual-companion.md` before using browser.
-- Acceptance = browser available, not mandatory for every question.
-- Decide per question: browser only when seeing beats reading.
+- Accepted → visuals available, not mandatory for every question. Decide per question: browser only when seeing beats reading.
 
-## Visual vs text choice
+Mechanics:
+
+- Save in `/tmp` or `/docs/ideation` if present in `.gitignore`. Throwaway artifacts; do not commit unless explicit ask.
+- When done, open HTML file. Unless user asks, keep updating same file.
 
 Browser for: UI mockups, layout/spacing/visual hierarchy, architecture diagrams, flowcharts/entity relationships, side-by-side visual design options.
 

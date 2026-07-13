@@ -1,5 +1,4 @@
 model = "gpt-5.6-sol"
-model_instructions_file = "~/.codex/model-instructions.md"
 model_reasoning_effort = "medium"
 web_search = "live"
 personality = "none"
@@ -16,13 +15,7 @@ approvals_reviewer = "user"
 
 
 
-service_tier = "fast"
 
-notify = ["/Users/adityasharma/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended", "--previous-notify", "[\"C:\\\\Users\\\\adityasharma\\\\.codex\\\\plugins\\\\cache\\\\openai-bundled\\\\computer-use\\\\26.602.40724\\\\node_modules\\\\@oai\\\\sky\\\\bin\\\\windows\\\\codex-computer-use.exe\",\"turn-ended\",\"--previous-notify\",\"[\\\"\\/Users\\/adityasharma\\/.codex\\/computer-use\\/Codex Computer Use.app\\/Contents\\/SharedSupport\\/SkyComputerUseClient.app\\/Contents\\/MacOS\\/SkyComputerUseClient\\\",\\\"turn-ended\\\"]\"]"]
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 4
 
 [features]
 collaboration_modes = true
@@ -40,29 +33,6 @@ terminal_resize_reflow = true
 mentions_v2 = true
 js_repl = false
 
-[features.multi_agent_v2]
-enabled = true
-hide_spawn_agent_metadata = false
-tool_namespace = "agents"
-
-[notice]
-fast_default_opt_out = true
-hide_rate_limit_model_nudge = true
-
-
-
-[notice.model_migrations]
-"gpt-5.1-codex-max" = "gpt-5.2-codex"
-"gpt-5.2" = "gpt-5.2-codex"
-"gpt-5.2-codex" = "gpt-5.3-codex"
-"gpt-5.3-codex" = "gpt-5.5"
-
-
-[projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
-trust_level = "trusted"
-
-[projects."C:\\Users\\adityasharma\\Projects\\Digests-Windows"]
-trust_level = "trusted"
 
 [projects."/Users/adityasharma/Projects/Digests/Digests-Swift"]
 trust_level = "trusted"
@@ -80,12 +50,6 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/adityasharma/Projects/Digests/digests-api"]
-trust_level = "trusted"
-
-[projects.'\\?\C:\Users\adityasharma\Projects\Wallpaper_splat']
-trust_level = "trusted"
-
-[projects.'\\?\C:\Users\adityasharma\Projects\dotfiles']
 trust_level = "trusted"
 
 [projects."/Users/adityasharma/Projects/Digests-Swift"]
@@ -181,11 +145,6 @@ trust_level = "trusted"
 [projects."/Users/adityasharma/Projects/schoolweb"]
 trust_level = "trusted"
 
-
-
-
-## END AGENT CONFIG
-
 [mcp_servers.exa-search]
 url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
@@ -222,14 +181,15 @@ enabled = false
 enabled = true
 url = "http://127.0.0.1:9791/mcp"
 
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
 # [mcp_servers."playwriter"]
 # command = "bunx"
 # args = [ "playwriter@latest" ]
 # startup_timeout_sec = 40
 # env = { PLAYWRITER_AUTO_ENABLE="1" }
 
-[windows]
-sandbox = "elevated"
 
 [plugins."google-calendar@openai-curated"]
 enabled = false
@@ -285,82 +245,6 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/1password/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-bundled/browser-use/0.1.0-alpha1/skills/browser/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/documents/26.430.10722/skills/documents/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-code-connect/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-design-system-rules/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-create-new-file/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-design/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-generate-library/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-implement-design/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/figma/figma-use/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/opentui/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/peeku-windows/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/playwriter/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/shadcn/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.430.10722/skills/spreadsheets/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/winui3-csharp-app/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/plugin-creator/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-creator/SKILL.md"
-enabled = false
-
-[[skills.config]]
-path = "/Users/adityasharma/Projects/dotfiles/skills/.system/skill-installer/SKILL.md"
-enabled = false
-
 [marketplaces.openai-bundled]
 last_updated = "2026-07-12T04:59:22Z"
 source_type = "local"
@@ -377,11 +261,6 @@ last_revision = "1afdc0d238b61673e8f2bb57622e73641000bb75"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
-[marketplaces.codex-warp]
-last_updated = "2026-07-06T04:21:17Z"
-last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
-source_type = "git"
-source = "https://github.com/warpdotdev/codex-warp.git"
 
 [desktop]
 reviewDelivery = "detached"
@@ -395,47 +274,3 @@ selected-avatar-id = "null-signal"
 followUpQueueMode = "queue"
 preventSleepWhileRunning = false
 dock-icon-preference = "codex-system"
-
-[desktop.appearanceLightChromeTheme]
-accent = "#cc7d5e"
-contrast = 45
-ink = "#2d2d2b"
-opaqueWindows = false
-surface = "#f9f9f7"
-
-[desktop.appearanceLightChromeTheme.fonts]
-
-[desktop.appearanceLightChromeTheme.semanticColors]
-diffAdded = "#00c853"
-diffRemoved = "#ff5f38"
-skill = "#cc7d5e"
-
-[desktop.open-in-target-preferences]
-global = "zed"
-
-[desktop.open-in-target-preferences.perPath]
-"/Users/adityasharma/Projects/gpui" = "zed"
-
-[hooks.state]
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
-trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
-trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
-
-[hooks.state."/Users/adityasharma/.codex/hooks.json:pre_tool_use:0:0"]
-trusted_hash = "sha256:e9d976a46eee8842ee74e5d566488ac50c1abd56faa50b464c9ba03bc7138a3a"
-
-# [mcp_servers.openaiDeveloperDocs]
-# url = "https://developers.openai.com/mcp"
-#
