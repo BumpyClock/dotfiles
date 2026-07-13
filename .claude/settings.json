@@ -193,9 +193,7 @@
     "security-guidance@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "warp@claude-code-warp": true,
     "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
@@ -212,9 +210,8 @@
       }
     }
   },
-  "outputStyle": "explanatory",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
