@@ -162,11 +162,15 @@
       "mcp__lspMCP__hoverBySymbol",
       "mcp__lspMCP__findSymbol",
       "Bash(gh:auth *)",
-      "Bash(rg *)"
+      "Bash(rg: *)",
+      "Bash(ast-grep: *)",
+      "Bash(coderabbit: *)"
     ],
     "deny": [],
     "ask": [
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git * main)"
     ]
   },
   "model": "fable",
