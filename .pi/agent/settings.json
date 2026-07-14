@@ -107,7 +107,7 @@
       "styles": []
     },
     "dynamicTitle": {
-      "model": "openai-codex/gpt-5.3-codex-spark",
+      "model": "zai/glm-5.2",
       "updateAfterTurns": 30
     }
   }
