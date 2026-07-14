@@ -3,19 +3,25 @@ model_reasoning_effort = "medium"
 web_search = "live"
 personality = "none"
 suppress_unstable_features_warning = true
-tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
-tui.notifications = true
-tui.notification_method = "auto"
-tui.notification_condition = "always"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
 approvals_reviewer = "user"
 
-
-
-
+[tui]
+status_line = [
+    "current-dir",
+    "git-branch",
+    "model-with-reasoning",
+    "five-hour-limit",
+    "weekly-limit",
+    "context-remaining",
+    "context-window-size",
+]
+notifications = true
+notification_method = "auto"
+notification_condition = "always"
 
 [features]
 collaboration_modes = true
@@ -32,7 +38,6 @@ goals = true
 terminal_resize_reflow = true
 mentions_v2 = true
 js_repl = false
-
 
 [projects."/Users/adityasharma/Projects/Digests/Digests-Swift"]
 trust_level = "trusted"
@@ -148,7 +153,9 @@ trust_level = "trusted"
 [mcp_servers.exa-search]
 url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
-http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
+
+[mcp_servers.exa-search.http_headers]
+x-api-key = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989"
 
 [mcp_servers.node_repl]
 args = []
@@ -183,13 +190,6 @@ url = "http://127.0.0.1:9791/mcp"
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
-
-# [mcp_servers."playwriter"]
-# command = "bunx"
-# args = [ "playwriter@latest" ]
-# startup_timeout_sec = 40
-# env = { PLAYWRITER_AUTO_ENABLE="1" }
-
 
 [plugins."google-calendar@openai-curated"]
 enabled = false
@@ -261,7 +261,6 @@ last_revision = "1afdc0d238b61673e8f2bb57622e73641000bb75"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
-
 [desktop]
 reviewDelivery = "detached"
 keepRemoteControlAwakeWhilePluggedIn = true
@@ -274,3 +273,10 @@ selected-avatar-id = "null-signal"
 followUpQueueMode = "queue"
 preventSleepWhileRunning = false
 dock-icon-preference = "codex-system"
+
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+AUTO_TOOL_SEARCH = "auto:5"
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"
