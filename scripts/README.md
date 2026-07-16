@@ -28,8 +28,6 @@ Managed secrets in `secrets/api-keys/env.json` are rendered into `~/.config/dotf
 
 Shell profiles are not symlinked. The native `~/.zshrc` and PowerShell profile stay machine-owned; setup only writes a small marker-delimited managed block into each (between `# >>> dotfiles zsh start`/`# <<< dotfiles zsh end` and the PowerShell equivalents). The block sources the repo baseline (`shell/zsh/shared.zsh`, `shell/powershell/shared.ps1`) and a machine-local override. Anything outside the markers, including installer appends like pnpm, is left untouched. Put machine-specific config in `~/.zshrc.local` or the `profile.local.ps1` next to each profile; those files are seeded once and never overwritten. If the markers get corrupted, setup logs a `[CONFLICT]` and leaves the file for you to fix by hand.
 
-`claude-gpt` is installed as a native launcher on Windows, macOS, and Linux. It keeps normal `claude` settings untouched, downloads the pinned `claude-code-proxy` release for the current platform after verifying its archive and executable SHA-256 values, starts one shared local proxy on demand, and prompts for ChatGPT OAuth once per device when needed. Its model aliases map Fable to GPT-5.6 Sol, Opus to GPT-5.6 Terra, Sonnet to GPT-5.6 Luna, and Haiku to GPT-5.4 Mini.
-
 Windows behavior:
 - Directory links use junctions (no elevation required).
 - File-link attempts fall back to hardlinks if symlink policy blocks them.

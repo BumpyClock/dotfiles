@@ -16,4 +16,4 @@ export CLAUDE_CODE_AUTO_COMPACT_WINDOW=240000
 export CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3
 export ENABLE_TOOL_SEARCH=false
 
-claude --model opus "$@"
+claude --dangerously-skip-permissions "$@"
