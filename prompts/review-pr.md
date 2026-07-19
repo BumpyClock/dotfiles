@@ -37,10 +37,10 @@ Run a comprehensive pull request review using specialized agents plus focused pr
    Based on changes:
    - **Always applicable**: reviewer (general quality)
    - **If test files changed**: pr-test-analyzer
-   - **If comments/docs added**: technical-writer, with `skills/programming/references/documentation/code-documentation.md`
+   - **If comments/docs added**: technical-writer, with `skills/programming/references/refactoring/deslop.md`
    - **If error handling changed**: reviewer, with `skills/programming/references/error-handling/silent-failures.md`
    - **If types added/modified**: reviewer, with `skills/programming/references/design/type-design.md`
-   - **If simplification is requested**: reviewer, with `skills/programming/references/refactoring/code-simplification.md`
+   - **If simplification is requested**: reviewer, with `skills/programming/references/refactoring/deslop.md` and `skills/programming/references/refactoring/clean-refactoring.md`
 
 5. **Launch Review Passes**
 
@@ -141,7 +141,7 @@ Run a comprehensive pull request review using specialized agents plus focused pr
 
 ## Programming References:
 
-**code-simplification reference**:
+**deslop + clean-refactoring references**:
 - Reviews simplification opportunities
 - Improves clarity and readability
 - Applies project standards
