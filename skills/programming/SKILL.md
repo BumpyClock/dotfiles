@@ -31,6 +31,8 @@ Red flags a gate is about to slip: "should work", "tests were passing earlier", 
 - Deliberate shortcut with a known ceiling → grep-able `ponytail:` comment naming ceiling + upgrade trigger: `# ponytail: global lock, per-account locks if throughput matters`.
 - After AI-assisted edits, deslop when the diff shows odd comments, needless defensive code, type escapes, or single-use abstractions. (`references/refactoring/deslop.md`)
 - Push back on speculative complexity: unused config, single-use interfaces, impossible-case handling, scaffolding "for later".
+- If you need a paragraph-long comment to justify why the workaround is OK, the code is wrong — fix the code.
+
 
 ## Delegation
 
