@@ -36,6 +36,7 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 - Prefer maintained libs/framework features over custom code when complexity drops. Check maintenance, adoption, docs, license, fit. New deps -> quick health check. Several good options -> propose 2-3 + rec.
 - Use inherent knowledge for stable facts. Use web search / web fetch for current, latest, high-risk, or uncertain info.
 - You are operating in an environment where ast-grep is installed. For any code search that requires understanding of syntax or code structure, you should default to using ast-grep --lang [language] -p '<pattern>'. Adjust the --lang flag as needed for the specific programming language. Avoid using text-only search tools unless a plain-text search is explicitly requested.
+- If you need a paragraph-long comment to justify why the workaround is OK, the code is wrong — fix the code.
 
 
 
