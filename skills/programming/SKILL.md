@@ -1,136 +1,70 @@
 ---
 name: programming
-description: "Guides production code changes: root-cause debugging, TDD, test quality, verification gates, delegation, and code standards. Use when implementing features, fixing bugs, refactoring, or writing or reviewing code and tests."
+description: "Programming first principles for any code change — features, bugs, refactors, scripts, config, tests. Covers root-cause debugging, test quality, and verification gates. Use when writing, changing, debugging, or testing code. Dedicated review pass → code-review skill; explicit proof requests → verify-this skill."
 ---
 
 # Programming
 
-Build prod code. Smallest safe change. Preserve behavior unless req/test/doc says change.
+This skill sets outcomes and five absolute gates, not procedure. Choose your own path; note a deviation from a default only where a reviewer would be surprised.
 
-## Core
+## Hard gates — never bend
 
-Simplicity ladder, always on:
+1. VERIFY BEFORE CLAIMING. Run the relevant gate once before your first edit to capture a baseline. Claim done/fixed/passing only after re-running it now and reading output + exit code. Compare against baseline; report pre-existing failures, don't fix them out of scope. (`references/verification-before-completion.md`)
+2. NAME THE CAUSE BEFORE FIXING. State the mechanism (X→Y→Z), or explicitly label the change a stopgap with a follow-up. (`systematic-debugging/guide.md`)
+3. EVERY TEST OBSERVED TO FAIL for the right reason at some point. A red test means fix the code or the test's premise. Remove a test only when the behavior it pins is intentionally gone — never to get green.
+4. TESTS ASSERT REAL BEHAVIOR: observable outcomes, expected values from the source of truth. A good test fails only when the product breaks. (`references/write-tests.md`)
+5. RUN REAL CHECKS. Merge gates stay on; no `--no-verify`. Safety content — security, accessibility, data-loss — outranks consistency with existing patterns, wherever it's written.
 
-1. No code if need is speculative or already covered.
-2. Existing code in this repo: helper, util, type, or pattern already here. Look before writing; re-implementing what lives a few files over is the most common slop.
-3. Standard library.
-4. Native platform/framework feature.
-5. Already-installed dependency.
-6. Tiny local helper or direct line.
-7. Minimum new code.
+User explicitly waives a gate → comply, and state what evidence is being skipped.
 
-First rung that holds wins.
+Red flags a gate is about to slip: "should work", "tests were passing earlier", "this test is now obsolete", "the subagent confirmed it".
 
-Tie-breaks:
+## Principles
 
-- Safety beats brevity: validation at trust boundaries, security, accessibility basics, data-loss prevention, explicit reqs, tests, fresh verification.
-- Existing code patterns beat generic minimalism when consistency lowers maintenance cost.
-- New deps only when stdlib/native/existing deps fall short and custom ownership costs more.
-- Fewest clear ownership boundaries beats fewest files.
-
-Push back when req implies needless complexity: speculative features, single-use interfaces, unused config, impossible-case handling, scaffolding "for later".
-
-Rules in this skill are strong defaults, not ceremony. Hard gates stay absolute: fresh verification evidence before success claims, named root cause before fixes, no coverage-theater tests, no bypassing merge checks. Everything else bends to judgment — deviate when the situation warrants, and state the deviation plus reason so it's reviewable.
-
-## Workflow
-
-1. Read relevant repo docs/instructions. Load refs from References only when task needs them.
-2. State assumptions. Multiple plausible meanings → offer options + rec. Ask only when unsafe to assume.
-3. Nontrivial task → plan scope, success criteria, test strategy.
-4. Bugs/failures → reproduce, find root cause, fix at source (`systematic-debugging/guide.md`).
-5. Behavior change → TDD when feasible (`references/tdd-rules.md`). Skipping TDD → say why.
-6. Before adding a new mechanism, search for existing owner/consumer patterns. Reuse, consolidate, or create new deliberately (`references/refactoring/clean-refactoring.md`).
-7. Understand existing code purpose/structure before editing. Edit surgically: every changed line traces to req. Mention unrelated issues; leave them.
-8. After AI-assisted edits, run deslop pass when diff shows odd comments, needless defensive code, type escapes, or single-use abstractions (`references/refactoring/deslop.md`).
-9. Run formatter/lint/tests/docs gate relevant to change. Read output + exit code.
-10. Conflicting instructions/reqs/code → call out. Order: safety rules → existing code patterns → language refs. Ask when user judgment needed.
+- Least total machinery: existing sound repo code > stdlib > platform > installed dep > minimal new code. Look before writing — re-implementing what lives a few files over is the most common slop. Don't ossify a bad helper for consistency's sake.
+- Smallest change is measured at the root cause, not the symptom — when the cause demands a refactor, the refactor IS the smallest safe change.
+- Every changed line traces to the task. Mention unrelated issues; leave them. Reverting a bad change is always in bounds.
+- Behavior change → test-first while the contract is being discovered; table-driven cases from a stated contract land together. Skipping test-first on a non-mechanical change needs a concrete reason, not "it's small". (`references/tdd-rules.md`)
+- Tests follow SUT ownership: new tests for an existing type go in that type's existing test file; split only past ~500 lines or for genuinely distinct fixtures.
+- Mock at system edges (network, clock, filesystem, env/config, third-party SDK) by default; mocking an internal collaborator needs a stated reason — convenience isn't one.
+- Fail fast with concrete errors unless spec defines safe recovery. Comments true, timeless, minimal.
+- Deliberate shortcut with a known ceiling → grep-able `ponytail:` comment naming ceiling + upgrade trigger: `# ponytail: global lock, per-account locks if throughput matters`.
+- After AI-assisted edits, deslop when the diff shows odd comments, needless defensive code, type escapes, or single-use abstractions. (`references/refactoring/deslop.md`)
+- Push back on speculative complexity: unused config, single-use interfaces, impossible-case handling, scaffolding "for later".
 
 ## Delegation
 
-Delegate when runtime permits and work parallelizes; work local for tiny tasks, urgent blockers, tight coupling. Saved multi-task plans → `subagent-driven-development` skill.
+Match tier to blast radius, not task keywords; in doubt, one tier up. Delegate when handoff cost is clearly below doing it locally. Dispatch prompts must carry the gates above — subagents do not inherit this skill. Verify by reading the diff AND re-running gates yourself; a subagent's pasted output is not evidence.
 
-- Dispatch: `developer-lite` clear 1-2 file mechanical work; `developer` cross-module/API/schema/security/concurrency/perf/debugging; `researcher` external info; `technical-writer` public docs; `reviewer` post-impl pass, spec first then quality.
-- Give subagents full context inline: task, scope, contracts, acceptance criteria, deliverable format.
-- Verify delegated work yourself: diff + gates. Reports are signals, not evidence.
-- Stop signs: `NEEDS_CONTEXT`, `BLOCKED`, `DONE_WITH_CONCERNS`, architectural smell changing scope → add context, split, upgrade, or ask.
+Parallel workstreams: test-file contention → sequence or reassign, never a parallel test file for the same type. Don't split high-churn refactors, an in-flux shared interface, or fixtures multiple agents would rewrite.
 
-## Code Rules
-
-- Match surrounding style/format/patterns; file consistency beats outside guide.
-- Preserve behavior unless req/test/doc calls for change. Breaking change allowed when it is the right fix; call it out.
-- Refactor only task area; broader cleanup needs approval. Remove only imports/vars/fns your change made unused.
-- Clean refactor means one concept with one clear owner. Do not layer wrappers, aliases, pass-local constants, duplicate structs, or parallel abstractions unless they are external boundaries or named short-lived compatibility seams with removal conditions.
-- Fix forward. Keep existing impl unless req, root cause, or approved refactor calls for replacement; remove transitional code only after replacement works.
-- Fail fast with concrete errors unless spec defines safe recovery.
-- Deliberate shortcut with known ceiling → mark with grep-able `ponytail:` comment naming ceiling + upgrade trigger: `# ponytail: global lock, per-account locks if throughput matters`. No trigger named = rot. Harvest ledger anytime: `grep -rnE '(#|//) ?ponytail:' .`
-- Prefer clear control flow, immutable data, explicit state transitions. Style detail: `references/refactoring/code-simplification.md`.
-- Comments/docs true, timeless, concise; update user-facing docs when behavior/API changes (`references/documentation/code-documentation.md`).
-
-## Tests
-
-- Tests pin real behavior. Good test fails only when product behavior/contract breaks.
-- Behavior change or bug fix → one focused test at a time. See it fail when feasible, make it pass, then choose next test from what you learned.
-- Assert observable behavior through outermost practical entry point: return values, exit codes, persisted rows, HTTP responses, rendered output. Avoid internal-call assertions, compiler-guaranteed shapes, current config values, and count-only checks where actual values matter.
-- Prefer real implementations. Mock seams only: network, clock, filesystem, process/env/config lookup, third-party SDK. If many internals need mocks, test one layer up.
-- Keep tests deterministic: explicit inputs, controlled variables, seeded randomness, temp dirs/ports, no Internet, condition-based waits, close resources.
-- Expected values come from the real source of truth (config, asset catalog, schema), never literals copied from production source.
-- New tests for an existing type go in that type's existing test file; split only past ~500 lines or for genuinely distinct fixtures.
-- Code removed → its tests removed in the same change. "Kept for coverage" is not a reason.
-- Details: `references/write-tests.md`, `references/tdd-rules.md`, `references/test-anti-patterns.md`.
-
-## Verification
-
-Claim complete/fixed/passing only with fresh evidence from current turn: name the proving command, run it now, read output + exit code, report actual state. Full gate + evidence matrix: `references/verification-before-completion.md`.
-
-Merge gates stay on; run the real check instead of `--no-verify`/`--skip-checks`.
-
-## References
-
-Load on demand; all one level deep.
+## References — load on demand
 
 Debugging:
 
-- `systematic-debugging/guide.md` - root-cause workflow for bugs/test/build failures.
-- `systematic-debugging/root-cause-tracing.md` - trace bugs backward to origin.
-- `systematic-debugging/defense-in-depth.md` - layered validation after root cause found.
-- `systematic-debugging/condition-based-waiting.md` - replace sleeps with condition polling.
-- `issue-investigation/guide.md` - incident triage, hypothesis ranking.
+- `systematic-debugging/guide.md` — root-cause workflow for bugs/test/build failures; includes report-only multi-hypothesis triage.
+- `systematic-debugging/root-cause-tracing.md` — trace bugs backward to origin.
+- `systematic-debugging/defense-in-depth.md` — layered validation after root cause found.
+- `systematic-debugging/condition-based-waiting.md` — replace sleeps with condition polling.
 
 Tests:
 
-- `references/write-tests.md` - behavior-first test writing: what to assert, seams/mocks, probes, falsification proof, red-test triage, review checklist.
-- `references/tdd-rules.md` + `references/tdd-examples.md` - TDD rules and examples.
-- `references/test-anti-patterns.md` - mock misuse, test-only prod code.
+- `references/write-tests.md` — what to assert, seams/mocks, probes, falsification proof, red-test triage, review checklist.
+- `references/tdd-rules.md` + `references/tdd-examples.md` — TDD rules and examples.
+- `references/test-anti-patterns.md` — mock misuse, test-only prod code, coverage theater.
 
 Quality:
 
-- `references/verification-before-completion.md` - evidence gate details.
-- `references/refactoring/clean-refactoring.md` - source-of-truth refactors, ownership, compatibility seams.
-- `references/refactoring/deslop.md` - AI slop cleanup.
-- `references/refactoring/code-simplification.md` - local clarity refactors, style rules.
-- `references/refactoring/code-flow-analysis.md` - simplification across files/async/side effects.
-- `references/error-handling/silent-failures.md` - catch/fallback/retry/null review.
-- `references/documentation/code-documentation.md` - comments, API docs.
+- `references/verification-before-completion.md` — evidence gate details.
+- `references/refactoring/clean-refactoring.md` — source-of-truth refactors, ownership, compatibility seams.
+- `references/refactoring/deslop.md` — AI slop cleanup.
+- `references/error-handling/silent-failures.md` — catch/fallback/retry/null review.
 
 Design:
 
-- `references/architecture/architecture-planning.md` - boundaries, contracts, ADRs.
-- `references/design/type-design.md` - domain models, invariants, state machines.
+- `references/architecture/architecture-planning.md` — boundaries, contracts, ADRs.
+- `references/design/type-design.md` — domain models, invariants, state machines.
 
-Roles (load when acting in that mode):
+Languages (load when repo uses them): `references/languages/go.md`, `references/languages/swift-ios.md`, `references/languages/typescript-frontend.md`.
 
-- `references/roles/code-reviewer.md` - structured review.
-- `references/roles/pair-programmer.md` - approach analysis before coding.
-- `references/roles/software-architect.md` - system design.
-- `references/roles/sprint-planner.md` - parallel workstream planning.
-- `references/roles/coding-teacher.md` - teaching guidance.
-
-Languages (load when repo uses them):
-
-- `references/languages/go.md`, `references/languages/swift-ios.md`, `references/languages/typescript-frontend.md`.
-
-Web (load for browser-rendered UI or web behavior):
-
-- `references/web-development.md` - native semantics, forms, keyboard/focus/touch, reduced motion, layout stability, React state boundaries, and rendered verification.
-
-Explicit proof requests → `verify-this` skill.
+Web (browser-rendered UI): `references/web-development.md` — semantics, forms, focus, reduced motion, layout stability, rendered verification.
