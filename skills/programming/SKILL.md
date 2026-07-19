@@ -40,6 +40,10 @@ Match tier to blast radius, not task keywords; in doubt, one tier up. Delegate w
 
 Parallel workstreams: test-file contention → sequence or reassign, never a parallel test file for the same type. Don't split high-churn refactors, an in-flux shared interface, or fixtures multiple agents would rewrite.
 
+- Adversarial review: reviewer gets the diff only — never the implementer's reasoning or self-report — and is told to assume the code is wrong. Implementer doesn't review; reviewer doesn't implement.
+- Same subagent mistake twice → fix the dispatch prompt or workflow, not each output by hand.
+- Mass fan-out (10+ similar items) → pilot 2-3 through the full pipeline first; serialize the conventions that emerge into a doc every dispatch prompt references.
+
 ## References — load on demand
 
 Debugging:
