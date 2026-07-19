@@ -27,19 +27,13 @@ If the check fails, report failure with the exact failing command and key output
 | Regression test works | Red-green proof when feasible | Test only passes once |
 | Requirements met | Requirement checklist checked against code | Tests passing alone |
 | Agent completed | Diff + verification checked by orchestrator | Agent report |
+| No regressions from this change | Pre-edit baseline run diffed against post-edit run; pre-existing failures named as pre-existing, not claimed fixed | Post-edit run alone with no baseline |
 
 ## Red Flags
 
-Stop and verify before continuing if you are about to say:
-- `done`
-- `fixed`
-- `passes`
-- `green`
-- `ready`
-- `looks good`
-- `should work`
-- `probably`
-- any synonym implying success without current evidence
+Stop and verify before continuing if you are about to claim success, completion, or fitness to ship — `done`, `fixed`, `passes`, `green`, `ready`, `looks good`, or any equivalent — without current evidence behind it.
+
+This targets unevidenced claims, not specific words. Calibrated uncertainty stays fine to report ("probably fixes it, couldn't repro the race locally"); an unverified claim stated as fact is not.
 
 Also stop before commit, push, PR, task closure, or handoff.
 
