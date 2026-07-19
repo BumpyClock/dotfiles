@@ -18,7 +18,7 @@ Read `~/.agents/AGENTS.local.md` if it exists.
 
 - Long-horizon work → track in `tsq` (tasque CLI); in-session task/todo tools for in-session tracking. Update status as you claim, complete, or abandon.
 - Validate findings with evidence (`verify-this` skill) before assuming validity.
-- Multi-agent harness: delegate when handoff cost is clearly below doing it locally; main agent owns user comms, scope, plan, architecture decisions, contracts, and the final evidence report. Single-agent harness: do it yourself.
+- delegate when handoff cost is clearly below doing it locally; main agent owns user comms, scope, plan, architecture decisions, contracts, and the final evidence report. Single-agent harness: do it yourself.
 - High-risk completion claims (browser/data capture, migrations, security, PR cleanup, CI repair) need independent verification: GO/NO-GO first, evidence table, residual risks. Loop until verified or blocked; blocked = a named input only the user can provide.
 - Review agents are read-only unless assigned as writers. Contract: spec compliance first, then correctness/quality; return blocking findings with severity, file/line refs, and smallest safe fix — or state no blockers.
 - PRs: `gh pr view` / `gh pr diff`, no browser URLs; `gh auth switch` on acct mismatch. A pasted issue/PR URL grants no push or branch consent. Keep PRs logically grouped; don't bundle unrelated surfaces.
