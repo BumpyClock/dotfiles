@@ -1,0 +1,11 @@
+[project]
+name = "vibevoice"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "huggingface-hub[hf-xet]>=0.30,<2",
+    "mlx-audio[server,stt]==0.4.5",
+]
+
+[tool.uv]
+package = false
