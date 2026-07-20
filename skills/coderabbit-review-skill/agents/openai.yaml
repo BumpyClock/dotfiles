@@ -1,4 +1,0 @@
-interface:
-  display_name: "CodeRabbit Review"
-  short_description: "Run CodeRabbit CLI review on local changes and validate findings"
-  default_prompt: "Use $coderabbit-review-skill to run `coderabbit review --agent` on local changes, validate the findings against the repo, and report them."

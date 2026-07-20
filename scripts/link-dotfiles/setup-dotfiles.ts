@@ -459,16 +459,21 @@ async function installManagedEnvironment(dotfilesDir: string): Promise<void> {
 	const shellTargetPath = path.join(targetDir, ENV_SCRIPT_NAME);
 	const powershellTargetPath = path.join(targetDir, POWERSHELL_ENV_SCRIPT_NAME);
 
-	if (!(await pathExists(configPath))) {
-		info(`No managed environment config found at ${configPath}`);
-		await removeGeneratedFile(shellTargetPath);
-		await removeGeneratedFile(powershellTargetPath);
-		return;
+	// Start with environment from env.json
+	const environment = await loadManagedEnvironment(dotfilesDir);
+
+	// Add ZAI_API_KEY from GLM secrets if available
+	const glmSecretsPath = path.join(
+		dotfilesDir,
+		"secrets/claude-code/glm/glm.sh",
+	);
+	const glmToken = await parseEnvValue(glmSecretsPath, "ANTHROPIC_AUTH_TOKEN");
+	if (glmToken && glmToken !== "__ANTHROPIC_AUTH_TOKEN__") {
+		environment.ZAI_API_KEY = glmToken;
 	}
 
-	const environment = await loadManagedEnvironment(dotfilesDir);
 	if (Object.keys(environment).length === 0) {
-		warn(`No environment variables defined in ${configPath}`);
+		warn("No environment variables to install");
 		await removeGeneratedFile(shellTargetPath);
 		await removeGeneratedFile(powershellTargetPath);
 		return;
@@ -764,7 +769,20 @@ export function renderManagedZshrc(dotfilesDir: string): string {
 		"# Stable baseline lives in shell/zsh/shared.zsh.",
 		"# Machine-specific edits go in ~/.zshrc.local or outside this block.",
 		"",
-		`source ${escapeShellValue(sharedZshPath)}`,
+		`# Resolve dotfiles location (supports symlinked repos and standard locations)`,
+		`if [ -z "$DOTFILES_ROOT" ]; then`,
+		`  # Try ~/.dotfiles symlink first, then ~/Projects/dotfiles`,
+		`  if [ -L "$HOME/.dotfiles" ]; then`,
+		`    export DOTFILES_ROOT="$(readlink -f "$HOME/.dotfiles" 2>/dev/null || readlink "$HOME/.dotfiles")"`,
+		`  elif [ -d "$HOME/Projects/dotfiles" ]; then`,
+		`    export DOTFILES_ROOT="$HOME/Projects/dotfiles"`,
+		`  else`,
+		`    # Fallback: resolve from .zshrc location (note: this uses zsh parameter expansion)`,
+		`    export DOTFILES_ROOT="\${\${(%):-%x}:A:h:h}"`,
+		`  fi`,
+		`fi`,
+		``,
+		`source "$DOTFILES_ROOT/shell/zsh/shared.zsh"`,
 		"",
 		"# Source local overrides if present.",
 		'if [ -f "$HOME/.zshrc.local" ]; then',
@@ -1179,6 +1197,53 @@ export async function removeShellProfileBlock(
 	await removeManagedBlockFromFile(path.join(homeDir, ".zshrc"), ZSHRC_MARKERS);
 }
 
+async function setupDotfilesSymlink(dotfilesDir: string): Promise<void> {
+	if (process.platform === "win32") {
+		return; // Skip on Windows
+	}
+
+	const symlinkPath = homePath(".dotfiles");
+
+	// Check if symlink already exists and points to the right place
+	if (await pathExists(symlinkPath)) {
+		const stat = await lstat(symlinkPath);
+		if (stat.isSymbolicLink()) {
+			const existingTarget = await readlink(symlinkPath);
+			const normalizedExisting = path.normalize(existingTarget);
+			const normalizedDotfiles = path.normalize(dotfilesDir);
+
+			if (normalizedExisting === normalizedDotfiles) {
+				info("~/.dotfiles symlink already exists and points to the right location");
+				return;
+			}
+
+			// Symlink points elsewhere - remove it
+			warn(`~/.dotfiles points to ${existingTarget}, removing`);
+			await rm(symlinkPath, { force: true });
+		} else {
+			// Regular file or directory exists - backup and remove
+			const backupPath = `${symlinkPath}.backup.${formatTimestamp(new Date())}`;
+			warn(`~/.dotfiles exists as a regular file/directory, backing up to ${backupPath}`);
+			await rename(symlinkPath, backupPath);
+		}
+	}
+
+	// Create the symlink
+	const symlinkTarget = path.relative(homePath("."), dotfilesDir);
+	await mkdir(path.dirname(symlinkPath), { recursive: true });
+	action(`Creating ~/.dotfiles -> ${dotfilesDir}`);
+
+	// Use relative path for the symlink target so it works if home dir moves
+	const proc = Bun.spawn(["ln", "-s", symlinkTarget, symlinkPath], {
+		stdout: "inherit",
+		stderr: "inherit",
+	});
+	const exitCode = await proc.exited;
+	if (exitCode !== 0) {
+		warn("Failed to create ~/.dotfiles symlink (this is optional)");
+	}
+}
+
 async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const dotfilesDir = options.dotfilesDir;
@@ -1202,6 +1267,7 @@ async function main(): Promise<void> {
 		await initializeSubmodules(dotfilesDir);
 	}
 
+	await setupDotfilesSymlink(dotfilesDir);
 	await linkDotfiles(dotfilesDir);
 
 	await linkGitHubConfig(dotfilesDir);

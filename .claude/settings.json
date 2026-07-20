@@ -174,22 +174,9 @@
       "Bash(git * main)"
     ]
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5[1m]",
   "enableAllProjectMcpServers": true,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/Projects/dotfiles/.claude/hooks/block-destructive-commands.sh\"",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  },
+  "hooks": {},
   "statusLine": {
     "type": "command",
     "command": "ccline"

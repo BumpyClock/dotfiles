@@ -1,4 +1,0 @@
-interface:
-  display_name: "Git Workflow"
-  short_description: "Handle branches, worktrees, PRs, CI, and PR review canvas"
-  default_prompt: "Use $git-workflow to handle git and GitHub tasks, including branch management, isolated worktree setup, PR flow, comments, CI checks, and interactive HTML PR review walkthroughs."

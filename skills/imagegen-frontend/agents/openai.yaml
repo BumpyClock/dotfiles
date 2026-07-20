@@ -1,4 +1,0 @@
-interface:
-  display_name: "Frontend Image Direction"
-  short_description: "Generate premium mobile and web UI concepts"
-  default_prompt: "Use $imagegen-frontend to generate a polished frontend design image set from this brief."

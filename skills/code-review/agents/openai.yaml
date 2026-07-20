@@ -1,4 +1,0 @@
-interface:
-  display_name: "Code Review"
-  short_description: "Repo audit + strict maintainability review with ranked, evidence-backed findings"
-  default_prompt: "Use $code-review to review this repo, rank the best cleanup and refactor opportunities with evidence, include a technical-writer pass for comment and documentation quality, and cover time-complexity bottlenecks when relevant. Say 'nuclear' for the strict maintainability review mode."

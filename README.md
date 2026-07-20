@@ -1,24 +1,16 @@
 # Dotfiles
 
-Personal dotfiles and AI-agent workspace configuration for macOS/Linux/Windows.
+Personal dotfiles and system configuration for macOS/Linux/Windows.
+
+**Note:** AI agent configurations (prompts, skills, agents) have been moved to the [agent-workspace](https://github.com/BumpyClock/agent-workspace) repository.
 
 ## Repository Layout
 
 ```text
 dotfiles/
-├── AGENTS.md
 ├── bootstrap.sh               # first-run bootstrap for Unix/macOS
 ├── bootstrap.ps1              # first-run bootstrap for Windows
-├── prompts/
-├── skills/
-├── skills_archive/
-├── agent-scripts/
-├── tools/                     # Bun-based TypeScript helpers
-├── codex_configs/
-├── serena_config/
-├── agents/                    # local agent definitions linked to ~/.claude/agents
-├── agents-reference/          # git submodule reference bundle
-├── shell/
+├── shell/                     # shell configurations
 │   ├── zsh/
 │   └── powershell/
 ├── scripts/
@@ -27,12 +19,84 @@ dotfiles/
 │   │   ├── setup-dotfiles.ts
 │   │   ├── setup-ai-agents.ts
 │   │   └── package.json
-│   ├── ai-agent-links.json
-│   └── ralph-loop/
+│   └── ai-agent-links.json
+├── tools/                     # Bun-based TypeScript helpers
 ├── docs/
+├── sysadmin/
+├── terminal-profiles/
 ├── .github/
 └── secrets/                   # private submodule
 ```
+
+## Quick Start
+
+```bash
+git clone --recurse-submodules https://github.com/BumpyClock/dotfiles.git
+cd dotfiles
+```
+
+### Unix/Linux/macOS
+
+```bash
+./bootstrap.sh
+```
+
+`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker (`--setup both`) exactly once.
+
+### Windows (PowerShell)
+
+```powershell
+.\bootstrap.ps1
+```
+
+`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker.
+
+## Linker CLI
+
+Primary entrypoint is `scripts/link-dotfiles/link-dotfiles.ts`.
+
+```bash
+# Interactive chooser: dotfiles, ai-agents, or both
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
+
+# Non-interactive
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles
+
+# Status
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
+
+# Remove only the managed shell profile block for this platform
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
+```
+
+## Platform Support
+
+- **macOS**: Full support (Homebrew + zsh)
+- **Linux**: Full support (distro-specific packages + zsh/bash)
+- **Windows**: Full support (PowerShell)
+
+## Integration with Agent Workspace
+
+After installing system dotfiles, install AI agent configurations from the separate [agent-workspace](https://github.com/BumpyClock/agent-workspace) repository:
+
+```bash
+cd ~/Projects
+git clone https://github.com/BumpyClock/agent-workspace.git
+cd agent-workspace
+./bootstrap.sh
+```
+
+This separation allows:
+- System configs and AI configs to be versioned independently
+- Easier syncing across machines without breaking AI tool configurations
+- Smaller, more focused repositories
+
+## Notes
+
+- `~/.zshrc` is managed by the linker on Unix/macOS. Use `~/.zshrc.local` for machine-specific shell snippets.
+- The linker creates a `~/.dotfiles` symlink for portable config resolution
+- Environment variables (API keys, etc.) are managed in `~/.config/dotfiles/env.sh` generated from `secrets/api-keys/env.json`
+
 
 ## Quick Start
 

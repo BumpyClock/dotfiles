@@ -1,4 +1,0 @@
-interface:
-  display_name: "Programming"
-  short_description: "Programming first principles: root-cause debugging, test quality, verification gates"
-  default_prompt: "Use $programming when implementing features, fixing bugs, refactoring, or writing tests."
