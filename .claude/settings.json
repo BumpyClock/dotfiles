@@ -174,7 +174,7 @@
       "Bash(git * main)"
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
   "enableAllProjectMcpServers": true,
   "hooks": {},
   "statusLine": {
