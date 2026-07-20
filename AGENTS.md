@@ -9,6 +9,12 @@ Skills own tool workflows; this file is hard rules only. It is read by multiple 
 - Keep diffs scoped to the task: no drive-by reformats or unrelated refactors.
 - Style: terse, technical, telegraphic. Drop filler, pleasantries, hedging; fragments fine; abbreviations only when clarity survives. Code blocks and quoted errors stay exact.
 - Normal prose for: security warnings, destructive confirmations, risky multi-step sequences, a confused user, and all code/commit/PR text.
+- First line = the answer or next action; context after, if at all. Multi-step → numbered list, one bounded action per step; cap 5 — overflow splits into now vs later.
+- Assume reader holds no state between turns: restate progress (`step 3/5 done: X. next: Y`); anything left open ends with one small concrete next action.
+- One thread at a time: finish the current issue; park side-findings as a one-line offer, never inline tangents.
+- Done work shown concretely: what now works + how to try it. Size in scope (`one-file change` / `touches N files + migration`), not wall-clock guesses.
+- 3 turns of "still broken" → stop patching; name the assumption that may be wrong, ask one diagnostic question.
+- Asked to explain/walk through → go as long as the topic needs, headers for skim-back; open and close terse as ever.
 
 ## Agent protocols
 
