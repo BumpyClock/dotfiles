@@ -2,7 +2,7 @@
 
 Personal dotfiles and system configuration for macOS/Linux/Windows.
 
-**Note:** AI agent configurations (prompts, skills, agents) have been moved to the [agent-workspace](https://github.com/BumpyClock/agent-workspace) repository.
+**Note:** AI agent configurations (prompts, skills, agents) have been moved to the [agent-templates](https://github.com/BumpyClock/agent-templates) repository.
 
 ## Repository Layout
 
@@ -77,12 +77,12 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-
 
 ## Integration with Agent Workspace
 
-After installing system dotfiles, install AI agent configurations from the separate [agent-workspace](https://github.com/BumpyClock/agent-workspace) repository:
+After installing system dotfiles, install AI agent configurations from the separate [agent-templates](https://github.com/BumpyClock/agent-templates) repository:
 
 ```bash
 cd ~/Projects
-git clone https://github.com/BumpyClock/agent-workspace.git
-cd agent-workspace
+git clone https://github.com/BumpyClock/agent-templates.git
+cd agent-templates
 ./bootstrap.sh
 ```
 
