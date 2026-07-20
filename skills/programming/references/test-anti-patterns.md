@@ -151,7 +151,8 @@ test('detects duplicate server', () => {
 ### Gate Function
 
 ```
-BEFORE mocking any method:
+BEFORE mocking an internal collaborator, or anything with side effects the test depends on
+(pure-value stubs — clock, uuid, random seed — are exempt):
   STOP - Don't mock yet
 
   1. Ask: "What side effects does the real method have?"

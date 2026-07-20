@@ -15,6 +15,7 @@ Timings and curves below are proven defaults — tune to product tone, keep cons
 - Honor `prefers-reduced-motion`: loops, parallax, and scroll-driven motion collapse to static/instant. Spec the reduced variant, don't leave it implied.
 - Backdrop blur belongs on fixed/sticky elements (navbars, overlays) only — never on scrolling containers or large content areas.
 - Marketing-page motion (scroll reveals, staggered entrances, hover physics) has its own rules in `marketing-and-landing.md`.
+- Auditing existing motion in a codebase is the `improve-animations` skill's job; its `AUDIT.md` carries the fuller rule catalog (frequency→severity, per-component easing/duration tables) and is the single source for those values.
 
 ## Enter and Exit Motion
 - Split enter animations into semantic chunks: title, description, controls, data rows, or cards.
@@ -60,7 +61,7 @@ Usually wrong — break one only with a stated reason tied to the design directi
 - Asymmetric padding without reason.
 - Pure white cards on colored backgrounds.
 - Thick borders (2px or more) for decoration.
-- Excessive spacing (margins over 48px between sections).
+- Excessive spacing in product UI (margins over 48px between sections; marketing/landing pages follow the macro-whitespace rules in `marketing-and-landing.md` instead).
 - Bouncy animations.
 - Decorative gradients.
 - Multiple accent colors in one interface.

@@ -8,7 +8,7 @@ Goal: reviewable changes. No surprise pushes, branch moves, hidden staging.
 
 ## Commits
 
-- Check repo style first: `git log --oneline -20`. Repo convention wins; else Conventional Commits (types in SKILL.md).
+- Check repo style first: `git log --oneline -20`. Repo convention wins; else Conventional Commits (types + voice in AGENTS.md).
 - Imperative subject, no period, body = what/why. Breaking → `!` or `BREAKING CHANGE:` footer.
 - Stage explicit paths only; prefer `committer "<type>(scope): msg" <paths…>`. Never `git add .` / `-A`. `git add -p` ok for partial.
 - Before commit: `git diff --staged`; run relevant tests/checks or state not run.

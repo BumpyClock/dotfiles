@@ -24,9 +24,9 @@ For marketing/landing surfaces, also state a one-line design read and set the th
 Fuller starting points when the direction calls for them (vibe archetypes for marketing pages live in `marketing-and-landing.md`):
 
 **Editorial minimalism** (workspace/document tools, calm SaaS — Notion-adjacent):
-- Canvas: white or warm bone (`#F7F6F3`); surfaces white/near-white; structural borders ultra-light (`#EAEAEA` / `rgba(0,0,0,0.06)`).
+- Canvas: white or warm bone (`#F7F6F3` / `#FBFBFA`); surfaces white/near-white (`#F9F9F8`); structural borders ultra-light (`#EAEAEA` / `rgba(0,0,0,0.06)`).
 - Text: off-black (`#111` or `#2F3437`), secondary muted gray (`#787774`); body line-height 1.6.
-- Type: characterful sans for UI/body; an editorial serif reserved for hero headings and quotes with tight tracking and line-height ~1.1; monospace for code, keys, metadata.
+- Type: characterful sans for UI/body; an editorial serif (chosen per `anti-slop-tells.md` — not Fraunces/Instrument Serif) reserved for hero headings and quotes with tight tracking (-0.02em to -0.04em) and line-height ~1.1; monospace for code, keys, metadata.
 - Accents: washed-out pastels only, for tags/inline-code/icon chips — pale red `#FDEBEC`/`#9F2F2D`, blue `#E1F3FE`/`#1F6C9F`, green `#EDF3EC`/`#346538`, yellow `#FBF3DB`/`#956400`.
 - Components: flat 1px-bordered cards, crisp 8-12px radius, generous internal padding; solid near-black CTAs with 4-6px radius and no shadow; pill tags in pastels; accordions as border-bottom rows with `+`/`−` toggles; `<kbd>`-style keystroke chips.
 - No gradients, no heavy shadows (< 0.05 opacity if any), no pill-shaped large containers. Depth comes from subtle low-opacity ambient imagery or faint radial warmth, not elevation.

@@ -33,6 +33,8 @@ digraph when_to_use {
 
 ## Core Pattern
 
+Prefer your framework's built-in polling assertion first — Vitest `expect.poll`, Testing Library `waitFor`, Playwright's auto-waiting, Jest fake timers. Hand-roll the loop below only when no such primitive exists (custom event bus, non-test code).
+
 ```typescript
 // ❌ BEFORE: Guessing at timing
 await new Promise(r => setTimeout(r, 50));
@@ -78,8 +80,6 @@ async function waitFor<T>(
   }
 }
 ```
-
-See `condition-based-waiting-example.ts` in this directory for complete implementation with domain-specific helpers (`waitForEvent`, `waitForEventCount`, `waitForEventMatch`) from actual debugging session.
 
 ## Common Mistakes
 

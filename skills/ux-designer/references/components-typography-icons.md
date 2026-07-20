@@ -43,3 +43,10 @@ Good starting values — adjust to product and platform:
 - Target 44x44px for interactive controls; 40x40px is the practical floor for dense UI.
 - If the visible control is smaller, specify an expanded hit area.
 - Expanded hit areas must not overlap nearby interactive elements.
+
+## Editorial-Minimal Components
+These belong to the Editorial minimalism direction (see `design-direction.md`), not universal defaults — use only when that direction is chosen.
+- Tags / status badges: pill radius, ~11-12px type, uppercase with wide tracking (~0.05em), background from the Editorial minimalism pastel pairs in `design-direction.md`.
+- Keystroke chips: render shortcuts in `<kbd>` — `1px solid #EAEAEA`, `4px` radius, `#F7F6F3` background, monospace font.
+- Accordions as border rows: strip the container box; separate items with `border-bottom: 1px solid #EAEAEA` only; `+`/`−` toggle glyph.
+- Faux-OS window chrome: frame a mockup in a minimal container with a white top bar holding three small light-gray circles (macOS controls). Frame only — contents must be a real screenshot, generated image, or real mini-component, never div-built fake UI (see fake-artifact tells in `anti-slop-tells.md`).

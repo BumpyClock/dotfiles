@@ -146,6 +146,15 @@ Work phases in order; spend effort proportional to how unclear the cause still i
    - What settings, config, environment?
    - What assumptions does it make?
 
+### Report-Only / Multi-Hypothesis Triage
+
+Use when the ask is investigate-and-report (no fix expected), or more than ~3 plausible hypotheses are live:
+
+- Generate distinct, non-overlapping hypotheses; for each, state why it fits, what would disconfirm it, and the fastest way to test it.
+- Spawn one sub-agent per active hypothesis when parallelism helps; investigate sequentially for narrow issues. Each returns evidence, confidence (0-100), and next action.
+- Synthesize: eliminate weak hypotheses, identify the most likely cause(s).
+- Report format: Summary (2-4 sentences); Hypotheses ranked (H1-H8 max, 1-2 lines each with confidence); Evidence highlights; Most likely cause(s); Recommended fix; Verification plan; Open questions.
+
 ### Phase 3: Hypothesis and Testing
 
 **Scientific method:**
@@ -180,7 +189,8 @@ Work phases in order; spend effort proportional to how unclear the cause still i
    - Automated regression test when feasible and apt
    - One-off test script if no framework and it is proportionate
    - If no test is feasible or apt, state rationale and use the lightest viable verification
-   - Use `references/tdd-rules.md` for strict test-driven development when needed
+   - If Phase 3's probe already applied the fix, revert it first and confirm the test fails before reapplying — the red must be observed, not asserted (ties to SKILL.md's verify gate)
+   - Use `../references/tdd-rules.md` for strict test-driven development when needed
 
 2. **Implement Single Fix**
    - Address root cause identified
@@ -229,20 +239,11 @@ If you catch yourself thinking:
 - **"One more fix attempt" (when already tried 2+)**
 - **Each fix reveals new problem in different place**
 
+(Cheap, reversible diagnostic probes — logs, a debugger, a temp toggle you intend to revert — are fine; the flag is landing an untested guess as the fix.)
+
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**Repeated failed fixes:** question the architecture (see Phase 4, step 5)
-
-## User Signals You're Doing It Wrong
-
-**Watch for these redirections:**
-- "Is that not happening?" - You assumed without verifying
-- "Will it show us...?" - You should have added evidence gathering
-- "Stop guessing" - You're proposing fixes without understanding
-- "Ultrathink this" - Question fundamentals, not just symptoms
-- "We're stuck?" (frustrated) - Your approach isn't working
-
-**When you see these:** STOP. Return to Phase 1.
+**Repeated failed fixes:** question the architecture (see Phase 4, step 5). Sustained user pushback ("stop guessing", repeated correction) signals an unverified assumption — re-check before continuing.
 
 ## Common Rationalizations
 

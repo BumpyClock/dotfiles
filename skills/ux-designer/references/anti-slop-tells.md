@@ -13,6 +13,7 @@ These are patterns that mark a design as AI-generated. Each is banned as a *defa
 
 ## Typography Tells
 - Serif-by-default for anything "creative/premium". Serif needs explicit justification: brand names a serif, or genuinely editorial/luxury/publication/heritage. Everything else defaults to a characterful sans display.
+- Inter/Roboto/system-default chosen by inertia on brand-forward marketing surfaces. Legitimate for native apps, utility tools, and projects already using them — a tell only when the surface is meant to carry brand personality and the font was never chosen.
 - Fraunces and Instrument Serif: the two LLM-favorite display serifs. Avoid as defaults even when serif is justified.
 - Mixed-family emphasis: a serif word dropped into a sans headline for "visual interest". Emphasize with italic or bold of the same family.
 - Gradient text as a shortcut for "premium".
@@ -30,12 +31,17 @@ These are patterns that mark a design as AI-generated. Each is banned as a *defa
 - Hairline dividers on every row of a long list or spec table. Group into chunks or use a different component.
 - Marquees: maximum one per page.
 - Scoring/progress bars with filled background tracks as landing-page comparison visuals.
+- Hero that overflows the first viewport: headline over 2 lines, subtext over 20 words, or the primary CTA pushed below the fold. Cut copy or reduce scale until the CTA is visible without scrolling. A 4-line hero headline is a font-size error, not a copy-length one.
+- Hero content floating halfway down the page from excess top padding (`pt-32`+). Cap hero top padding at ~`pt-24`; earn breathing room with font/asset scale, not padding.
+- Overstuffed hero stack: tagline under the CTAs, trust micro-strip, pricing teaser, or avatar row crammed into the hero. Max 4 text elements (eyebrow OR brand strip, headline, subtext, CTAs); everything else moves to a section below. The "Used by / Trusted by" logo wall lives under the hero, never inside it.
+- Nav that wraps to two lines, or a tall "agency" bar eating the viewport. One line at desktop, height ≤ 80px (default 64-72px); condense labels or collapse to a hamburger before wrapping.
 
 ## Content and Copy Tells
 Placeholder content must be realistic — these break the illusion:
 - Generic names ("John Doe", "Sarah Chan") and egg avatars. Use locale-appropriate realistic names.
 - Startup-slop brands: Acme, Nexus, Flowbit, NovaCore, Quantumly. Invent names that sound real.
 - Fake-perfect numbers (`99.99%`, `50%`, `1234567`) and fake-precise specs (`4.1×`, `5.8 mm`) with no source. Use organic messy data or label as mock.
+- Fake scarcity counters (`Reservation 412 of 800`, `3 spots left`) as decoration. Only with a real limited-run waitlist and real data.
 - Filler verbs: elevate, seamless, unleash, next-gen, revolutionize, transformative. Concrete verbs only.
 - Copy self-audit before delivery: re-read every visible string; rewrite anything grammatically broken, referent-free, or LLM-poetic ("elegant nothing" phrasing). Plain beats cute.
 - Quotes: max 3 lines, real typographic quotes or none, attribution = name + role (never name alone).
@@ -61,4 +67,4 @@ Placeholder content must be realistic — these break the illusion:
 - Duplicate CTA intent: "Get in touch" + "Let's talk" + "Reach out" on one page. One label per intent, reused everywhere.
 
 ## Mechanical Pre-Delivery Check
-Scan the mockup/spec for: em-dashes in visible copy; eyebrow count > ceil(sections/3); accent color drift; radius system drift; theme flip mid-page; CTA labels that wrap or duplicate intent; button/form text below WCAG AA contrast; any tell above without a stated override reason.
+Scan the mockup/spec for: em-dashes in visible copy; eyebrow count > ceil(sections/3) — count by role (any small uppercase/tracked/small-caps label above a heading, however it's styled); accent color drift; radius system drift; theme flip mid-page; CTA labels that wrap or duplicate intent; button/form text below WCAG AA contrast; hero CTA below the fold; hero top padding beyond ~`pt-24`; hero stack over 4 text elements; nav wrapping to 2 lines or taller than 80px at desktop; any tell above without a stated override reason.

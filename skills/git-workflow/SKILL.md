@@ -19,14 +19,10 @@ Three tiers of authority:
 
 ## Global rules
 
+- Safety/consent gates from AGENTS.md are absolute here. In this skill they extend to: branch changes needing consent = create, switch, rebase, merge, delete; destructive also = force-delete, force-push, overwrite.
 - Inspect first: `git status --short`, then relevant `git diff` / `git log`.
+- Never `git add .` or `git add -A`. Use `committer`: stages explicit paths, rejects `.`.
 - Use `gh` for GitHub. Prefer API/JSON for PR comments/checks.
-- Use `committer` for commits. Stages explicit paths, rejects `.`
-- Never `git add .` or `git add -A`.
-- Push only when user asks.
-- Branch changes need consent: create, switch, rebase, merge, delete.
-- Destructive ops forbidden unless explicit: `reset --hard`, `clean`, force-delete, force-push, overwrite.
-- No manual `git stash`. Auto-stash from pull/rebase ok when command owns it.
 - Ask before resolving binary conflicts or choosing one side blindly.
 - Auth fails → ask user to run `gh auth login`; don't invent tokens.
 
@@ -64,11 +60,7 @@ python3 <skill-dir>/scripts/inspect_pr_checks.py --repo . --pr <pr>
 # <skill-dir> = this skill's install directory (bundled script), not repo-relative
 ```
 
-## Commit types
-
-Conventional Commits: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
-
 ## PR title prefixes
 
 - Default when repo has no convention of its own: `[Feature]`, `[Fix]`, `[Refactor]`, `[Perf]`, `[Docs]`, `[Test]`, `[Build]`, `[BREAKING]`.
-- Prefix sets category; wording stays plain. Commit/PR prose: concise, concrete, explains why, no filler (mitchellh style).
+- Prefix sets category; wording stays plain. Commit/PR voice: AGENTS.md rules.

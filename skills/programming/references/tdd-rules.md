@@ -23,7 +23,7 @@ Skip or simplify (unless user explicitly requests TDD or project policy requires
 
 ## Strict TDD Mode
 
-When strict TDD is chosen or required: no production change for that behavior before a failing test.
+When strict TDD is chosen or required: default to no production change for that behavior before a failing test; deviating needs a stated reason (e.g., contract still being discovered through a spike).
 
 If exploratory code came first, do not pretend it was TDD. Either keep going with explicit test-after verification, or restart the behavior slice from a failing test when the risk warrants it.
 

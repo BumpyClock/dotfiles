@@ -44,4 +44,4 @@ Use for hard problems that need boundaries, contracts, sequencing, or trade-off 
 
 ## Output
 
-Provide an executive summary, key decisions, boundaries/contracts, parallel workstreams, critical path, risks, and integration/testing strategy.
+Provide an executive summary, key decisions, boundaries/contracts, parallel workstreams, critical path, risks, and integration/testing strategy. Use Mermaid diagrams when helpful.

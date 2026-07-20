@@ -27,9 +27,11 @@ Set after the design read; record values + reasoning in the doc. Every layout/mo
 | Developer portfolio | 6 | 5 | 4 |
 | Editorial / blog | 6 | 4 | 3 |
 | Trust-first / public sector / regulated | 3-4 | 2-3 | 4-5 |
+| Designer / studio portfolio | 8 | 7 | 3 |
 | Redesign: preserve existing | match existing | +1 | match |
+| Redesign: overhaul (new visual language) | +2 | +2 | match |
 
-Redesigns: audit first (brand tokens, IA, patterns to keep vs retire); never silently change URLs, nav labels, form fields, or logo.
+Redesigns: full protocol in `redesign.md` — mode detection, audit-first, preservation rules, modernisation levers.
 
 ## Hero Discipline
 - Hero fits the first viewport: headline ≤ 2 lines, subtext ≤ 20 words, primary CTA visible without scroll. Overflow means the font scale or the copy is wrong, never the rule.
