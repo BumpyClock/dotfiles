@@ -24,7 +24,10 @@ if ! command -v bun >/dev/null 2>&1; then
 	exit 1
 fi
 
-echo "[bootstrap] Linking dotfiles and AI agent configuration..."
-bun "$DOTFILES_DIR/scripts/link-dotfiles/link-dotfiles.ts" --dotfiles-dir "$DOTFILES_DIR" --setup both "$@"
+echo "[bootstrap] Linking dotfiles..."
+bun "$DOTFILES_DIR/scripts/link-dotfiles/link-dotfiles.ts" --dotfiles-dir "$DOTFILES_DIR" "$@"
 
 echo "[bootstrap] Done."
+echo "[bootstrap] AI agent configs now live in a separate repo. To install them:"
+echo "[bootstrap]   git clone https://github.com/BumpyClock/agent-templates.git ~/Projects/agent-templates"
+echo "[bootstrap]   cd ~/Projects/agent-templates && ./bootstrap.sh"
