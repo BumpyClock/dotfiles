@@ -29,3 +29,6 @@ AGENTS.local.md
 # Editor backup files
 *.save
 .pi/.pi-subagents
+
+# Bun build cache artifacts
+*.bun-build
