@@ -1,14 +1,10 @@
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { isElevated, requestElevation } from "./setup-ai-agents";
-
-type SetupMode = "dotfiles" | "ai-agents" | "both";
 
 type CliOptions = {
 	dotfilesDir: string;
 	projectAgentsPath?: string;
-	setupMode?: SetupMode;
 	show: boolean;
 	skipSubmodules: boolean;
 	removeShellProfile: boolean;
@@ -21,7 +17,6 @@ function info(message: string): void {
 function parseArgs(argv: string[]): CliOptions {
 	let dotfilesDir = process.cwd();
 	let projectAgentsPath: string | undefined;
-	let setupMode: SetupMode | undefined;
 	let show = false;
 	let skipSubmodules = false;
 	let removeShellProfile = false;
@@ -35,16 +30,6 @@ function parseArgs(argv: string[]): CliOptions {
 				throw new Error("Missing value for --dotfiles-dir");
 			}
 			dotfilesDir = value;
-			i += 1;
-			continue;
-		}
-
-		if (arg === "--setup") {
-			const value = argv[i + 1] as SetupMode | undefined;
-			if (!value || !["dotfiles", "ai-agents", "both"].includes(value)) {
-				throw new Error("--setup must be one of: dotfiles, ai-agents, both");
-			}
-			setupMode = value;
 			i += 1;
 			continue;
 		}
@@ -81,25 +66,17 @@ function parseArgs(argv: string[]): CliOptions {
 			console.log("");
 			console.log("Options:");
 			console.log(
-				"  --dotfiles-dir <path>            Dotfiles repo root (default: cwd)",
+				"  --dotfiles-dir <path>   Dotfiles repo root (default: cwd)",
 			);
 			console.log(
-				"  --setup <dotfiles|ai-agents|both>  Run without interactive prompt",
+				"  --project-agents <path> Link repo agents into <path>/.claude/agents",
+			);
+			console.log("  --show, -s              Show current link status");
+			console.log(
+				"  --skip-submodules       Skip git submodule initialization",
 			);
 			console.log(
-				"                                      AI agents includes Claude, Codex, Copilot, OpenCode, and Pi",
-			);
-			console.log(
-				"  --project-agents <path>          Link repo agents into <path>/.claude/agents",
-			);
-			console.log(
-				"  --show, -s                       Show current link status",
-			);
-			console.log(
-				"  --skip-submodules                Skip submodule init for dotfiles setup",
-			);
-			console.log(
-				"  --remove-shell-profile           Remove only the managed shell profile block for this platform",
+				"  --remove-shell-profile  Remove only the managed shell profile block for this platform",
 			);
 			process.exit(0);
 		}
@@ -112,39 +89,10 @@ function parseArgs(argv: string[]): CliOptions {
 		projectAgentsPath: projectAgentsPath
 			? path.resolve(projectAgentsPath)
 			: undefined,
-		setupMode,
 		show,
 		skipSubmodules,
 		removeShellProfile,
 	};
-}
-
-async function promptSetupMode(): Promise<SetupMode> {
-	const rl = createInterface({ input, output });
-
-	try {
-		while (true) {
-			console.log("\nSelect setup mode:");
-			console.log("  1. Dotfiles only");
-			console.log("  2. AI agents only");
-			console.log("  3. Both dotfiles and AI agents");
-
-			const answer = (await rl.question("Enter 1, 2, or 3: ")).trim();
-			if (answer === "1") {
-				return "dotfiles";
-			}
-			if (answer === "2") {
-				return "ai-agents";
-			}
-			if (answer === "3") {
-				return "both";
-			}
-
-			console.log("Invalid choice. Please enter 1, 2, or 3.");
-		}
-	} finally {
-		rl.close();
-	}
 }
 
 async function runScript(scriptPath: string, args: string[]): Promise<void> {
@@ -166,25 +114,11 @@ async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const scriptsDir = path.join(options.dotfilesDir, "scripts", "link-dotfiles");
 	const dotfilesScript = path.join(scriptsDir, "setup-dotfiles.ts");
-	const aiAgentsScript = path.join(scriptsDir, "setup-ai-agents.ts");
-	const aiAgentConfigPath = path.join(
-		options.dotfilesDir,
-		"scripts",
-		"ai-agent-links.json",
-	);
 
 	if (options.show) {
 		await runScript(dotfilesScript, [
 			"--dotfiles-dir",
 			options.dotfilesDir,
-			"--show",
-		]);
-		console.log("\nAI mappings:");
-		await runScript(aiAgentsScript, [
-			"--dotfiles-dir",
-			options.dotfilesDir,
-			"--config",
-			aiAgentConfigPath,
 			"--show",
 		]);
 		return;
@@ -199,56 +133,26 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	if (process.platform === "win32" && !isElevated()) {
-		await requestElevation();
-	}
-
-	const setupMode = options.setupMode ?? (await promptSetupMode());
-
-	if (setupMode === "dotfiles") {
-		info("Running dotfiles setup...");
-		const args = ["--dotfiles-dir", options.dotfilesDir];
-		if (options.projectAgentsPath) {
-			args.push("--project-agents", options.projectAgentsPath);
-		}
-		if (options.skipSubmodules) {
-			args.push("--skip-submodules");
-		}
-		await runScript(dotfilesScript, args);
-		return;
-	}
-
-	if (setupMode === "ai-agents") {
-		info("Running AI agents setup...");
-		await runScript(aiAgentsScript, [
+	if (options.projectAgentsPath) {
+		await runScript(dotfilesScript, [
 			"--dotfiles-dir",
 			options.dotfilesDir,
-			"--config",
-			aiAgentConfigPath,
+			"--project-agents",
+			options.projectAgentsPath,
 		]);
 		return;
 	}
 
 	info("Running dotfiles setup...");
-	const dotfilesArgs = ["--dotfiles-dir", options.dotfilesDir];
-	if (options.projectAgentsPath) {
-		dotfilesArgs.push("--project-agents", options.projectAgentsPath);
-	}
+	const args = ["--dotfiles-dir", options.dotfilesDir];
 	if (options.skipSubmodules) {
-		dotfilesArgs.push("--skip-submodules");
+		args.push("--skip-submodules");
 	}
-	await runScript(dotfilesScript, dotfilesArgs);
-
-	info("Running AI agents setup...");
-	await runScript(aiAgentsScript, [
-		"--dotfiles-dir",
-		options.dotfilesDir,
-		"--config",
-		aiAgentConfigPath,
-	]);
+	await runScript(dotfilesScript, args);
+	info("All linking tasks completed");
 }
 
 main().catch((error) => {
-	console.error("link-dotfiles orchestrator failed:", error);
+	console.error("link-dotfiles failed:", error);
 	process.exit(1);
 });

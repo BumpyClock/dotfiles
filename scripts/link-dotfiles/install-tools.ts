@@ -1,7 +1,81 @@
-import { lstat, mkdir, readFile, readdir, rename, rm } from "node:fs/promises";
+import {
+	chmod,
+	lstat,
+	mkdir,
+	readFile,
+	readdir,
+	rename,
+	rm,
+	symlink,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { ensureLinked, getSymlinkTarget, normalizeForCompare, pathExists } from "./setup-ai-agents";
+
+// Helper functions for linking (moved from setup-ai-agents)
+
+async function pathExists(filePath: string): Promise<boolean> {
+	try {
+		await lstat(filePath);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+async function normalizeForCompare(filePath: string): Promise<string> {
+	if (process.platform === "win32") {
+		return filePath.toLowerCase();
+	}
+	return filePath;
+}
+
+async function getSymlinkTarget(
+	symlinkPath: string,
+): Promise<string | null> {
+	try {
+		const target = await readlink(symlinkPath);
+		return target;
+	} catch {
+		return null;
+	}
+}
+
+async function ensureLinked(
+	sourcePath: string,
+	targetPath: string,
+): Promise<void> {
+	const targetDir = path.dirname(targetPath);
+	await mkdir(targetDir, { recursive: true });
+
+	if (await pathExists(targetPath)) {
+		const stat = await lstat(targetPath);
+		if (stat.isSymbolicLink()) {
+			const existingTarget = await getSymlinkTarget(targetPath);
+			if (existingTarget) {
+				const normalizedExisting = await normalizeForCompare(existingTarget);
+				const normalizedSource = await normalizeForCompare(sourcePath);
+				if (normalizedExisting === normalizedSource) {
+					return;
+				}
+			}
+			await rm(targetPath, { force: true });
+		} else {
+			await rm(targetPath, { force: true, recursive: true });
+		}
+	}
+
+	const relativeSource = path.relative(targetDir, sourcePath);
+	const proc = Bun.spawn(["ln", "-s", relativeSource, targetPath], {
+		stdin: "inherit",
+		stdout: "inherit",
+		stderr: "inherit",
+	});
+	const exitCode = await proc.exited;
+	if (exitCode !== 0) {
+		throw new Error(`Failed to create symlink: ${targetPath} -> ${sourcePath}`);
+	}
+}
+
 
 type ToolInstallMode = "compile" | "link";
 
