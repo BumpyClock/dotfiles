@@ -19,20 +19,16 @@ import {
 	formatTimestamp,
 	prependManagedBlock,
 	reconcileManagedBlock,
+	removeManagedBlock,
 } from "./managed-block";
-import {
-	ensureLinked,
-	linkAiAgents,
-	pathExists,
-	showAiAgentLinks,
-} from "./setup-ai-agents";
+import { ensureLinked, pathExists } from "./setup-ai-agents";
 
 type CliOptions = {
 	dotfilesDir: string;
 	projectAgentsPath?: string;
 	show: boolean;
 	skipSubmodules: boolean;
-	skipAiAgents: boolean;
+	removeShellProfile: boolean;
 };
 
 type EnvironmentConfigValue = Record<string, string> | string;
@@ -59,7 +55,7 @@ function parseArgs(argv: string[]): CliOptions {
 	let projectAgentsPath: string | undefined;
 	let show = false;
 	let skipSubmodules = false;
-	let skipAiAgents = false;
+	let removeShellProfile = false;
 
 	for (let i = 0; i < argv.length; i += 1) {
 		const arg = argv[i];
@@ -94,8 +90,8 @@ function parseArgs(argv: string[]): CliOptions {
 			continue;
 		}
 
-		if (arg === "--skip-ai-agents") {
-			skipAiAgents = true;
+		if (arg === "--remove-shell-profile") {
+			removeShellProfile = true;
 			continue;
 		}
 
@@ -116,7 +112,7 @@ function parseArgs(argv: string[]): CliOptions {
 				"  --skip-submodules       Skip git submodule initialization",
 			);
 			console.log(
-				"  --skip-ai-agents        Do not run AI agent mapping links",
+				"  --remove-shell-profile  Remove only the managed shell profile block for this platform",
 			);
 			process.exit(0);
 		}
@@ -131,7 +127,7 @@ function parseArgs(argv: string[]): CliOptions {
 			: undefined,
 		show,
 		skipSubmodules,
-		skipAiAgents,
+		removeShellProfile,
 	};
 }
 
@@ -725,12 +721,6 @@ async function showStatus(dotfilesDir: string): Promise<void> {
 	await printLinkStatus(".tmux.conf", homePath(".tmux.conf"));
 	await printLinkStatus(".vimrc", homePath(".vimrc"));
 
-	console.log("\nAI mappings:");
-	await showAiAgentLinks({
-		configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
-		dotfilesDir,
-	});
-
 	await showToolStatus(dotfilesDir);
 }
 
@@ -1099,12 +1089,79 @@ export async function setupPowerShellProfile(
 	}
 }
 
+async function removeManagedBlockFromFile(
+	filePath: string,
+	markers: ManagedBlockMarkers,
+): Promise<void> {
+	if (!(await pathExists(filePath))) {
+		info(`No file at ${filePath}; nothing to remove`);
+		return;
+	}
+
+	const existingContent = await readFile(filePath, "utf8");
+	const result = removeManagedBlock(existingContent, markers);
+
+	if (result.outcome === "absent") {
+		info(`No managed block found in ${filePath}`);
+		return;
+	}
+
+	if (result.outcome === "conflict") {
+		warn(
+			`[CONFLICT] ${filePath} has malformed dotfiles markers; fix them manually. Leaving the file untouched.`,
+		);
+		return;
+	}
+
+	await writeFile(filePath, result.content, "utf8");
+	action(`Removed managed shell profile block from ${filePath}`);
+}
+
+export type RemoveShellProfileOptions = {
+	homeDir?: string;
+	platform?: NodeJS.Platform;
+};
+
+/**
+ * Remove only the marker-managed shell profile block for the current
+ * platform (zsh on Unix, the PowerShell profile targets on Windows),
+ * preserving all other content in the file untouched. Does not run any
+ * other linking or setup work.
+ */
+export async function removeShellProfileBlock(
+	options: RemoveShellProfileOptions = {},
+): Promise<void> {
+	const platform = options.platform ?? process.platform;
+	const homeDir = options.homeDir ?? os.homedir();
+
+	if (platform === "win32") {
+		const documentsDir = path.join(homeDir, "Documents");
+		const winPowerShellDir = path.join(documentsDir, "WindowsPowerShell");
+		const targets = [
+			path.join(documentsDir, "PowerShell", POWERSHELL_PROFILE_NAME),
+			path.join(winPowerShellDir, POWERSHELL_PROFILE_NAME),
+		];
+
+		for (const target of targets) {
+			await removeManagedBlockFromFile(target, POWERSHELL_MARKERS);
+		}
+		return;
+	}
+
+	await removeManagedBlockFromFile(path.join(homeDir, ".zshrc"), ZSHRC_MARKERS);
+}
+
 async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const dotfilesDir = options.dotfilesDir;
 
 	if (options.show) {
 		await showStatus(dotfilesDir);
+		return;
+	}
+
+	if (options.removeShellProfile) {
+		await removeShellProfileBlock();
 		return;
 	}
 
@@ -1118,13 +1175,6 @@ async function main(): Promise<void> {
 	}
 
 	await linkDotfiles(dotfilesDir);
-
-	if (!options.skipAiAgents) {
-		await linkAiAgents({
-			configPath: path.join(dotfilesDir, "scripts/ai-agent-links.json"),
-			dotfilesDir,
-		});
-	}
 
 	await linkGitHubConfig(dotfilesDir);
 	await linkConfigDirs(dotfilesDir);

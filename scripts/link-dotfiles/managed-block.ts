@@ -13,6 +13,8 @@ export type ManagedBlockOutcome =
 	| "prepended"
 	| "conflict";
 
+export type ManagedBlockRemovalOutcome = "absent" | "removed" | "conflict";
+
 export type ManagedBlockMarkers = {
 	start: string;
 	end: string;
@@ -21,6 +23,11 @@ export type ManagedBlockMarkers = {
 export type ReconcileResult = {
 	content: string;
 	outcome: ManagedBlockOutcome;
+};
+
+export type RemovalResult = {
+	content: string;
+	outcome: ManagedBlockRemovalOutcome;
 };
 
 function countOccurrences(haystack: string, needle: string): number {
@@ -36,6 +43,50 @@ function countOccurrences(haystack: string, needle: string): number {
 	}
 
 	return count;
+}
+
+type BlockSpan = {
+	startIndex: number;
+	tailStart: number;
+};
+
+/**
+ * Locate the single well-formed managed block in `content`, if any.
+ *
+ * - No markers at all -> `null` (block is absent).
+ * - Exactly one start and one end marker, start before end -> the span.
+ * - Anything else (missing counterpart, duplicated markers, end before
+ *   start) -> `"conflict"`; caller must leave the content untouched.
+ */
+function findManagedBlockSpan(
+	content: string,
+	markers: ManagedBlockMarkers,
+): BlockSpan | "conflict" | null {
+	const startCount = countOccurrences(content, markers.start);
+	const endCount = countOccurrences(content, markers.end);
+
+	if (startCount === 0 && endCount === 0) {
+		return null;
+	}
+
+	if (startCount !== 1 || endCount !== 1) {
+		return "conflict";
+	}
+
+	const startIndex = content.indexOf(markers.start);
+	const endIndex = content.indexOf(markers.end, startIndex);
+	if (endIndex === -1 || endIndex < startIndex) {
+		return "conflict";
+	}
+
+	let tailStart = endIndex + markers.end.length;
+	if (content[tailStart] === "\r" && content[tailStart + 1] === "\n") {
+		tailStart += 2;
+	} else if (content[tailStart] === "\n") {
+		tailStart += 1;
+	}
+
+	return { startIndex, tailStart };
 }
 
 export function prependManagedBlock(content: string, block: string): string {
@@ -65,42 +116,55 @@ export function reconcileManagedBlock(
 	desiredBlock: string,
 	markers: ManagedBlockMarkers,
 ): ReconcileResult {
-	const startCount = countOccurrences(existingContent, markers.start);
-	const endCount = countOccurrences(existingContent, markers.end);
+	const span = findManagedBlockSpan(existingContent, markers);
 
-	if (startCount === 0 && endCount === 0) {
+	if (span === null) {
 		return {
 			content: prependManagedBlock(existingContent, desiredBlock),
 			outcome: "prepended",
 		};
 	}
 
-	if (startCount !== 1 || endCount !== 1) {
+	if (span === "conflict") {
 		return { content: existingContent, outcome: "conflict" };
 	}
 
-	const startIndex = existingContent.indexOf(markers.start);
-	const endIndex = existingContent.indexOf(markers.end, startIndex);
-	if (endIndex === -1 || endIndex < startIndex) {
-		return { content: existingContent, outcome: "conflict" };
-	}
-
-	let tailStart = endIndex + markers.end.length;
-	if (
-		existingContent[tailStart] === "\r" &&
-		existingContent[tailStart + 1] === "\n"
-	) {
-		tailStart += 2;
-	} else if (existingContent[tailStart] === "\n") {
-		tailStart += 1;
-	}
-
-	const nextContent = `${existingContent.slice(0, startIndex)}${desiredBlock}${existingContent.slice(tailStart)}`;
+	const nextContent = `${existingContent.slice(0, span.startIndex)}${desiredBlock}${existingContent.slice(span.tailStart)}`;
 	if (nextContent === existingContent) {
 		return { content: existingContent, outcome: "unchanged" };
 	}
 
 	return { content: nextContent, outcome: "replaced" };
+}
+
+/**
+ * Remove a single well-formed managed block from `existingContent`, leaving
+ * everything else untouched.
+ *
+ * - No markers present -> `absent`; content is returned unchanged.
+ * - Malformed markers (start without end, end without start, duplicated, or
+ *   end before start) -> `conflict`; content is returned unchanged and the
+ *   caller must not modify the file.
+ * - Exactly one well-formed block -> `removed`; the block (including
+ *   markers and its trailing newline) is cut out, preserving everything
+ *   before and after it byte-for-byte.
+ */
+export function removeManagedBlock(
+	existingContent: string,
+	markers: ManagedBlockMarkers,
+): RemovalResult {
+	const span = findManagedBlockSpan(existingContent, markers);
+
+	if (span === null) {
+		return { content: existingContent, outcome: "absent" };
+	}
+
+	if (span === "conflict") {
+		return { content: existingContent, outcome: "conflict" };
+	}
+
+	const nextContent = `${existingContent.slice(0, span.startIndex)}${existingContent.slice(span.tailStart)}`;
+	return { content: nextContent, outcome: "removed" };
 }
 
 export function formatTimestamp(date: Date): string {

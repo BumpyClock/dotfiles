@@ -10,7 +10,9 @@ The PowerShell profile automatically installs these tools if missing:
 ## Profile Management
 - Profile content is owned by a marker-delimited managed block that the linker
   writes into the native profile. Set it up with:
-  `bun scripts/link-dotfiles/link-dotfiles.ts --setup dotfiles`
+  `bun scripts/link-dotfiles/link-dotfiles.ts --setup dotfiles`, or run
+  `.\bootstrap.ps1` from the repo root for first-run setup (provisions tools via
+  `setup.ps1`, then runs the linker once).
 - The block sources `shell/powershell/shared.ps1` (the shared baseline) and a
   machine-local `profile.local.ps1` next to the profile. Everything outside the
   markers, including installer appends, is preserved on rerun.
@@ -18,6 +20,8 @@ The PowerShell profile automatically installs these tools if missing:
   its directory already exists, `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1`.
 - If the markers get corrupted the linker logs a `[CONFLICT]` and leaves the
   file untouched for you to fix by hand.
+- To remove only the managed block (leaving the rest of the profile untouched), run:
+  `bun scripts/link-dotfiles/link-dotfiles.ts --remove-shell-profile`
 
 ## Installer Behavior
 - `shell/powershell/setup.ps1` installs the tools the profile relies on (pwsh,

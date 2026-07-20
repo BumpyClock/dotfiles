@@ -1,6 +1,8 @@
 #!/bin/bash
+# ABOUTME: Installs OS-level dependencies for the zsh environment (packages, plugins, Bun).
+# ABOUTME: Does not create symlinks or write config; bootstrap.sh owns invoking the Bun linker.
 
-set -e
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -45,13 +47,19 @@ install_base_packages() {
 		if ! command -v brew &>/dev/null; then
 			print_status "Installing Homebrew..."
 			/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+			# Initialize brew in this process so subsequent `brew` calls work
+			# without requiring a new shell.
+			if [ -x /opt/homebrew/bin/brew ]; then
+				eval "$(/opt/homebrew/bin/brew shellenv)"
+			elif [ -x /usr/local/bin/brew ]; then
+				eval "$(/usr/local/bin/brew shellenv)"
+			fi
 		fi
-		print_status "Updating Homebrew..."
-		brew update
 		;;
 	arch)
-		print_status "Updating pacman..."
-		sudo pacman -Syu --noconfirm
+		# Never run -Sy alone: partial upgrades break Arch. Databases must be
+		# current before any install; user is responsible for running -Syu first.
+		print_status "Arch: skipping pacman -Sy (partial-upgrade risk). Run 'sudo pacman -Syu' before this script if databases are stale."
 		;;
 	ubuntu)
 		print_status "Updating apt..."
@@ -71,7 +79,7 @@ install_zsh() {
 			brew install zsh
 			;;
 		arch)
-			sudo pacman -S --noconfirm zsh
+			sudo pacman -S --needed --noconfirm zsh
 			;;
 		ubuntu)
 			sudo apt install -y zsh
@@ -90,7 +98,7 @@ install_oh_my_zsh() {
 	fi
 }
 
-# Install zsh plugins
+# Install zsh plugins actually loaded by shell/zsh/shared.zsh
 install_zsh_plugins() {
 	ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 	# zsh-autosuggestions
@@ -100,26 +108,12 @@ install_zsh_plugins() {
 		print_status "Installing zsh-autosuggestions..."
 		git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 	fi
-	# zsh-syntax-highlighting
-	if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
-		print_status "zsh-syntax-highlighting is already installed"
-	else
-		print_status "Installing zsh-syntax-highlighting..."
-		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-	fi
 	# fast-syntax-highlighting
 	if [ -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]; then
 		print_status "fast-syntax-highlighting is already installed"
 	else
 		print_status "Installing fast-syntax-highlighting..."
 		git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
-	fi
-	# zsh-autocomplete
-	if [ -d "$ZSH_CUSTOM/plugins/zsh-autocomplete" ]; then
-		print_status "zsh-autocomplete is already installed"
-	else
-		print_status "Installing zsh-autocomplete..."
-		git clone https://github.com/marlonrichert/zsh-autocomplete.git "$ZSH_CUSTOM/plugins/zsh-autocomplete"
 	fi
 }
 
@@ -134,7 +128,7 @@ install_eza() {
 			brew install eza
 			;;
 		arch)
-			sudo pacman -S --noconfirm eza
+			sudo pacman -S --needed --noconfirm eza
 			;;
 		ubuntu)
 			# For Ubuntu, we need to use cargo or download from releases
@@ -189,6 +183,25 @@ install_pnpm() {
 	fi
 }
 
+# Install Bun (required by bootstrap.sh to run the dotfiles linker)
+install_bun() {
+	export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+	if command -v bun &>/dev/null; then
+		print_status "bun is already installed"
+	else
+		print_status "Installing bun..."
+		curl -fsSL https://bun.sh/install | bash
+	fi
+	case ":$PATH:" in
+	*":$BUN_INSTALL/bin:"*) ;;
+	*) export PATH="$BUN_INSTALL/bin:$PATH" ;;
+	esac
+	if ! command -v bun &>/dev/null; then
+		print_error "Bun is not available on PATH after install. Check $BUN_INSTALL/bin and re-run."
+		exit 1
+	fi
+}
+
 # Install ast-grep (code structural search)
 install_ast_grep() {
 	if command -v ast-grep &>/dev/null; then
@@ -200,16 +213,18 @@ install_ast_grep() {
 			brew install ast-grep
 			;;
 		arch)
-			sudo pacman -S --noconfirm ast-grep
+			sudo pacman -S --needed --noconfirm ast-grep
 			;;
 		ubuntu)
-			# No native package - use pnpm or npm global install
+			# No native package - try pnpm, npm, then bun (installed earlier in this script)
 			if command -v pnpm &>/dev/null; then
 				pnpm install --global @ast-grep/cli
 			elif command -v npm &>/dev/null; then
 				npm install --global @ast-grep/cli
+			elif command -v bun &>/dev/null; then
+				bun add --global @ast-grep/cli
 			else
-				print_error "pnpm or npm required to install ast-grep on Ubuntu"
+				print_error "pnpm, npm, or bun required to install ast-grep on Ubuntu"
 				return 1
 			fi
 			;;
@@ -225,7 +240,7 @@ install_additional_tools() {
 		brew install git curl wget ripgrep fd bat fzf
 		;;
 	arch)
-		sudo pacman -S --noconfirm git curl wget ripgrep fd bat fzf
+		sudo pacman -S --needed --noconfirm git curl wget ripgrep fd bat fzf
 		;;
 	ubuntu)
 		sudo apt install -y git curl wget ripgrep fd-find bat fzf
@@ -239,37 +254,6 @@ install_additional_tools() {
 		fi
 		;;
 	esac
-}
-
-# Create symlinks for dotfiles
-create_symlinks() {
-	print_status "Linking supporting configuration files..."
-	# Detect dotfiles directory (parent of shell/zsh)
-	DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-	print_status "Detected dotfiles directory: $DOTFILES_DIR"
-
-	if command -v bun >/dev/null 2>&1; then
-		bun "$DOTFILES_DIR/scripts/link-dotfiles/link-dotfiles.ts" --dotfiles-dir "$DOTFILES_DIR" --setup both --skip-submodules
-		print_status "Symlinks created successfully via Bun linker"
-		return
-	fi
-
-	print_warning "bun not found; applying minimal fallback links only"
-	mkdir -p "$HOME/.claude" "$HOME/.codex" "$HOME/.copilot" "$HOME/.config/opencode" "$HOME/.agents"
-	[ -d "$DOTFILES_DIR/agents" ] && ln -sf "$DOTFILES_DIR/agents" "$HOME/.claude/agents"
-	[ -f "$DOTFILES_DIR/.claude/settings.json" ] && ln -sf "$DOTFILES_DIR/.claude/settings.json" "$HOME/.claude/settings.json"
-	[ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.claude/commands"
-	[ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.codex/prompts"
-	[ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.claude/CLAUDE.md"
-	[ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.codex/AGENTS.md"
-	[ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.claude/docs"
-	[ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.codex/docs"
-	[ -d "$DOTFILES_DIR/skills" ] && ln -sf "$DOTFILES_DIR/skills" "$HOME/.config/opencode/skills"
-	[ -d "$DOTFILES_DIR/prompts" ] && ln -sf "$DOTFILES_DIR/prompts" "$HOME/.agents/prompts"
-	[ -f "$DOTFILES_DIR/AGENTS.md" ] && ln -sf "$DOTFILES_DIR/AGENTS.md" "$HOME/.agents/AGENTS.md"
-	[ -d "$DOTFILES_DIR/docs" ] && ln -sf "$DOTFILES_DIR/docs" "$HOME/.agents/docs"
-	[ -d "$DOTFILES_DIR/skills" ] && ln -sf "$DOTFILES_DIR/skills" "$HOME/.agents/skills"
-	print_status "Fallback links created successfully"
 }
 
 # Main installation
@@ -287,6 +271,7 @@ main() {
 	fi
 	# Run installations
 	install_base_packages
+	install_additional_tools  # ensures git/curl/wget present before remote installers/clones
 	install_zsh
 	install_oh_my_zsh
 	install_zsh_plugins
@@ -294,15 +279,14 @@ main() {
 	install_starship
 	install_fnm
 	install_pnpm
+	install_bun
 	install_ast_grep
-	install_additional_tools
-	create_symlinks
-	print_status "Installation complete!"
-	print_status "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
+	print_status "Dependency installation complete!"
+	print_status "Run bootstrap.sh (or bun scripts/link-dotfiles/link-dotfiles.ts) to link dotfiles."
 	# Set zsh as default shell if it isn't already
 	if [ "${SHELL#*zsh}" = "$SHELL" ]; then
 		print_status "Setting zsh as default shell..."
-		chsh -s $(which zsh)
+		chsh -s "$(command -v zsh)"
 		print_status "Please log out and log back in for the shell change to take effect"
 	fi
 }

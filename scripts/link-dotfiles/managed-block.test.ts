@@ -3,6 +3,7 @@ import {
 	type ManagedBlockMarkers,
 	prependManagedBlock,
 	reconcileManagedBlock,
+	removeManagedBlock,
 } from "./managed-block";
 
 const markers: ManagedBlockMarkers = {
@@ -78,6 +79,62 @@ describe("reconcileManagedBlock", () => {
 		const existing = `${markers.end}\nsource /a\n${markers.start}\n`;
 
 		const result = reconcileManagedBlock(existing, block("source /b"), markers);
+
+		expect(result.outcome).toBe("conflict");
+		expect(result.content).toBe(existing);
+	});
+});
+
+describe("removeManagedBlock", () => {
+	test("reports absent when no markers are present", () => {
+		const existing = "# user config\nexport Y=2\n";
+
+		const result = removeManagedBlock(existing, markers);
+
+		expect(result.outcome).toBe("absent");
+		expect(result.content).toBe(existing);
+	});
+
+	test("removes the block and preserves surrounding content byte-for-byte", () => {
+		const existing = `# user head\n${block("source /a")}# pnpm append\nexport X=1\n`;
+
+		const result = removeManagedBlock(existing, markers);
+
+		expect(result.outcome).toBe("removed");
+		expect(result.content).toBe("# user head\n# pnpm append\nexport X=1\n");
+	});
+
+	test("removes a block that is the only content, leaving an empty file", () => {
+		const existing = block("source /a");
+
+		const result = removeManagedBlock(existing, markers);
+
+		expect(result.outcome).toBe("removed");
+		expect(result.content).toBe("");
+	});
+
+	test("reports conflict when the start marker has no end marker, leaving content untouched", () => {
+		const existing = `${markers.start}\nsource /a\n# no end here\n`;
+
+		const result = removeManagedBlock(existing, markers);
+
+		expect(result.outcome).toBe("conflict");
+		expect(result.content).toBe(existing);
+	});
+
+	test("reports conflict when markers are duplicated, leaving content untouched", () => {
+		const existing = `${block("source /a")}${block("source /b")}`;
+
+		const result = removeManagedBlock(existing, markers);
+
+		expect(result.outcome).toBe("conflict");
+		expect(result.content).toBe(existing);
+	});
+
+	test("reports conflict when the end marker precedes the start marker, leaving content untouched", () => {
+		const existing = `${markers.end}\nsource /a\n${markers.start}\n`;
+
+		const result = removeManagedBlock(existing, markers);
 
 		expect(result.outcome).toBe("conflict");
 		expect(result.content).toBe(existing);

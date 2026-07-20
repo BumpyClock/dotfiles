@@ -11,6 +11,7 @@ type CliOptions = {
 	setupMode?: SetupMode;
 	show: boolean;
 	skipSubmodules: boolean;
+	removeShellProfile: boolean;
 };
 
 function info(message: string): void {
@@ -23,6 +24,7 @@ function parseArgs(argv: string[]): CliOptions {
 	let setupMode: SetupMode | undefined;
 	let show = false;
 	let skipSubmodules = false;
+	let removeShellProfile = false;
 
 	for (let i = 0; i < argv.length; i += 1) {
 		const arg = argv[i];
@@ -67,6 +69,11 @@ function parseArgs(argv: string[]): CliOptions {
 			continue;
 		}
 
+		if (arg === "--remove-shell-profile") {
+			removeShellProfile = true;
+			continue;
+		}
+
 		if (arg === "--help" || arg === "-h") {
 			console.log(
 				"Usage: bun scripts/link-dotfiles/link-dotfiles.ts [options]",
@@ -91,6 +98,9 @@ function parseArgs(argv: string[]): CliOptions {
 			console.log(
 				"  --skip-submodules                Skip submodule init for dotfiles setup",
 			);
+			console.log(
+				"  --remove-shell-profile           Remove only the managed shell profile block for this platform",
+			);
 			process.exit(0);
 		}
 
@@ -105,6 +115,7 @@ function parseArgs(argv: string[]): CliOptions {
 		setupMode,
 		show,
 		skipSubmodules,
+		removeShellProfile,
 	};
 }
 
@@ -168,6 +179,23 @@ async function main(): Promise<void> {
 			options.dotfilesDir,
 			"--show",
 		]);
+		console.log("\nAI mappings:");
+		await runScript(aiAgentsScript, [
+			"--dotfiles-dir",
+			options.dotfilesDir,
+			"--config",
+			aiAgentConfigPath,
+			"--show",
+		]);
+		return;
+	}
+
+	if (options.removeShellProfile) {
+		await runScript(dotfilesScript, [
+			"--dotfiles-dir",
+			options.dotfilesDir,
+			"--remove-shell-profile",
+		]);
 		return;
 	}
 
@@ -179,7 +207,7 @@ async function main(): Promise<void> {
 
 	if (setupMode === "dotfiles") {
 		info("Running dotfiles setup...");
-		const args = ["--dotfiles-dir", options.dotfilesDir, "--skip-ai-agents"];
+		const args = ["--dotfiles-dir", options.dotfilesDir];
 		if (options.projectAgentsPath) {
 			args.push("--project-agents", options.projectAgentsPath);
 		}
@@ -202,11 +230,7 @@ async function main(): Promise<void> {
 	}
 
 	info("Running dotfiles setup...");
-	const dotfilesArgs = [
-		"--dotfiles-dir",
-		options.dotfilesDir,
-		"--skip-ai-agents",
-	];
+	const dotfilesArgs = ["--dotfiles-dir", options.dotfilesDir];
 	if (options.projectAgentsPath) {
 		dotfilesArgs.push("--project-agents", options.projectAgentsPath);
 	}

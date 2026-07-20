@@ -18,6 +18,7 @@ import {
 	flattenEnvironmentConfig,
 	isManagedZshrc,
 	loadManagedEnvironment,
+	removeShellProfileBlock,
 	renderManagedPowerShell,
 	renderManagedZshrc,
 	renderPowerShellEnvironmentScript,
@@ -657,5 +658,112 @@ describe("managed PowerShell profile", () => {
 		await expect(readFile(localPath, "utf8")).resolves.toBe(
 			"$env:MY_LOCAL = '1'\n",
 		);
+	});
+});
+
+describe("removeShellProfileBlock", () => {
+	afterEach(async () => {
+		await Promise.all(
+			temporaryDirectories.map((directory) =>
+				rm(directory, { force: true, recursive: true }),
+			),
+		);
+		temporaryDirectories = [];
+	});
+
+	const dotfilesDir = "/fake/dotfiles";
+
+	async function createHomeFixture(prefix: string): Promise<string> {
+		const homeDir = await mkdtemp(path.join(os.tmpdir(), prefix));
+		temporaryDirectories.push(homeDir);
+		return homeDir;
+	}
+
+	test("removes the managed zshrc block on Unix, preserving surrounding content", async () => {
+		const homeDir = await createHomeFixture("remove-zshrc-test-home-");
+		const zshrcPath = path.join(homeDir, ".zshrc");
+		const managed = renderManagedZshrc(dotfilesDir);
+		await writeFile(
+			zshrcPath,
+			`# user head\n${managed}# pnpm append\nexport X=1\n`,
+			"utf8",
+		);
+
+		await removeShellProfileBlock({ homeDir, platform: "darwin" });
+
+		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
+			"# user head\n# pnpm append\nexport X=1\n",
+		);
+	});
+
+	test("is a no-op when .zshrc has no managed block", async () => {
+		const homeDir = await createHomeFixture("remove-zshrc-test-home-");
+		const zshrcPath = path.join(homeDir, ".zshrc");
+		await writeFile(zshrcPath, "# my own config\n", "utf8");
+
+		await removeShellProfileBlock({ homeDir, platform: "darwin" });
+
+		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(
+			"# my own config\n",
+		);
+	});
+
+	test("is a no-op when .zshrc does not exist", async () => {
+		const homeDir = await createHomeFixture("remove-zshrc-test-home-");
+
+		await expect(
+			removeShellProfileBlock({ homeDir, platform: "darwin" }),
+		).resolves.toBeUndefined();
+	});
+
+	test("leaves malformed zshrc markers untouched", async () => {
+		const homeDir = await createHomeFixture("remove-zshrc-test-home-");
+		const zshrcPath = path.join(homeDir, ".zshrc");
+		const malformed = "# >>> dotfiles zsh start\nsource /a\n# no end marker\n";
+		await writeFile(zshrcPath, malformed, "utf8");
+
+		await removeShellProfileBlock({ homeDir, platform: "darwin" });
+
+		await expect(readFile(zshrcPath, "utf8")).resolves.toBe(malformed);
+	});
+
+	test("removes the managed PowerShell profile block on Windows, preserving appended content", async () => {
+		const homeDir = await createHomeFixture("remove-pwsh-test-home-");
+		const profilePath = path.join(
+			homeDir,
+			"Documents",
+			"PowerShell",
+			"Microsoft.PowerShell_profile.ps1",
+		);
+		await mkdir(path.dirname(profilePath), { recursive: true });
+		const managed = renderManagedPowerShell(dotfilesDir);
+		await writeFile(
+			profilePath,
+			`${managed}# user tail\n$env:FOO = '1'\n`,
+			"utf8",
+		);
+
+		await removeShellProfileBlock({ homeDir, platform: "win32" });
+
+		await expect(readFile(profilePath, "utf8")).resolves.toBe(
+			"# user tail\n$env:FOO = '1'\n",
+		);
+	});
+
+	test("also removes the legacy WindowsPowerShell profile block when present", async () => {
+		const homeDir = await createHomeFixture("remove-pwsh-test-home-");
+		const legacyProfilePath = path.join(
+			homeDir,
+			"Documents",
+			"WindowsPowerShell",
+			"Microsoft.PowerShell_profile.ps1",
+		);
+		await mkdir(path.dirname(legacyProfilePath), { recursive: true });
+		const managed = renderManagedPowerShell(dotfilesDir);
+		await writeFile(legacyProfilePath, managed, "utf8");
+
+		await removeShellProfileBlock({ homeDir, platform: "win32" });
+
+		await expect(readFile(legacyProfilePath, "utf8")).resolves.toBe("");
 	});
 });

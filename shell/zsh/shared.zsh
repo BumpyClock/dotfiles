@@ -60,11 +60,11 @@ if [ -z "${PNPM_HOME:-}" ]; then
     *) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
   esac
 fi
-path_prepend "$PNPM_HOME"
 
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
+path=("$PNPM_HOME" ${path:#"$PNPM_HOME"})
 
 DOTFILES_ENV_SCRIPT="$HOME/.config/dotfiles/env.sh"
 if [ -f "$DOTFILES_ENV_SCRIPT" ]; then

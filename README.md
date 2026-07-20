@@ -7,6 +7,8 @@ Personal dotfiles and AI-agent workspace configuration for macOS/Linux/Windows.
 ```text
 dotfiles/
 ├── AGENTS.md
+├── bootstrap.sh               # first-run bootstrap for Unix/macOS
+├── bootstrap.ps1              # first-run bootstrap for Windows
 ├── prompts/
 ├── skills/
 ├── skills_archive/
@@ -42,20 +44,25 @@ cd dotfiles
 ### Unix/Linux/macOS
 
 ```bash
-./shell/zsh/install-deps.sh
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+./bootstrap.sh
 ```
+
+`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker (`--setup both`) exactly once. Extra arguments are passed through to the linker, e.g. `./bootstrap.sh --skip-submodules`.
 
 On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged file once, writes a small managed entrypoint that sources `shell/zsh/shared.zsh`, and creates `~/.zshrc.local` for machine-specific customizations.
 
 ### Windows (PowerShell)
 
 ```powershell
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+.\bootstrap.ps1
 ```
+
+`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker (`--setup both`) exactly once. Supports `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
 
 On Windows, directory links are created as junctions (no elevation needed).  
 If file symlinks are blocked, the linker falls back to hardlinks; only if both are blocked should you run elevated or enable Developer Mode.
+
+Once bootstrapped, re-run the linker directly (see below) to re-apply links or check status without re-provisioning dependencies.
 
 ## Linker CLI
 
@@ -75,6 +82,9 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
 
 # Link repo agents into a project's .claude/agents
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles --project-agents /path/to/project
+
+# Remove only the managed shell profile block for this platform (zsh on Unix, PowerShell profile on Windows)
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
 ```
 
 AI-agent destination mappings are defined in `scripts/ai-agent-links.json`.
