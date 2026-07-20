@@ -237,13 +237,14 @@ install_additional_tools() {
 	print_status "Installing additional tools..."
 	case $OS in
 	macos)
-		brew install git curl wget ripgrep fd bat fzf
+		brew install git curl wget unzip ripgrep fd bat fzf
 		;;
 	arch)
-		sudo pacman -S --needed --noconfirm git curl wget ripgrep fd bat fzf
+		sudo pacman -S --needed --noconfirm git curl wget unzip ripgrep fd bat fzf
 		;;
 	ubuntu)
-		sudo apt install -y git curl wget ripgrep fd-find bat fzf
+		# unzip is required by the fnm installer; without it fnm aborts.
+		sudo apt install -y git curl wget unzip ripgrep fd-find bat fzf
 		# Create symlink for fd on Ubuntu
 		if [ -f /usr/bin/fdfind ] && [ ! -f /usr/bin/fd ]; then
 			sudo ln -s /usr/bin/fdfind /usr/bin/fd
@@ -269,25 +270,35 @@ main() {
 		print_error "Unsupported operating system"
 		exit 1
 	fi
-	# Run installations
+	# Run installations.
+	# base packages, zsh, and bun are required; the rest are convenience tools
+	# whose failure must not abort the run (the linker still needs to execute).
 	install_base_packages
-	install_additional_tools  # ensures git/curl/wget present before remote installers/clones
+	install_additional_tools  # ensures git/curl/wget/unzip present before remote installers/clones
 	install_zsh
-	install_oh_my_zsh
-	install_zsh_plugins
-	install_eza
-	install_starship
-	install_fnm
-	install_pnpm
-	install_bun
-	install_ast_grep
+	# Optional tools: warn on failure, never abort. `|| true` shields each from
+	# `set -e` so a single flaky remote installer can't skip the linker.
+	install_oh_my_zsh || print_warning "oh-my-zsh install failed; continuing"
+	install_zsh_plugins || print_warning "zsh plugins install failed; continuing"
+	install_eza || print_warning "eza install failed; continuing"
+	install_starship || print_warning "starship install failed; continuing"
+	install_fnm || print_warning "fnm install failed; continuing"
+	install_pnpm || print_warning "pnpm install failed; continuing"
+	install_bun  # required: install_bun exits non-zero itself if bun is unavailable
+	install_ast_grep || print_warning "ast-grep install failed; continuing"
 	print_status "Dependency installation complete!"
 	print_status "Run bootstrap.sh (or bun scripts/link-dotfiles/link-dotfiles.ts) to link dotfiles."
-	# Set zsh as default shell if it isn't already
+	# Set zsh as default shell if it isn't already. chsh prompts for a password
+	# and fails under PAM in non-interactive/sudo-less environments; that must
+	# never abort the run, so treat any failure as a warning.
 	if [ "${SHELL#*zsh}" = "$SHELL" ]; then
 		print_status "Setting zsh as default shell..."
-		chsh -s "$(command -v zsh)"
-		print_status "Please log out and log back in for the shell change to take effect"
+		if chsh -s "$(command -v zsh)" 2>/dev/null; then
+			print_status "Please log out and log back in for the shell change to take effect"
+		else
+			print_warning "Could not change default shell to zsh automatically."
+			print_warning "Run 'chsh -s $(command -v zsh)' manually when convenient."
+		fi
 	fi
 }
 
