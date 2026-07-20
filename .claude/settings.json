@@ -174,7 +174,7 @@
       "Bash(git * main)"
     ]
   },
-  "model": "fable",
+  "model": "opus",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [

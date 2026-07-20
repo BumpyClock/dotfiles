@@ -128,7 +128,7 @@ claude-monitor() {
 }
 alias cmon='claude-monitor'
 
-# Note: cz, ccy, and claudex are generated/synced into ~/.local/bin by:
+# Note: cz, ccy, claudex, and claude-grok are generated/synced into ~/.local/bin by:
 # bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
 
 # =============================================================================

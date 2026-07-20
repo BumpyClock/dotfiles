@@ -580,6 +580,18 @@ async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
 		await chmod(claudexTarget, 0o755);
 		action(`Copied: ${claudexTarget}`);
 	}
+
+	const claudeGrokSource = path.join(
+		dotfilesDir,
+		"shell/bin/zsh/claude-grok.sh",
+	);
+	const claudeGrokTarget = path.join(binDir, "claude-grok");
+	if (await pathExists(claudeGrokSource)) {
+		await ensureWritableTarget(claudeGrokTarget);
+		await copyFile(claudeGrokSource, claudeGrokTarget);
+		await chmod(claudeGrokTarget, 0o755);
+		action(`Copied: ${claudeGrokTarget}`);
+	}
 }
 
 async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
@@ -673,6 +685,17 @@ async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
 		await ensureWritableTarget(claudexTarget);
 		await copyFile(claudexSource, claudexTarget);
 		action(`Copied: ${claudexTarget}`);
+	}
+
+	const claudeGrokSource = path.join(
+		dotfilesDir,
+		"shell/bin/powershell/claude-grok.ps1",
+	);
+	const claudeGrokTarget = path.join(binDir, "claude-grok.ps1");
+	if (await pathExists(claudeGrokSource)) {
+		await ensureWritableTarget(claudeGrokTarget);
+		await copyFile(claudeGrokSource, claudeGrokTarget);
+		action(`Copied: ${claudeGrokTarget}`);
 	}
 }
 
@@ -909,7 +932,12 @@ const POWERSHELL_PROFILE_NAME = "Microsoft.PowerShell_profile.ps1";
 const POWERSHELL_PROFILE_LOCAL_NAME = "profile.local.ps1";
 
 export function renderManagedPowerShell(dotfilesDir: string): string {
-	const sharedPath = path.join(dotfilesDir, "shell", "powershell", "shared.ps1");
+	const sharedPath = path.join(
+		dotfilesDir,
+		"shell",
+		"powershell",
+		"shared.ps1",
+	);
 	const lines = [
 		POWERSHELL_MANAGED_START,
 		POWERSHELL_MANAGED_MARKER,

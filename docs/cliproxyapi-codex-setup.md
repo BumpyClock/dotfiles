@@ -7,10 +7,10 @@ provider.
 
 ## Reference links
 
-- Quick Start: https://help.router-for.me/introduction/quick-start
-- Codex provider config: https://help.router-for.me/configuration/provider/codex
-- Codex agent client: https://help.router-for.me/agent-client/codex
-- Repo: https://github.com/router-for-me/CLIProxyAPI
+- Quick Start: <https://help.router-for.me/introduction/quick-start>
+- Codex provider config: <https://help.router-for.me/configuration/provider/codex>
+- Codex agent client: <https://help.router-for.me/agent-client/codex>
+- Repo: <https://github.com/router-for-me/CLIProxyAPI>
 
 ## Steps
 
@@ -73,6 +73,21 @@ curl -s http://localhost:8317/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"gpt-5.3-codex-spark","messages":[{"role":"user","content":"Reply with exactly: OK"}]}'
 ```
+
+## Claude Code wrappers (local bin)
+
+Dotfiles ship thin Claude Code launchers that point at this proxy
+(`ANTHROPIC_BASE_URL=http://127.0.0.1:8317`, `ANTHROPIC_AUTH_TOKEN=sk-dummy`).
+Sources live under `shell/bin/{zsh,powershell}/` and are copied to
+`~/.local/bin` by `scripts/link-dotfiles/setup-dotfiles.ts`.
+
+| Command | Default model env | Mapping |
+| --- | --- | --- |
+| `claudex` | fable | fable→`gpt-5.6-sol`, opus→`gpt-5.6-terra`, sonnet/haiku→`gpt-5.6-luna`, custom→`glm-5.2` |
+| `claude-grok` | opus | opus→`grok-4.5`, fable→`gpt-5.6-sol`, sonnet/haiku→`glm-5.2`, custom→`gpt-5.6-terra` |
+
+Requires `cliproxyapi` running (`brew services start cliproxyapi`) with the
+models above exposed on `/v1/models`.
 
 ## Notes / pitfalls
 
