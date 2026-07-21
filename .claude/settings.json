@@ -174,7 +174,7 @@
       "Bash(git * main)"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "enableAllProjectMcpServers": true,
   "hooks": {},
   "statusLine": {
