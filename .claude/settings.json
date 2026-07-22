@@ -174,12 +174,13 @@
       "Bash(git * main)"
     ]
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "enableAllProjectMcpServers": true,
-  "hooks": {},
   "statusLine": {
     "type": "command",
-    "command": "ccline"
+    "command": "bunx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
