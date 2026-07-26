@@ -32,4 +32,4 @@ AGENTS.local.md
 
 # Bun build cache artifacts
 *.bun-build
-.pi/agent/.pi-subagents
+**/.pi-subagents
