@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.80.10",
-  "defaultProvider": "xai",
-  "defaultModel": "grok-4.5",
+  "lastChangelogVersion": "0.82.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
   "defaultThinkingLevel": "high",
   "subagents": {
     "agentOverrides": {
@@ -110,7 +110,7 @@
       "styles": []
     },
     "dynamicTitle": {
-      "model": "zai/glm-5.2",
+      "model": "zai/glm-5-turbo",
       "updateAfterTurns": 30
     }
   }
