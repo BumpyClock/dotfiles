@@ -102,6 +102,9 @@
     }
   },
   "extensionSettings": {
+    "openaiCodexFastMode": {
+      "enabled": false
+    },
     "personalitySwitcher": {
       "personality": "caveman",
       "styles": []
