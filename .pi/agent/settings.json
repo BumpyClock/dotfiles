@@ -57,7 +57,8 @@
     "npm:pi-teams",
     "npm:@bumpyclock/pi-tasque",
     "npm:@narumitw/pi-goal",
-    "npm:@quintinshaw/pi-dynamic-workflows"
+    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:@bumpyclock/pi-codex-compat"
   ],
   "terminal": {
     "showTerminalProgress": true
