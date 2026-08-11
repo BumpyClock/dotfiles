@@ -63,7 +63,7 @@ if ($DryRun) { $setupArgs.DryRun = $true }
 
 Write-Step "Bun linker"
 
-$linkerArgs = @("--dotfiles-dir", $DotfilesDir, "--setup", "both")
+$linkerArgs = @("--dotfiles-dir", $DotfilesDir)
 if ($SkipSubmodules) {
     $linkerArgs += "--skip-submodules"
 }

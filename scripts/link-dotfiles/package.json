@@ -4,10 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun ./link-dotfiles.ts",
-    "show": "bun ./link-dotfiles.ts --show",
-    "dotfiles": "bun ./link-dotfiles.ts --setup dotfiles",
-    "ai-agents": "bun ./link-dotfiles.ts --setup ai-agents",
-    "setup-environment": "bun ./link-dotfiles.ts --setup both"
+    "show": "bun ./link-dotfiles.ts --show"
   },
   "dependencies": {
     "yaml": "^2.8.3"

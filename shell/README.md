@@ -38,7 +38,7 @@ Use the root bootstrap script for a new machine; it installs OS dependencies and
 ./zsh/install-deps.sh
 
 # Full setup from repo root: links dotfiles and writes the managed ~/.zshrc block.
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 ```
 
 On Unix/macOS, the linker owns only a marked block inside `~/.zshrc`. That block sources `shell/zsh/shared.zsh` and then `~/.zshrc.local`. Existing unmanaged `~/.zshrc` content is backed up, then preserved after the managed block so installer snippets such as pnpm are not clobbered on rerun.
@@ -54,11 +54,11 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-
 Use the Bun orchestrator from repo root:
 
 ```bash
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 ```
 
 ```powershell
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 ```
 
 ## Notes
@@ -68,4 +68,4 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
 - Managed env from `secrets/api-keys/env.json` is loaded via `~/.config/dotfiles/env.sh` in zsh and `~/.config/dotfiles/env.ps1` in PowerShell.
 - `shell/zsh/shared.zsh` sets cross-platform defaults defensively, including `PNPM_HOME` (`~/Library/pnpm` on macOS, `~/.local/share/pnpm` elsewhere) only when not already set.
 - `install-deps.sh` only provisions OS-level dependencies (packages, zsh plugins, Bun); it never writes links or config. `bootstrap.sh`/`bootstrap.ps1` own calling the linker afterward.
-- Linking source of truth is `scripts/link-dotfiles/` and `scripts/ai-agent-links.json`.
+- Linking source of truth is `scripts/link-dotfiles/`.

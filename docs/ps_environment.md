@@ -10,7 +10,7 @@ The PowerShell profile automatically installs these tools if missing:
 ## Profile Management
 - Profile content is owned by a marker-delimited managed block that the linker
   writes into the native profile. Set it up with:
-  `bun scripts/link-dotfiles/link-dotfiles.ts --setup dotfiles`, or run
+  `bun scripts/link-dotfiles/link-dotfiles.ts`, or run
   `.\bootstrap.ps1` from the repo root for first-run setup (provisions tools via
   `setup.ps1`, then runs the linker once).
 - The block sources `shell/powershell/shared.ps1` (the shared baseline) and a

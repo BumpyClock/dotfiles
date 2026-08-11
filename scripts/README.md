@@ -5,15 +5,10 @@
 `link-dotfiles/` contains the Bun-based linker workflow. For first-run setup, use the root `bootstrap.sh` (Unix/macOS) or `bootstrap.ps1` (Windows), which provision OS dependencies and then invoke this linker exactly once. The linker itself is also the routine re-apply/status command below.
 
 ```bash
-# Interactive: choose dotfiles, ai-agents, or both
+# Apply links / run dotfiles setup
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 
-# Non-interactive
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup ai-agents
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
-
-# Show current status (dotfiles/tools and AI-agent links)
+# Show current status
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
 
 # Remove only the managed shell profile block for this platform
@@ -22,8 +17,6 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-
 
 Internal scripts:
 - `scripts/link-dotfiles/setup-dotfiles.ts`
-- `scripts/link-dotfiles/setup-ai-agents.ts`
-- `scripts/ai-agent-links.json`
 
 During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`.
 TypeScript/Bun entrypoints are compiled into native binaries, and non-TypeScript shebang scripts are linked in place.

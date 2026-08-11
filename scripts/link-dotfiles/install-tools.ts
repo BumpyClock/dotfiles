@@ -11,7 +11,7 @@ import {
 import os from "node:os";
 import path from "node:path";
 
-// Helper functions for linking (moved from setup-ai-agents)
+// Helper functions for linking
 
 async function pathExists(filePath: string): Promise<boolean> {
 	try {

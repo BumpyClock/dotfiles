@@ -373,7 +373,7 @@ if ($Optional) {
 # --- Profile prerequisites ---------------------------------------------------
 # Profile content is owned by the marker-managed block that
 # scripts/link-dotfiles writes into the native profile:
-#   bun scripts/link-dotfiles/link-dotfiles.ts --setup dotfiles
+#   bun scripts/link-dotfiles/link-dotfiles.ts
 # This installer only provisions the tools the profile relies on. Resolve the
 # shared Documents location (used for the theme below) and unblock any existing
 # profile files so execution policy does not reject them.

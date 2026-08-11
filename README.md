@@ -17,9 +17,7 @@ dotfiles/
 │   ├── link-dotfiles/
 │   │   ├── link-dotfiles.ts   # interactive orchestrator
 │   │   ├── setup-dotfiles.ts
-│   │   ├── setup-ai-agents.ts
 │   │   └── package.json
-│   └── ai-agent-links.json
 ├── tools/                     # Bun-based TypeScript helpers
 ├── docs/
 ├── sysadmin/
@@ -41,7 +39,7 @@ cd dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker (`--setup both`) exactly once.
+`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker exactly once.
 
 ### Windows (PowerShell)
 
@@ -56,11 +54,8 @@ cd dotfiles
 Primary entrypoint is `scripts/link-dotfiles/link-dotfiles.ts`.
 
 ```bash
-# Interactive chooser: dotfiles, ai-agents, or both
+# Apply links / run dotfiles setup
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
-
-# Non-interactive
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles
 
 # Status
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
@@ -111,7 +106,7 @@ cd dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker (`--setup both`) exactly once. Extra arguments are passed through to the linker, e.g. `./bootstrap.sh --skip-submodules`.
+`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker exactly once. Extra arguments are passed through to the linker, e.g. `./bootstrap.sh --skip-submodules`.
 
 On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged file once, writes a small managed entrypoint that sources `shell/zsh/shared.zsh`, and creates `~/.zshrc.local` for machine-specific customizations.
 
@@ -121,7 +116,7 @@ On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged 
 .\bootstrap.ps1
 ```
 
-`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker (`--setup both`) exactly once. Supports `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
+`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker exactly once. Supports `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
 
 On Windows, directory links are created as junctions (no elevation needed).  
 If file symlinks are blocked, the linker falls back to hardlinks; only if both are blocked should you run elevated or enable Developer Mode.
@@ -133,25 +128,18 @@ Once bootstrapped, re-run the linker directly (see below) to re-apply links or c
 Primary entrypoint is `scripts/link-dotfiles/link-dotfiles.ts`.
 
 ```bash
-# Interactive chooser: dotfiles, ai-agents, or both
+# Apply links / run dotfiles setup
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
-
-# Non-interactive
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup ai-agents
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup both
 
 # Status
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
 
 # Link repo agents into a project's .claude/agents
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --setup dotfiles --project-agents /path/to/project
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --project-agents /path/to/project
 
 # Remove only the managed shell profile block for this platform (zsh on Unix, PowerShell profile on Windows)
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
 ```
-
-AI-agent destination mappings are defined in `scripts/ai-agent-links.json`.
 
 During setup, installable CLI sources in `tools/` are also published into `~/.local/bin`.
 TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
