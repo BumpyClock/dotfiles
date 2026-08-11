@@ -137,12 +137,17 @@ describe("managed zshrc", () => {
 		return homeDir;
 	}
 
+	// setupZshrc is a no-op on Windows (zsh isn't managed there), so the
+	// integration tests that assert on written files only run on Unix.
+	// (Bun 1.3.x ignores the test options-object form, so select test.skip directly.)
+	const onUnix = process.platform === "win32" ? test.skip : test;
+
 	test("renders a managed zshrc block", () => {
 		const content = renderManagedZshrc("/opt/dotfiles");
 
 		expect(content).toStartWith("# >>> dotfiles zsh start\n");
 		expect(content).toContain(ZSHRC_MANAGED_MARKER);
-		expect(content).toContain("source '/opt/dotfiles/shell/zsh/shared.zsh'");
+		expect(content).toContain('source "$DOTFILES_ROOT/shell/zsh/shared.zsh"');
 		expect(content).toContain('if [ -f "$HOME/.zshrc.local" ]; then');
 		expect(content).toContain('source "$HOME/.zshrc.local"');
 		expect(content).toContain("# <<< dotfiles zsh end");
@@ -156,7 +161,7 @@ describe("managed zshrc", () => {
 		expect(isManagedZshrc("# my custom zshrc\nexport FOO=bar\n")).toBe(false);
 	});
 
-	test("creates managed zshrc block and local override file", async () => {
+	onUnix("creates managed zshrc block and local override file", async () => {
 		const homeDir = await createHomeFixture();
 
 		await setupZshrc({ dotfilesDir, homeDir, now: fixedDate });
@@ -169,7 +174,7 @@ describe("managed zshrc", () => {
 		).resolves.toBe(renderZshrcLocal());
 	});
 
-	test("preserves existing local override file", async () => {
+	onUnix("preserves existing local override file", async () => {
 		const homeDir = await createHomeFixture();
 		const localPath = path.join(homeDir, ".zshrc.local");
 		await writeFile(localPath, "export MY_VAR=1\n", "utf8");
@@ -181,7 +186,7 @@ describe("managed zshrc", () => {
 		);
 	});
 
-	test("backs up unmanaged zshrc and preserves it after managed block", async () => {
+	onUnix("backs up unmanaged zshrc and preserves it after managed block", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 		const oldContent = "# my old config\nexport PATH=/usr/bin\n";
@@ -197,7 +202,7 @@ describe("managed zshrc", () => {
 		);
 	});
 
-	test("uses a unique backup path when timestamped backup already exists", async () => {
+	onUnix("uses a unique backup path when timestamped backup already exists", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 		const existingBackupPath = path.join(
@@ -222,7 +227,7 @@ describe("managed zshrc", () => {
 		);
 	});
 
-	test("does not create repeated backups when zshrc is already managed", async () => {
+	onUnix("does not create repeated backups when zshrc is already managed", async () => {
 		const homeDir = await createHomeFixture();
 
 		await setupZshrc({ dotfilesDir, homeDir, now: fixedDate });
@@ -238,7 +243,7 @@ describe("managed zshrc", () => {
 		expect(backups).toHaveLength(0);
 	});
 
-	test("updates stale managed zshrc block in place", async () => {
+	onUnix("updates stale managed zshrc block in place", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 
@@ -255,14 +260,14 @@ describe("managed zshrc", () => {
 		);
 		expect(backups).toHaveLength(0);
 		await expect(readFile(zshrcPath, "utf8")).resolves.toContain(
-			"/new/dotfiles/shell/zsh/shared.zsh",
+			'source "$DOTFILES_ROOT/shell/zsh/shared.zsh"',
 		);
 		await expect(readFile(zshrcPath, "utf8")).resolves.toContain(
 			"export PNPM_HOME=/x",
 		);
 	});
 
-	test("migrates legacy managed zshrc without losing appended tool config", async () => {
+	onUnix("migrates legacy managed zshrc without losing appended tool config", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 		const legacyContent = [
@@ -287,7 +292,7 @@ describe("managed zshrc", () => {
 		const updatedContent = await readFile(zshrcPath, "utf8");
 		expect(updatedContent).toStartWith("# >>> dotfiles zsh start\n");
 		expect(updatedContent).toContain(
-			"source '/fake/dotfiles/shell/zsh/shared.zsh'",
+			'source "$DOTFILES_ROOT/shell/zsh/shared.zsh"',
 		);
 		expect(updatedContent).toContain(
 			"# pnpm\nexport PNPM_HOME=/Users/test/Library/pnpm",
@@ -298,7 +303,7 @@ describe("managed zshrc", () => {
 		expect(backups).toHaveLength(0);
 	});
 
-	test("backs up a marked but unparseable legacy zshrc instead of migrating it", async () => {
+	onUnix("backs up a marked but unparseable legacy zshrc instead of migrating it", async () => {
 		const homeDir = await createHomeFixture();
 		const zshrcPath = path.join(homeDir, ".zshrc");
 		// Starts with the managed marker but omits the local-source/fi structure
@@ -374,7 +379,7 @@ describe("managed PowerShell profile", () => {
 
 		expect(content).toStartWith("# >>> dotfiles powershell start\n");
 		expect(content).toContain(
-			"$dotfilesShared = '/opt/dotfiles/shell/powershell/shared.ps1'",
+			`$dotfilesShared = '${path.join("/opt/dotfiles", "shell", "powershell", "shared.ps1")}'`,
 		);
 		expect(content).toContain("if (Test-Path $dotfilesShared) {");
 		expect(content).toContain(
@@ -617,7 +622,7 @@ describe("managed PowerShell profile", () => {
 		});
 
 		const updated = await readFile(profilePath, "utf8");
-		expect(updated).toContain("/new/dotfiles/shell/powershell/shared.ps1");
+		expect(updated).toContain(path.join("/new/dotfiles", "shell", "powershell", "shared.ps1"));
 		expect(updated).toContain("$env:PNPM_HOME = 'C:\\pnpm'");
 		expect(await listBackups(path.dirname(profilePath))).toHaveLength(0);
 	});

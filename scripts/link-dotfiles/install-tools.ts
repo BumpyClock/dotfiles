@@ -4,6 +4,7 @@ import {
 	mkdir,
 	readFile,
 	readdir,
+	readlink,
 	rename,
 	rm,
 	symlink,

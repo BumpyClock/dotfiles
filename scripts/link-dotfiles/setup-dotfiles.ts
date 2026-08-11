@@ -830,7 +830,6 @@ export const ZSHRC_MANAGED_START = "# >>> dotfiles zsh start";
 export const ZSHRC_MANAGED_END = "# <<< dotfiles zsh end";
 
 export function renderManagedZshrc(dotfilesDir: string): string {
-	const sharedZshPath = path.join(dotfilesDir, "shell", "zsh", "shared.zsh");
 	const lines = [
 		ZSHRC_MANAGED_START,
 		ZSHRC_MANAGED_MARKER,
