@@ -5,7 +5,7 @@
 .DESCRIPTION
     Calls shell/powershell/setup.ps1 to install the tools the PowerShell profile
     relies on, then invokes the Bun linker (scripts/link-dotfiles/link-dotfiles.ts)
-    to write the managed profile block and AI-agent links. The linker is the sole
+    to write the managed profile block. The linker is the sole
     owner of links/generated config/profile content; this script only provisions
     dependencies and calls it exactly once.
 
@@ -23,7 +23,7 @@
     Skip git submodule initialization in the Bun linker.
 
 .EXAMPLE
-    .\bootstrap.ps1                    # core tools + link dotfiles and AI agents
+    .\bootstrap.ps1                    # core tools + link dotfiles
     .\bootstrap.ps1 -Optional          # core + optional tools, then link
     .\bootstrap.ps1 -DryRun            # preview what would happen
 

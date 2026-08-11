@@ -30,13 +30,6 @@ Windows behavior:
 
 ## Other Scripts
 
-### `ralph-loop/ouroboros.ts`
-
-```bash
-bun scripts/ralph-loop/ouroboros.ts --help
-ouroboros --help
-```
-
 ### `setup-github-runner.sh`
 
 ```bash

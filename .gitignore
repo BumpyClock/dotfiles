@@ -1,5 +1,5 @@
 .DS_Store
-/AGENTS.local.md
+AGENTS.local.md
 __pycache__
 *.py[cod]
 
@@ -19,16 +19,12 @@ skills/.system/
 ./lsp-mcp/logs/*
 ./lsp-mcp/semanticSearch/*
 .lsp-mcp/
-.DS_Store
 *.zip
-node_modules/
 .tasque/
 .pi-lens/
-AGENTS.local.md
 
 # Editor backup files
 *.save
-.pi/.pi-subagents
 
 # Bun build cache artifacts
 *.bun-build

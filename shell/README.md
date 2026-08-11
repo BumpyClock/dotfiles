@@ -8,7 +8,6 @@ Shell configurations and shell-specific setup scripts.
 
 - `.zshrc`
 - `shared.zsh`
-- `anthropic.zsh`
 - `install-deps.sh`
 
 ### `powershell/`

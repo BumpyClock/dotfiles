@@ -21,8 +21,6 @@ import {
 	reconcileManagedBlock,
 	removeManagedBlock,
 } from "./managed-block";
-// AI agent linking moved to agent-workspace repo
-// Local helper functions for dotfiles linking only
 
 async function pathExists(filePath: string): Promise<boolean> {
 	try {
@@ -260,12 +258,6 @@ async function linkGitHubConfig(dotfilesDir: string): Promise<void> {
 		".github/copilot-instructions.md",
 		path.join(githubRoot, "copilot-instructions.md"),
 	);
-	await linkIfPresent(
-		dotfilesDir,
-		".github/prompts",
-		path.join(githubRoot, "prompts"),
-	);
-	await linkIfPresent(dotfilesDir, "agents", path.join(githubRoot, "agents"));
 }
 
 async function linkConfigDirs(dotfilesDir: string): Promise<void> {

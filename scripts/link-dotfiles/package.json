@@ -6,9 +6,6 @@
     "start": "bun ./link-dotfiles.ts",
     "show": "bun ./link-dotfiles.ts --show"
   },
-  "dependencies": {
-    "yaml": "^2.8.3"
-  },
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "@types/node": "^26.1.0"
