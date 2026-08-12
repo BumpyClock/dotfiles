@@ -2,7 +2,6 @@ import path from "node:path";
 
 type CliOptions = {
 	dotfilesDir: string;
-	projectAgentsPath?: string;
 	show: boolean;
 	skipSubmodules: boolean;
 	removeShellProfile: boolean;
@@ -14,7 +13,6 @@ function info(message: string): void {
 
 function parseArgs(argv: string[]): CliOptions {
 	let dotfilesDir = process.cwd();
-	let projectAgentsPath: string | undefined;
 	let show = false;
 	let skipSubmodules = false;
 	let removeShellProfile = false;
@@ -28,16 +26,6 @@ function parseArgs(argv: string[]): CliOptions {
 				throw new Error("Missing value for --dotfiles-dir");
 			}
 			dotfilesDir = value;
-			i += 1;
-			continue;
-		}
-
-		if (arg === "--project-agents") {
-			const value = argv[i + 1];
-			if (!value) {
-				throw new Error("Missing value for --project-agents");
-			}
-			projectAgentsPath = value;
 			i += 1;
 			continue;
 		}
@@ -66,9 +54,6 @@ function parseArgs(argv: string[]): CliOptions {
 			console.log(
 				"  --dotfiles-dir <path>   Dotfiles repo root (default: cwd)",
 			);
-			console.log(
-				"  --project-agents <path> Link repo agents into <path>/.claude/agents",
-			);
 			console.log("  --show, -s              Show current link status");
 			console.log(
 				"  --skip-submodules       Skip git submodule initialization",
@@ -84,9 +69,6 @@ function parseArgs(argv: string[]): CliOptions {
 
 	return {
 		dotfilesDir: path.resolve(dotfilesDir),
-		projectAgentsPath: projectAgentsPath
-			? path.resolve(projectAgentsPath)
-			: undefined,
 		show,
 		skipSubmodules,
 		removeShellProfile,
@@ -127,16 +109,6 @@ async function main(): Promise<void> {
 			"--dotfiles-dir",
 			options.dotfilesDir,
 			"--remove-shell-profile",
-		]);
-		return;
-	}
-
-	if (options.projectAgentsPath) {
-		await runScript(dotfilesScript, [
-			"--dotfiles-dir",
-			options.dotfilesDir,
-			"--project-agents",
-			options.projectAgentsPath,
 		]);
 		return;
 	}

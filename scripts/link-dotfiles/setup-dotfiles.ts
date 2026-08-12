@@ -91,7 +91,6 @@ async function ensureLinked(
 
 type CliOptions = {
 	dotfilesDir: string;
-	projectAgentsPath?: string;
 	show: boolean;
 	skipSubmodules: boolean;
 	removeShellProfile: boolean;
@@ -118,7 +117,6 @@ function action(message: string): void {
 
 function parseArgs(argv: string[]): CliOptions {
 	let dotfilesDir = process.cwd();
-	let projectAgentsPath: string | undefined;
 	let show = false;
 	let skipSubmodules = false;
 	let removeShellProfile = false;
@@ -132,16 +130,6 @@ function parseArgs(argv: string[]): CliOptions {
 				throw new Error("Missing value for --dotfiles-dir");
 			}
 			dotfilesDir = value;
-			i += 1;
-			continue;
-		}
-
-		if (arg === "--project-agents") {
-			const value = argv[i + 1];
-			if (!value) {
-				throw new Error("Missing value for --project-agents");
-			}
-			projectAgentsPath = value;
 			i += 1;
 			continue;
 		}
@@ -170,9 +158,6 @@ function parseArgs(argv: string[]): CliOptions {
 			console.log(
 				"  --dotfiles-dir <path>   Dotfiles repo root (default: cwd)",
 			);
-			console.log(
-				"  --project-agents <path> Link repo agents into <path>/.claude/agents",
-			);
 			console.log("  --show, -s              Show current link status");
 			console.log(
 				"  --skip-submodules       Skip git submodule initialization",
@@ -188,9 +173,6 @@ function parseArgs(argv: string[]): CliOptions {
 
 	return {
 		dotfilesDir: path.resolve(dotfilesDir),
-		projectAgentsPath: projectAgentsPath
-			? path.resolve(projectAgentsPath)
-			: undefined,
 		show,
 		skipSubmodules,
 		removeShellProfile,
@@ -760,29 +742,6 @@ async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
 	}
 }
 
-async function linkProjectAgents(
-	dotfilesDir: string,
-	projectPath: string,
-): Promise<void> {
-	info(`Linking agents into project: ${projectPath}`);
-	if (!(await pathExists(projectPath))) {
-		throw new Error(`Project path does not exist: ${projectPath}`);
-	}
-
-	const projectStat = await lstat(projectPath);
-	if (!projectStat.isDirectory()) {
-		throw new Error(`Project path is not a directory: ${projectPath}`);
-	}
-
-	const source = path.join(dotfilesDir, "agents");
-	if (!(await pathExists(source))) {
-		throw new Error(`Agents source missing: ${source}`);
-	}
-
-	const target = path.join(projectPath, ".claude/agents");
-	await ensureLinked(source, target);
-}
-
 async function printLinkStatus(
 	pathLabel: string,
 	targetPath: string,
@@ -1314,11 +1273,6 @@ async function main(): Promise<void> {
 
 	if (options.removeShellProfile) {
 		await removeShellProfileBlock();
-		return;
-	}
-
-	if (options.projectAgentsPath) {
-		await linkProjectAgents(dotfilesDir, options.projectAgentsPath);
 		return;
 	}
 

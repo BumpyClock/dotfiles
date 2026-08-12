@@ -39,7 +39,9 @@ cd dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker exactly once.
+`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker exactly once. Extra arguments are passed through to the linker, e.g. `./bootstrap.sh --skip-submodules`.
+
+On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged file once, writes a small managed entrypoint that sources `shell/zsh/shared.zsh`, and creates `~/.zshrc.local` for machine-specific customizations.
 
 ### Windows (PowerShell)
 
@@ -47,7 +49,12 @@ cd dotfiles
 .\bootstrap.ps1
 ```
 
-`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker.
+`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker exactly once. Supports `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
+
+On Windows, directory links are created as junctions (no elevation needed).
+If file symlinks are blocked, the linker falls back to hardlinks; only if both are blocked should you run elevated or enable Developer Mode.
+
+Once bootstrapped, re-run the linker directly (see below) to re-apply links or check status without re-provisioning dependencies.
 
 ## Linker CLI
 
@@ -60,9 +67,13 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 # Status
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
 
-# Remove only the managed shell profile block for this platform
+# Remove only the managed shell profile block for this platform (zsh on Unix, PowerShell profile on Windows)
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
 ```
+
+During setup, installable CLI sources in `tools/` are also published into `~/.local/bin`.
+TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
+If `secrets/api-keys/env.json` exists, the linker also generates `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` so shells can load managed API keys automatically.
 
 ## Platform Support
 
@@ -86,67 +97,6 @@ This separation allows:
 - Easier syncing across machines without breaking AI tool configurations
 - Smaller, more focused repositories
 
-## Notes
-
-- `~/.zshrc` is managed by the linker on Unix/macOS. Use `~/.zshrc.local` for machine-specific shell snippets.
-- The linker creates a `~/.dotfiles` symlink for portable config resolution
-- Environment variables (API keys, etc.) are managed in `~/.config/dotfiles/env.sh` generated from `secrets/api-keys/env.json`
-
-
-## Quick Start
-
-```bash
-git clone --recurse-submodules https://github.com/BumpyClock/dotfiles.git
-cd dotfiles
-```
-
-### Unix/Linux/macOS
-
-```bash
-./bootstrap.sh
-```
-
-`bootstrap.sh` installs OS-level dependencies (`shell/zsh/install-deps.sh`), then runs the Bun linker exactly once. Extra arguments are passed through to the linker, e.g. `./bootstrap.sh --skip-submodules`.
-
-On Unix/macOS, the linker manages `~/.zshrc`. It backs up an existing unmanaged file once, writes a small managed entrypoint that sources `shell/zsh/shared.zsh`, and creates `~/.zshrc.local` for machine-specific customizations.
-
-### Windows (PowerShell)
-
-```powershell
-.\bootstrap.ps1
-```
-
-`bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the Bun linker exactly once. Supports `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
-
-On Windows, directory links are created as junctions (no elevation needed).  
-If file symlinks are blocked, the linker falls back to hardlinks; only if both are blocked should you run elevated or enable Developer Mode.
-
-Once bootstrapped, re-run the linker directly (see below) to re-apply links or check status without re-provisioning dependencies.
-
-## Linker CLI
-
-Primary entrypoint is `scripts/link-dotfiles/link-dotfiles.ts`.
-
-```bash
-# Apply links / run dotfiles setup
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
-
-# Status
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
-
-# Link repo agents into a project's .claude/agents
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --project-agents /path/to/project
-
-# Remove only the managed shell profile block for this platform (zsh on Unix, PowerShell profile on Windows)
-bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
-```
-
-During setup, installable CLI sources in `tools/` are also published into `~/.local/bin`.
-TypeScript/Bun tools are compiled into native binaries on the current OS, while other shebang-based tool scripts are linked directly.
-If `secrets/api-keys/env.json` exists, the linker also generates `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` so shells can load managed API keys automatically.
-
-On Unix/macOS, the linker also manages `~/.zshrc`. Existing unmanaged content is moved to a timestamped backup such as `~/.zshrc.backup.20260518_143000`; personal shell snippets belong in `~/.zshrc.local`, which the managed entrypoint sources after the shared config.
-
 ## Submodules
 
 ```bash
@@ -166,5 +116,7 @@ git submodule update --init --recursive
 ## Notes
 
 - `~/.zshrc` is managed by the linker on Unix/macOS. Use `~/.zshrc.local` for machine-specific shell snippets; existing unmanaged `~/.zshrc` content is preserved in a timestamped backup on first migration.
+- The linker creates a `~/.dotfiles` symlink for portable config resolution.
+- Environment variables (API keys, etc.) are managed in `~/.config/dotfiles/env.sh` generated from `secrets/api-keys/env.json`.
 - `scripts/sync-github-folder.{sh,ps1}` remain available for project-level `.github` syncing.
 - `tools/trash.ts` moves files and directories to the system trash on macOS, Windows, and Linux; Linux support is best-effort through the underlying XDG-compatible backend.
