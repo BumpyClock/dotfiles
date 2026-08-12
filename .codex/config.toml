@@ -155,7 +155,6 @@ url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
 
 [mcp_servers.exa-search.http_headers]
-x-api-key = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989"
 
 [mcp_servers.node_repl]
 args = []
