@@ -29,7 +29,7 @@ docker compose down
 - Settings: `searxng/settings.yml` (JSON format enabled, limiter off)
 
 ## WebSkill SearXNG
-- **Compose:** `/home/bumpyclock/Projects/dotfiles/skills/web-skill/docker-compose.yml`
+- **Compose:** `~/Projects/agent-templates/skills_archive/web-skill/compose.yml`
 - **LAN URL:** `http://192.168.1.110:8899`
 - **JSON API:** `http://192.168.1.110:8899/search?q=QUERY&format=json`
 - **Container name:** `webskill-searxng`

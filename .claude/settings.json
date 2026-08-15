@@ -198,7 +198,7 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "advisorModel": "opus",
+  "advisorModel": "fable",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,

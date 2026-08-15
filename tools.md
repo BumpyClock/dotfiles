@@ -223,7 +223,7 @@ Engines: ...
 
 If service not up:
 ```bash
-cd ~/Projects/dotfiles/skills/web-skill
+cd ~/Projects/agent-templates/skills_archive/web-skill
 podman compose ps
 podman compose up -d
 # Mac fallback when Podman machine is not configured:
@@ -266,7 +266,7 @@ If `links` requested, tool appends `--- Links ---`.
 
 If service not up:
 ```bash
-cd ~/Projects/dotfiles/skills/web-skill
+cd ~/Projects/agent-templates/skills_archive/web-skill
 podman compose ps
 podman compose up -d
 # Mac fallback when Podman machine is not configured:

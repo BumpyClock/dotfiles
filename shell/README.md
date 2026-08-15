@@ -13,6 +13,19 @@ Shell configurations and shell-specific setup scripts.
 ### `powershell/`
 
 - `shared.ps1`
+- `setup.ps1` (tool provisioning; called by `bootstrap.ps1`)
+
+### `bin/`
+
+CLI wrappers installed into `~/.local/bin` by the linker — `zsh/` and `powershell/`
+variants of `ccy`, `ck`, `claude-grok`, `claudex`, `cz`. `cz` is rendered with the
+`ZAI_API_KEY` from `secrets/api-keys/env.json` and `ck` with the Kimi token from
+`secrets/claude-code/`; `ccy`, `claudex`, and `claude-grok` are copied verbatim and
+made executable.
+
+### `Brewfile`
+
+Homebrew dependencies for macOS setup.
 
 ## Usage
 

@@ -96,9 +96,9 @@ try {
 	) {
 		console.error(`Error: Cannot connect to Firecrawl at ${FIRECRAWL_URL}`);
 		console.error("First check whether the service is already running:");
-		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose ps");
+		console.error("  cd ~/Projects/agent-templates/skills_archive/web-skill && podman compose ps");
 		console.error("If not, start it with:");
-		console.error("  cd ~/Projects/dotfiles/skills/web-skill && podman compose up -d");
+		console.error("  cd ~/Projects/agent-templates/skills_archive/web-skill && podman compose up -d");
 	} else {
 		console.error(`Error: ${error.message}`);
 	}

@@ -16,17 +16,22 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-
 ```
 
 Internal scripts:
-- `scripts/link-dotfiles/setup-dotfiles.ts`
+- `scripts/link-dotfiles/setup-dotfiles.ts` (interactive setup)
+- `scripts/link-dotfiles/install-tools.ts` (tools/ installer)
+- `scripts/link-dotfiles/managed-block.ts` (shell-profile block helpers)
 
-During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`.
-TypeScript/Bun entrypoints are compiled into native binaries, and non-TypeScript shebang scripts are linked in place.
+During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`
+(TypeScript/Bun entrypoints compiled into native binaries, shebang scripts linked in place),
+and entrypoints from `shell/bin/zsh` (Unix) and `shell/bin/powershell` (Windows) — `cz`, `ck`,
+`ccy`, `claudex`, `claude-grok` — are rendered into `~/.local/bin` with secrets injected.
 Managed secrets in `secrets/api-keys/env.json` are rendered into `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` during setup.
 
 Shell profiles are not symlinked. The native `~/.zshrc` and PowerShell profile stay machine-owned; setup only writes a small marker-delimited managed block into each (between `# >>> dotfiles zsh start`/`# <<< dotfiles zsh end` and the PowerShell equivalents). The block sources the repo baseline (`shell/zsh/shared.zsh`, `shell/powershell/shared.ps1`) and a machine-local override. Anything outside the markers, including installer appends like pnpm, is left untouched. Put machine-specific config in `~/.zshrc.local` or the `profile.local.ps1` next to each profile; those files are seeded once and never overwritten. If the markers get corrupted, setup logs a `[CONFLICT]` and leaves the file for you to fix by hand. `--remove-shell-profile` removes only that managed block (zsh on Unix, the PowerShell profile targets on Windows) without running any other linking or setup work.
 
 Windows behavior:
-- Directory links use junctions (no elevation required).
-- File-link attempts fall back to hardlinks if symlink policy blocks them.
+- Links are created with plain `ln -s` (Bun.spawn), so an `ln` on PATH (Git Bash/MSYS, with
+  symlinks enabled) is required. There is no junction or hardlink fallback — failures raise
+  "Failed to create symlink".
 
 ## Other Scripts
 

@@ -11,8 +11,6 @@ import {
 } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createInterface } from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
 import { installTools, showToolStatus } from "./install-tools";
 import {
 	type ManagedBlockMarkers,
@@ -432,11 +430,22 @@ export async function loadManagedEnvironment(
 	return flattenEnvironmentConfig(parsed);
 }
 
-async function promptUser(question: string): Promise<string> {
-	const rl = createInterface({ input, output });
-	const answer = await rl.question(question);
-	rl.close();
-	return answer.trim();
+async function loadZaiApiKey(
+	dotfilesDir: string,
+): Promise<string | undefined> {
+	const environment = await loadManagedEnvironment(dotfilesDir);
+	return environment.ZAI_API_KEY;
+}
+
+function zaiScriptReplacements(apiKey: string): Record<string, string> {
+	return {
+		__ANTHROPIC_AUTH_TOKEN__: apiKey,
+		__ANTHROPIC_BASE_URL__: "https://api.z.ai/api/anthropic",
+		__API_TIMEOUT_MS__: "3000000",
+		__ANTHROPIC_DEFAULT_HAIKU_MODEL__: "glm-4.5-air",
+		__ANTHROPIC_DEFAULT_SONNET_MODEL__: "glm-5.2",
+		__ANTHROPIC_DEFAULT_OPUS_MODEL__: "glm-5.2",
+	};
 }
 
 async function ensureWritableTarget(targetPath: string): Promise<void> {
@@ -496,23 +505,12 @@ async function writeManagedEnvironmentFile(
 async function installManagedEnvironment(dotfilesDir: string): Promise<void> {
 	info("Installing managed environment variables...");
 
-	const configPath = path.join(dotfilesDir, ENV_CONFIG_RELATIVE_PATH);
 	const targetDir = homePath(ENV_CONFIG_TARGET_DIR);
 	const shellTargetPath = path.join(targetDir, ENV_SCRIPT_NAME);
 	const powershellTargetPath = path.join(targetDir, POWERSHELL_ENV_SCRIPT_NAME);
 
-	// Start with environment from env.json
+	// Source of truth: secrets/api-keys/env.json
 	const environment = await loadManagedEnvironment(dotfilesDir);
-
-	// Add ZAI_API_KEY from GLM secrets if available
-	const glmSecretsPath = path.join(
-		dotfilesDir,
-		"secrets/claude-code/glm/glm.sh",
-	);
-	const glmToken = await parseEnvValue(glmSecretsPath, "ANTHROPIC_AUTH_TOKEN");
-	if (glmToken && glmToken !== "__ANTHROPIC_AUTH_TOKEN__") {
-		environment.ZAI_API_KEY = glmToken;
-	}
 
 	if (Object.keys(environment).length === 0) {
 		warn("No environment variables to install");
@@ -537,41 +535,18 @@ async function installUnixBinScripts(dotfilesDir: string): Promise<void> {
 	const binDir = homePath(".local/bin");
 	await mkdir(binDir, { recursive: true });
 
-	const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.sh");
-	let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const zaiApiKey = await loadZaiApiKey(dotfilesDir);
 
-	if (!glmToken) {
-		warn(`GLM secrets not found at ${glmSecrets}`);
-		const response = (
-			await promptUser("Install cz script anyway? (y/n): ")
-		).toLowerCase();
-		if (response === "y") {
-			glmToken = await promptUser("Enter your Z.ai GLM API key: ");
-		}
-	}
-
-	if (glmToken) {
+	if (zaiApiKey) {
 		await writeGeneratedScript(
 			path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
 			path.join(binDir, "cz"),
-			{
-				__ANTHROPIC_AUTH_TOKEN__: glmToken,
-				__ANTHROPIC_BASE_URL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ??
-					"https://api.z.ai/api/anthropic",
-				__API_TIMEOUT_MS__:
-					(await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
-				__ANTHROPIC_DEFAULT_HAIKU_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ??
-					"glm-5",
-				__ANTHROPIC_DEFAULT_SONNET_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ??
-					"glm-5",
-				__ANTHROPIC_DEFAULT_OPUS_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ??
-					"glm-5",
-			},
+			zaiScriptReplacements(zaiApiKey),
 			true,
+		);
+	} else {
+		warn(
+			"ZAI_API_KEY not found in secrets/api-keys/env.json, skipping cz script generation",
 		);
 	}
 
@@ -642,41 +617,18 @@ async function installWindowsBinScripts(dotfilesDir: string): Promise<void> {
 	const binDir = homePath(".local/bin");
 	await mkdir(binDir, { recursive: true });
 
-	const glmSecrets = path.join(dotfilesDir, "secrets/claude-code/glm/glm.ps1");
-	let glmToken = await parseEnvValue(glmSecrets, "ANTHROPIC_AUTH_TOKEN");
+	const zaiApiKey = await loadZaiApiKey(dotfilesDir);
 
-	if (!glmToken) {
-		warn(`GLM secrets not found at ${glmSecrets}`);
-		const response = (
-			await promptUser("Install cz.ps1 script anyway? (y/n): ")
-		).toLowerCase();
-		if (response === "y") {
-			glmToken = await promptUser("Enter your Z.ai GLM API key: ");
-		}
-	}
-
-	if (glmToken) {
+	if (zaiApiKey) {
 		await writeGeneratedScript(
 			path.join(dotfilesDir, "shell/bin/powershell/cz.ps1"),
 			path.join(binDir, "cz.ps1"),
-			{
-				__ANTHROPIC_AUTH_TOKEN__: glmToken,
-				__ANTHROPIC_BASE_URL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_BASE_URL")) ??
-					"https://api.z.ai/api/anthropic",
-				__API_TIMEOUT_MS__:
-					(await parseEnvValue(glmSecrets, "API_TIMEOUT_MS")) ?? "3000000",
-				__ANTHROPIC_DEFAULT_HAIKU_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_HAIKU_MODEL")) ??
-					"glm-5",
-				__ANTHROPIC_DEFAULT_SONNET_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_SONNET_MODEL")) ??
-					"glm-5",
-				__ANTHROPIC_DEFAULT_OPUS_MODEL__:
-					(await parseEnvValue(glmSecrets, "ANTHROPIC_DEFAULT_OPUS_MODEL")) ??
-					"glm-5",
-			},
+			zaiScriptReplacements(zaiApiKey),
 			false,
+		);
+	} else {
+		warn(
+			"ZAI_API_KEY not found in secrets/api-keys/env.json, skipping cz.ps1 script generation",
 		);
 	}
 

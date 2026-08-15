@@ -3,6 +3,8 @@ layout: default
 title: "Agentic Coding"
 ---
 
+> **Note:** This file is a flattened snapshot of the upstream [PocketFlow](https://github.com/the-pocket/PocketFlow) documentation (concatenated from that repo's `docs/` tree — the `File: docs/...` markers show the original boundaries). Relative links like `./design_pattern/mapreduce.md` refer to the upstream repo layout, not to files in this dotfiles repo; resolve them against `https://github.com/the-pocket/PocketFlow/blob/main/docs/`.
+
 # Agentic Coding: Humans Design, Agents code!
 
 > If you are an AI agents involved in building LLM Systems, read this guide **VERY, VERY** carefully! This is the most important chapter in the entire document. Throughout development, you should always (1) start with a small and simple solution, (2) design at a high level (`docs/design.md`) before implementation, and (3) frequently ask humans for feedback and clarification.

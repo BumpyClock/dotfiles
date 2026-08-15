@@ -13,7 +13,11 @@ secrets/tokens/*
 node_modules/
 .ai_agents/session_context
 .claude/session_context
-skills/.system/
+
+# Local clones of agent marketplaces / vendored skills — see README (agent-templates note)
+agents/
+agents-reference/
+skills/
 
 # lsp-mcp logs
 ./lsp-mcp/logs/*
