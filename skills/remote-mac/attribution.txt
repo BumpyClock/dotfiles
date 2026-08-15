@@ -1,4 +1,0 @@
-Source: https://github.com/steipete/agent-scripts
-Path: skills/remote-mac
-Pulled from commit: 5dc3c2435ba70f39a7fd022a80bf12c5c2b6b0c5
-Pulled on: 2026-06-03T16:44:58Z

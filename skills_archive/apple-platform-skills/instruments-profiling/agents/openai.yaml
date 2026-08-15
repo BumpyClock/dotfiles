@@ -1,4 +1,0 @@
-interface:
-  display_name: "Instruments Profiling"
-  short_description: "Instruments profiling for macOS/iOS apps"
-  default_prompt: "Use $instruments-profiling for Instruments profiling for macOS/iOS apps."

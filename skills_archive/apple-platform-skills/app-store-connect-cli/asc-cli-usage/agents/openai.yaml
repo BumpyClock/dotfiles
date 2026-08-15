@@ -1,4 +1,0 @@
-interface:
-  display_name: "ASC CLI Usage"
-  short_description: "Help with ASC CLI Usage tasks"
-  default_prompt: "Use $asc-cli-usage to help with ASC CLI Usage tasks."

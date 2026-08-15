@@ -1,4 +1,0 @@
-interface:
-  display_name: "ASC Release Flow"
-  short_description: "Help with ASC Release Flow tasks"
-  default_prompt: "Use $asc-release-flow to help with ASC Release Flow tasks."

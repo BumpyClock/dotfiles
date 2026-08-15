@@ -161,29 +161,47 @@
       "mcp__lspMCP__hover",
       "mcp__lspMCP__hoverBySymbol",
       "mcp__lspMCP__findSymbol",
-      "Bash(gh:auth *)"
+      "Bash(gh:auth *)",
+      "Bash(rg: *)",
+      "Bash(ast-grep: *)",
+      "Bash(coderabbit: *)",
+      "Bash(committer:*)"
     ],
     "deny": [],
     "ask": [
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git * main)"
     ]
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
-    "command": "ccline"
+    "command": "ccline",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enabledPlugins": {
     "security-guidance@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
-    "figma@claude-plugins-official": true,
-    "explanatory-output-style@claude-plugins-official": true
+    "figma@claude-plugins-official": false,
+    "codex@openai-codex": true
   },
-  "outputStyle": "explanatory",
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "high",
+  "advisorModel": "opus",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "teammateMode": "in-process",
   "skipAutoPermissionPrompt": true,

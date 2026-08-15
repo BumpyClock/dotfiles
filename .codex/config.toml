@@ -1,27 +1,32 @@
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
 web_search = "live"
-personality = "pragmatic"
+personality = "none"
 suppress_unstable_features_warning = true
-tui.status_line = ["current-dir", "git-branch","model-with-reasoning","five-hour-limit", "weekly-limit", "context-remaining", "context-window-size"]
-tui.notifications = true
-tui.notification_method = "auto"
-tui.notification_condition = "always"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-model_context_window = 750000
-model_auto_compact_token_limit = 650000
 commit_attribution = ""
 plan_mode_reasoning_effort = "high"
 approvals_reviewer = "user"
 
-
-
 service_tier = "default"
 
-
-
 notify = [ "C:\\Users\\adity\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a89897d3d9baa117\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended" ]
+
+[tui]
+status_line = [
+    "current-dir",
+    "git-branch",
+    "model-with-reasoning",
+    "five-hour-limit",
+    "weekly-limit",
+    "context-remaining",
+    "context-window-size",
+]
+notifications = true
+notification_method = "auto"
+notification_condition = "always"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
@@ -40,132 +45,12 @@ goals = true
 terminal_resize_reflow = true
 mentions_v2 = true
 js_repl = false
-
-[notice]
-fast_default_opt_out = true
-hide_rate_limit_model_nudge = true
-
-
-
-[notice.model_migrations]
-"gpt-5.1-codex-max" = "gpt-5.2-codex"
-"gpt-5.2" = "gpt-5.2-codex"
-"gpt-5.2-codex" = "gpt-5.3-codex"
-"gpt-5.3-codex" = "gpt-5.5"
-
-
-[projects."C:\\Users\\adityasharma\\Projects\\code-tools-mcp"]
-trust_level = "trusted"
-
-[projects."C:\\Users\\adityasharma\\Projects\\Digests-Windows"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Digests/Digests-Swift"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/figma-console-mcp"]
-trust_level = "trusted"
-
-[projects."/"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/dotfiles"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/tasque"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Digests/digests-api"]
-trust_level = "trusted"
-
-[projects.'\\?\C:\Users\adityasharma\Projects\Wallpaper_splat']
-trust_level = "trusted"
-
-[projects.'\\?\C:\Users\adityasharma\Projects\dotfiles']
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Digests-Swift"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/sysadmin"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/book-recos"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/making-with-ai"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/nova-shell"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/gpui-component"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/ansible"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/roci"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/notes"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/PersonalAssistant"]
-trust_level = "trusted"
+default_mode_request_user_input = true
 
 [projects.'C:\Users\adityasharma\Projects\agent-replay']
 trust_level = "trusted"
 
 [projects.'C:\Users\adityasharma\Projects\session-replay']
-trust_level = "trusted"
-
-[projects."/home/bumpyclock/Projects/dotfiles"]
-trust_level = "trusted"
-
-[projects."/home/bumpyclock/sysadmin"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/.codex"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/code-tools-mcp"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/intentOS"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Blender-Wes"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/gpui"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/agent-term"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Andromeda"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Documents/Codex/2026-05-01/what-is-immediate-mode-ui-library"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/digests-api"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Gurukul/SchoolWeb"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/Projects/Digests"]
-trust_level = "trusted"
-
-[projects."/Users/adityasharma/.agents"]
 trust_level = "trusted"
 
 [projects.'c:\users\adityasharma\projects\nova-shell']
@@ -180,63 +65,36 @@ trust_level = "trusted"
 [projects.'c:\users\adity']
 trust_level = "trusted"
 
-
-
-#Agents configuration
-[agents]
-max_threads = 24
-
-## END AGENT CONFIG
-
 [mcp_servers.exa-search]
 url = "https://mcp.exa.ai/mcp"
 startup_timeout_sec = 20
-http_headers = { "x-api-key" = "0b3e8d1c-6330-45d9-be1f-0c4d2c0e1989" }
+
+[mcp_servers.exa-search.http_headers]
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
-[mcp_servers.node_repl]
-args = []
-command = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node_repl.exe'
-startup_timeout_sec = 120
-
-[mcp_servers.node_repl.env]
-NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
-NODE_REPL_NODE_MODULE_DIRS = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node_modules'
-NODE_REPL_NODE_PATH = 'C:\Users\adity\AppData\Local\OpenAI\Codex\runtimes\cua_node\a89897d3d9baa117\bin\node.exe'
-NODE_REPL_TRUSTED_CODE_PATHS = 'C:\Users\adity\.codex'
-CODEX_HOME = 'C:\Users\adity\.codex'
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "566be6ef352eb3de899adc56a9cd7b5e46c8f65b00e56b5630dd7a580e10cbea,feca4d852d7d18eab5e217b18c8c80099fe667c330e836640fd7a48f362de525"
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
-NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.32156"
-SKY_CUA_NATIVE_PIPE = "1"
-SKY_CUA_NATIVE_PIPE_DIRECTORY = '\\.\pipe\codex-computer-use-2a6ea144-2808-4c17-8442-eabbf2bf0f4b'
-CODEX_CLI_PATH = 'C:\Users\adity\AppData\Local\OpenAI\Codex\bin\5d35d2790d1d3d7b\codex.exe'
-
-# [mcp_servers."playwriter"]
-# command = "bunx"
-# args = [ "playwriter@latest" ]
-# startup_timeout_sec = 40
-# env = { PLAYWRITER_AUTO_ENABLE="1" }
+[mcp_servers.rive]
+enabled = true
+url = "http://127.0.0.1:9791/mcp"
 
 [windows]
 sandbox = "elevated"
 
 [plugins."google-calendar@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."gmail@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."github@openai-curated"]
 enabled = true
 
 [plugins."google-drive@openai-curated"]
 enabled = false
+
+[plugins."build-ios-apps@openai-curated"]
+enabled = true
 
 [plugins."documents@openai-primary-runtime"]
 enabled = false
@@ -253,22 +111,33 @@ enabled = true
 [plugins."linear@openai-curated"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
 [plugins."pdf@openai-primary-runtime"]
 enabled = true
 
-[[skills.config]]
-path = "/Users/adityasharma/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.430.10722/skills/spreadsheets/SKILL.md"
-enabled = false
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."warp@codex-warp"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."swift-lsp@claude-plugins-official"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-06-19T13:09:10Z"
-last_revision = "94258c5913c482462e8c242ef3060a011a4e186d"
+last_updated = "2026-07-12T04:59:18Z"
+last_revision = "1afdc0d238b61673e8f2bb57622e73641000bb75"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
@@ -285,19 +154,22 @@ source = '\\?\C:\Users\adity\.cache\codex-runtimes\codex-primary-runtime\plugins
 [desktop]
 reviewDelivery = "detached"
 keepRemoteControlAwakeWhilePluggedIn = true
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 sansFontSize = 14
 codeFontSize = 13
 ambient-suggestions-enabled = true
 appearanceLightCodeThemeId = "absolutely"
-selected-avatar-id = "bsod"
+selected-avatar-id = "null-signal"
+followUpQueueMode = "queue"
+preventSleepWhileRunning = false
+dock-icon-preference = "codex-system"
 
-[desktop.appearanceLightChromeTheme]
-accent = "#cc7d5e"
-contrast = 45
-ink = "#2d2d2b"
-opaqueWindows = false
-surface = "#f9f9f7"
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+AUTO_TOOL_SEARCH = "auto:5"
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"
 
 [desktop.appearanceLightChromeTheme.fonts]
 

@@ -1,0 +1,19 @@
+# Claude Code - CLIProxyAPI wrapper (Grok-primary mix)
+
+$Host.UI.RawUI.WindowTitle = "Claude Code - Grok"
+$env:ANTHROPIC_BASE_URL = "http://127.0.0.1:8317"
+$env:ANTHROPIC_AUTH_TOKEN = "sk-dummy"
+$env:ANTHROPIC_DEFAULT_FABLE_MODEL = "gpt-5.6-sol"
+$env:ANTHROPIC_DEFAULT_OPUS_MODEL = "grok-4.5"
+$env:ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5.2"
+$env:ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-5.2"
+$env:ANTHROPIC_CUSTOM_MODEL_OPTION = "gpt-5.6-terra"
+$env:ANTHROPIC_CUSTOM_MODEL_OPTION_NAME = "GPT-5.6 Terra"
+$env:ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION = "OpenAI Codex model through CLIProxyAPI"
+$env:CLAUDE_CODE_ALWAYS_ENABLE_EFFORT = "1"
+$env:CLAUDE_CODE_MAX_CONTEXT_TOKENS = "340000"
+$env:CLAUDE_CODE_AUTO_COMPACT_WINDOW = "300000"
+$env:CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY = "3"
+# $env:ENABLE_TOOL_SEARCH = "false"
+
+claude --model opus @args

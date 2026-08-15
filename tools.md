@@ -37,6 +37,54 @@ Use `--real-profile` when a site needs your actual signed-in Chrome session. Pai
 
 ---
 
+## website-cli
+Capture sanitized network metadata from one explicitly selected existing Chrome tab, classify public reads, and run anonymously validated recipes.
+
+**Install path**: `~/.local/bin/website-cli`
+
+**Usage**:
+```bash
+website-cli list --site sports
+website-cli capture --port 9222 --target <target-id> --site sports --duration 15s
+website-cli infer --capture <capture-id> --capture <variant-capture-id> --site sports
+website-cli inspect --draft <draft-id>
+website-cli promote --draft <draft-id> --operations <candidate-id> --name scores --param league=nfl --variant-param league=nba --browser-fact original=nfl --browser-fact variant=nba
+website-cli run sports scores --league nfl
+website-cli clean --captures-older-than 1h --force
+# Add --json to any command for machine-readable output.
+```
+
+Artifact locations:
+- captures: `${XDG_STATE_HOME:-~/.local/state}/browser-to-cli/captures/<site>/`
+- drafts: `${XDG_STATE_HOME:-~/.local/state}/browser-to-cli/drafts/<site>/`
+- recipes: `${XDG_DATA_HOME:-~/.local/share}/browser-to-cli/sites/<site>/recipe.json`
+
+`capture` prints only its capture ID and managed path. `infer` prints the draft ID, `promote`/`list` print operation IDs, `run` prints the bounded redacted response, and `clean` prints removal counts. Add `--json` for structured success output. `infer --capture` accepts either an ID or managed path, but paths must resolve to that site's private managed capture directory.
+
+Safety boundaries:
+- Capture attaches only to the exact `--port` and `--target`; it observes CDP network metadata and never navigates, clicks, evaluates page code, or starts Chrome.
+- Artifacts contain no raw target IDs, ports, headers, bodies, cookies, authorization, signed values, query values, or raw CDP events. XDG state/data directories and JSON files use private permissions and atomic writes.
+- Promotion accepts only anonymous public-network HTTPS `GET`/`HEAD`. Session/auth traffic, mutations, GraphQL POST, signed/expiring URLs, anti-bot traffic, private-network destinations, and unsafe redirects are rejected.
+- Class A promotion requires one non-sensitive public browser fact. Class B requires explicit original and benign variant parameters plus a public fact for each response. Parameter values and browser facts are used for validation but are not retained.
+- GET promotion currently accepts structured JSON and requires each supplied fact to match an exact primitive in its corresponding anonymous response; HEAD can match status or content type. One operation is not evidence of site-wide support.
+- Recipes define the origin, path, response contract, expiry, and query allowlist. `run` accepts only the recipe's dynamic flags; it has no arbitrary URL, header, cookie, or body escape hatch.
+- `clean` removes only expired captures and drafts after explicit `--force`; it never removes recipes.
+
+Exit codes:
+- `0`: success
+- `1`: internal error
+- `2`: invalid input or usage
+- `3`: requested capture, draft, candidate, or recipe is absent
+- `4`: recipe validation is stale
+- `5`: browser fallback is required
+- `6`: anonymous network or response-shape validation failed
+- `7`: a security policy rejected the operation
+- `8`: Chrome DevTools attachment or capture failed
+
+Command output goes to stdout. Failures are one JSON object on stderr: `{"ok":false,"fallback_required":true|false,"reason_code":"...","message":"..."}`.
+
+---
+
 ## committer
 Safe git commit helper for committing only explicit paths.
 

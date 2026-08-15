@@ -5,7 +5,15 @@ import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const DEFAULT_MODEL = "gpt-image-1-mini";
+type SupportedModel = "gpt-image-1-mini" | "gpt-image-2" | "gpt-image-1";
+
+const DEFAULT_MODEL: SupportedModel = "gpt-image-1-mini";
+const SUPPORTED_MODELS: readonly SupportedModel[] = [
+  "gpt-image-1-mini",
+  "gpt-image-2",
+  "gpt-image-1",
+];
+const SUPPORTED_MODELS_TEXT = SUPPORTED_MODELS.join(", ");
 const MAX_REFERENCE_IMAGES = 16;
 const SUPPORTED_IMAGE_MIME_TYPES = new Map<string, string>([
   [".jpg", "image/jpeg"],
@@ -17,13 +25,17 @@ const SUPPORTED_IMAGE_MIME_TYPES = new Map<string, string>([
 const USAGE = `gpt-image - Image generation with OpenAI's GPT Image API
 Usage:
   gpt-image "<prompt>" [output-path]
+  gpt-image --model <model> "<prompt>" [output-path]
   gpt-image --ref <image-path> "<prompt>" [output-path]
   gpt-image --ref <image-path> --ref <image-path> "<prompt>" [output-path]
   gpt-image --transparent "<prompt>" [output-path]
 
+Options:
+  --model <model>   Use one of: ${SUPPORTED_MODELS_TEXT} (default: ${DEFAULT_MODEL})
+
 Examples:
   gpt-image "an isometric miniature ramen shop at dusk"
-  gpt-image "a retro-futuristic travel poster for Kyoto" kyoto-poster.png
+  gpt-image --model gpt-image-1 "a retro-futuristic travel poster for Kyoto" kyoto-poster.png
   gpt-image --ref mug.png "place this mug on a wooden desk in morning light" mug-scene.png
   gpt-image --ref portrait.png --ref logo.png "create a conference badge using these references" badge.png
   gpt-image --transparent "a flat pixel-art cat sticker"
@@ -38,29 +50,46 @@ export interface GptImageCliArgs {
   prompt: string;
   explicitOutputPath?: string;
   transparentBackground: boolean;
+  model?: SupportedModel;
 }
 
 export interface GptImageRequestPlan {
   requestKind: RequestKind;
   referenceImagePaths: string[];
   prompt: string;
-  model: typeof DEFAULT_MODEL;
+  model: SupportedModel;
   outputFormat: "png";
   background: BackgroundMode;
 }
 
 function mimeTypeFor(filePath: string): string {
-  const mimeType = SUPPORTED_IMAGE_MIME_TYPES.get(path.extname(filePath).toLowerCase());
+  const mimeType = SUPPORTED_IMAGE_MIME_TYPES.get(
+    path.extname(filePath).toLowerCase(),
+  );
   if (!mimeType) {
-    throw new Error(`Unsupported image format: ${filePath}. Use png, jpg, or webp`);
+    throw new Error(
+      `Unsupported image format: ${filePath}. Use png, jpg, or webp`,
+    );
   }
   return mimeType;
+}
+
+function normalizeModel(value: string): SupportedModel | null {
+  const normalizedValue = value.toLowerCase();
+  for (const model of SUPPORTED_MODELS) {
+    if (model === normalizedValue) {
+      return model;
+    }
+  }
+
+  return null;
 }
 
 export function parseCliArgs(argv: string[]): GptImageCliArgs | null {
   const referenceImagePaths: string[] = [];
   const positionals: string[] = [];
   let transparentBackground = false;
+  let selectedModel: SupportedModel | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -80,6 +109,33 @@ export function parseCliArgs(argv: string[]): GptImageCliArgs | null {
         return null;
       }
       referenceImagePaths.push(referenceImagePath);
+      continue;
+    }
+
+    if (arg === "--model") {
+      const modelName = argv[index + 1];
+      if (!modelName || modelName.startsWith("-")) {
+        return null;
+      }
+      const normalizedModel = normalizeModel(modelName);
+      if (!normalizedModel) {
+        return null;
+      }
+      selectedModel = normalizedModel;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--model=")) {
+      const modelName = arg.slice("--model=".length);
+      if (!modelName) {
+        return null;
+      }
+      const normalizedModel = normalizeModel(modelName);
+      if (!normalizedModel) {
+        return null;
+      }
+      selectedModel = normalizedModel;
       continue;
     }
 
@@ -109,6 +165,7 @@ export function parseCliArgs(argv: string[]): GptImageCliArgs | null {
     prompt,
     explicitOutputPath,
     transparentBackground,
+    model: selectedModel,
   };
 }
 
@@ -117,13 +174,16 @@ export function buildRequestPlan(args: GptImageCliArgs): GptImageRequestPlan {
     requestKind: args.referenceImagePaths.length > 0 ? "edit" : "generate",
     referenceImagePaths: args.referenceImagePaths,
     prompt: args.prompt,
-    model: DEFAULT_MODEL,
+    model: args.model ?? DEFAULT_MODEL,
     outputFormat: "png",
     background: args.transparentBackground ? "transparent" : "opaque",
   };
 }
 
-export function outputPathFor(referenceImagePaths: string[], explicitOutputPath?: string): string {
+export function outputPathFor(
+  referenceImagePaths: string[],
+  explicitOutputPath?: string,
+): string {
   if (explicitOutputPath) {
     return explicitOutputPath;
   }
@@ -163,7 +223,10 @@ async function generateImage(args: GptImageCliArgs): Promise<string> {
 
   const client = new OpenAI({ apiKey });
   const plan = buildRequestPlan(args);
-  const outputPath = outputPathFor(plan.referenceImagePaths, args.explicitOutputPath);
+  const outputPath = outputPathFor(
+    plan.referenceImagePaths,
+    args.explicitOutputPath,
+  );
 
   if (plan.requestKind === "edit") {
     console.log(`🖼️ Loading: ${plan.referenceImagePaths.join(", ")}`);
@@ -172,6 +235,7 @@ async function generateImage(args: GptImageCliArgs): Promise<string> {
   }
   console.log("✨ Sending to GPT Image...");
   console.log(`   Prompt: ${plan.prompt}`);
+  console.log(`   Model: ${plan.model}`);
 
   const response =
     plan.requestKind === "edit"
@@ -189,7 +253,10 @@ async function generateImage(args: GptImageCliArgs): Promise<string> {
           output_format: plan.outputFormat,
         });
 
-  await writeFile(outputPath, normalizeGeneratedImage(response.data?.[0]?.b64_json));
+  await writeFile(
+    outputPath,
+    normalizeGeneratedImage(response.data?.[0]?.b64_json),
+  );
   console.log(`✅ Saved: ${outputPath}`);
   return outputPath;
 }
