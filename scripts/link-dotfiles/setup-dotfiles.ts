@@ -7,6 +7,7 @@ import {
 	readlink,
 	rename,
 	rm,
+	symlink,
 	writeFile,
 } from "node:fs/promises";
 import os from "node:os";
@@ -59,8 +60,16 @@ async function ensureLinked(
 		if (stat.isSymbolicLink()) {
 			const existingTarget = await getSymlinkTarget(targetPath);
 			if (existingTarget) {
-				const normalizedExisting = await normalizeForCompare(existingTarget);
-				const normalizedSource = await normalizeForCompare(sourcePath);
+				// readlink may return a relative path, or a \\?\-prefixed absolute
+				// path for Windows junctions
+				const resolvedExisting = path.resolve(
+					targetDir,
+					existingTarget.replace(/^\\\\\?\\/, ""),
+				);
+				const normalizedExisting = await normalizeForCompare(resolvedExisting);
+				const normalizedSource = await normalizeForCompare(
+					path.resolve(sourcePath),
+				);
 				if (normalizedExisting === normalizedSource) {
 					// Already linked correctly
 					return;
@@ -76,14 +85,28 @@ async function ensureLinked(
 
 	// Create the symlink
 	const relativeSource = path.relative(targetDir, sourcePath);
-	const proc = Bun.spawn(["ln", "-s", relativeSource, targetPath], {
-		stdin: "inherit",
-		stdout: "inherit",
-		stderr: "inherit",
-	});
-	const exitCode = await proc.exited;
-	if (exitCode !== 0) {
-		throw new Error(`Failed to create symlink: ${targetPath} -> ${sourcePath}`);
+	try {
+		if (process.platform === "win32") {
+			if ((await lstat(sourcePath)).isDirectory()) {
+				// Directory junctions don't require admin/Developer Mode, but
+				// their targets must be absolute paths
+				await symlink(path.resolve(sourcePath), targetPath, "junction");
+			} else {
+				await symlink(relativeSource, targetPath, "file");
+			}
+		} else {
+			await symlink(relativeSource, targetPath);
+		}
+	} catch (error) {
+		const hint =
+			process.platform === "win32" &&
+			(error as NodeJS.ErrnoException).code === "EPERM"
+				? " (creating file symlinks on Windows requires Developer Mode or an elevated shell)"
+				: "";
+		throw new Error(
+			`Failed to create symlink: ${targetPath} -> ${sourcePath}${hint}`,
+			{ cause: error },
+		);
 	}
 }
 
@@ -1204,12 +1227,9 @@ async function setupDotfilesSymlink(dotfilesDir: string): Promise<void> {
 	action(`Creating ~/.dotfiles -> ${dotfilesDir}`);
 
 	// Use relative path for the symlink target so it works if home dir moves
-	const proc = Bun.spawn(["ln", "-s", symlinkTarget, symlinkPath], {
-		stdout: "inherit",
-		stderr: "inherit",
-	});
-	const exitCode = await proc.exited;
-	if (exitCode !== 0) {
+	try {
+		await symlink(symlinkTarget, symlinkPath);
+	} catch {
 		warn("Failed to create ~/.dotfiles symlink (this is optional)");
 	}
 }
