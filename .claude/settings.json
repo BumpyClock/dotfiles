@@ -174,7 +174,7 @@
       "Bash(git * main)"
     ]
   },
-  "model": "fable",
+  "model": "opus[1m]",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -204,6 +204,7 @@
   "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "teammateMode": "in-process",
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
