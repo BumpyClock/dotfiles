@@ -110,7 +110,7 @@ export type InstallableTool = {
 };
 
 const COMPILED_EXTENSIONS = new Set([".js", ".jsx", ".ts", ".tsx"]);
-const IGNORED_TOOL_FILES = new Set(["tools.md", "trash.ts"]);
+const IGNORED_TOOL_FILES = new Set(["tools.md"]);
 const SUPPORTED_TOOL_PLATFORMS: Partial<Record<string, NodeJS.Platform[]>> = {
   "browser-tools": ["darwin"],
 };

@@ -114,6 +114,21 @@ docs-list --dotfiles-dir ~/Projects/dotfiles
 
 ---
 
+## trash
+
+Moves files and directories to the system trash.
+
+**Install path**: `~/.local/bin/trash`
+
+**Usage**:
+```bash
+trash file.txt directory
+trash --allow-missing optional-file.txt
+trash -- -filename
+```
+
+---
+
 ## pr-comments
 Fetch open and unresolved GitHub PR feedback in one command.
 

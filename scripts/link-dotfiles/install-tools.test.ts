@@ -29,7 +29,7 @@ describe("listInstallableTools", () => {
     await writeFile(path.join(toolsDir, "committer.ts"), "#!/usr/bin/env bun\nconsole.log('commit')\n");
     await writeFile(path.join(toolsDir, "pr-comments.ts"), "#!/usr/bin/env bun\nconsole.log('comments')\n");
     await writeFile(path.join(toolsDir, "shazam-song"), "#!/usr/bin/env -S uv run --script\nprint('song')\n");
-    await writeFile(path.join(toolsDir, "trash.ts"), "export const nothing = true;\n");
+    await writeFile(path.join(toolsDir, "trash.ts"), "#!/usr/bin/env bun\nconsole.log('trash')\n");
     await writeFile(path.join(toolsDir, "tools.md"), "# tools\n");
 
     const tools = await listInstallableTools(dotfilesDir);
@@ -45,6 +45,7 @@ describe("listInstallableTools", () => {
       { mode: "compile", name: "docs-list", targetName: installedToolFileName("docs-list") },
       { mode: "compile", name: "pr-comments", targetName: installedToolFileName("pr-comments") },
       { mode: "link", name: "shazam-song", targetName: "shazam-song" },
+      { mode: "compile", name: "trash", targetName: installedToolFileName("trash") },
     ]);
   });
 
