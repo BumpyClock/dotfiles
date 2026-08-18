@@ -74,9 +74,7 @@ startup_timeout_sec = 20
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
-[mcp_servers.rive]
-enabled = true
-url = "http://127.0.0.1:9791/mcp"
+
 
 [windows]
 sandbox = "elevated"
