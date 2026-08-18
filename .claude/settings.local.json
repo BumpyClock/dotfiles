@@ -28,7 +28,8 @@
       "Bash(chmod:*)",
       "Bash(pwsh:*)",
       "Bash(git pull *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(echo \"=== exit: $? ===\")"
     ],
     "deny": [
       "Bash(rm -rf /)"
