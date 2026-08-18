@@ -127,4 +127,4 @@ Attributions for skills that moved to [agent-templates](https://github.com/Bumpy
 - The linker creates a `~/.dotfiles` symlink for portable config resolution.
 - Environment variables (API keys, etc.) are managed in `~/.config/dotfiles/env.sh` generated from `secrets/api-keys/env.json`.
 - `scripts/sync-github-folder.{sh,ps1}` remain available for project-level `.github` syncing.
-- `tools/trash.ts` moves files and directories to the system trash on macOS, Windows, and Linux; Linux support is best-effort through the underlying XDG-compatible backend.
+- `trash <path> [<path> ...]` moves files and directories to the system trash on macOS, Windows, and Linux. Linux support is best-effort through the underlying XDG-compatible backend.
