@@ -6,16 +6,19 @@ import {
 	readdir,
 	readFile,
 	readlink,
+	stat,
 	rm,
 	symlink,
 	writeFile,
 } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { pathExists } from "./fs-utils";
 import {
 	POWERSHELL_MANAGED_START,
 	ZSHRC_MANAGED_MARKER,
 	flattenEnvironmentConfig,
+	installBinScripts,
 	isManagedZshrc,
 	loadManagedEnvironment,
 	removeShellProfileBlock,
@@ -27,13 +30,13 @@ import {
 	renderZshrcLocal,
 	setupPowerShellProfile,
 	setupZshrc,
-} from "./setup-dotfiles";
+} from "./link-dotfiles";
 
 let temporaryDirectories: string[] = [];
 
 async function createDotfilesFixture(): Promise<string> {
 	const dotfilesDir = await mkdtemp(
-		path.join(os.tmpdir(), "setup-dotfiles-test-"),
+		path.join(os.tmpdir(), "link-dotfiles-test-"),
 	);
 	temporaryDirectories.push(dotfilesDir);
 	return dotfilesDir;
@@ -770,5 +773,53 @@ describe("removeShellProfileBlock", () => {
 		await removeShellProfileBlock({ homeDir, platform: "win32" });
 
 		await expect(readFile(legacyProfilePath, "utf8")).resolves.toBe("");
+	});
+});
+
+describe("installBinScripts", () => {
+	let dotfilesDir = "";
+	let homeDir = "";
+
+	async function setup(envJson: string | null): Promise<void> {
+		dotfilesDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-repo-"));
+		homeDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-home-"));
+		await mkdir(path.join(dotfilesDir, "shell/bin/zsh"), { recursive: true });
+		await writeFile(
+			path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
+			'export ANTHROPIC_AUTH_TOKEN="__ZAI_API_KEY__"\n',
+		);
+		await writeFile(path.join(dotfilesDir, "shell/bin/zsh/ccy.sh"), "plain\n");
+		if (envJson !== null) {
+			await mkdir(path.join(dotfilesDir, "secrets/api-keys"), { recursive: true });
+			await writeFile(path.join(dotfilesDir, "secrets/api-keys/env.json"), envJson);
+		}
+	}
+
+	afterEach(async () => {
+		await rm(dotfilesDir, { recursive: true, force: true });
+		await rm(homeDir, { recursive: true, force: true });
+	});
+
+	test("fills the placeholder from env.json and copies plain scripts", async () => {
+		await setup(JSON.stringify({ zai: { ZAI_API_KEY: "secret-token" } }));
+
+		await installBinScripts({ dotfilesDir, homeDir, platform: "darwin" });
+
+		const cz = await readFile(path.join(homeDir, ".local/bin/cz"), "utf8");
+		expect(cz).toBe('export ANTHROPIC_AUTH_TOKEN="secret-token"\n');
+		expect(cz).not.toContain("__ZAI_API_KEY__");
+		const czStat = await stat(path.join(homeDir, ".local/bin/cz"));
+		expect(czStat.mode & 0o111).not.toBe(0);
+		const ccy = await readFile(path.join(homeDir, ".local/bin/ccy"), "utf8");
+		expect(ccy).toBe("plain\n");
+	});
+
+	test("skips templated scripts when the key is missing", async () => {
+		await setup(JSON.stringify({ gemini: { GEMINI_API_KEY: "g" } }));
+
+		await installBinScripts({ dotfilesDir, homeDir, platform: "darwin" });
+
+		expect(await pathExists(path.join(homeDir, ".local/bin/cz"))).toBe(false);
+		expect(await pathExists(path.join(homeDir, ".local/bin/ccy"))).toBe(true);
 	});
 });

@@ -177,7 +177,7 @@ nanobanana selfie.png "add a sunset background" sunset-selfie.png
 nanobanana room.png --ref chair.png "place this chair next to the window"
 ```
 
-**Requires**: `GEMINI_API_KEY` (can be managed via `secrets/api-keys/env.json` + `scripts/link-dotfiles/setup-dotfiles.ts`)
+**Requires**: `GEMINI_API_KEY` (can be managed via `secrets/api-keys/env.json` + `scripts/link-dotfiles/link-dotfiles.ts`)
 
 ---
 

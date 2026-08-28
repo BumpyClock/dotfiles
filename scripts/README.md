@@ -1,11 +1,11 @@
-# General Utility Scripts
+# General utility scripts
 
-## Link Dotfiles
+## Link dotfiles
 
-`link-dotfiles/` contains the Bun-based linker workflow. For first-run setup, use the root `bootstrap.sh` (Unix/macOS) or `bootstrap.ps1` (Windows), which provision OS dependencies and then invoke this linker exactly once. The linker itself is also the routine re-apply/status command below.
+`link-dotfiles/` holds the linker, a Bun-based script that links dotfiles into place. For first-run setup, run the root `bootstrap.sh` on Unix and macOS, or `bootstrap.ps1` on Windows. Each bootstrap script provisions OS dependencies, then invokes the linker once. You can also run the linker directly, as shown below, to re-apply links or check status.
 
 ```bash
-# Apply links / run dotfiles setup
+# Link everything
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 
 # Show current status
@@ -15,25 +15,21 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --show
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
 ```
 
-Internal scripts:
-- `scripts/link-dotfiles/setup-dotfiles.ts` (interactive setup)
-- `scripts/link-dotfiles/install-tools.ts` (tools/ installer)
-- `scripts/link-dotfiles/managed-block.ts` (shell-profile block helpers)
+Internal modules:
 
-During dotfiles setup, CLI sources in `tools/` are installed into `~/.local/bin`
-(TypeScript/Bun entrypoints compiled into native binaries, shebang scripts linked in place),
-and entrypoints from `shell/bin/zsh` (Unix) and `shell/bin/powershell` (Windows) — `cz`, `ck`,
-`ccy`, `claudex`, `claude-grok` — are rendered into `~/.local/bin` with secrets injected.
-Managed secrets in `secrets/api-keys/env.json` are rendered into `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1` during setup.
+- `scripts/link-dotfiles/install-tools.ts`
+- `scripts/link-dotfiles/managed-block.ts`
+- `scripts/link-dotfiles/fs-utils.ts`
 
-Shell profiles are not symlinked. The native `~/.zshrc` and PowerShell profile stay machine-owned; setup only writes a small marker-delimited managed block into each (between `# >>> dotfiles zsh start`/`# <<< dotfiles zsh end` and the PowerShell equivalents). The block sources the repo baseline (`shell/zsh/shared.zsh`, `shell/powershell/shared.ps1`) and a machine-local override. Anything outside the markers, including installer appends like pnpm, is left untouched. Put machine-specific config in `~/.zshrc.local` or the `profile.local.ps1` next to each profile; those files are seeded once and never overwritten. If the markers get corrupted, setup logs a `[CONFLICT]` and leaves the file for you to fix by hand. `--remove-shell-profile` removes only that managed block (zsh on Unix, the PowerShell profile targets on Windows) without running any other linking or setup work.
+During setup, the linker installs the CLI sources in `tools/` into `~/.local/bin`. It compiles TypeScript and JavaScript entrypoints into native binaries with Bun, and links other shebang scripts in place. If `secrets/api-keys/env.json` exists, the linker also renders it into `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1`.
+
+The linker does not symlink shell profiles. The native `~/.zshrc` and PowerShell profile files stay owned by the machine. The linker only writes a small managed block into each file, delimited by `# >>> dotfiles zsh start` and `# <<< dotfiles zsh end`, or their PowerShell equivalents. The block sources the repo baseline, `shell/zsh/shared.zsh` or `shell/powershell/shared.ps1`, and a machine-local override. The linker leaves everything outside the markers untouched, including installer appends such as pnpm. Add machine-specific config to `~/.zshrc.local`, or to `profile.local.ps1` next to each profile. The linker seeds those files once and never overwrites them. If the markers get corrupted, the linker logs a `[CONFLICT]` message and leaves the file for you to fix by hand. `--remove-shell-profile` removes only that managed block, zsh on Unix or the PowerShell profile targets on Windows, without running any other linking or setup work.
 
 Windows behavior:
-- Links are created with plain `ln -s` (Bun.spawn), so an `ln` on PATH (Git Bash/MSYS, with
-  symlinks enabled) is required. There is no junction or hardlink fallback — failures raise
-  "Failed to create symlink".
+- Directory links use junctions (no elevation required).
+- File-link attempts fall back to hardlinks if symlink policy blocks them.
 
-## Other Scripts
+## Other scripts
 
 ### `setup-github-runner.sh`
 
@@ -41,7 +37,7 @@ Windows behavior:
 sudo ./setup-github-runner.sh
 ```
 
-### `sync-github-folder.sh` / `sync-github-folder.ps1`
+### `sync-github-folder.sh` and `sync-github-folder.ps1`
 
 ```bash
 ./sync-github-folder.sh /path/to/project

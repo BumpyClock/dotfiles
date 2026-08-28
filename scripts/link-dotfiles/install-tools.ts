@@ -1,104 +1,19 @@
 import {
-	chmod,
 	lstat,
 	mkdir,
 	readFile,
 	readdir,
-	readlink,
 	rename,
 	rm,
-	symlink,
 } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-
-// Helper functions for linking
-
-async function pathExists(filePath: string): Promise<boolean> {
-	try {
-		await lstat(filePath);
-		return true;
-	} catch {
-		return false;
-	}
-}
-
-async function normalizeForCompare(filePath: string): Promise<string> {
-	if (process.platform === "win32") {
-		return filePath.toLowerCase();
-	}
-	return filePath;
-}
-
-async function getSymlinkTarget(
-	symlinkPath: string,
-): Promise<string | null> {
-	try {
-		const target = await readlink(symlinkPath);
-		return target;
-	} catch {
-		return null;
-	}
-}
-
-async function ensureLinked(
-	sourcePath: string,
-	targetPath: string,
-): Promise<void> {
-	const targetDir = path.dirname(targetPath);
-	await mkdir(targetDir, { recursive: true });
-
-	if (await pathExists(targetPath)) {
-		const stat = await lstat(targetPath);
-		if (stat.isSymbolicLink()) {
-			const existingTarget = await getSymlinkTarget(targetPath);
-			if (existingTarget) {
-				// readlink may return a relative path, or a \\?\-prefixed absolute
-				// path for Windows junctions
-				const resolvedExisting = path.resolve(
-					targetDir,
-					existingTarget.replace(/^\\\\\?\\/, ""),
-				);
-				const normalizedExisting = await normalizeForCompare(resolvedExisting);
-				const normalizedSource = await normalizeForCompare(
-					path.resolve(sourcePath),
-				);
-				if (normalizedExisting === normalizedSource) {
-					return;
-				}
-			}
-			await rm(targetPath, { force: true });
-		} else {
-			await rm(targetPath, { force: true, recursive: true });
-		}
-	}
-
-	const relativeSource = path.relative(targetDir, sourcePath);
-	try {
-		if (process.platform === "win32") {
-			if ((await lstat(sourcePath)).isDirectory()) {
-				// Directory junctions don't require admin/Developer Mode, but
-				// their targets must be absolute paths
-				await symlink(path.resolve(sourcePath), targetPath, "junction");
-			} else {
-				await symlink(relativeSource, targetPath, "file");
-			}
-		} else {
-			await symlink(relativeSource, targetPath);
-		}
-	} catch (error) {
-		const hint =
-			process.platform === "win32" &&
-			(error as NodeJS.ErrnoException).code === "EPERM"
-				? " (creating file symlinks on Windows requires Developer Mode or an elevated shell)"
-				: "";
-		throw new Error(
-			`Failed to create symlink: ${targetPath} -> ${sourcePath}${hint}`,
-			{ cause: error },
-		);
-	}
-}
-
+import {
+	ensureLinked,
+	getSymlinkTarget,
+	normalizeForCompare,
+	pathExists,
+} from "./fs-utils";
 
 type ToolInstallMode = "compile" | "link";
 
