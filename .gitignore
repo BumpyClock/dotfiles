@@ -19,6 +19,9 @@ agents/
 agents-reference/
 skills/
 
+# Upstream clone kept local only - re-added as a real submodule if it should ship
+skills/rust-skills/
+
 # lsp-mcp logs
 ./lsp-mcp/logs/*
 ./lsp-mcp/semanticSearch/*
