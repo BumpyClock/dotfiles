@@ -29,7 +29,8 @@
       "Bash(pwsh:*)",
       "Bash(git pull *)",
       "Bash(git stash *)",
-      "Bash(echo \"=== exit: $? ===\")"
+      "Bash(echo \"=== exit: $? ===\")",
+      "Bash(git fetch *)"
     ],
     "deny": [
       "Bash(rm -rf /)"
