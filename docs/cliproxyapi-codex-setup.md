@@ -83,7 +83,7 @@ Sources live under `shell/bin/{zsh,powershell}/` and are copied to
 
 | Command | Default model env | Mapping |
 | --- | --- | --- |
-| `claudex` | fable | fable→`gpt-5.6-sol`, opus→`gpt-5.6-terra`, sonnet/haiku→`gpt-5.6-luna`, custom→`glm-5.2` |
+| `claudex` | fable | fable→`gpt-6-astra`, opus→`gpt-5.6-sol`, sonnet→`gpt-5.6-terra`, haiku→`gpt-5.6-luna`, custom→`glm-5.2` |
 | `claude-grok` | opus | opus→`grok-4.5`, fable→`gpt-5.6-sol`, sonnet/haiku→`glm-5.2`, custom→`gpt-5.6-terra` |
 
 Requires `cliproxyapi` running (`brew services start cliproxyapi`) with the
