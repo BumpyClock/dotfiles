@@ -175,7 +175,7 @@
       "Bash(git * main)"
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "haiku",
   "enableAllProjectMcpServers": true,
   "statusLine": {
     "type": "command",
@@ -199,6 +199,11 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "modelSettings": {
+    "gpt-5.6-sol": {
+      "effortLevel": "high"
+    }
+  },
   "advisorModel": "fable",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
