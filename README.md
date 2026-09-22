@@ -53,6 +53,7 @@ cd dotfiles
 ```
 
 `bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the linker once. It accepts `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
+It also appends `~\.local\bin` to the user `PATH` when the directory is not already present.
 
 On Windows, the linker creates directory links as junctions, which need no elevation. File links are symlinks, which need Developer Mode or an elevated shell. There is no hardlink fallback.
 

@@ -44,7 +44,36 @@ $ErrorActionPreference = 'Stop'
 
 function Write-Step { param([string]$msg) Write-Host ("`n> " + $msg) -ForegroundColor Cyan }
 function Write-Ok   { param([string]$msg) Write-Host ("  [OK]   " + $msg) -ForegroundColor Green }
+function Write-Skip { param([string]$msg) Write-Host ("  [SKIP] " + $msg) -ForegroundColor DarkGray }
 function Write-Warn { param([string]$msg) Write-Host ("  [WARN] " + $msg) -ForegroundColor Yellow }
+
+function Test-PathEntry {
+    param(
+        [AllowNull()]
+        [string]$PathValue,
+        [string]$Entry
+    )
+
+    $normalizedEntry = [System.IO.Path]::GetFullPath($Entry).TrimEnd('\')
+    foreach ($candidate in @($PathValue -split ';')) {
+        if ([string]::IsNullOrWhiteSpace($candidate)) {
+            continue
+        }
+
+        $expandedCandidate = [Environment]::ExpandEnvironmentVariables($candidate.Trim().Trim('"'))
+        try {
+            $normalizedCandidate = [System.IO.Path]::GetFullPath($expandedCandidate).TrimEnd('\')
+        } catch {
+            continue
+        }
+
+        if ([string]::Equals($normalizedCandidate, $normalizedEntry, [StringComparison]::OrdinalIgnoreCase)) {
+            return $true
+        }
+    }
+
+    return $false
+}
 
 # Resolve the repo root from this script's location, not the caller's cwd.
 $DotfilesDir = $PSScriptRoot
@@ -61,12 +90,36 @@ if ($DryRun) { $setupArgs.DryRun = $true }
 
 # --- Bun linker ---------------------------------------------------------------
 
-Write-Step "Bun linker"
-
 $linkerArgs = @("--dotfiles-dir", $DotfilesDir)
 if ($SkipSubmodules) {
     $linkerArgs += "--skip-submodules"
 }
+
+# --- User PATH ---------------------------------------------------------------
+
+Write-Step "User PATH"
+$localBin = Join-Path $env:USERPROFILE ".local\bin"
+$userPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::User)
+
+if (Test-PathEntry -PathValue $userPath -Entry $localBin) {
+    Write-Skip "$localBin is already on the user PATH"
+} elseif ($DryRun) {
+    Write-Warn "(DRY RUN) Would append $localBin to the user PATH"
+} else {
+    $newUserPath = if ([string]::IsNullOrWhiteSpace($userPath)) {
+        $localBin
+    } else {
+        "$($userPath.TrimEnd(';'));$localBin"
+    }
+    [Environment]::SetEnvironmentVariable("Path", $newUserPath, [EnvironmentVariableTarget]::User)
+    Write-Ok "Appended $localBin to the user PATH"
+}
+
+if (-not $DryRun -and -not (Test-PathEntry -PathValue $env:PATH -Entry $localBin)) {
+    $env:PATH = "$($env:PATH.TrimEnd(';'));$localBin"
+}
+
+Write-Step "Bun linker"
 
 if ($DryRun) {
     Write-Warn "(DRY RUN) Would run: bun scripts\link-dotfiles\link-dotfiles.ts $($linkerArgs -join ' ')"
