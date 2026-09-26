@@ -127,7 +127,7 @@ function Test-ObjectProperty {
         [string]$Name
     )
 
-    $null -ne $Object -and $Object.PSObject.Properties.Name -contains $Name
+    $null -ne $Object -and $null -ne $Object.PSObject.Properties[$Name]
 }
 
 function Set-ObjectPropertyValue {
