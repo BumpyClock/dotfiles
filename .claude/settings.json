@@ -34,7 +34,6 @@
       "Bash(unexpand:*)",
       "Bash(fmt:*)",
       "Bash(find:*)",
-      "Bash(xargs:*)",
       "Bash(file:*)",
       "Bash(stat:*)",
       "Bash(readlink:*)",
@@ -77,7 +76,6 @@
       "Bash(uptime:*)",
       "Bash(date:*)",
       "Bash(cal:*)",
-      "Bash(env:*)",
       "Bash(printenv:*)",
       "Bash(jq:*)",
       "Bash(xmllint:*)",
@@ -127,9 +125,11 @@
       "Bash(rg: *)",
       "Bash(ast-grep: *)",
       "Bash(coderabbit: *)",
-      "Bash(committer:*)"
+      "Bash(committer:*)",
+      "Bash(git * main)"
     ],
-    "deny": ["CronCreate",
+    "deny": [
+      "CronCreate",
       "CronDelete",
       "CronList",
       "RemoteTrigger",
@@ -140,15 +140,19 @@
       "DesignSync",
       "NotebookEdit",
       "EnterPlanMode",
-      "ExitPlanMode"],
+      "ExitPlanMode"
+    ],
     "ask": [
       "Bash(git push:*)",
-      "Bash(git reset:*)",
-      "Bash(git * main)"
+      "Bash(git reset:*)"
     ]
   },
-  "model": "haiku",
+  "model": "opus",
   "enableAllProjectMcpServers": true,
+  "disableClaudeAiConnectors": true,
+  "disableBundledSkills": true,
+  "disableRemoteControl": true,
+  "disableArtifact": true,
   "statusLine": {
     "type": "command",
     "command": "ccline",
@@ -174,19 +178,47 @@
   "modelSettings": {
     "gpt-5.6-sol": {
       "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
     }
   },
   "advisorModel": "fable",
   "tui": "fullscreen",
-  "disableBundledSkills": true,
-  "disableRemoteControl": true,
-  "disableClaudeAiConnectors": true,
-  "disableArtifact": true,
+  "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "teammateMode": "in-process",
   "agentPushNotifEnabled": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: private (BumpyClock/Digests-Swift, confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: Default branch is `main`; no protected branches listed via gh (rulesets not queryable here, so this is not confirmed unprotected)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The trusted repo (BumpyClock/Digests-Swift) and its origin remote only (no additional orgs configured)",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Trusted repo**: /Users/adityasharma/Projects/Digests/Digests-Swift (github.com/BumpyClock/Digests-Swift, private) and its origin remote",
+      "**Org-specific CLIs**: None configured"
+    ]
+  },
   "feedbackSurveyState": {
     "lastShownTime": 1754001410798
   }

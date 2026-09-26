@@ -89,6 +89,37 @@ Sources live under `shell/bin/{zsh,powershell}/` and are copied to
 Requires `cliproxyapi` running (`brew services start cliproxyapi`) with the
 models above exposed on `/v1/models`.
 
+## T3 Code + GitHub Copilot (local instance)
+
+The current local service runs `~/.local/bin/cliproxyapi` with
+`~/.config/cliproxyapi/config.yaml`. Its GitHub Copilot OAuth record lives under
+`~/.cli-proxy-api/`. The Copilot auth JSON must contain
+`"prefix": "github-copilot"` so T3's `github-copilot/<model>` selections route
+to Copilot instead of another provider with the same model ID. Recheck this
+field after reauthorizing Copilot; the login flow can replace the auth file.
+
+T3 stores its Copilot provider menus in `~/.t3/userdata/settings.json` and
+copies the model IDs to `~/.codex-t3-copilot/models.json` and
+`~/.claude-t3-copilot/models.json`. Curate these from the **live**, prefixed
+`/v1/models` results, because Copilot availability is account-specific. The
+Codex provider uses the Responses API; the Claude Code provider uses the
+Anthropic-compatible Messages API. Both default to Claude Sonnet 5 here.
+Claude Code's `opus` default maps to Copilot Opus 5. Its `haiku` fallback stays
+on Sonnet 5 because Copilot Haiku 4.5 rejects Claude Code's high-effort requests.
+Opus 5.5 is listed by Copilot and works for a short proxy Messages request,
+but remains out of T3's presets because longer Codex/Claude Code sessions have
+stalled or failed.
+
+If Copilot model discovery suddenly falls back to old models, check
+`~/.cli-proxy-api/logs/main.log` for `token_exchange_failed` / `Bad credentials`.
+This build stores a `ghu_` GitHub App user token without refresh-token data and
+incorrectly assumes it never expires. [GitHub App user tokens normally expire
+after eight hours](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens);
+the provider cannot renew one after expiry. Reauthorize
+Copilot, then verify both the auth-file prefix and the live model list. A quick
+routing check is a short request for `github-copilot/claude-sonnet-5`; a
+`cursor:` error means the prefixed request did not select the Copilot credential.
+
 ## Notes / pitfalls
 
 - `--version` is informational only; the flag parser rejects `-version` (use no
