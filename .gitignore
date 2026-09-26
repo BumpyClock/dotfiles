@@ -17,7 +17,6 @@ node_modules/
 # Local clones of agent marketplaces / vendored skills — see README (agent-templates note)
 agents/
 agents-reference/
-skills/
 
 # Upstream clone kept local only - re-added as a real submodule if it should ship
 skills/rust-skills/
