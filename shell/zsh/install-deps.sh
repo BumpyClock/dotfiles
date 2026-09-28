@@ -202,6 +202,31 @@ install_bun() {
 	fi
 }
 
+# Install mcporter (MCP server manager) as a pnpm global
+install_mcporter() {
+	if command -v mcporter &>/dev/null; then
+		print_status "mcporter is already installed"
+		return 0
+	fi
+	# Refresh PATH so a pnpm installed earlier in this script is usable now.
+	if [ -z "${PNPM_HOME:-}" ]; then
+		case "$(uname -s)" in
+		Darwin) PNPM_HOME="$HOME/Library/pnpm" ;;
+		*) PNPM_HOME="$HOME/.local/share/pnpm" ;;
+		esac
+	fi
+	case ":$PATH:" in
+	*":$PNPM_HOME:"*) ;;
+	*) export PATH="$PNPM_HOME:$PATH" ;;
+	esac
+	if ! command -v pnpm &>/dev/null; then
+		print_error "pnpm is required to install mcporter"
+		return 1
+	fi
+	print_status "Installing mcporter..."
+	pnpm install --global mcporter
+}
+
 # Install ast-grep (code structural search)
 install_ast_grep() {
 	if command -v ast-grep &>/dev/null; then
@@ -286,6 +311,7 @@ main() {
 	install_pnpm || print_warning "pnpm install failed; continuing"
 	install_bun  # required: install_bun exits non-zero itself if bun is unavailable
 	install_ast_grep || print_warning "ast-grep install failed; continuing"
+	install_mcporter || print_warning "mcporter install failed; continuing"
 	print_status "Dependency installation complete!"
 	print_status "Run bootstrap.sh (or bun scripts/link-dotfiles/link-dotfiles.ts) to link dotfiles."
 	# Set zsh as default shell if it isn't already. chsh prompts for a password

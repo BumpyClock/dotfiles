@@ -18,6 +18,9 @@ case ":$PATH:" in
 *) export PATH="$BUN_INSTALL/bin:$PATH" ;;
 esac
 
+# Canonical mcporter config, matching shell/zsh/shared.zsh.
+export MCPORTER_CONFIG="$HOME/.mcporter/mcporter.json"
+
 if ! command -v bun >/dev/null 2>&1; then
 	echo "[bootstrap] ERROR: bun is still not available on PATH after dependency install." >&2
 	echo "[bootstrap] Install it manually (curl -fsSL https://bun.sh/install | bash) and re-run bootstrap.sh." >&2

@@ -19,6 +19,7 @@ import {
 	ZSHRC_MANAGED_MARKER,
 	flattenEnvironmentConfig,
 	installBinScripts,
+	installMcporterSecrets,
 	isManagedZshrc,
 	loadManagedEnvironment,
 	removeShellProfileBlock,
@@ -773,6 +774,71 @@ describe("removeShellProfileBlock", () => {
 		await removeShellProfileBlock({ homeDir, platform: "win32" });
 
 		await expect(readFile(legacyProfilePath, "utf8")).resolves.toBe("");
+	});
+});
+
+describe("installMcporterSecrets", () => {
+	let dotfilesDir = "";
+	let homeDir = "";
+
+	async function setup(withSecrets: boolean): Promise<void> {
+		dotfilesDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-repo-"));
+		homeDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-home-"));
+		if (withSecrets) {
+			const secretsDir = path.join(dotfilesDir, "secrets/api-keys/mcporter");
+			await mkdir(secretsDir, { recursive: true });
+			await writeFile(path.join(secretsDir, "mcporter.json"), '{"mcpServers":{}}');
+			await writeFile(
+				path.join(secretsDir, "credentials.json"),
+				'{"entries":{}}',
+			);
+		}
+	}
+
+	afterEach(async () => {
+		await rm(dotfilesDir, { recursive: true, force: true });
+		await rm(homeDir, { recursive: true, force: true });
+	});
+
+	test("restores both files into ~/.mcporter with owner-only permissions", async () => {
+		await setup(true);
+
+		await installMcporterSecrets({ dotfilesDir, homeDir });
+
+		const config = await readFile(path.join(homeDir, ".mcporter/mcporter.json"), "utf8");
+		expect(config).toBe('{"mcpServers":{}}');
+		const credentials = await readFile(
+			path.join(homeDir, ".mcporter/credentials.json"),
+			"utf8",
+		);
+		expect(credentials).toBe('{"entries":{}}');
+		const statResult = await stat(path.join(homeDir, ".mcporter/credentials.json"));
+		expect(statResult.mode & 0o077).toBe(0);
+	});
+
+	test("overwrites a stale config but keeps newer local credentials", async () => {
+		await setup(true);
+		await mkdir(path.join(homeDir, ".mcporter"), { recursive: true });
+		await writeFile(path.join(homeDir, ".mcporter/mcporter.json"), "stale");
+		await writeFile(path.join(homeDir, ".mcporter/credentials.json"), "refreshed-tokens");
+
+		await installMcporterSecrets({ dotfilesDir, homeDir });
+
+		const config = await readFile(path.join(homeDir, ".mcporter/mcporter.json"), "utf8");
+		expect(config).toBe('{"mcpServers":{}}');
+		const credentials = await readFile(
+			path.join(homeDir, ".mcporter/credentials.json"),
+			"utf8",
+		);
+		expect(credentials).toBe("refreshed-tokens");
+	});
+
+	test("is a no-op when the secrets directory is absent", async () => {
+		await setup(false);
+
+		await installMcporterSecrets({ dotfilesDir, homeDir });
+
+		expect(await pathExists(path.join(homeDir, ".mcporter"))).toBe(false);
 	});
 });
 

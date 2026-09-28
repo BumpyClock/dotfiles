@@ -431,6 +431,50 @@ async function installManagedEnvironment(dotfilesDir: string): Promise<void> {
 	);
 }
 
+export type InstallMcporterSecretsOptions = {
+	dotfilesDir: string;
+	homeDir?: string;
+};
+
+// Restores secrets/api-keys/mcporter/ into ~/.mcporter, matching the path
+// MCPORTER_CONFIG points at in shell/zsh/shared.zsh. mcporter.json is the
+// managed config and is overwritten each run. credentials.json is rewritten
+// by the mcporter daemon on token refresh, so it is only seeded when missing
+// to keep re-runs from regressing newer local tokens.
+export async function installMcporterSecrets(
+	options: InstallMcporterSecretsOptions,
+): Promise<void> {
+	const { dotfilesDir } = options;
+	const homeDir = options.homeDir ?? os.homedir();
+	const sourceDir = path.join(dotfilesDir, "secrets/api-keys/mcporter");
+
+	if (!(await pathExists(sourceDir))) {
+		return;
+	}
+
+	info("Installing mcporter secrets...");
+	const targetDir = path.join(homeDir, ".mcporter");
+	const restoreFile = async (fileName: string): Promise<boolean> => {
+		const sourcePath = path.join(sourceDir, fileName);
+		if (!(await pathExists(sourcePath))) {
+			return false;
+		}
+
+		const targetPath = path.join(targetDir, fileName);
+		await ensureWritableTarget(targetPath);
+		await writeFile(targetPath, await readFile(sourcePath, "utf8"), "utf8");
+		await chmod(targetPath, 0o600);
+		action(`Restored: ${targetPath}`);
+		return true;
+	};
+
+	await restoreFile("mcporter.json");
+	const seededCredentials = path.join(targetDir, "credentials.json");
+	if (!(await pathExists(seededCredentials))) {
+		await restoreFile("credentials.json");
+	}
+}
+
 type BinScript = {
 	name: string;
 	/** Placeholder token in the template and the env.json variable that fills it. */
@@ -1036,6 +1080,7 @@ async function main(): Promise<void> {
 	await linkGitHubConfig(dotfilesDir);
 	await linkConfigDirs(dotfilesDir);
 	await installManagedEnvironment(dotfilesDir);
+	await installMcporterSecrets({ dotfilesDir });
 	await setupZshrc({ dotfilesDir });
 	await setupPowerShellProfile({ dotfilesDir });
 	await linkWindowsExtras(dotfilesDir);

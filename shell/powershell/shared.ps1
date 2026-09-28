@@ -242,6 +242,9 @@ if (Test-Path "$env:USERPROFILE\.bun") {
     $env:PATH += ";$env:BUN_INSTALL\bin"
 }
 
+# Canonical mcporter config so every shell and child process uses one config.
+$env:MCPORTER_CONFIG = "$env:USERPROFILE\.mcporter\mcporter.json"
+
 function Start-PnpmDev { pnpm dev }
 Set-Alias pnd Start-PnpmDev
 function claude-yolo { claude --dangerously-skip-permissions @args }
