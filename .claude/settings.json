@@ -181,6 +181,9 @@
     },
     "claude-opus-5-5": {
       "effortLevel": "high"
+    },
+    "gpt-6-sol": {
+      "effortLevel": "high"
     }
   },
   "advisorModel": "fable",
