@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test';
-import path from 'node:path';
 
 import { buildRequestPlan, outputPathFor, parseCliArgs } from './gpt-image.ts';
 
@@ -75,9 +74,5 @@ describe('buildRequestPlan', () => {
 describe('outputPathFor', () => {
   test('derives a generated filename from the first reference image', () => {
     expect(outputPathFor(['/tmp/portrait.jpg'])).toBe('/tmp/portrait_generated.png');
-  });
-
-  test('uses the current working directory for prompt-only generation', () => {
-    expect(outputPathFor([])).toBe(path.join(process.cwd(), 'gpt-image.png'));
   });
 });

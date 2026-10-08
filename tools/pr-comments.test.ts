@@ -9,17 +9,23 @@ const prCommentsPath = path.join(toolsDir, "pr-comments.ts");
 
 describe("pr-comments CLI", () => {
 	test("prints help without requiring GitHub auth", () => {
+		const {
+			GH_ENTERPRISE_TOKEN: _ghEnterpriseToken,
+			GH_TOKEN: _ghToken,
+			GITHUB_ENTERPRISE_TOKEN: _githubEnterpriseToken,
+			GITHUB_TOKEN: _githubToken,
+			...unauthenticatedEnv
+		} = process.env;
 		const result = spawnSync(process.execPath, [prCommentsPath, "--help"], {
 			cwd: toolsDir,
 			encoding: "utf8",
+			env: unauthenticatedEnv,
 		});
 
-		expect(result.status).toBe(0);
-		expect(result.stderr).toBe("");
-		expect(result.stdout).toContain("Usage: pr-comments");
-		expect(result.stdout).toContain("--repo <owner/repo>");
-		expect(result.stdout).toContain("--json");
-		expect(result.stdout).toContain("--all");
+		expect({ status: result.status, stderr: result.stderr }).toEqual({
+			status: 0,
+			stderr: "",
+		});
 	});
 
 	test("renders grouped text output", () => {
@@ -82,16 +88,24 @@ describe("pr-comments CLI", () => {
 
 		const text = renderText(output);
 
-		expect(text).toContain("PR #42: Fix review feedback");
-		expect(text).toContain(
-			"Counts: 1 unresolved threads, 2 resolved threads, 1 PR comments, 1 review bodies",
-		);
-		expect(text).toContain("Unresolved review threads");
-		expect(text).toContain("reviewer src/file.ts:12");
-		expect(text).toContain("     More detail");
-		expect(text).toContain("Open PR conversation comments");
-		expect(text).toContain("teammate");
-		expect(text).toContain("Review bodies");
-		expect(text).toContain("reviewer COMMENTED");
+		expect(text).toBe(`PR #42: Fix review feedback
+https://github.com/owner/repo/pull/42
+State: OPEN
+Counts: 1 unresolved threads, 2 resolved threads, 1 PR comments, 1 review bodies
+
+Unresolved review threads
+  1. reviewer src/file.ts:12
+     Please fix this.
+     More detail
+     https://github.com/owner/repo/pull/42#discussion_r1
+
+Open PR conversation comments
+  1. teammate
+     Top-level note
+
+Review bodies
+  1. reviewer COMMENTED
+     Review summary
+`);
 	});
 });

@@ -63,29 +63,16 @@ load_agent() {
   launchctl kickstart -k "gui/$(id -u)/$LABEL"
 }
 
-models_ready() {
-  "$PROJECT_DIR/.venv/bin/python" - "$BASE_URL/v1/models" <<'PY'
-import json
-import sys
-from urllib.request import urlopen
-
-expected = {
-    "mlx-community/VibeVoice-Realtime-0.5B-fp16",
-    "mlx-community/VibeVoice-ASR-bf16",
-}
-with urlopen(sys.argv[1], timeout=5) as response:
-    payload = json.load(response)
-loaded = {item["id"] for item in payload.get("data", [])}
-raise SystemExit(0 if expected <= loaded else 1)
-PY
+api_ready() {
+  curl --fail --silent --show-error "$BASE_URL/v1/models" >/dev/null
 }
 
-wait_for_models() {
+wait_for_api() {
   local deadline=$((SECONDS + STARTUP_TIMEOUT_SECONDS))
-  info "waiting for both models to load"
-  until models_ready 2>/dev/null; do
-    ((SECONDS < deadline)) || fail "models did not become ready; inspect $LOG_DIR/stderr.log"
-    sleep 5
+  info "waiting for the API to accept requests"
+  until api_ready 2>/dev/null; do
+    ((SECONDS < deadline)) || fail "API did not become ready; inspect $LOG_DIR/stderr.log"
+    sleep 2
   done
 }
 
@@ -109,7 +96,7 @@ install_service() {
 
   render_plist
   load_agent
-  wait_for_models
+  wait_for_api
   configure_tailscale
 
   info "ready locally: $BASE_URL"
@@ -120,16 +107,16 @@ show_status() {
   printf '\nLaunchAgent\n'
   launchctl print "gui/$(id -u)/$LABEL" 2>/dev/null || true
   printf '\nLoaded models\n'
-  if ! models_ready; then
+  curl --fail --silent --show-error "$BASE_URL/v1/models" || \
     printf 'not ready; inspect %s/stderr.log\n' "$LOG_DIR"
-  fi
+  printf '\n'
   printf '\nTailscale Serve\n'
   tailscale serve status
 }
 
 restart_service() {
   launchctl kickstart -k "gui/$(id -u)/$LABEL"
-  wait_for_models
+  wait_for_api
 }
 
 case ${1:-install} in

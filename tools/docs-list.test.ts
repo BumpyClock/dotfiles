@@ -26,6 +26,12 @@ const runDocsList = (args: string[]) =>
     stderr: 'pipe',
   });
 
+const processResult = (result: ReturnType<typeof runDocsList>) => ({
+  exitCode: result.exitCode,
+  stdout: toText(result.stdout),
+  stderr: toText(result.stderr),
+});
+
 describe('docs-list CLI', () => {
   test('prints clear error when explicit dotfiles root has no docs directory', () => {
     const dotfilesDir = createTempDir();
@@ -34,10 +40,11 @@ describe('docs-list CLI', () => {
     try {
       const result = runDocsList(['--dotfiles-dir', dotfilesDir]);
 
-      expect(result.exitCode).toBe(1);
-      expect(toText(result.stdout)).toBe('');
-      expect(toText(result.stderr)).toContain(`Error: Docs directory not found: ${path.join(dotfilesDir, 'docs')}`);
-      expect(toText(result.stderr)).not.toContain('ENOENT');
+      expect(processResult(result)).toEqual({
+        exitCode: 1,
+        stdout: '',
+        stderr: `Error: Docs directory not found: ${path.join(dotfilesDir, 'docs')}\n`,
+      });
     } finally {
       fs.rmSync(dotfilesDir, { recursive: true, force: true });
     }
@@ -50,9 +57,11 @@ describe('docs-list CLI', () => {
     try {
       const result = runDocsList(['--dotfiles-dir', dotfilesDir]);
 
-      expect(result.exitCode).toBe(1);
-      expect(toText(result.stdout)).toBe('');
-      expect(toText(result.stderr)).toContain(`Error: Docs path is not a directory: ${path.join(dotfilesDir, 'docs')}`);
+      expect(processResult(result)).toEqual({
+        exitCode: 1,
+        stdout: '',
+        stderr: `Error: Docs path is not a directory: ${path.join(dotfilesDir, 'docs')}\n`,
+      });
     } finally {
       fs.rmSync(dotfilesDir, { recursive: true, force: true });
     }
@@ -74,10 +83,11 @@ describe('docs-list CLI', () => {
         stderr: 'pipe',
       });
 
-      expect(result.exitCode).toBe(1);
-      expect(toText(result.stdout)).toBe('');
-      expect(toText(result.stderr)).toContain('Error: No docs directory found');
-      expect(toText(result.stderr)).not.toContain('--dotfiles-dir');
+      expect(processResult(result)).toEqual({
+        exitCode: 1,
+        stdout: '',
+        stderr: 'Error: No docs directory found\n',
+      });
     } finally {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }

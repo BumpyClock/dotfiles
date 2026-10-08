@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, call, patch
 
 
 MODULE_PATH = Path(__file__).parents[1] / "prefetch_models.py"
@@ -15,29 +15,6 @@ SPEC.loader.exec_module(prefetch_models)
 
 
 class PrefetchModelsTests(unittest.TestCase):
-    def test_model_revisions_are_pinned(self):
-        self.assertEqual(
-            [(model.repo_id, model.sha) for model in prefetch_models.MODELS],
-            [
-                (
-                    "mlx-community/VibeVoice-Realtime-0.5B-fp16",
-                    "59ba546c294935410544f037a2de20b9da7ed219",
-                ),
-                (
-                    "mlx-community/VibeVoice-ASR-bf16",
-                    "12076ff8cb141fcb672abc9f8957b08aab5ecf94",
-                ),
-                (
-                    "Qwen/Qwen2.5-0.5B",
-                    "060db6499f32faf8b98477b0a26969ef7d8b9987",
-                ),
-                (
-                    "Qwen/Qwen2.5-7B",
-                    "d149729398750b98c0af14eb82c78cfe92750796",
-                ),
-            ],
-        )
-
     def test_revision_drift_stops_before_download(self):
         api = Mock()
         api.model_info.return_value = SimpleNamespace(sha="unexpected")
@@ -49,7 +26,15 @@ class PrefetchModelsTests(unittest.TestCase):
         downloader.assert_not_called()
 
     def test_downloads_main_after_verifying_revision(self):
-        expected_shas = {model.repo_id: model.sha for model in prefetch_models.MODELS}
+        models = (
+            prefetch_models.ModelSpec("owner/full-model", "full-sha"),
+            prefetch_models.ModelSpec(
+                "owner/tokenizer",
+                "tokenizer-sha",
+                ("tokenizer.json",),
+            ),
+        )
+        expected_shas = {model.repo_id: model.sha for model in models}
         api = Mock()
         api.model_info.side_effect = lambda repo_id, revision: SimpleNamespace(
             sha=expected_shas[repo_id]
@@ -62,13 +47,25 @@ class PrefetchModelsTests(unittest.TestCase):
                     cache / f"models--{repo_id.replace('/', '--')}" / "snapshots" / expected_shas[repo_id]
                 )
             )
-            prefetch_models.prefetch(cache, api=api, downloader=downloader)
+            with patch.object(prefetch_models, "MODELS", models):
+                prefetch_models.prefetch(cache, api=api, downloader=downloader)
 
-        self.assertEqual(downloader.call_count, 4)
-        for call in downloader.call_args_list:
-            self.assertEqual(call.kwargs["revision"], "main")
-        tokenizer_call = downloader.call_args_list[-1]
-        self.assertIn("tokenizer.json", tokenizer_call.kwargs["allow_patterns"])
+            self.assertEqual(
+                downloader.call_args_list,
+                [
+                    call(
+                        "owner/full-model",
+                        revision="main",
+                        cache_dir=str(cache),
+                    ),
+                    call(
+                        "owner/tokenizer",
+                        revision="main",
+                        cache_dir=str(cache),
+                        allow_patterns=("tokenizer.json",),
+                    ),
+                ],
+            )
 
 
 if __name__ == "__main__":

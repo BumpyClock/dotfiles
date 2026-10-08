@@ -48,7 +48,7 @@ sysadmin/vibevoice/setup-macos.sh status
 sysadmin/vibevoice/setup-macos.sh restart
 ```
 
-The installer adds missing `uv`, `ffmpeg`, and `git-lfs` Homebrew formulae, syncs the locked environment, downloads both models, installs the LaunchAgent, waits for both models to load, then configures:
+The installer adds missing `uv`, `ffmpeg`, and `git-lfs` Homebrew formulae, syncs the locked environment, downloads both models and their Qwen tokenizers, installs the LaunchAgent, waits for the API listener, then configures:
 
 ```bash
 tailscale serve --bg --yes --tcp=7781 tcp://127.0.0.1:7781
@@ -82,11 +82,15 @@ curl --fail http://127.0.0.1:7781/v1/audio/transcriptions \
   -F max_tokens=8192
 ```
 
+## MLX server workaround
+
+MLX-Audio 0.4.5 preloads models on Uvicorn's thread but runs inference on a broker thread. VibeVoice then fails with `There is no Stream(gpu, 0) in current thread`. `mlx_audio_server.py` defers model loading to the broker and creates that thread's Metal stream. Remove this bootstrap only after upstream performs model loading and generation on the same initialized MLX thread.
+
 ## Failure modes
 
-- First start loads both models before the service is considered ready; inspect `stderr.log` if startup exceeds 30 minutes.
+- Models load lazily on their first inference request. `/v1/models` is initially empty, and the first TTS/ASR call has additional load latency.
 - TTS inputs of three words or fewer can be unstable. Use a complete sentence for health tests.
 - The realtime 0.5B model is single-speaker per request. Extra languages/voices remain experimental.
 - ASR can process long recordings, but the gateway buffers uploads and has a finite timeout. Prefer compressed mono audio for long sessions.
 - MLX model repositories are community conversions of Microsoft weights. Update their pinned SHAs only after a fresh TTS/ASR quality test.
-- If `/v1/models` omits either model, restart the LaunchAgent and inspect logs; do not expose the backend on `0.0.0.0` as a workaround.
+- After each model has handled one request, `/v1/models` should list it. If inference fails, restart the LaunchAgent and inspect logs; do not expose the backend on `0.0.0.0` as a workaround.

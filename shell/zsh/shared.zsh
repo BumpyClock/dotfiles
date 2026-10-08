@@ -60,6 +60,7 @@ if [ -z "${PNPM_HOME:-}" ]; then
     *) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
   esac
 fi
+path_prepend "$PNPM_HOME"
 
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell zsh)"

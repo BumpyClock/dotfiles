@@ -6,7 +6,8 @@ import subprocess
 import sys
 import time
 from collections.abc import Sequence
-from urllib import error, parse, request
+from pathlib import Path
+from urllib import error, request
 
 
 TTS_MODEL = "mlx-community/VibeVoice-Realtime-0.5B-fp16"
@@ -17,8 +18,7 @@ MODEL_IDS = (TTS_MODEL, ASR_MODEL)
 def build_command(host: str, port: int) -> list[str]:
     return [
         sys.executable,
-        "-m",
-        "mlx_audio.server",
+        str(Path(__file__).with_name("mlx_audio_server.py")),
         "--host",
         host,
         "--port",
@@ -50,19 +50,6 @@ def wait_until_ready(base_url: str, child: subprocess.Popen, timeout: float) -> 
     raise TimeoutError(f"MLX-Audio did not become ready within {timeout:g}s{detail}")
 
 
-def preload_model(base_url: str, model_name: str, timeout: float) -> None:
-    query = parse.urlencode({"model_name": model_name})
-    preload_request = request.Request(
-        f"{base_url}/v1/models?{query}",
-        method="POST",
-    )
-    with request.urlopen(preload_request, timeout=timeout) as response:
-        if response.status != 200:
-            raise RuntimeError(
-                f"preloading {model_name} returned HTTP {response.status}"
-            )
-
-
 def forward_signal(child: subprocess.Popen, signum: int) -> None:
     if child.poll() is None:
         child.send_signal(signum)
@@ -89,10 +76,7 @@ def run(host: str, port: int, startup_timeout: float) -> int:
     base_url = f"http://{host}:{port}"
     try:
         wait_until_ready(base_url, child, startup_timeout)
-        for model_name in MODEL_IDS:
-            print(f"Preloading {model_name}", flush=True)
-            preload_model(base_url, model_name, startup_timeout)
-        print(f"VibeVoice ready on {base_url}", flush=True)
+        print(f"VibeVoice API ready on {base_url}", flush=True)
         return child.wait()
     except Exception as exc:
         print(f"VibeVoice startup failed: {exc}", file=sys.stderr, flush=True)

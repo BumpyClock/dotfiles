@@ -125,8 +125,7 @@
       "Bash(rg: *)",
       "Bash(ast-grep: *)",
       "Bash(coderabbit: *)",
-      "Bash(committer:*)",
-      "Bash(git * main)"
+      "Bash(committer:*)"
     ],
     "deny": [
       "CronCreate",
@@ -147,7 +146,7 @@
       "Bash(git reset:*)"
     ]
   },
-  "model": "opus",
+  "model": "claude-fable-5-1",
   "enableAllProjectMcpServers": true,
   "disableClaudeAiConnectors": true,
   "disableBundledSkills": true,

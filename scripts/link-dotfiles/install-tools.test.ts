@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { installedToolFileName, isToolSupportedOnPlatform, listInstallableTools } from "./install-tools";
+import { installedToolFileName, listInstallableTools } from "./install-tools";
 
 let temporaryDirectories: string[] = [];
 
@@ -20,7 +20,7 @@ describe("listInstallableTools", () => {
     temporaryDirectories = [];
   });
 
-  test("includes shebang CLI scripts and skips internal files", async () => {
+  test("discovers shebang scripts and selects an install mode by file type", async () => {
     const dotfilesDir = await createDotfilesFixture();
     const toolsDir = path.join(dotfilesDir, "tools");
     await mkdir(toolsDir, { recursive: true });
@@ -34,55 +34,45 @@ describe("listInstallableTools", () => {
 
     const tools = await listInstallableTools(dotfilesDir);
 
-    expect(
-      tools.map((tool) => ({
-        mode: tool.mode,
-        name: tool.name,
-        targetName: path.basename(tool.targetPath),
-      })),
-    ).toEqual([
-      { mode: "compile", name: "committer", targetName: installedToolFileName("committer") },
-      { mode: "compile", name: "docs-list", targetName: installedToolFileName("docs-list") },
-      { mode: "compile", name: "pr-comments", targetName: installedToolFileName("pr-comments") },
-      { mode: "link", name: "shazam-song", targetName: "shazam-song" },
-      { mode: "compile", name: "trash", targetName: installedToolFileName("trash") },
+    expect(tools).toEqual([
+      {
+        mode: "compile",
+        name: "committer",
+        sourcePath: path.join(toolsDir, "committer.ts"),
+        targetPath: path.join(os.homedir(), ".local", "bin", installedToolFileName("committer")),
+      },
+      {
+        mode: "compile",
+        name: "docs-list",
+        sourcePath: path.join(toolsDir, "docs-list.ts"),
+        targetPath: path.join(os.homedir(), ".local", "bin", installedToolFileName("docs-list")),
+      },
+      {
+        mode: "compile",
+        name: "pr-comments",
+        sourcePath: path.join(toolsDir, "pr-comments.ts"),
+        targetPath: path.join(os.homedir(), ".local", "bin", installedToolFileName("pr-comments")),
+      },
+      {
+        mode: "link",
+        name: "shazam-song",
+        sourcePath: path.join(toolsDir, "shazam-song"),
+        targetPath: path.join(os.homedir(), ".local", "bin", "shazam-song"),
+      },
+      {
+        mode: "compile",
+        name: "trash",
+        sourcePath: path.join(toolsDir, "trash.ts"),
+        targetPath: path.join(os.homedir(), ".local", "bin", installedToolFileName("trash")),
+      },
     ]);
   });
 
-  test("maps tools/search.ts and tools/fetch.ts to web command names", async () => {
-    const dotfilesDir = await createDotfilesFixture();
-    const toolsDir = path.join(dotfilesDir, "tools");
-    await mkdir(toolsDir, { recursive: true });
-
-    await writeFile(path.join(toolsDir, "fetch.ts"), "#!/usr/bin/env bun\nconsole.log('fetch')\n");
-    await writeFile(path.join(toolsDir, "search.ts"), "#!/usr/bin/env bun\nconsole.log('search')\n");
-
-    const tools = await listInstallableTools(dotfilesDir);
-
-    expect(
-      tools.map((tool) => ({
-        mode: tool.mode,
-        name: tool.name,
-        targetName: path.basename(tool.targetPath),
-      })),
-    ).toEqual([
-      { mode: "compile", name: "web_fetch", targetName: installedToolFileName("web_fetch") },
-      { mode: "compile", name: "web_search", targetName: installedToolFileName("web_search") },
-    ]);
-  });
 });
 
 describe("installedToolFileName", () => {
   test("adds exe suffix on windows only", () => {
     expect(installedToolFileName("docs-list", "darwin")).toBe("docs-list");
     expect(installedToolFileName("docs-list", "win32")).toBe("docs-list.exe");
-  });
-});
-
-describe("isToolSupportedOnPlatform", () => {
-  test("skips browser-tools outside darwin", () => {
-    expect(isToolSupportedOnPlatform("browser-tools", "darwin")).toBe(true);
-    expect(isToolSupportedOnPlatform("browser-tools", "win32")).toBe(false);
-    expect(isToolSupportedOnPlatform("docs-list", "win32")).toBe(true);
   });
 });

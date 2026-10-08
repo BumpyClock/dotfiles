@@ -48,20 +48,21 @@ test('buildRequestParts adds one inline image part for each input image', async 
 
     const parts = await buildRequestParts([firstImagePath, secondImagePath], 'Place the chair in the room');
 
-    expect(parts).toHaveLength(3);
-    expect(parts[0]).toEqual({ text: 'Place the chair in the room' });
-
-    expect('inlineData' in parts[1]).toBeTrue();
-    if ('inlineData' in parts[1]) {
-      expect(parts[1].inlineData.mimeType).toBe('image/png');
-      expect(Buffer.from(parts[1].inlineData.data, 'base64').toString('utf8')).toBe('room-image');
-    }
-
-    expect('inlineData' in parts[2]).toBeTrue();
-    if ('inlineData' in parts[2]) {
-      expect(parts[2].inlineData.mimeType).toBe('image/jpeg');
-      expect(Buffer.from(parts[2].inlineData.data, 'base64').toString('utf8')).toBe('chair-image');
-    }
+    expect(parts).toEqual([
+      { text: 'Place the chair in the room' },
+      {
+        inlineData: {
+          data: Buffer.from('room-image').toString('base64'),
+          mimeType: 'image/png',
+        },
+      },
+      {
+        inlineData: {
+          data: Buffer.from('chair-image').toString('base64'),
+          mimeType: 'image/jpeg',
+        },
+      },
+    ]);
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

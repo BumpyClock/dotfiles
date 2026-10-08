@@ -22,8 +22,7 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, desired, markers);
 
-		expect(result.outcome).toBe("unchanged");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "unchanged", content: existing });
 	});
 
 	test("replaces only the block text when it differs", () => {
@@ -32,10 +31,10 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, desired, markers);
 
-		expect(result.outcome).toBe("replaced");
-		expect(result.content).toBe(`${desired}# pnpm append\nexport X=1\n`);
-		expect(result.content).toContain("source /new");
-		expect(result.content).toContain("# pnpm append");
+		expect(result).toEqual({
+			outcome: "replaced",
+			content: `${desired}# pnpm append\nexport X=1\n`,
+		});
 	});
 
 	test("prepends the block when no markers are present", () => {
@@ -44,8 +43,10 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, desired, markers);
 
-		expect(result.outcome).toBe("prepended");
-		expect(result.content).toBe(`${desired}${existing}`);
+		expect(result).toEqual({
+			outcome: "prepended",
+			content: `${desired}${existing}`,
+		});
 	});
 
 	test("prepends into an empty file without stray separators", () => {
@@ -53,8 +54,7 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock("", desired, markers);
 
-		expect(result.outcome).toBe("prepended");
-		expect(result.content).toBe(desired);
+		expect(result).toEqual({ outcome: "prepended", content: desired });
 	});
 
 	test("reports conflict when the start marker has no end marker", () => {
@@ -62,8 +62,7 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, block("source /b"), markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 
 	test("reports conflict when markers are duplicated", () => {
@@ -71,8 +70,7 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, block("source /c"), markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 
 	test("reports conflict when the end marker precedes the start marker", () => {
@@ -80,8 +78,7 @@ describe("reconcileManagedBlock", () => {
 
 		const result = reconcileManagedBlock(existing, block("source /b"), markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 });
 
@@ -91,8 +88,7 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("absent");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "absent", content: existing });
 	});
 
 	test("removes the block and preserves surrounding content byte-for-byte", () => {
@@ -100,8 +96,10 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("removed");
-		expect(result.content).toBe("# user head\n# pnpm append\nexport X=1\n");
+		expect(result).toEqual({
+			outcome: "removed",
+			content: "# user head\n# pnpm append\nexport X=1\n",
+		});
 	});
 
 	test("removes a block that is the only content, leaving an empty file", () => {
@@ -109,8 +107,7 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("removed");
-		expect(result.content).toBe("");
+		expect(result).toEqual({ outcome: "removed", content: "" });
 	});
 
 	test("reports conflict when the start marker has no end marker, leaving content untouched", () => {
@@ -118,8 +115,7 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 
 	test("reports conflict when markers are duplicated, leaving content untouched", () => {
@@ -127,8 +123,7 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 
 	test("reports conflict when the end marker precedes the start marker, leaving content untouched", () => {
@@ -136,8 +131,7 @@ describe("removeManagedBlock", () => {
 
 		const result = removeManagedBlock(existing, markers);
 
-		expect(result.outcome).toBe("conflict");
-		expect(result.content).toBe(existing);
+		expect(result).toEqual({ outcome: "conflict", content: existing });
 	});
 });
 
