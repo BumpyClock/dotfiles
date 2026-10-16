@@ -63,7 +63,7 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 
 ### `bin/`
 
-Wrapper scripts that the linker installs into `~/.local/bin`, with `zsh/` and `powershell/` variants of `cz`, `ck`, `ccy`, `claudex`, and `claude-grok`. The linker fills `cz` from `ZAI_API_KEY` and `ck` from `KIMI_API_KEY` in `secrets/api-keys/env.json`. It copies the other three unchanged and makes them executable.
+Wrapper scripts that the linker installs into `~/.local/bin`, with `zsh/` and `powershell/` variants of `cz`, `ck`, `ccy`, `claudex`, `claude-grok`, and `claude-muse`. The linker fills `cz` from `ZAI_API_KEY` and `ck` from `KIMI_API_KEY` in `secrets/api-keys/env.json`. It copies the other wrappers unchanged and makes them executable.
 
 ### `Brewfile`
 

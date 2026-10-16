@@ -265,3 +265,6 @@ if (Test-Path "$localBin\claudex.ps1") {
 if (Test-Path "$localBin\claude-grok.ps1") {
     function claude-grok { & "$env:USERPROFILE\.local\bin\claude-grok.ps1" @args }
 }
+if (Test-Path "$localBin\claude-muse.ps1") {
+    function claude-muse { & "$env:USERPROFILE\.local\bin\claude-muse.ps1" @args }
+}

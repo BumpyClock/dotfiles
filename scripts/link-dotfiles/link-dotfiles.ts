@@ -490,6 +490,7 @@ const BIN_SCRIPTS: BinScript[] = [
 	{ name: "ccy" },
 	{ name: "claudex" },
 	{ name: "claude-grok" },
+	{ name: "claude-muse" },
 ];
 
 export type InstallBinScriptsOptions = {
