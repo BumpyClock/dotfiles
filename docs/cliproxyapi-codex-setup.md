@@ -81,10 +81,11 @@ Dotfiles ship thin Claude Code launchers that point at this proxy
 Sources live under `shell/bin/{zsh,powershell}/` and are copied to
 `~/.local/bin` by `scripts/link-dotfiles/link-dotfiles.ts`.
 
-| Command | Default model env | Mapping |
+| Command | Launch model | Mapping |
 | --- | --- | --- |
-| `claudex` | fable | fable→`gpt-5.6-sol`, opus→`gpt-5.6-terra`, sonnet/haiku→`gpt-5.6-luna`, custom→`glm-5.2` |
-| `claude-grok` | opus | opus→`grok-4.5`, fable→`gpt-5.6-sol`, sonnet/haiku→`glm-5.2`, custom→`gpt-5.6-terra` |
+| `claudex` | opus | fable→`gpt-6-astra`, opus/sonnet→`gpt-6.1-sol`, haiku→`glm-5.3-flash` |
+| `claude-grok` | opus | fable→`gpt-6.1-sol`, opus/sonnet→`grok-4.7`, haiku→`glm-5.3` |
+| `claude-muse` | opus | fable/opus→`muse-wonder-full-1.0`, sonnet/haiku→`muse-wonder-1.0` |
 
 Requires `cliproxyapi` running (`brew services start cliproxyapi`) with the
 models above exposed on `/v1/models`.

@@ -14,6 +14,7 @@ $env:CLAUDE_CODE_ALWAYS_ENABLE_EFFORT = "1"
 $env:CLAUDE_CODE_MAX_CONTEXT_TOKENS = "340000"
 $env:CLAUDE_CODE_AUTO_COMPACT_WINDOW = "300000"
 $env:CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY = "3"
+$env:ENABLE_LSP_TOOL = "1"
 # $env:ENABLE_TOOL_SEARCH = "false"
 
 claude --dangerously-skip-permissions --model opus @args
