@@ -124,7 +124,7 @@ claude-monitor() {
 }
 alias cmon='claude-monitor'
 
-# Note: cz, ck, ccy, claudex, claude-grok, and claude-muse are wrapper scripts. The linker installs them into ~/.local/bin:
+# Agent launchers are generated from shell/launchers.json into ~/.local/bin:
 # bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 
 # =============================================================================

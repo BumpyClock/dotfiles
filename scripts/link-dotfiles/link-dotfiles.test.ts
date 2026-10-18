@@ -856,19 +856,23 @@ describe("installBinScripts", () => {
 	let dotfilesDir = "";
 	let homeDir = "";
 
-	async function setup(envJson: string | null): Promise<void> {
+	async function setup(): Promise<void> {
 		dotfilesDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-repo-"));
 		homeDir = await mkdtemp(path.join(os.tmpdir(), "link-dotfiles-home-"));
-		await mkdir(path.join(dotfilesDir, "shell/bin/zsh"), { recursive: true });
+		await mkdir(path.join(dotfilesDir, "shell"), { recursive: true });
 		await writeFile(
-			path.join(dotfilesDir, "shell/bin/zsh/cz.sh"),
-			'export ANTHROPIC_AUTH_TOKEN="__ZAI_API_KEY__"\n',
+			path.join(dotfilesDir, "shell/launchers.json"),
+			JSON.stringify({
+				custom: {
+					title: "Custom launcher",
+					command: "claude",
+					args: ["--model", "opus"],
+					env: { ANTHROPIC_AUTH_TOKEN: { fromEnv: "ZAI_API_KEY" } },
+				},
+			}),
 		);
-		await writeFile(path.join(dotfilesDir, "shell/bin/zsh/ccy.sh"), "plain\n");
-		if (envJson !== null) {
-			await mkdir(path.join(dotfilesDir, "secrets/api-keys"), { recursive: true });
-			await writeFile(path.join(dotfilesDir, "secrets/api-keys/env.json"), envJson);
-		}
+		await mkdir(path.join(dotfilesDir, "secrets/api-keys"), { recursive: true });
+		await writeFile(path.join(dotfilesDir, "secrets/api-keys/env.json"), "not JSON");
 	}
 
 	afterEach(async () => {
@@ -876,26 +880,71 @@ describe("installBinScripts", () => {
 		await rm(homeDir, { recursive: true, force: true });
 	});
 
-	test("fills the placeholder from env.json and copies plain scripts", async () => {
-		await setup(JSON.stringify({ zai: { ZAI_API_KEY: "secret-token" } }));
+	test.each(["darwin", "linux"] as const)(
+		"generates executable launchers from the manifest on %s without reading secrets",
+		async (platform) => {
+			await setup();
 
-		await installBinScripts({ dotfilesDir, homeDir, platform: "darwin" });
+			await installBinScripts({ dotfilesDir, homeDir, platform });
 
-		const cz = await readFile(path.join(homeDir, ".local/bin/cz"), "utf8");
-		expect(cz).toBe('export ANTHROPIC_AUTH_TOKEN="secret-token"\n');
-		expect(cz).not.toContain("__ZAI_API_KEY__");
-		const czStat = await stat(path.join(homeDir, ".local/bin/cz"));
-		expect(czStat.mode & 0o111).not.toBe(0);
-		const ccy = await readFile(path.join(homeDir, ".local/bin/ccy"), "utf8");
-		expect(ccy).toBe("plain\n");
+			const target = path.join(homeDir, ".local/bin/custom");
+			expect(await readFile(target, "utf8")).toContain(
+				'export ANTHROPIC_AUTH_TOKEN="$ZAI_API_KEY"',
+			);
+			if (process.platform !== "win32") {
+				expect((await stat(target)).mode & 0o111).not.toBe(0);
+			}
+		},
+	);
+
+	test("generates PowerShell launchers and refreshes existing installed files", async () => {
+		await setup();
+		await mkdir(path.join(homeDir, ".local/bin"), { recursive: true });
+		const target = path.join(homeDir, ".local/bin/custom.ps1");
+		await writeFile(target, "old wrapper with embedded credentials");
+
+		await installBinScripts({ dotfilesDir, homeDir, platform: "win32" });
+
+		const script = await readFile(target, "utf8");
+		expect(script).toContain("$env:ANTHROPIC_AUTH_TOKEN = $env:ZAI_API_KEY");
+		expect(script).not.toContain("embedded credentials");
 	});
 
-	test("skips templated scripts when the key is missing", async () => {
-		await setup(JSON.stringify({ gemini: { GEMINI_API_KEY: "g" } }));
+	test.each(["darwin", "win32"] as const)(
+		"removes retired managed ck scripts but preserves unrelated commands on %s",
+		async (platform) => {
+			await setup();
+			const binDir = path.join(homeDir, ".local/bin");
+			await mkdir(binDir, { recursive: true });
+			const target = path.join(binDir, platform === "win32" ? "ck.ps1" : "ck");
+			for (const marker of [
+				"# ABOUTME: Claude Code - Kimi wrapper template",
+				"# Generated from shell/launchers.json. Do not edit.",
+			]) {
+				await writeFile(target, marker);
+				await installBinScripts({ dotfilesDir, homeDir, platform });
+				expect(await pathExists(target)).toBe(false);
+			}
+			await writeFile(target, "unrelated user command");
+			await installBinScripts({ dotfilesDir, homeDir, platform });
+			expect(await readFile(target, "utf8")).toBe("unrelated user command");
+		},
+	);
 
-		await installBinScripts({ dotfilesDir, homeDir, platform: "darwin" });
+	test("rejects an invalid manifest before overwriting installed launchers", async () => {
+		await setup();
+		await mkdir(path.join(homeDir, ".local/bin"), { recursive: true });
+		const target = path.join(homeDir, ".local/bin/custom");
+		await writeFile(target, "existing");
+		await writeFile(
+			path.join(dotfilesDir, "shell/launchers.json"),
+			JSON.stringify({ "../custom": {} }),
+		);
 
-		expect(await pathExists(path.join(homeDir, ".local/bin/cz"))).toBe(false);
-		expect(await pathExists(path.join(homeDir, ".local/bin/ccy"))).toBe(true);
+		await expect(
+			installBinScripts({ dotfilesDir, homeDir, platform: "darwin" }),
+		).rejects.toThrow("plain command name");
+
+		expect(await readFile(target, "utf8")).toBe("existing");
 	});
 });

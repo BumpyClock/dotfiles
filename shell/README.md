@@ -61,9 +61,39 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
 ```
 
-### `bin/`
+### `launchers.json`
 
-Wrapper scripts that the linker installs into `~/.local/bin`, with `zsh/` and `powershell/` variants of `cz`, `ck`, `ccy`, `claudex`, `claude-grok`, and `claude-muse`. The linker fills `cz` from `ZAI_API_KEY` and `ck` from `KIMI_API_KEY` in `secrets/api-keys/env.json`. It copies the other wrappers unchanged and makes them executable.
+The single source of truth for `cz`, `ccy`, `claudex`, `claude-grok`, and `claude-muse`. The linker generates executable Bash scripts on macOS/Linux and `.ps1` scripts on Windows in `~/.local/bin`. Both shell baselines make that directory available on `PATH`; adding a launcher needs no profile edits.
+
+Each entry defines `title`, `command`, `args`, and `env`, plus an optional `unset` array. Environment values are strings or references to existing environment variables:
+
+```json
+{
+  "cz": {
+    "title": "Claude Code - Zai",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions"],
+    "env": {
+      "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+      "ANTHROPIC_AUTH_TOKEN": { "fromEnv": "ZAI_API_KEY" }
+    }
+  }
+}
+```
+
+Keep API key values in `secrets/api-keys/env.json`, not this manifest. Shell profiles already load those keys through the generated `~/.config/dotfiles/env.sh` or `env.ps1`. Launchers resolve `fromEnv` references at launch time and report an error if a required variable is missing or empty. Keys are never embedded in the launcher scripts. PowerShell launchers restore modified environment variables when the command finishes, including on errors.
+
+`cz` configures a 1,000,000-token context limit and a 900,000-token auto-compaction window for its GLM-5.3 and GLM-5.3 Flash model mappings.
+
+The retired `ck` launcher is no longer generated. The linker removes previously managed copies from `~/.local/bin`, leaving unrelated commands with that name untouched.
+
+After changing the manifest, rerun the linker on each machine:
+
+```bash
+bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD"
+```
+
+After rotating keys in the secrets submodule, rerun the linker to refresh the managed environment files and start a new terminal or reload the applicable environment file. `sync.sh` and `sync.ps1` only update Git content; they do not run the linker. Reload the PowerShell profile or start a new terminal once after migrating from the old per-command forwarding functions.
 
 ### `Brewfile`
 

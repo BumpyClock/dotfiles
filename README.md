@@ -16,7 +16,7 @@ dotfiles/
 ├── shell/                     # shell configurations
 │   ├── zsh/
 │   ├── powershell/
-│   ├── bin/                   # wrapper scripts installed into ~/.local/bin
+│   ├── launchers.json         # shared definitions for generated agent launchers
 │   └── Brewfile
 ├── scripts/
 │   ├── link-dotfiles/         # the linker (see Linker CLI)
@@ -76,7 +76,7 @@ bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-
 
 The linker also installs the CLI sources in `tools/` into `~/.local/bin`. It compiles TypeScript tools to native binaries and links other shebang scripts in place.
 
-If `secrets/api-keys/env.json` exists, the linker renders it to `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1`. The shell baseline sources that file. The linker also fills the `cz` and `ck` wrapper scripts from `ZAI_API_KEY` and `KIMI_API_KEY` in the same file.
+If `secrets/api-keys/env.json` exists, the linker renders it to `~/.config/dotfiles/env.sh` and `~/.config/dotfiles/env.ps1`. The shell baseline sources that file. Agent launchers are generated from `shell/launchers.json` into `~/.local/bin`; `cz` reads `ZAI_API_KEY` from the environment at launch time, without embedding the key in scripts. See [shell configuration](shell/README.md#launchersjson) for editing and refresh instructions.
 
 On Unix and macOS, the linker owns one managed block in `~/.zshrc`. The block sources `shell/zsh/shared.zsh` and then `~/.zshrc.local`. The linker backs up an unmanaged `~/.zshrc` once, to a file such as `~/.zshrc.backup.20260518_143000`, and keeps the old content after the block. Put machine-specific shell config in `~/.zshrc.local`.
 

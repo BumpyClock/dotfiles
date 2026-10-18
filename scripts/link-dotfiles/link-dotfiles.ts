@@ -14,6 +14,7 @@ import os from "node:os";
 import path from "node:path";
 import { ensureLinked, pathExists } from "./fs-utils";
 import { installTools, showToolStatus } from "./install-tools";
+import { parseLaunchers, renderLauncher } from "./launchers";
 import {
 	type ManagedBlockMarkers,
 	formatTimestamp,
@@ -363,29 +364,6 @@ async function ensureWritableTarget(targetPath: string): Promise<void> {
 	}
 }
 
-async function writeGeneratedScript(
-	templatePath: string,
-	targetPath: string,
-	replacements: Record<string, string>,
-	executable: boolean,
-): Promise<void> {
-	if (!(await pathExists(templatePath))) {
-		return;
-	}
-
-	let content = await readFile(templatePath, "utf8");
-	for (const [token, value] of Object.entries(replacements)) {
-		content = content.replaceAll(token, value);
-	}
-
-	await ensureWritableTarget(targetPath);
-	await writeFile(targetPath, content, "utf8");
-	if (executable) {
-		await chmod(targetPath, 0o755);
-	}
-	action(`Generated: ${targetPath}`);
-}
-
 async function removeGeneratedFile(targetPath: string): Promise<void> {
 	if (!(await pathExists(targetPath))) {
 		return;
@@ -475,24 +453,6 @@ export async function installMcporterSecrets(
 	}
 }
 
-type BinScript = {
-	name: string;
-	/** Placeholder token in the template and the env.json variable that fills it. */
-	secret?: { placeholder: string; envKey: string };
-};
-
-// Wrapper scripts live in shell/bin/zsh/ and shell/bin/powershell/. A script
-// with a `secret` entry is a template. The linker fills its placeholder from
-// secrets/api-keys/env.json. A script without one is copied as is.
-const BIN_SCRIPTS: BinScript[] = [
-	{ name: "cz", secret: { placeholder: "__ZAI_API_KEY__", envKey: "ZAI_API_KEY" } },
-	{ name: "ck", secret: { placeholder: "__KIMI_API_KEY__", envKey: "KIMI_API_KEY" } },
-	{ name: "ccy" },
-	{ name: "claudex" },
-	{ name: "claude-grok" },
-	{ name: "claude-muse" },
-];
-
 export type InstallBinScriptsOptions = {
 	dotfilesDir: string;
 	homeDir?: string;
@@ -504,41 +464,37 @@ export async function installBinScripts(
 ): Promise<void> {
 	const { dotfilesDir } = options;
 	const homeDir = options.homeDir ?? os.homedir();
-	const isWindows = (options.platform ?? process.platform) === "win32";
-	const sourceDir = path.join(
-		dotfilesDir,
-		isWindows ? "shell/bin/powershell" : "shell/bin/zsh",
+	const platform = options.platform ?? process.platform;
+	const isWindows = platform === "win32";
+	const manifestPath = path.join(dotfilesDir, "shell/launchers.json");
+	const launchers = parseLaunchers(
+		JSON.parse(await readFile(manifestPath, "utf8")),
 	);
-	const extension = isWindows ? ".ps1" : ".sh";
 	const targetSuffix = isWindows ? ".ps1" : "";
 
 	info(`Installing ${isWindows ? "PowerShell" : "Unix"} bin scripts...`);
 	const binDir = path.join(homeDir, ".local/bin");
 	await mkdir(binDir, { recursive: true });
 
-	const environment = await loadManagedEnvironment(dotfilesDir);
-
-	for (const script of BIN_SCRIPTS) {
-		const sourcePath = path.join(sourceDir, `${script.name}${extension}`);
-		const targetPath = path.join(binDir, `${script.name}${targetSuffix}`);
-
-		if (!(await pathExists(sourcePath))) {
-			continue;
+	const retiredPath = path.join(binDir, `ck${targetSuffix}`);
+	if (await pathExists(retiredPath)) {
+		const content = await readFile(retiredPath, "utf8");
+		if (
+			content.includes("# ABOUTME: Claude Code - Kimi wrapper template") ||
+			content.includes("# Generated from shell/launchers.json. Do not edit.")
+		) {
+			await removeGeneratedFile(retiredPath);
 		}
+	}
 
-		const replacements: Record<string, string> = {};
-		if (script.secret) {
-			const value = environment[script.secret.envKey];
-			if (!value) {
-				warn(
-					`${script.secret.envKey} not set in ${ENV_CONFIG_RELATIVE_PATH}; skipping ${script.name}`,
-				);
-				continue;
-			}
-			replacements[script.secret.placeholder] = value;
+	for (const [name, launcher] of Object.entries(launchers)) {
+		const targetPath = path.join(binDir, `${name}${targetSuffix}`);
+		await ensureWritableTarget(targetPath);
+		await writeFile(targetPath, renderLauncher(name, launcher, platform), "utf8");
+		if (!isWindows) {
+			await chmod(targetPath, 0o755);
 		}
-
-		await writeGeneratedScript(sourcePath, targetPath, replacements, !isWindows);
+		action(`Generated: ${targetPath}`);
 	}
 }
 

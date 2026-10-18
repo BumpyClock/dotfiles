@@ -1,0 +1,86 @@
+{
+  "cz": {
+    "title": "Claude Code - Zai",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions"],
+    "env": {
+      "ANTHROPIC_AUTH_TOKEN": { "fromEnv": "ZAI_API_KEY" },
+      "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+      "API_TIMEOUT_MS": "3000000",
+      "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.3-flash",
+      "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5.3-flash",
+      "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.3",
+      "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "1000000",
+      "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "900000",
+      "ENABLE_LSP_TOOL": "1"
+    }
+  },
+  "ccy": {
+    "title": "Claude Code",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions"],
+    "unset": [
+      "ANTHROPIC_AUTH_TOKEN",
+      "ANTHROPIC_BASE_URL",
+      "API_TIMEOUT_MS",
+      "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+      "ANTHROPIC_DEFAULT_SONNET_MODEL",
+      "ANTHROPIC_DEFAULT_OPUS_MODEL"
+    ],
+    "env": {
+      "ENABLE_LSP_TOOL": "1"
+    }
+  },
+  "claudex": {
+    "title": "Claude Code - Gateway",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions", "--model", "opus"],
+    "env": {
+      "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
+      "ANTHROPIC_AUTH_TOKEN": "sk-dummy",
+      "ANTHROPIC_DEFAULT_FABLE_MODEL": "gpt-6-astra",
+      "ANTHROPIC_DEFAULT_OPUS_MODEL": "gpt-6.1-sol",
+      "ANTHROPIC_DEFAULT_SONNET_MODEL": "gpt-6.1-sol",
+      "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.3-flash",
+      "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT": "1",
+      "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "340000",
+      "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "300000",
+      "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY": "3",
+      "ENABLE_LSP_TOOL": "1"
+    }
+  },
+  "claude-grok": {
+    "title": "Claude Code - Grok",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions", "--model", "opus"],
+    "env": {
+      "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
+      "ANTHROPIC_AUTH_TOKEN": "sk-dummy",
+      "ANTHROPIC_DEFAULT_FABLE_MODEL": "gpt-6.1-sol",
+      "ANTHROPIC_DEFAULT_OPUS_MODEL": "grok-4.7",
+      "ANTHROPIC_DEFAULT_SONNET_MODEL": "grok-4.7",
+      "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.3",
+      "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT": "1",
+      "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "400000",
+      "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "350000",
+      "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY": "3"
+    }
+  },
+  "claude-muse": {
+    "title": "Claude Code - Muse",
+    "command": "claude",
+    "args": ["--dangerously-skip-permissions", "--model", "opus"],
+    "env": {
+      "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
+      "ANTHROPIC_AUTH_TOKEN": "sk-dummy",
+      "ANTHROPIC_DEFAULT_FABLE_MODEL": "muse-wonder-full-1.0",
+      "ANTHROPIC_DEFAULT_OPUS_MODEL": "muse-wonder-full-1.0",
+      "ANTHROPIC_DEFAULT_SONNET_MODEL": "muse-wonder-1.0",
+      "ANTHROPIC_DEFAULT_HAIKU_MODEL": "muse-wonder-1.0",
+      "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT": "1",
+      "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "400000",
+      "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "350000",
+      "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY": "3"
+    }
+  }
+}

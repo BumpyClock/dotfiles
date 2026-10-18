@@ -251,20 +251,8 @@ function claude-yolo { claude --dangerously-skip-permissions @args }
 function claude-monitor-plan-max-20 { claude-monitor --plan max20 @args }
 Set-Alias cmon claude-monitor-plan-max-20
 
-# Claude wrappers from ~/.local/bin
+# Discover generated launchers without a per-command function list.
 $localBin = "$env:USERPROFILE\.local\bin"
-if (Test-Path "$localBin\cz.ps1") {
-    function cz { & "$env:USERPROFILE\.local\bin\cz.ps1" @args }
-}
-if (Test-Path "$localBin\ccy.ps1") {
-    function ccy { & "$env:USERPROFILE\.local\bin\ccy.ps1" @args }
-}
-if (Test-Path "$localBin\claudex.ps1") {
-    function claudex { & "$env:USERPROFILE\.local\bin\claudex.ps1" @args }
-}
-if (Test-Path "$localBin\claude-grok.ps1") {
-    function claude-grok { & "$env:USERPROFILE\.local\bin\claude-grok.ps1" @args }
-}
-if (Test-Path "$localBin\claude-muse.ps1") {
-    function claude-muse { & "$env:USERPROFILE\.local\bin\claude-muse.ps1" @args }
+if (($env:PATH -split ';') -notcontains $localBin) {
+    $env:PATH = "$localBin;$env:PATH"
 }

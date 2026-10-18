@@ -78,8 +78,9 @@ curl -s http://localhost:8317/v1/chat/completions \
 
 Dotfiles ship thin Claude Code launchers that point at this proxy
 (`ANTHROPIC_BASE_URL=http://127.0.0.1:8317`, `ANTHROPIC_AUTH_TOKEN=sk-dummy`).
-Sources live under `shell/bin/{zsh,powershell}/` and are copied to
-`~/.local/bin` by `scripts/link-dotfiles/link-dotfiles.ts`.
+Definitions live in `shell/launchers.json`. The linker at
+`scripts/link-dotfiles/link-dotfiles.ts` generates the platform-specific scripts
+in `~/.local/bin`; change the manifest and rerun the linker to update them.
 
 | Command | Launch model | Mapping |
 | --- | --- | --- |
