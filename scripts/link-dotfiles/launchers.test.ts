@@ -165,6 +165,43 @@ describe("PowerShell launchers", () => {
 		},
 	);
 
+	test.skipIf(!Bun.which("pwsh"))("removes unset variables instead of blanking them", async () => {
+		const { mock, capture, env } = await setup();
+		const target = path.join(temporaryDirectory, "ccy.ps1");
+		await writeFile(target, renderLauncher("ccy", {
+			...launchers.ccy,
+			command: process.execPath,
+			args: [mock],
+		}, "win32"));
+		const result = Bun.spawnSync(
+			["pwsh", "-NoProfile", "-NonInteractive", "-File", target],
+			{ env },
+		);
+		expect(result.exitCode).toBe(23);
+		const observed = JSON.parse(await readFile(capture, "utf8"));
+		expect(observed).not.toHaveProperty("token");
+		expect(observed).not.toHaveProperty("baseUrl");
+	});
+
+	test.skipIf(!Bun.which("pwsh"))("leaves variables that were unset before launch unset", async () => {
+		const { mock, env } = await setup();
+		const { ANTHROPIC_AUTH_TOKEN: _token, ANTHROPIC_BASE_URL: _baseUrl, ...unsetEnv } = env;
+		for (const name of ["cz", "ccy"]) {
+			const target = path.join(temporaryDirectory, `${name}.ps1`);
+			await writeFile(target, renderLauncher(name, {
+				...launchers[name],
+				command: process.execPath,
+				args: [mock],
+			}, "win32"));
+			const result = Bun.spawnSync([
+				"pwsh", "-NoProfile", "-NonInteractive", "-Command",
+				`& '${target.replaceAll("'", "''")}'; if ((Test-Path Env:ANTHROPIC_AUTH_TOKEN) -or (Test-Path Env:ANTHROPIC_BASE_URL)) { exit 4 }; exit 0`,
+			], { env: unsetEnv });
+			expect(result.stderr.toString()).toBe("");
+			expect(result.exitCode).toBe(0);
+		}
+	});
+
 	test.skipIf(!Bun.which("pwsh"))("restores the environment when the command cannot start", async () => {
 		const { env } = await setup();
 		const target = path.join(temporaryDirectory, "cz.ps1");

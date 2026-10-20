@@ -157,7 +157,8 @@ export function renderLauncher(
 	);
 	for (const variable of launcher.unset) {
 		lines.push(
-			`    [Environment]::SetEnvironmentVariable(${powershellQuote(variable)}, $null, 'Process')`,
+			// Not SetEnvironmentVariable(name, $null): PowerShell passes $null as "", which blanks the variable
+			`    Remove-Item -LiteralPath ${powershellQuote(`Env:${variable}`)} -ErrorAction SilentlyContinue`,
 		);
 	}
 	for (const [variable, value] of Object.entries(launcher.env)) {
@@ -167,12 +168,17 @@ export function renderLauncher(
 		lines.push(`    $env:${variable} = ${expression}`);
 	}
 	lines.push(
-		"    $LASTEXITCODE = 0",
+		// A script-scope $LASTEXITCODE would hide the global one the command sets
+		"    $global:LASTEXITCODE = 0",
 		`    & ${[launcher.command, ...launcher.args].map(powershellQuote).join(" ")} @args`,
-		"    $launcherExitCode = $LASTEXITCODE",
+		"    $launcherExitCode = $global:LASTEXITCODE",
 		"} finally {",
 		"    foreach ($variable in $savedEnvironment.Keys) {",
-		"        [Environment]::SetEnvironmentVariable($variable, $savedEnvironment[$variable], 'Process')",
+		"        if ($null -eq $savedEnvironment[$variable]) {",
+		"            Remove-Item -LiteralPath \"Env:$variable\" -ErrorAction SilentlyContinue",
+		"        } else {",
+		"            [Environment]::SetEnvironmentVariable($variable, $savedEnvironment[$variable], 'Process')",
+		"        }",
 		"    }",
 		"}",
 		"exit $launcherExitCode",
