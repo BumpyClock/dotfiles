@@ -125,7 +125,8 @@
       "Bash(rg: *)",
       "Bash(ast-grep: *)",
       "Bash(coderabbit: *)",
-      "Bash(committer:*)"
+      "Bash(committer:*)",
+      "mcp__pencil"
     ],
     "deny": [
       "CronCreate",
