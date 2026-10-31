@@ -44,25 +44,20 @@
   },
   "packages": [
     "npm:pi-subagents",
-    "npm:pi-web-access",
     "npm:pi-lens",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-markdown-preview",
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-btw",
     "npm:@bumpyclock/pi-statusbar",
-    "npm:@ifi/oh-pi-themes",
-    "npm:pi-teams",
-    "npm:@narumitw/pi-goal",
     "npm:@quintinshaw/pi-dynamic-workflows",
-    "npm:@bumpyclock/pi-codex-compat"
+    "npm:@router-for-me/pi-cliproxyapi-provider@1.4.23"
   ],
   "terminal": {
     "showTerminalProgress": true,
     "clearOnShrink": false
   },
   "quietStartup": true,
-  "theme": "catppuccin-macchiato/catppuccin-mocha",
   "hideThinkingBlock": false,
   "statusbar": {
     "preset": "default-no-cost",
@@ -120,5 +115,6 @@
   ],
   "extensions": [
     "-builtin:mcp"
-  ]
+  ],
+  "steeringMode": "all"
 }
