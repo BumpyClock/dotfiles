@@ -59,6 +59,16 @@ On Windows, the linker creates directory links as junctions, which need no eleva
 
 After bootstrap, run the linker directly to re-apply links or to check status. See the Linker CLI section. This skips dependency provisioning.
 
+## Automation validation
+
+Use Bun 1.3.14 from `.bun-version`. Prepare dependencies separately with `bun install --frozen-lockfile` in both `scripts/link-dotfiles` and `tools`. The linker has a pinned TypeScript compiler and project-level `bun run typecheck`; both projects use `bun test`. Launcher tests use test-owned definitions, not private `shell/launchers.json`. The Linux compiled-trash test currently fails inside Bun's bundled dependency; do not skip it to claim a passing full baseline. PowerShell launcher tests require prepared `pwsh` and Windows/macOS behavior remains separate native qualification.
+
+Opt in explicitly with `sh scripts/install-hooks.sh` (Git Bash on Windows). It preserves unrelated active hooks/config. The hook requires a clean checkout of the exact pushed commit. It selects the owning automation project for code/lock/config changes, including `shell/launchers.json` for the linker. Shared/unknown paths, empty diffs and unknown/new bases broaden to both automation projects; rename/deletion paths retain their old owners. Multiple distinct pushed commits are refused and deletion-only pushes skip checks. Shell/PowerShell lint has no selected policy and is not claimed as covered.
+
+The hook never bootstraps, links the user home, installs tools, downloads models, or invokes provider/browser commands. Tests create disposable filesystem fixtures. For Boat, upload only reviewed automation source/tests/manifests and hook fixtures; never user configs, `shell/launchers.json`, secrets/submodules or credentials.
+
+Run `python3 scripts/test-hooks.py` and `bun test scripts/check-push.test.cjs` for hook/installer and selector fixtures. Stub checks do not prove native acceptance. Claude workflows now select Boat; their known billing/auth failures are not repaired by a runner label. No trigger, token or permission contract changed.
+
 ## Linker CLI
 
 The linker is `scripts/link-dotfiles/link-dotfiles.ts`.
