@@ -4,9 +4,29 @@ import os from "node:os";
 import path from "node:path";
 import { parseLaunchers, renderLauncher } from "./launchers";
 
-const manifest = await Bun.file(
-	new URL("../../shell/launchers.json", import.meta.url),
-).json();
+// Test-owned definitions keep automation tests independent of private user config.
+const manifest = {
+	cz: {
+		title: "Fixture keyed launcher", command: "fixture-command", args: ["--model", "fixture"],
+		env: {
+			ANTHROPIC_AUTH_TOKEN: { fromEnv: "ZAI_API_KEY" },
+			CLAUDE_CODE_MAX_CONTEXT_TOKENS: "1000000",
+			CLAUDE_CODE_AUTO_COMPACT_WINDOW: "900000",
+		},
+	},
+	ccy: {
+		title: "Fixture clean launcher", command: "fixture-command", args: [], env: {},
+		unset: ["ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL"],
+	},
+	proxy: {
+		title: "Fixture local launcher", command: "fixture-command", args: ["--model", "fixture"],
+		env: {
+			ANTHROPIC_AUTH_TOKEN: "sk-dummy",
+			ANTHROPIC_BASE_URL: "http://127.0.0.1:8317",
+			ANTHROPIC_DEFAULT_OPUS_MODEL: "fixture-model",
+		},
+	},
+};
 const launchers = parseLaunchers(manifest);
 let temporaryDirectory = "";
 

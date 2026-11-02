@@ -114,7 +114,6 @@
     "github-copilot/claude-opus-4.8"
   ],
   "extensions": [
-    "-builtin:mcp"
   ],
   "steeringMode": "all"
 }
