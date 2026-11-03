@@ -25,6 +25,8 @@ During setup, the linker installs the CLI sources in `tools/` into `~/.local/bin
 
 The linker does not symlink shell profiles. The native `~/.zshrc` and PowerShell profile files stay owned by the machine. The linker only writes a small managed block into each file, delimited by `# >>> dotfiles zsh start` and `# <<< dotfiles zsh end`, or their PowerShell equivalents. The block sources the repo baseline, `shell/zsh/shared.zsh` or `shell/powershell/shared.ps1`, and a machine-local override. The linker leaves everything outside the markers untouched, including installer appends such as pnpm. Add machine-specific config to `~/.zshrc.local`, or to `profile.local.ps1` next to each profile. The linker seeds those files once and never overwrites them. If the markers get corrupted, the linker logs a `[CONFLICT]` message and leaves the file for you to fix by hand. `--remove-shell-profile` removes only that managed block, zsh on Unix or the PowerShell profile targets on Windows, without running any other linking or setup work.
 
+On Unix/macOS, normal setup also ensures `~/.zshenv` contains the guarded Claude Code/Codex option line documented in [shell configuration](../shell/README.md#zsh-setup). It appends only when absent, preserving existing content. The options affect only noninteractive agent shells. `--show` does not change it, and `--remove-shell-profile` leaves this independent setting intact.
+
 Windows behavior:
 - Directory links use junctions (no elevation required).
 - File-link attempts fall back to hardlinks if symlink policy blocks them.

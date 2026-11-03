@@ -528,6 +528,42 @@ async function showStatus(dotfilesDir: string): Promise<void> {
 }
 
 // =============================================================================
+// Agent options for noninteractive zsh
+// =============================================================================
+
+const ZSHENV_AGENT_OPTIONS =
+	"[[ ! -o interactive && ( -n $CLAUDECODE || -n $CODEX_THREAD_ID ) ]] && setopt sh_word_split no_nomatch no_equals";
+
+export async function setupZshenv(
+	options: { homeDir?: string } = {},
+): Promise<void> {
+	if (process.platform === "win32") {
+		return;
+	}
+
+	const zshenvPath = path.join(options.homeDir ?? os.homedir(), ".zshenv");
+	const existingContent = (await pathExists(zshenvPath))
+		? await readFile(zshenvPath, "utf8")
+		: "";
+	if (
+		existingContent
+			.split(/\r?\n/)
+			.some((line) => line.trim() === ZSHENV_AGENT_OPTIONS)
+	) {
+		info(".zshenv agent options already present");
+		return;
+	}
+
+	const separator = existingContent && !existingContent.endsWith("\n") ? "\n" : "";
+	await writeFile(
+		zshenvPath,
+		`${existingContent}${separator}${ZSHENV_AGENT_OPTIONS}\n`,
+		"utf8",
+	);
+	action("Added noninteractive agent options to ~/.zshenv");
+}
+
+// =============================================================================
 // Managed .zshrc helpers
 // =============================================================================
 
@@ -1038,6 +1074,7 @@ async function main(): Promise<void> {
 	await linkConfigDirs(dotfilesDir);
 	await installManagedEnvironment(dotfilesDir);
 	await installMcporterSecrets({ dotfilesDir });
+	await setupZshenv();
 	await setupZshrc({ dotfilesDir });
 	await setupPowerShellProfile({ dotfilesDir });
 	await linkWindowsExtras(dotfilesDir);

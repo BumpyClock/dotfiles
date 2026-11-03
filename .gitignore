@@ -32,6 +32,9 @@ skills/rust-skills/
 # Editor backup files
 *.save
 
+# Machine-local zsh bytecode
+*.zwc
+
 # Bun build cache artifacts
 *.bun-build
 **/.pi-subagents

@@ -49,6 +49,38 @@ To remove only the managed block and keep everything else untouched, run:
 bun scripts/link-dotfiles/link-dotfiles.ts --dotfiles-dir "$PWD" --remove-shell-profile
 ```
 
+The linker also appends this guard to `~/.zshenv` on Unix/macOS if the line is not already present. Existing content is preserved, and reruns do not duplicate or rewrite an existing guard.
+
+```zsh
+[[ ! -o interactive && ( -n $CLAUDECODE || -n $CODEX_THREAD_ID ) ]] && setopt sh_word_split no_nomatch no_equals
+```
+
+Only noninteractive Claude Code or Codex shells get word splitting, literal unmatched globs, and literal leading equals signs. Interactive shells and other noninteractive shells keep their existing options. This guard is independent of the managed `.zshrc` block, so `--remove-shell-profile` leaves it in place. `--show` does not install it.
+
+### Zsh startup performance
+
+Startup keeps Oh My Zsh, completion security checks, autosuggestions, syntax highlighting, fnm directory switching, Starship, fzf, and managed environment loading enabled. Nothing is deferred until the first command.
+
+Refresh native zsh bytecode after installing or updating shell tools:
+
+```bash
+zsh -f shell/zsh/compile-startup.zsh
+```
+
+This explicit maintenance step compiles `shared.zsh`, Oh My Zsh libraries, highlighting/autosuggestion implementations, and Bun completions beside their source files. It adds no startup hook. zsh falls back to source when a file is newer or bytecode is incompatible. Rerun to restore the speed benefit after updates. Machine-local `.zwc` files are ignored by Git. User profiles and the alias-dependent Git plugin remain interpreted. fnm's per-shell environment is never cached.
+
+Measure the real installed configuration from a representative working directory:
+
+```bash
+python3 shell/zsh/profile-startup.py --runs 20
+python3 shell/zsh/profile-startup.py --zprof
+python3 shell/zsh/test-startup.py
+```
+
+The profiler reports warm median and p10/p90 for no-rc, interactive, login, and terminal-ready shells. Terminal-ready includes the first prompt and ZLE setup, not only `.zshrc`. It uses a disposable history copy. `--zprof` loads instrumentation before startup instead of sourcing `.zshrc` twice. Timings and profiles contain no environment dump or command trace.
+
+[Measured bottlenecks, results, and verification](../docs/zsh-startup-profile.md).
+
 ### Cross-platform linking
 
 Run the linker from the repo root:

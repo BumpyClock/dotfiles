@@ -30,6 +30,7 @@ import {
 	renderShellEnvironmentScript,
 	renderZshrcLocal,
 	setupPowerShellProfile,
+	setupZshenv,
 	setupZshrc,
 } from "./link-dotfiles";
 
@@ -129,6 +130,130 @@ export GEMINI_API_KEY='O'"'"'Brien'
 $env:GEMINI_API_KEY = 'O''Brien'
 `,
 		);
+	});
+});
+
+describe("agent zshenv options", () => {
+	const guard =
+		"[[ ! -o interactive && ( -n $CLAUDECODE || -n $CODEX_THREAD_ID ) ]] && setopt sh_word_split no_nomatch no_equals";
+	const onUnix = process.platform === "win32" ? test.skip : test;
+	const zsh = Bun.which("zsh");
+	const withZsh = process.platform !== "win32" && zsh ? test : test.skip;
+
+	afterEach(async () => {
+		await Promise.all(
+			temporaryDirectories.map((directory) =>
+				rm(directory, { force: true, recursive: true }),
+			),
+		);
+		temporaryDirectories = [];
+	});
+
+	onUnix("creates zshenv and leaves it unchanged on a second run", async () => {
+		const homeDir = await createDotfilesFixture();
+		const target = path.join(homeDir, ".zshenv");
+		await setupZshenv({ homeDir });
+		expect(await readFile(target, "utf8")).toBe(`${guard}\n`);
+		const before = await stat(target);
+		await setupZshenv({ homeDir });
+		expect(await readFile(target, "utf8")).toBe(`${guard}\n`);
+		expect((await stat(target)).mtimeMs).toBe(before.mtimeMs);
+	});
+
+	for (const existing of ["# local config\nexport KEEP=1\n", "export KEEP=1"]) {
+		onUnix(`preserves existing content ${JSON.stringify(existing)}`, async () => {
+			const homeDir = await createDotfilesFixture();
+			const target = path.join(homeDir, ".zshenv");
+			await writeFile(target, existing);
+			await setupZshenv({ homeDir });
+			const separator = existing.endsWith("\n") ? "" : "\n";
+			expect(await readFile(target, "utf8")).toBe(
+				`${existing}${separator}${guard}\n`,
+			);
+		});
+	}
+
+	onUnix("normal CLI installs the guard once but --show does not", async () => {
+		const homeDir = await createDotfilesFixture();
+		const dotfilesDir = await createDotfilesFixture();
+		await mkdir(path.join(dotfilesDir, "shell"));
+		await writeFile(path.join(dotfilesDir, "shell/launchers.json"), "{}");
+		const cli = path.join(import.meta.dir, "link-dotfiles.ts");
+		const args = [
+			process.execPath, cli, "--dotfiles-dir", dotfilesDir, "--skip-submodules",
+		];
+		const env = { ...process.env, HOME: homeDir };
+		const target = path.join(homeDir, ".zshenv");
+		expect(Bun.spawnSync([...args, "--show"], { env }).exitCode).toBe(0);
+		expect(await pathExists(target)).toBe(false);
+		for (let run = 0; run < 2; run += 1) {
+			expect(Bun.spawnSync(args, { env }).exitCode).toBe(0);
+			expect(await readFile(target, "utf8")).toBe(`${guard}\n`);
+		}
+	});
+
+	onUnix("recognizes an existing guard with whitespace and CRLF", async () => {
+		const homeDir = await createDotfilesFixture();
+		const target = path.join(homeDir, ".zshenv");
+		const existing = `# custom config\r\n  ${guard}  \r\nexport KEEP=1\r\n`;
+		await writeFile(target, existing);
+		await setupZshenv({ homeDir });
+		expect(await readFile(target, "utf8")).toBe(existing);
+	});
+
+	onUnix("does not mistake a commented guard for an active one", async () => {
+		const homeDir = await createDotfilesFixture();
+		const target = path.join(homeDir, ".zshenv");
+		await writeFile(target, `# ${guard}\n`);
+		await setupZshenv({ homeDir });
+		expect(await readFile(target, "utf8")).toBe(`# ${guard}\n${guard}\n`);
+	});
+
+	for (const interactive of [false, true]) {
+		for (const agent of ["none", "CLAUDECODE", "CODEX_THREAD_ID"]) {
+			withZsh(`${interactive ? "interactive" : "noninteractive"} shell with ${agent}`, async () => {
+				const homeDir = await createDotfilesFixture();
+				await setupZshenv({ homeDir });
+				const result = Bun.spawnSync(
+					[
+						zsh!,
+						interactive ? "-ic" : "-c",
+						'print -r -- "${options[shwordsplit]} ${options[nomatch]} ${options[equals]}"',
+					],
+					{
+						env: {
+							...process.env,
+							HOME: homeDir,
+							ZDOTDIR: homeDir,
+							CLAUDECODE: agent === "CLAUDECODE" ? "1" : "",
+							CODEX_THREAD_ID: agent === "CODEX_THREAD_ID" ? "test-thread" : "",
+						},
+					},
+				);
+				expect(result.exitCode).toBe(0);
+				const enabled = !interactive && agent !== "none";
+				expect(result.stdout.toString().trim()).toBe(
+					enabled ? "on off off" : "off on on",
+				);
+			});
+		}
+	}
+
+	withZsh("agent commands split words and keep unmatched globs and equals literal", async () => {
+		const homeDir = await createDotfilesFixture();
+		await setupZshenv({ homeDir });
+		const result = Bun.spawnSync(
+			[
+				zsh!, "-c",
+				'value="one two"; set -- $value; print -r -- $#; print -r -- *.dotfiles-no-match; print -r -- =zsh',
+			],
+			{
+				cwd: homeDir,
+				env: { ...process.env, HOME: homeDir, ZDOTDIR: homeDir, CLAUDECODE: "1", CODEX_THREAD_ID: "" },
+			},
+		);
+		expect(result.exitCode).toBe(0);
+		expect(result.stdout.toString()).toBe("2\n*.dotfiles-no-match\n=zsh\n");
 	});
 });
 
