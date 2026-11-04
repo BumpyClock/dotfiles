@@ -1,4 +1,4 @@
-# Theme – lazy load on first prompt
+# Theme initialization. Dependencies are provisioned by setup.ps1, never at startup.
 $documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
 $themeCandidates = @(
     (Join-Path $documentsDir "PowerShell\Themes\dracula.omp.json"),
@@ -15,22 +15,21 @@ if (-not $global:FNM_DONE) {
     if (Get-Command fnm -ErrorAction SilentlyContinue) {
         fnm env --shell powershell | Out-String | iex
         $global:FNM_DONE = $true
-    } else {
-        Write-Host "fnm not found. Installing..." -ForegroundColor Yellow
-        winget install Schniz.fnm -h
     }
 }
 
-# Terminal Icons auto-install and lazy-load
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
-    Write-Host "Installing Terminal-Icons..." -ForegroundColor Yellow
-    Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
+# Dependencies are checked at setup, not by scanning module directories per shell.
+if (-not (Get-EventSubscriber | Where-Object SourceIdentifier -eq PowerShell.OnCommandLookupFailed)) {
+    Register-EngineEvent -SourceIdentifier PowerShell.OnCommandLookupFailed `
+        -Action { Import-Module Terminal-Icons -ErrorAction SilentlyContinue } | Out-Null
 }
-Register-EngineEvent -SourceIdentifier PowerShell.OnCommandLookupFailed `
-    -Action { Import-Module Terminal-Icons -ErrorAction SilentlyContinue }
 
-# Enhanced PSReadLine settings
-Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -EditMode Windows
+# ListView requires an interactive VT-capable host. Keep redirected shells usable.
+try {
+    Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -EditMode Windows -ErrorAction Stop
+} catch {
+    Set-PSReadLineOption -EditMode Windows -ErrorAction SilentlyContinue
+}
 $PSReadLineOptions = @{
     MaximumHistoryCount = 10000
     HistoryNoDuplicates = $true
@@ -120,11 +119,7 @@ function fresh-start { Remove-Item node_modules, pnpm-lock.yaml -Recurse -Force;
 # GIT & GITHUB CLI SHORTCUTS
 # =============================================================================
 
-# GitHub CLI auto-install
-if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
-    Write-Host "GitHub CLI not found. Installing..." -ForegroundColor Yellow
-    winget install GitHub.cli -h
-}
+# GitHub CLI is provisioned by shell/powershell/setup.ps1.
 
 # Basic Git shortcuts
 function gs { git status }
@@ -222,9 +217,6 @@ if ($ezaCommand) {
 
     function ls-tree-eza { eza --tree --git-ignore --show-symlinks --icons --hyperlink}
     Set-Alias lt ls-tree-eza
-} else {
-    Write-Host "eza not found. Installing..." -ForegroundColor Yellow
-    winget install eza-community.eza -h
 }
 
 # Go environment setup
