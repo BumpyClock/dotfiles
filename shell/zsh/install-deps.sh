@@ -61,11 +61,17 @@ install_base_packages() {
 		# current before any install; user is responsible for running -Syu first.
 		print_status "Arch: skipping pacman -Sy (partial-upgrade risk). Run 'sudo pacman -Syu' before this script if databases are stale."
 		;;
-	ubuntu)
-		print_status "Updating apt..."
-		sudo apt update
-		;;
 	esac
+}
+
+# Refresh apt metadata only when a missing package needs installing.
+APT_UPDATED=false
+install_apt_packages() {
+	if [ "$APT_UPDATED" = false ]; then
+		sudo apt update || return $?
+		APT_UPDATED=true
+	fi
+	sudo apt install -y "$@"
 }
 
 # Install zsh
@@ -82,7 +88,7 @@ install_zsh() {
 			sudo pacman -S --needed --noconfirm zsh
 			;;
 		ubuntu)
-			sudo apt install -y zsh
+			install_apt_packages zsh
 			;;
 		esac
 	fi
@@ -136,12 +142,14 @@ install_eza() {
 				cargo install eza
 			else
 				print_status "Installing eza via apt..."
-				sudo apt install -y gpg
+				if ! command -v gpg &>/dev/null; then
+					install_apt_packages gpg || return $?
+				fi
 				sudo mkdir -p /etc/apt/keyrings
 				wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
 				echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
 				sudo apt update
-				sudo apt install -y eza
+				install_apt_packages eza
 			fi
 			;;
 		esac
@@ -165,6 +173,17 @@ install_starship() {
 
 # Install fnm (Fast Node Manager)
 install_fnm() {
+	local fnm_dir
+	if [ -d "$HOME/.fnm" ]; then
+		fnm_dir="$HOME/.fnm"
+	elif [ -n "${XDG_DATA_HOME:-}" ]; then
+		fnm_dir="$XDG_DATA_HOME/fnm"
+	elif [ "$OS" = macos ]; then
+		fnm_dir="$HOME/Library/Application Support/fnm"
+	else
+		fnm_dir="$HOME/.local/share/fnm"
+	fi
+	export PATH="$fnm_dir:$PATH"
 	if command -v fnm &>/dev/null; then
 		print_status "fnm is already installed"
 	else
@@ -175,6 +194,14 @@ install_fnm() {
 
 # Install pnpm
 install_pnpm() {
+	# Discover an existing user install even in a fresh, unconfigured shell.
+	if [ -z "${PNPM_HOME:-}" ]; then
+		case $OS in
+		macos) export PNPM_HOME="$HOME/Library/pnpm" ;;
+		*) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
+		esac
+	fi
+	export PATH="$PNPM_HOME:$PATH"
 	if command -v pnpm &>/dev/null; then
 		print_status "pnpm is already installed"
 	else
@@ -186,16 +213,16 @@ install_pnpm() {
 # Install Bun (required by bootstrap.sh to run the dotfiles linker)
 install_bun() {
 	export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+	case ":$PATH:" in
+	*":$BUN_INSTALL/bin:"*) ;;
+	*) export PATH="$BUN_INSTALL/bin:$PATH" ;;
+	esac
 	if command -v bun &>/dev/null; then
 		print_status "bun is already installed"
 	else
 		print_status "Installing bun..."
 		curl -fsSL https://bun.sh/install | bash
 	fi
-	case ":$PATH:" in
-	*":$BUN_INSTALL/bin:"*) ;;
-	*) export PATH="$BUN_INSTALL/bin:$PATH" ;;
-	esac
 	if ! command -v bun &>/dev/null; then
 		print_error "Bun is not available on PATH after install. Check $BUN_INSTALL/bin and re-run."
 		exit 1
@@ -208,17 +235,6 @@ install_mcporter() {
 		print_status "mcporter is already installed"
 		return 0
 	fi
-	# Refresh PATH so a pnpm installed earlier in this script is usable now.
-	if [ -z "${PNPM_HOME:-}" ]; then
-		case "$(uname -s)" in
-		Darwin) PNPM_HOME="$HOME/Library/pnpm" ;;
-		*) PNPM_HOME="$HOME/.local/share/pnpm" ;;
-		esac
-	fi
-	case ":$PATH:" in
-	*":$PNPM_HOME:"*) ;;
-	*) export PATH="$PNPM_HOME:$PATH" ;;
-	esac
 	if ! command -v pnpm &>/dev/null; then
 		print_error "pnpm is required to install mcporter"
 		return 1
@@ -259,27 +275,55 @@ install_ast_grep() {
 
 # Install additional useful tools
 install_additional_tools() {
-	print_status "Installing additional tools..."
-	case $OS in
-	macos)
-		brew install git curl wget unzip ripgrep fd bat fzf
-		;;
-	arch)
-		sudo pacman -S --needed --noconfirm git curl wget unzip ripgrep fd bat fzf
-		;;
-	ubuntu)
-		# unzip is required by the fnm installer; without it fnm aborts.
-		sudo apt install -y git curl wget unzip ripgrep fd-find bat fzf
-		# Create symlink for fd on Ubuntu
-		if [ -f /usr/bin/fdfind ] && [ ! -f /usr/bin/fd ]; then
-			sudo ln -s /usr/bin/fdfind /usr/bin/fd
+	local tool package alias_command
+	local missing=()
+	for tool in git curl wget unzip rg fd bat fzf; do
+		if command -v "$tool" &>/dev/null; then
+			continue
 		fi
-		# Create symlink for bat on Ubuntu
-		if [ -f /usr/bin/batcat ] && [ ! -f /usr/bin/bat ]; then
-			sudo ln -s /usr/bin/batcat /usr/bin/bat
+		# Debian/Ubuntu expose fd and bat under different executable names.
+		if [ "$OS" = ubuntu ]; then
+			alias_command=""
+			case $tool in
+			fd) alias_command=fdfind ;;
+			bat) alias_command=batcat ;;
+			esac
+			if [ -n "$alias_command" ] && command -v "$alias_command" &>/dev/null; then
+				continue
+			fi
 		fi
-		;;
-	esac
+		package="$tool"
+		case $tool in
+		rg) package=ripgrep ;;
+		fd) if [ "$OS" = ubuntu ]; then package=fd-find; fi ;;
+		esac
+		missing+=("$package")
+	done
+
+	if [ "${#missing[@]}" -eq 0 ]; then
+		print_status "Additional tools are already installed"
+	else
+		print_status "Installing missing tools: ${missing[*]}"
+		case $OS in
+		macos) brew install "${missing[@]}" ;;
+		arch) sudo pacman -S --needed --noconfirm "${missing[@]}" ;;
+		ubuntu) install_apt_packages "${missing[@]}" ;;
+		esac
+	fi
+
+	# User-local aliases avoid requiring sudo for already-installed packages.
+	if [ "$OS" = ubuntu ]; then
+		for tool in fd bat; do
+			case $tool in
+			fd) alias_command=fdfind ;;
+			bat) alias_command=batcat ;;
+			esac
+			if ! command -v "$tool" &>/dev/null && command -v "$alias_command" &>/dev/null; then
+				mkdir -p "$HOME/.local/bin"
+				ln -sf "$(command -v "$alias_command")" "$HOME/.local/bin/$tool"
+			fi
+		done
+	fi
 }
 
 # Main installation
@@ -295,6 +339,7 @@ main() {
 		print_error "Unsupported operating system"
 		exit 1
 	fi
+	export PATH="$HOME/.local/bin:$PATH"
 	# Run installations.
 	# base packages, zsh, and bun are required; the rest are convenience tools
 	# whose failure must not abort the run (the linker still needs to execute).

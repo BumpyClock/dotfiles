@@ -3,7 +3,7 @@
     One-shot first-run bootstrap for Windows: provision tools, then run the Bun linker.
 
 .DESCRIPTION
-    Calls shell/powershell/setup.ps1 to install the tools the PowerShell profile
+    Calls shell/powershell/setup.ps1 to install missing tools the PowerShell profile
     relies on, then invokes the Bun linker (scripts/link-dotfiles/link-dotfiles.ts)
     to write the managed profile block. The linker is the sole
     owner of links/generated config/profile content; this script only provisions
@@ -80,7 +80,7 @@ $DotfilesDir = $PSScriptRoot
 
 # --- Dependency provisioning -------------------------------------------------
 
-Write-Step "Provisioning tools (shell/powershell/setup.ps1)"
+Write-Step "Checking for missing tools (shell/powershell/setup.ps1)"
 $setupArgs = @{}
 if ($Optional) { $setupArgs.Optional = $true }
 if ($SkipModules) { $setupArgs.SkipModules = $true }

@@ -453,6 +453,31 @@ export async function installMcporterSecrets(
 	}
 }
 
+export async function setupLspMcpConfig(
+	homeDir: string = os.homedir(),
+): Promise<void> {
+	const targetPath = path.join(homeDir, ".lsp-mcp", ".lsp-mcp.json");
+	if (await pathExists(targetPath)) {
+		return;
+	}
+
+	const config = {
+		semantic_search: {
+			enabled: true,
+			embedder: {
+				provider: "openai",
+				model: "text-embedding-3-small",
+				api_key_env: "OPENAI_API_KEY",
+				base_url: "https://api.openai.com/v1",
+				dimension: 1536,
+			},
+		},
+	};
+	await mkdir(path.dirname(targetPath), { recursive: true });
+	await writeFile(targetPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+	action(`Created: ${targetPath}`);
+}
+
 export type InstallBinScriptsOptions = {
 	dotfilesDir: string;
 	homeDir?: string;
@@ -1074,6 +1099,7 @@ async function main(): Promise<void> {
 	await linkConfigDirs(dotfilesDir);
 	await installManagedEnvironment(dotfilesDir);
 	await installMcporterSecrets({ dotfilesDir });
+	await setupLspMcpConfig();
 	await setupZshenv();
 	await setupZshrc({ dotfilesDir });
 	await setupPowerShellProfile({ dotfilesDir });

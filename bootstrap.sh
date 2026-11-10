@@ -7,7 +7,7 @@ set -euo pipefail
 # Resolve the repo root from this script's location, not the caller's cwd.
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "[bootstrap] Installing OS-level dependencies..."
+echo "[bootstrap] Checking for missing OS-level dependencies..."
 "$DOTFILES_DIR/shell/zsh/install-deps.sh"
 
 # Refresh PATH so a Bun install performed by install-deps.sh in a separate

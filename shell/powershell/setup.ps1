@@ -3,11 +3,11 @@
     Setup script for the PowerShell profile environment.
 
 .DESCRIPTION
-    Installs all required and optional tools referenced by the managed
+    Installs missing required and optional tools referenced by the managed
     PowerShell profile (shell/powershell/shared.ps1). Profile content itself is
     written by scripts/link-dotfiles as a marker-managed block, not by this
     script. Works on both PowerShell 5.1 and 7+. Will install PowerShell 7 if
-    not already present.
+    not already present. Existing Node.js installations are kept, not upgraded.
 
 .PARAMETER Optional
     Install optional/soft-dependency tools in addition to the core set.
@@ -285,7 +285,7 @@ Install-WingetPackage -Id "eza-community.eza" -DisplayName "eza"
 Install-WingetPackage -Id "Microsoft.VisualStudioCode" -DisplayName "code"
 
 # GitHub Copilot CLI
-Install-WingetPackage -Id "GitHub.Copilot" -DisplayName "github-copilot"
+Install-WingetPackage -Id "GitHub.Copilot" -DisplayName "copilot"
 
 # --- Node.js via fnm --------------------------------------------------------
 
@@ -294,7 +294,9 @@ if (Test-CommandAvailable fnm) {
     # Load fnm environment into current session so node/corepack are on PATH
     fnm env --shell powershell | Out-String | Invoke-Expression
 
-    if ($DryRun) {
+    if (Test-CommandAvailable node) {
+        Write-Skip "Node.js already installed"
+    } elseif ($DryRun) {
         Write-Warn "(DRY RUN) Would install Node.js LTS via fnm"
     } else {
         fnm install --lts
@@ -327,7 +329,9 @@ if (Test-CommandAvailable pnpm) {
 # --- Bun (profile lines 239-242) --------------------------------------------
 
 Write-Step "Bun"
-if (-not (Test-Path "$env:USERPROFILE\.bun")) {
+if ((Test-CommandAvailable bun) -or (Test-Path "$env:USERPROFILE\.bun\bin\bun.exe" -PathType Leaf)) {
+    Write-Skip "Bun already installed"
+} else {
     if ($DryRun) {
         Write-Warn "(DRY RUN) Would install Bun"
     } else {
@@ -335,8 +339,6 @@ if (-not (Test-Path "$env:USERPROFILE\.bun")) {
         irm bun.sh/install.ps1 | iex
         Write-Ok "Bun installed"
     }
-} else {
-    Write-Skip "Bun already installed"
 }
 
 # --- PowerShell modules -----------------------------------------------------
@@ -379,7 +381,7 @@ if ($Optional) {
 # profile files so execution policy does not reject them.
 
 Write-Step "Profile prerequisites"
-$documentsDirs = Get-DocumentsDirectoryCandidates
+$documentsDirs = @(Get-DocumentsDirectoryCandidates)
 $documentsDir = $documentsDirs[0]
 
 foreach ($candidateDocumentsDir in $documentsDirs) {

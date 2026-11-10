@@ -44,7 +44,7 @@ cd dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs OS-level dependencies with `shell/zsh/install-deps.sh`, then runs the linker once. It passes extra arguments to the linker, for example `./bootstrap.sh --skip-submodules`.
+`bootstrap.sh` installs missing OS-level dependencies with `shell/zsh/install-deps.sh`, then runs the linker once. Installed utilities are skipped. When all dependencies are present, Linux dependency provisioning skips sudo and apt metadata refreshes. Ubuntu's `fdfind` and `batcat` get user-local `fd` and `bat` links without sudo. It passes extra arguments to the linker, for example `./bootstrap.sh --skip-submodules`.
 
 ### Windows (PowerShell)
 
@@ -53,9 +53,11 @@ cd dotfiles
 ```
 
 `bootstrap.ps1` calls `shell/powershell/setup.ps1` to provision tools, then runs the linker once. It accepts `-Optional`, `-SkipModules`, `-DryRun`, and `-SkipSubmodules`.
-It also appends `~\.local\bin` to the user `PATH` when the directory is not already present.
+Installed tools and modules are skipped, including an existing Node.js version. Bootstrap does not upgrade them. It also appends `~\.local\bin` to the user `PATH` when the directory is not already present.
 
 On Windows, the linker creates directory links as junctions, which need no elevation. File links are symlinks, which need Developer Mode or an elevated shell. There is no hardlink fallback.
+
+Both bootstrap scripts also create `~/.lsp-mcp/.lsp-mcp.json` through the shared linker when the file is absent. Defaults enable semantic search with OpenAI `text-embedding-3-small` at `https://api.openai.com/v1`, 1536 dimensions, and the `OPENAI_API_KEY` environment variable. Existing files are never overwritten. PowerShell `-DryRun` does not create the file.
 
 After bootstrap, run the linker directly to re-apply links or to check status. See the Linker CLI section. This skips dependency provisioning.
 
@@ -66,6 +68,8 @@ Use Bun 1.3.14 from `.bun-version`. Prepare dependencies separately with `bun in
 Opt in explicitly with `sh scripts/install-hooks.sh` (Git Bash on Windows). It preserves unrelated active hooks/config. The hook requires a clean checkout of the exact pushed commit. It selects the owning automation project for code/lock/config changes, including `shell/launchers.json` for the linker. Shared/unknown paths, empty diffs and unknown/new bases broaden to both automation projects; rename/deletion paths retain their old owners. Multiple distinct pushed commits are refused and deletion-only pushes skip checks. Shell/PowerShell lint has no selected policy and is not claimed as covered.
 
 The hook never bootstraps, links the user home, installs tools, downloads models, or invokes provider/browser commands. Tests create disposable filesystem fixtures. For Boat, upload only reviewed automation source/tests/manifests and hook fixtures; never user configs, `shell/launchers.json`, secrets/submodules or credentials.
+
+Run `python3 scripts/test-bootstrap.py` and `pwsh -NoProfile -File scripts/test-bootstrap.ps1` for disposable bootstrap fixtures. These mock package managers and downloads, cover repeat runs and missing dependencies, and do not install tools or link the real user home. PowerShell fixtures are not native Windows installer qualification.
 
 Run `python3 scripts/test-hooks.py` and `bun test scripts/check-push.test.cjs` for hook/installer and selector fixtures. Stub checks do not prove native acceptance. Claude workflows now select Boat; their known billing/auth failures are not repaired by a runner label. No trigger, token or permission contract changed.
 
