@@ -1,14 +1,11 @@
-# Theme initialization. Dependencies are provisioned by setup.ps1, never at startup.
-$documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
-$themeCandidates = @(
-    (Join-Path $documentsDir "PowerShell\Themes\dracula.omp.json"),
-    (Join-Path $HOME "OneDrive\Documents\PowerShell\Themes\dracula.omp.json")
-) | Select-Object -Unique
-$themePath = $themeCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-if (-not $themePath) {
-    $themePath = $themeCandidates[0]
+# Static discovery and prompt generation belong to setup.ps1.
+$dotfilesStartup = Join-Path $HOME '.cache\dotfiles\powershell\startup.ps1'
+if ([IO.File]::Exists($dotfilesStartup)) {
+    . $dotfilesStartup
+} else {
+    Write-Warning 'PowerShell startup is not prepared. Run dotfiles shell\powershell\setup.ps1.'
 }
-oh-my-posh init pwsh --config $themePath | iex
+Remove-Variable dotfilesStartup
 
 # Node (only once per session)
 if (-not $global:FNM_DONE) {
@@ -19,18 +16,17 @@ if (-not $global:FNM_DONE) {
 }
 
 # Dependencies are checked at setup, not by scanning module directories per shell.
-if (-not (Get-EventSubscriber | Where-Object SourceIdentifier -eq PowerShell.OnCommandLookupFailed)) {
+if (-not (Get-EventSubscriber -SourceIdentifier PowerShell.OnCommandLookupFailed -ErrorAction SilentlyContinue)) {
     Register-EngineEvent -SourceIdentifier PowerShell.OnCommandLookupFailed `
         -Action { Import-Module Terminal-Icons -ErrorAction SilentlyContinue } | Out-Null
 }
 
-# ListView requires an interactive VT-capable host. Keep redirected shells usable.
-try {
-    Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -EditMode Windows -ErrorAction Stop
-} catch {
-    Set-PSReadLineOption -EditMode Windows -ErrorAction SilentlyContinue
+# ListView requires a terminal, not redirected process output.
+if ($Host.UI.SupportsVirtualTerminal -and -not [Console]::IsOutputRedirected) {
+    Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView
 }
 $PSReadLineOptions = @{
+    EditMode = 'Windows'
     MaximumHistoryCount = 10000
     HistoryNoDuplicates = $true
     BellStyle = "None"
@@ -184,55 +180,16 @@ function downloads { Set-Location ~\Downloads }
 # EXISTING ALIASES
 # =============================================================================
 
-# eza aliases
-# Try to find eza in various locations
-$ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
-if (-not $ezaCommand) {
-    # Check common winget install locations
-    $possiblePaths = @(
-        "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\eza-community.eza_Microsoft.Winget.Source_8wekyb3d8bbwe\eza.exe",
-        "$env:LOCALAPPDATA\Microsoft\WinGet\Links\eza.exe",
-        "$env:ProgramFiles\eza\eza.exe",
-        "$env:ProgramFiles(x86)\eza\eza.exe"
-    )
+# eza and custom GOPATH locations are resolved during startup preparation.
+function ls-eza { eza --long --group-directories-first --icons --color }
+Set-Alias ls ls-eza
+function ll { eza -l --all --group-directories-first --icons }
+function la { eza -la --group-directories-first --icons }
+function ls-tree-eza { eza --tree --git-ignore --show-symlinks --icons --hyperlink}
+Set-Alias lt ls-tree-eza
 
-    foreach ($path in $possiblePaths) {
-        if (Test-Path $path) {
-            $ezaDir = Split-Path $path -Parent
-            if ($env:Path -notlike "*$ezaDir*") {
-                $env:Path = "$ezaDir;$env:Path"
-            }
-            break
-        }
-    }
-    $ezaCommand = Get-Command eza -ErrorAction SilentlyContinue
-}
-
-if ($ezaCommand) {
-    function ls-eza { eza --long --group-directories-first --icons --color }
-    Set-Alias ls ls-eza
-
-    function ll { eza -l --all --group-directories-first --icons }
-    function la { eza -la --group-directories-first --icons }
-
-    function ls-tree-eza { eza --tree --git-ignore --show-symlinks --icons --hyperlink}
-    Set-Alias lt ls-tree-eza
-}
-
-# Go environment setup
-if (Get-Command go -ErrorAction SilentlyContinue) {
-    $goPath = go env GOPATH
-    if ($goPath -and (Test-Path "$goPath\bin")) {
-        $env:PATH += ";$goPath\bin"
-    }
-}
-
-
-# Bun environment (if installed)
-if (Test-Path "$env:USERPROFILE\.bun") {
-    $env:BUN_INSTALL = "$env:USERPROFILE\.bun"
-    $env:PATH += ";$env:BUN_INSTALL\bin"
-}
+$env:BUN_INSTALL = "$env:USERPROFILE\.bun"
+if (($env:PATH -split ';') -notcontains "$env:BUN_INSTALL\bin") { $env:PATH += ";$env:BUN_INSTALL\bin" }
 
 # Canonical mcporter config so every shell and child process uses one config.
 $env:MCPORTER_CONFIG = "$env:USERPROFILE\.mcporter\mcporter.json"

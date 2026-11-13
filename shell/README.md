@@ -81,6 +81,33 @@ The profiler reports warm median and p10/p90 for no-rc, interactive, login, and 
 
 [Measured bottlenecks, results, and verification](../docs/zsh-startup-profile.md).
 
+### PowerShell startup
+
+`shell\powershell\setup.ps1` installs dependencies and runs
+`shell\powershell\prepare-startup.ps1`. Preparation saves Oh My Posh's generated
+initialization and discovered eza/custom GOPATH locations under
+`~\.cache\dotfiles\powershell`. Profiles load those files without launching
+`oh-my-posh init`, searching installation directories, or running `go env`.
+The generated files are machine-local and contain no managed environment secrets.
+
+After upgrading Oh My Posh, editing its theme, or changing tool locations or
+GOPATH, refresh only startup state. This does not install or upgrade anything.
+
+```powershell
+pwsh -NoProfile -File shell\powershell\prepare-startup.ps1
+```
+
+Use `-ThemePath` for a different theme. Run the full setup script on a new
+machine. Its `-DryRun` does not generate startup files. Missing prepared state
+produces a warning instead of doing setup during shell startup.
+
+Session state still belongs in the profile. This includes PSReadLine settings,
+environment loading, aliases, and terminal integration. The shared baseline
+still initializes fnm per session because its multishell state cannot be
+cached. A customized profile can instead offer explicit `Enable-Fnm` activation.
+
+[Native measurements and checks](powershell/STARTUP.md).
+
 ### Cross-platform linking
 
 Run the linker from the repo root:

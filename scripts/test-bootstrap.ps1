@@ -14,12 +14,18 @@ try {
     $env:USERPROFILE = $fixture
     $env:LOCALAPPDATA = Join-Path $fixture 'AppData'
     $env:SystemRoot = Join-Path $fixture 'Windows'
-    $env:PATH = ''
+    $sessionBin = Join-Path $fixture 'session-bin'
+    $env:PATH = $sessionBin
     $env:OneDrive = $env:OneDriveConsumer = $env:OneDriveCommercial = ''
 
     function pwsh { }
     function git { }
-    function oh-my-posh { throw 'Existing font must not be reinstalled' }
+    function oh-my-posh {
+        if ($args[0] -ne 'init') { throw 'Existing font must not be reinstalled' }
+        $global:LASTEXITCODE = 0
+        '$env:POSH_SESSION_ID = "setup-id"'
+    }
+    function go { $global:LASTEXITCODE = 0; Join-Path $fixture 'go' }
     function gh { }
     function eza { }
     function code { }
@@ -58,14 +64,19 @@ try {
     }
     function Invoke-WebRequest { throw 'Existing theme must not be downloaded' }
 
-    # Substitute only the native Documents boundary so no real user files are read.
+    # Substitute native Documents and registry PATH boundaries.
     $source = Get-Content (Join-Path $root 'shell/powershell/setup.ps1') -Raw
     $source = $source.Replace(
         '[Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)',
         '(Join-Path $HOME "Documents")'
     )
+    foreach ($scope in @('Machine', 'User')) {
+        $registryBin = Join-Path $fixture "$scope-bin"
+        $source = $source.Replace("[Environment]::GetEnvironmentVariable('Path', '$scope')", "'$registryBin'")
+    }
     $setupScript = Join-Path $fixture 'setup.ps1'
     Set-Content $setupScript $source
+    Copy-Item (Join-Path $root 'shell/powershell/prepare-startup.ps1') (Join-Path $fixture 'prepare-startup.ps1')
     $theme = Join-Path $fixture 'Documents/PowerShell/Themes/dracula.omp.json'
     New-Item -ItemType Directory -Path (Split-Path $theme) -Force | Out-Null
     Set-Content $theme '{}'
@@ -87,6 +98,16 @@ try {
     Run-Setup
     Run-Setup
     Assert-Calls
+    foreach ($entry in @($sessionBin, (Join-Path $fixture 'Machine-bin'), (Join-Path $fixture 'User-bin'))) {
+        if (@(($env:PATH -split ';') | Where-Object { $_ -eq $entry }).Count -ne 1) {
+            throw 'Setup did not preserve and deduplicate session and registry PATH entries'
+        }
+    }
+    $startup = Join-Path $HOME '.cache/dotfiles/powershell/startup.ps1'
+    if (-not (Test-Path -LiteralPath $startup)) { throw 'Setup did not prepare profile startup' }
+    Remove-Item -LiteralPath $startup
+    & $setupScript -DryRun
+    if (Test-Path -LiteralPath $startup) { throw 'Dry run wrote profile startup files' }
 
     Remove-Item Function:node
     Run-Setup
@@ -110,7 +131,7 @@ try {
     Run-Setup
     Assert-Calls @('install bun')
 
-    Write-Output 'PASS repeat setup, missing Node, registered package, Bun on PATH, Bun executable, incomplete Bun install'
+    Write-Output 'PASS repeat setup, PATH refresh, dry run, missing Node, registered package, Bun on PATH, Bun executable, incomplete Bun install'
 } finally {
     Remove-Variable DotfilesBootstrapTestCalls -Scope Global
     Set-Variable HOME $originalHome -Force

@@ -8,6 +8,7 @@
     written by scripts/link-dotfiles as a marker-managed block, not by this
     script. Works on both PowerShell 5.1 and 7+. Will install PowerShell 7 if
     not already present. Existing Node.js installations are kept, not upgraded.
+    Prepares machine-local prompt initialization and discovered tool paths.
 
 .PARAMETER Optional
     Install optional/soft-dependency tools in addition to the core set.
@@ -287,6 +288,15 @@ Install-WingetPackage -Id "Microsoft.VisualStudioCode" -DisplayName "code"
 # GitHub Copilot CLI
 Install-WingetPackage -Id "GitHub.Copilot" -DisplayName "copilot"
 
+if (-not $DryRun) {
+    # WinGet updates the registry PATH, not this setup process.
+    $registryPath = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
+                    [Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:PATH = ((($env:PATH + ';' + $registryPath) -split ';') |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        Select-Object -Unique) -join ';'
+}
+
 # --- Node.js via fnm --------------------------------------------------------
 
 Write-Step "Node.js (via fnm)"
@@ -376,9 +386,8 @@ if ($Optional) {
 # Profile content is owned by the marker-managed block that
 # scripts/link-dotfiles writes into the native profile:
 #   bun scripts/link-dotfiles/link-dotfiles.ts
-# This installer only provisions the tools the profile relies on. Resolve the
-# shared Documents location (used for the theme below) and unblock any existing
-# profile files so execution policy does not reject them.
+# This installer provisions tools and prepares startup state. Resolve the shared
+# Documents location and unblock existing profile files.
 
 Write-Step "Profile prerequisites"
 $documentsDirs = @(Get-DocumentsDirectoryCandidates)
@@ -418,6 +427,13 @@ if (Test-Path $themeFile) {
 foreach ($candidateDocumentsDir in $documentsDirs) {
     $candidateThemePath = [System.IO.Path]::Combine($candidateDocumentsDir, "PowerShell", "Themes", "dracula.omp.json")
     Unblock-ManagedFile -Path $candidateThemePath -Label "Dracula theme"
+}
+
+Write-Step "PowerShell startup preparation"
+if ($DryRun) {
+    Write-Warn "(DRY RUN) Would prepare prompt initialization and tool paths"
+} else {
+    & (Join-Path $PSScriptRoot 'prepare-startup.ps1') -ThemePath $themeFile
 }
 
 # --- Nerd Font ---------------------------------------------------------------

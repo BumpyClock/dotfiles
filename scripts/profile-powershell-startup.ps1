@@ -6,16 +6,21 @@ Runs use redirected streams, not a terminal emulator. One warmup per case is
 excluded. Case order alternates to distribute load and cache drift. Profile
 output and environment values are never logged. Error records include caught
 and silenced errors, so they are reported separately from process failures.
+.PARAMETER SkipPrompt
+Measures process startup and profile loading without explicitly rendering a
+prompt. Use to distinguish profile-loading delays from prompt-rendering delays.
 #>
 [CmdletBinding()]
 param(
     [ValidateRange(1, 100)][int]$Runs = 7,
     [string]$Executable = (Get-Process -Id $PID).Path,
     [string]$CompareProfile,
+    [switch]$SkipPrompt,
     [string]$OutputPath
 )
 
-$command = '$null = prompt; [Console]::WriteLine("__STARTUP_READY__"); [Console]::WriteLine("__ERROR_RECORDS__=" + $Error.Count)'
+$command = '[Console]::WriteLine("__STARTUP_READY__"); [Console]::WriteLine("__ERROR_RECORDS__=" + $Error.Count)'
+if (-not $SkipPrompt) { $command = '$null = prompt; ' + $command }
 $cases = [ordered]@{
     bare = @('-NoLogo', '-NoProfile', '-NonInteractive', '-Command', $command)
     profile = @('-NoLogo', '-NonInteractive', '-Command', $command)
@@ -69,6 +74,7 @@ $report = foreach ($name in $cases.Keys) {
     [pscustomobject]@{
         Case = $name
         Runs = $Runs
+        IncludesPrompt = -not $SkipPrompt
         MedianMs = [Math]::Round($median, 3)
         MinMs = $values[0]
         MaxMs = $values[-1]
